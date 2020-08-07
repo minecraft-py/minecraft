@@ -1,5 +1,5 @@
 # Minecraft
-> 感谢 [这个项目](https://github.com/fogleman/Minecraft), 该项目源于此.
+> 感谢 [这个项目](https://github.com/fogleman/Minecraft), 该项目源于此, 并且加入了一些 PR 中的内容.
 
 该项目是一个对 Minecraft Java版的复刻, 旨在使用 python 重写 Minecraft 并实现其中的大部分功能.
 > 下文所提及的`Minecraft`都指该项目, 没有什么新的名字可以取了.
@@ -10,13 +10,12 @@ pip install -U pyglet kytten
 # 其中, kytten 尚未使用, 是可选的
 ```
 
-然后, 在 Windows 资源管理器下, 双击`Minecraft.pyw`即可运行.
-
-其余系统输入: `python Minecraft.pyw`
+然后, 输入: `./Minecraft`即可运行
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:
 
+- [ ] 启动器(tk)
 - [x] 行为控制(已实现部分)
 - [x] 世界生成
 - [ ] 随机世界生成
