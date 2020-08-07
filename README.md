@@ -6,8 +6,8 @@
 
 要游玩 Minecraft, 请先下载依赖项:
 ```shell
-pip install -U pyglet glooey
-# 其中, glooey 尚未使用, 是可选的
+pip install -U pyglet kytten
+# 其中, kytten 尚未使用, 是可选的
 ```
 
 然后, 在 Windows 资源管理器下, 双击`Minecraft.pyw`即可运行.
