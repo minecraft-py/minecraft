@@ -646,6 +646,10 @@ class Window(pyglet.window.Window):
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
                 texture = self.model.world[block]
+                sound = pyglet.resource.media('resource/sound/dig', streaming=False)
+                play = pyglet.media.Player()
+                play.queue(sound)
+                play.play()
                 if texture != STONE:
                     self.model.remove_block(block)
         else:
