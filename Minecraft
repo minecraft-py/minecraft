@@ -136,9 +136,7 @@ class Model(object):
         self._initialize()
 
     def _initialize(self):
-        """ Initialize the world by placing all the blocks.
-
-        """
+        # 放置所有方块以初始化世界
         n = 128  # 世界一半的长度和宽度
         s = 1    # 步长
         y = 0   # 初始 y 值
@@ -154,7 +152,7 @@ class Model(object):
             b = random.randint(-o, o)  # 山的 z 坐标
             c = 2  # base of the hill
             h = random.randint(3, 10)  # 山的高度
-            s = random.randint(4, 8)  # 2 * s is the side length of the hill
+            s = random.randint(4, 8)   # 山的边长为 2*s
             d = 1  # how quickly to taper off the hills
             t = random.choice([GRASS, SAND])
             for y in range(c, c + h):
@@ -410,12 +408,10 @@ class Window(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
-
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
         self.flying = False
         self.running = False
-
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
         #
@@ -449,9 +445,9 @@ class Window(pyglet.window.Window):
             key._6, key._7, key._8, key._9, key._0]
         # Instance of the model that handles the world.
         self.model = Model()
-        # The label that is displayed in the top left of the canvas.
+        # The label that is displayed in the top of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
-            x=5, y=self.height - 5, anchor_x='left', anchor_y='top',
+            x=5, y=self.height // 2, anchor_x='center', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
         self.loading_label = pyglet.text.Label(font_name='Arial', font_size=25,
@@ -623,28 +619,19 @@ class Window(pyglet.window.Window):
         return tuple(p)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        """ Called when a mouse button is pressed. See pyglet docs for button
-        amd modifier mappings.
-
-        Parameters
-        ----------
-        x, y : int
-            The coordinates of the mouse click. Always center of the screen if
-            the mouse is captured.
-        button : int
-            Number representing mouse button that was clicked. 1 = left button,
-            4 = right button.
-        modifiers : int
-            Number representing any modifying keys that were pressed when the
-            mouse button was clicked.
-
+        """
+        当玩家按下鼠标按键时调用
+  
+        @param x, y(int) 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
+        @param button(int) 哪个按键被按下: 1 = 左键, 4 = 右键
+        @param modifiers(int) 表示单击鼠标按钮时按下的任何修改键的数字
         """
         if self.exclusive:
             vector = self.get_sight_vector()
             block, previous = self.model.hit_test(self.position, vector)
             if (button == mouse.RIGHT) or \
                     ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
-                # 在 Mac OS X, Ctrl + 左键 = 右键
+                # 在 Mac OS X 中, Ctrl + 左键 = 右键
                 if previous:
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
@@ -657,16 +644,11 @@ class Window(pyglet.window.Window):
             self.set_exclusive_mouse(True)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        """ Called when the player moves the mouse.
+        """
+        当玩家移动鼠标时调用
 
-        Parameters
-        ----------
-        x, y : int
-            The coordinates of the mouse click. Always center of the screen if
-            the mouse is captured.
-        dx, dy : float
-            The movement of the mouse.
-
+        @param x, y(int) 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
+        @param dx, dy(float) 鼠标移动的距离
         """
         if self.exclusive:
             m = 0.15
@@ -734,12 +716,10 @@ class Window(pyglet.window.Window):
             self.running = False
 
     def on_resize(self, width, height):
-        """ Called when the window is resized to a new `width` and `height`.
-
-        """
-        # label
-        self.label.y = height - 10
-        # reticle
+        # 当窗口被调整到一个新的宽度和高度时调用
+        # 标签
+        self.label.y = height // 2
+        # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()
         x, y = self.width // 2, self.height // 2
@@ -778,9 +758,7 @@ class Window(pyglet.window.Window):
         glTranslatef(-x, -y, -z)
 
     def on_draw(self):
-        """ Called by pyglet to draw the canvas.
-
-        """
+        # 当 pyglet 在画布上绘图时调用
         self.clear()
         if not self.is_init:
             self.set_3d()
@@ -822,22 +800,18 @@ class Window(pyglet.window.Window):
             self.loading_label.draw()
 
     def draw_reticle(self):
-        """ Draw the crosshairs in the center of the screen.
-
-        """
+        # 在屏幕中央画十字线
         if not self.is_init:
             glColor3d(0, 0, 0)
             self.reticle.draw(GL_LINES)
 
 
 def setup_fog():
-    """ Configure the OpenGL fog properties.
-
-    """
+    # 配置 OpenGL 的雾属性
     # Enable fog. Fog "blends a fog color with each rasterized pixel fragment's
     # post-texturing color."
     glEnable(GL_FOG)
-    # Set the fog color.
+    # 设置雾的颜色
     glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
     # Say we have no preference between rendering speed and quality.
     glHint(GL_FOG_HINT, GL_DONT_CARE)
@@ -850,9 +824,7 @@ def setup_fog():
 
 
 def setup():
-    """ Basic OpenGL configuration.
-
-    """
+    # 基本的 OpenGL 设置
     # 设置背景颜色. 比如在 RGBA 模式下的天空
     glClearColor(0.5, 0.69, 1.0, 1)
     # Enable culling (not rendering) of back-facing facets -- facets that aren't
