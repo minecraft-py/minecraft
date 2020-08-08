@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
+import json
 import math
 import random
 import time
+
 from collections import deque
 from pyglet import image
 from pyglet.gl import *
@@ -17,21 +19,21 @@ RUNNING_SPEED = 10
 FLYING_SPEED = 10
 
 GRAVITY = 20.0
-MAX_JUMP_HEIGHT = 1.0 # About the height of a block.
-# To derive the formula for calculating jump speed, first solve
+MAX_JUMP_HEIGHT = 1.0 # 大约是每个方块的高度
+# 获得跳跃的高度, 首先计算公式:
 #    v_t = v_0 + a * t
 # for the time at which you achieve maximum height, where a is the acceleration
 # due to gravity and v_t = 0. This gives:
 #    t = - v_0 / a
 # Use t and the desired MAX_JUMP_HEIGHT to solve for v_0 (jump speed) in
-#    s = s_0 + v_0 * t + (a * t^2) / 2
+#    s = s_0 + v_0 * t + (a * t ** 2) / 2
 JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
 TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
 def cube_vertices(x, y, z, n):
-    # Return the vertices of the cube at position x, y, z with size 2*n
+    # 返回在 x, y, z 坐标的方形顶点
     return [
         x-n,y+n,z-n, x-n,y+n,z+n, x+n,y+n,z+n, x+n,y+n,z-n,  # 顶部
         x-n,y-n,z-n, x+n,y-n,z-n, x+n,y-n,z+n, x-n,y-n,z+n,  # 底部
@@ -41,14 +43,12 @@ def cube_vertices(x, y, z, n):
         x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
     ]
 
-
 def tex_coord(x, y, n=4):
-    # Return the bounding vertices of the texture square
+    # 返回纹理正方形绑定的顶点
     m = 1.0 / n
     dx = x * m
     dy = y * m
     return dx, dy, dx + m, dy, dx + m, dy + m, dx, dy + m
-
 
 def tex_coords(top, bottom, side):
     # Return a list of the texture squares for the top, bottom and side
@@ -61,13 +61,14 @@ def tex_coords(top, bottom, side):
     result.extend(side * 4)
     return result
 
-
 TEXTURE_PATH = 'resource/texture/texture.png'
 
 GRASS = tex_coords((1, 0), (0, 1), (0, 0))
+DIRT = tex_coords((0, 1), (0, 1), (0, 1))
 SAND = tex_coords((1, 1), (1, 1), (1, 1))
-BRICK = tex_coords((2, 0), (2, 0), (2, 0))
 STONE = tex_coords((2, 1), (2, 1), (2, 1))
+BRICK = tex_coords((2, 0), (2, 0), (2, 0))
+BEDROCK = tex_coords((2, 1), (2, 1), (2, 1))
 
 FACES = [
     ( 0, 1, 0),
@@ -142,9 +143,9 @@ class Model(object):
         y = 0   # 初始 y 值
         for x in range(-n, n + 1, s):
             for z in range(-n, n + 1, s):
-                # 在地表生成石头和草方块
+                # 在地表生成基岩和草方块
                 self.add_block((x, 1, z), GRASS, immediate=False)
-                self.add_block((x, 0, z), STONE, immediate=False)
+                self.add_block((x, 0, z), BEDROCK, immediate=False)
         # 随机生成山丘
         o = n - 5
         for _ in range(100):
@@ -154,7 +155,7 @@ class Model(object):
             h = random.randint(3, 10)  # 山的高度
             s = random.randint(4, 8)   # 山的边长为 2*s
             d = 1  # how quickly to taper off the hills
-            t = random.choice([GRASS, SAND])
+            t = random.choice([GRASS, SAND, STONE])
             for y in range(c, c + h):
                 for x in range(a - s, a + s + 1):
                     for z in range(b - s, b + s + 1):
@@ -298,7 +299,7 @@ class Model(object):
         vertex_data = cube_vertices(x, y, z, 0.5)
         texture_data = list(texture)
         # create vertex list
-        # FIXME Maybe `add_indexed()` should be used instead
+        # FIXME 应该使用 add_indexed() 来代替
         self._shown[position] = self.batch.add(24, GL_QUADS, self.group,
             ('v3f/static', vertex_data),
             ('t2f/static', texture_data))
@@ -436,7 +437,7 @@ class Window(pyglet.window.Window):
         # Velocity in the y (upward) direction.
         self.dy = 0
         # A list of blocks the player can place. Hit num keys to cycle.
-        self.inventory = [BRICK, GRASS, SAND]
+        self.inventory = [GRASS, DIRT, SAND, STONE, BRICK]
         # The current block the user can place. Hit num keys to cycle.
         self.block = self.inventory[0]
         # Convenience list of num keys.
@@ -447,7 +448,7 @@ class Window(pyglet.window.Window):
         self.model = Model()
         # The label that is displayed in the top of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
-            x=5, y=self.height // 2, anchor_x='center', anchor_y='center',
+            x=10, y=self.height - 10, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
         self.loading_label = pyglet.text.Label(font_name='Arial', font_size=25,
@@ -638,7 +639,7 @@ class Window(pyglet.window.Window):
                 texture = self.model.world[block]
                 sound = pyglet.media.load('resource/sound/dig.ogg', streaming=False)
                 sound.play()
-                if texture != STONE:
+                if texture != BEDROCK:
                     self.model.remove_block(block)
         else:
             self.set_exclusive_mouse(True)
@@ -718,7 +719,7 @@ class Window(pyglet.window.Window):
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
-        self.label.y = height // 2
+        self.label.y = height - 10
         # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()

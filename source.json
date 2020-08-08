@@ -1,0 +1,50 @@
+{
+	"resource": [
+		{
+			"sound": {
+				"default": "reesourse/sound/default"
+			},
+			"texture": {
+				"default": "resourse/texture/texture.png"
+			}
+		}
+	],
+	"block": [
+		{
+			"name": "grass",
+			"breakable": true,
+			"coords": [[1, 0], [0, 1], [0, 0]]
+		},
+		{
+			"name": "dirt",
+			"breakable": true,
+			"coords": [[0, 1], [0, 1], [0, 1]]
+		},
+		{
+			"name": "sand",
+			"breakable": true,
+			"coords": [[1, 1], [1, 1], [1, 1]]
+		},
+		{
+			"name": "stone",
+			"breakable": true,
+			"coords": [[2, 1], [2, 1], [2, 1]]
+		},
+		{
+			"name": "brick",
+			"breakable": true,
+			"coords": [[2, 0], [2, 0], [2, 0]]
+		},
+		{
+			"name": "bedrock",
+			"breakable": -1,
+			"coords": [[2, 1], [2, 1], [2, 1]]
+		}
+	],
+	"sound": [
+		{
+			"name": "dig",
+			"sourse": "dig.ogg"
+		}
+	]
+}
