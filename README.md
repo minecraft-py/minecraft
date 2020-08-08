@@ -1,5 +1,6 @@
 # Minecraft
-> 感谢 [这个项目](https://github.com/fogleman/Minecraft), 该 Minecraft 项目基于这个项目, 并且加入了一些 PR 中的内容, 还翻译了部分注释.
+> 感谢 [Fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目, 并翻译了部分注释, 
+添加了一些 PR 中的内容.
 
 该项目是一个对 Minecraft Java版的复刻, 旨在使用 python 重写 Minecraft 并实现其中的大部分功能.
 > 下文所提及的`Minecraft`都指该项目, 没有什么新的名字可以取了.
@@ -15,7 +16,7 @@ pip install -U pyglet kytten glooey
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:
 
-- [ ] 启动器(tk)
+- [ ] 启动器(使用 tkinter 实现)
 - [x] 行为控制(已实现部分, 参见下面`控制角色`)
 - [x] 世界生成
 - [ ] 随机世界生成
@@ -26,11 +27,12 @@ pip install -U pyglet kytten glooey
 
 # 控制角色
 
-- `左键 右键` - 破坏和放置
+- `鼠标左键 右键` - 破坏和放置
 - `W A S D` - 分别向前后左右移动
 - `空格` - 跳跃
 - `左SHIFT` - 疾跑
+- `左Ctrl` - 潜行
 - `TAB` - 飞行与行走的切换
 - `F2` - 截屏
 - `ESC` - 退出游戏
-- `数字键` - 切换物品(目前有三种物品: `草方块, 沙子, 砖块`和一种无法放置, 不能破坏, 不能获得的物品, 类似原版的基岩, 但我改过材质文件)
+- `数字键` - 循环切换物品(目前有`草方块 泥土 沙子 石头`方块)
