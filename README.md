@@ -1,13 +1,13 @@
 # Minecraft
-> 感谢 [这个项目](https://github.com/fogleman/Minecraft), 该项目源于此, 并且加入了一些 PR 中的内容.
+> 感谢 [这个项目](https://github.com/fogleman/Minecraft), 该 Minecraft 项目基于这个项目, 并且加入了一些 PR 中的内容, 还翻译了部分注释.
 
 该项目是一个对 Minecraft Java版的复刻, 旨在使用 python 重写 Minecraft 并实现其中的大部分功能.
 > 下文所提及的`Minecraft`都指该项目, 没有什么新的名字可以取了.
 
 要游玩 Minecraft, 请先下载依赖项:
 ```shell
-pip install -U pyglet kytten
-# 其中, kytten 尚未使用, 是可选的
+pip install -U pyglet kytten glooey
+# 我正在考虑应该使用 kytten 还是 glooey 来实现复杂的 GUI
 ```
 
 然后, 输入: `./Minecraft`即可运行
@@ -16,7 +16,7 @@ pip install -U pyglet kytten
 下面这个 TODO 列表是 Minecraft 要实现的功能:
 
 - [ ] 启动器(tk)
-- [x] 行为控制(已实现部分)
+- [x] 行为控制(已实现部分, 参见下面`控制角色`)
 - [x] 世界生成
 - [ ] 随机世界生成
 - [ ] 更多方块
@@ -33,4 +33,4 @@ pip install -U pyglet kytten
 - `TAB` - 飞行与行走的切换
 - `F2` - 截屏
 - `ESC` - 退出游戏
-- `数字键` - 切换物品(目前有三种物品: `草方块, 沙子, 砖块`和一种无法放置, 不能破坏的物品, 类似基岩, 但我改过材质)
+- `数字键` - 切换物品(目前有三种物品: `草方块, 沙子, 砖块`和一种无法放置, 不能破坏, 不能获得的物品, 类似原版的基岩, 但我改过材质文件)
