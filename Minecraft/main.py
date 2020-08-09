@@ -4,14 +4,17 @@ import json
 import math
 import random
 import time
-
 from collections import deque
+
+from noise import snoise2 as noise2
+
 from pyglet import image
+from pyglet import media
 from pyglet.gl import *
 from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 
-TICKS_PER_SEC = 60
+TICKS_PER_SEC = 5
 SECTOR_SIZE = 16
 
 WALKING_SPEED = 5
@@ -138,7 +141,7 @@ class Model(object):
 
     def _initialize(self):
         # 放置所有方块以初始化世界
-        n = 128  # 世界一半的长度和宽度
+        n = 256  # 世界一半的长度和宽度
         s = 1    # 步长
         y = 0   # 初始 y 值
         for x in range(-n, n + 1, s):
@@ -146,25 +149,13 @@ class Model(object):
                 # 在地表生成基岩和草方块
                 self.add_block((x, 1, z), GRASS, immediate=False)
                 self.add_block((x, 0, z), BEDROCK, immediate=False)
-        # 随机生成山丘
-        o = n - 5
-        for _ in range(100):
-            a = random.randint(-o, o)  # 山的 x 坐标
-            b = random.randint(-o, o)  # 山的 z 坐标
-            c = 2  # base of the hill
-            h = random.randint(3, 10)  # 山的高度
-            s = random.randint(4, 8)   # 山的边长为 2*s
-            d = 1  # how quickly to taper off the hills
-            t = random.choice([GRASS, SAND, STONE])
-            for y in range(c, c + h):
-                for x in range(a - s, a + s + 1):
-                    for z in range(b - s, b + s + 1):
-                        if (x - a) ** 2 + (z - b) ** 2 > (s + 1) ** 2:
-                            continue
-                        if (x - 0) ** 2 + (z - 0) ** 2 < 5 ** 2:
-                            continue
-                        self.add_block((x, y, z), t, immediate=False)
-                s -= d  # decrement side lenth so hills taper off
+        # 使用噪声生成地形
+        # 这个地形太乱了, 就是噪声本身
+        for x in range(-n, n + 1, s):
+            for z in range(-n, n + 1, s):
+                l = 2 + round(noise2(x,z) * 3)
+                for y in range(2, l + 1):
+                    self.add_block((x, y, z), GRASS, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -637,8 +628,7 @@ class Window(pyglet.window.Window):
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
                 texture = self.model.world[block]
-                sound = pyglet.media.load('resource/sound/dig.ogg', streaming=False)
-                sound.play()
+                # media.load('resource/sound/default/dig.ogg', streaming=False).play()
                 if texture != BEDROCK:
                     self.model.remove_block(block)
         else:
@@ -823,7 +813,6 @@ def setup_fog():
     glFogf(GL_FOG_START, 30.0)
     glFogf(GL_FOG_END, 80.0)
 
-
 def setup():
     # 基本的 OpenGL 设置
     # 设置背景颜色. 比如在 RGBA 模式下的天空
@@ -840,14 +829,3 @@ def setup():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     setup_fog()
 
-
-def main():
-    window = Window(width=800, height=600, caption='Minecraft', resizable=True)
-    # 隐藏鼠标并防止其离开窗口
-    window.set_exclusive_mouse(True)
-    setup()
-    pyglet.app.run()
-
-
-if __name__ == '__main__':
-    main()

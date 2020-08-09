@@ -37,7 +37,7 @@
 		},
 		{
 			"name": "bedrock",
-			"breakable": -1,
+			"breakable": false,
 			"coords": [[2, 1], [2, 1], [2, 1]]
 		}
 	],
