@@ -152,7 +152,8 @@ class Model(object):
         # 使用噪声生成地形
         for x in range(-n, n + 1, s):
             for z in range(-n, n + 1, s):
-                l = 2 + round(noise2(x / 10,z / 10) * 3)
+                # 20这个基数是可以改变的, 数字越大, 地形越平缓
+                l = 2 + round(noise2(x / 20, z / 20) * 3)
                 for y in range(2, l + 1):
                     self.add_block((x, y, z), GRASS, immediate=False)
 
@@ -388,7 +389,7 @@ class Window(pyglet.window.Window):
         self.strafe = [0, 0]
         # Current (x, y, z) position in the world, specified with floats. Note
         # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 3 + round(noise2(0 ,0) * 3), 0)
+        self.position = (0, 4 + round(noise2(0 ,0) * 3), 0)
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
