@@ -54,7 +54,7 @@ def tex_coord(x, y, n=4):
     return dx, dy, dx + m, dy, dx + m, dy + m, dx, dy + m
 
 def tex_coords(top, bottom, side):
-    # Return a list of the texture squares for the top, bottom and side
+    # 返回纹理正方形的顶面, 底面, 侧面
     top = tex_coord(*top)
     bottom = tex_coord(*bottom)
     side = tex_coord(*side)
@@ -158,19 +158,13 @@ class Model(object):
                     self.add_block((x, y, z), GRASS, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
-        """ Line of sight search from current position. If a block is
-        intersected it is returned, along with the block previously in the line
-        of sight. If no block is found, return None, None.
+        """
+        从当前位置开始视线搜索, 如果有任何方块与之相交, 返回之.
+        如果没有找到, 返回 (None, None)
 
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position to check visibility from.
-        vector : tuple of len 3
-            The line of sight vector.
-        max_distance : int
-            How many blocks away to search for a hit.
-
+        @patam position 长度为3的元组, 当前位置
+        @param vector 长度为3的元组, 视线向量
+        @param max_distance 在多少方块的范围内搜索
         """
         m = 8
         x, y, z = position
@@ -185,10 +179,7 @@ class Model(object):
         return None, None
 
     def exposed(self, position):
-        """ Returns False is given `position` is surrounded on all 6 sides by
-        blocks, True otherwise.
-
-        """
+        # 如果 position 所有的六个面旁边都有方块, 返回 False. 否则返回 True
         x, y, z = position
         for dx, dy, dz in FACES:
             if (x + dx, y + dy, z + dz) not in self.world:
@@ -196,18 +187,12 @@ class Model(object):
         return False
 
     def add_block(self, position, texture, immediate=True):
-        """ Add a block with the given `texture` and `position` to the world.
+        """
+        在 position 处添加一个纹理为 texture 的方块
 
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position of the block to add.
-        texture : list of len 3
-            The coordinates of the texture squares. Use `tex_coords()` to
-            generate.
-        immediate : bool
-            Whether or not to draw the block immediately.
-
+        @param pssition 长度为3的元组, 要添加方块的位置
+        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
+        @patam immediate 是否立即绘制方块
         """
         if position in self.world:
             self.remove_block(position, immediate)
@@ -219,15 +204,11 @@ class Model(object):
             self.check_neighbors(position)
 
     def remove_block(self, position, immediate=True):
-        """ Remove the block at the given `position`.
+        """
+        在 position 处移除一个方块
 
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position of the block to remove.
-        immediate : bool
-            Whether or not to immediately remove block from canvas.
-
+        @param position 长度为3的元组, 要移除方块的位置
+        @param immediate 是否要从画布上立即移除方块
         """
         del self.world[position]
         self.sectors[sectorize(position)].remove(position)
@@ -237,11 +218,10 @@ class Model(object):
             self.check_neighbors(position)
 
     def check_neighbors(self, position):
-        """ Check all blocks surrounding `position` and ensure their visual
-        state is current. This means hiding blocks that are not exposed and
-        ensuring that all exposed blocks are shown. Usually used after a block
-        is added or removed.
-
+        """
+        检查 position 周围所有的方块, 确保它们的状态是最新的.
+        这意味着将隐藏不可见的方块, 并显示可见的方块.
+        通常在添加或删除方块时使用.
         """
         x, y, z = position
         for dx, dy, dz in FACES:
@@ -289,7 +269,7 @@ class Model(object):
         x, y, z = position
         vertex_data = cube_vertices(x, y, z, 0.5)
         texture_data = list(texture)
-        # create vertex list
+        # 创建向量列表
         # FIXME 应该使用 add_indexed() 来代替
         self._shown[position] = self.batch.add(24, GL_QUADS, self.group,
             ('v3f/static', vertex_data),
@@ -365,15 +345,11 @@ class Model(object):
             self.hide_sector(sector)
 
     def _enqueue(self, func, *args):
-        """ Add `func` to the internal queue.
-
-        """
+        # 把 func 添加到内部的队列
         self.queue.append((func, args))
 
     def _dequeue(self):
-        """ Pop the top function from the internal queue and call it.
-
-        """
+        # 从内部队列顶部弹出函数并调用之
         func, args = self.queue.popleft()
         func(*args)
 
@@ -684,16 +660,10 @@ class Window(pyglet.window.Window):
             pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot.png')
 
     def on_key_release(self, symbol, modifiers):
-        """ Called when the player releases a key. See pyglet docs for key
-        mappings.
-
-        Parameters
-        ----------
-        symbol : int
-            Number representing the key that was pressed.
-        modifiers : int
-            Number representing any modifying keys that were pressed.
-
+        """
+        当玩家释放一个按键时调用
+        
+        @param symbol 按下的键
         """
         if symbol == key.W:
             self.strafe[0] += 1
@@ -765,10 +735,7 @@ class Window(pyglet.window.Window):
             self.is_init = False
 
     def draw_focused_block(self):
-        """ Draw black edges around the block that is currently under the
-        crosshairs.
-
-        """
+        # 在十字线选中的方块绘制黑边
         vector = self.get_sight_vector()
         block = self.model.hit_test(self.position, vector)[0]
         if block:
@@ -799,18 +766,16 @@ class Window(pyglet.window.Window):
 
 def setup_fog():
     # 配置 OpenGL 的雾属性
-    # Enable fog. Fog "blends a fog color with each rasterized pixel fragment's
-    # post-texturing color."
+    # 启用雾
     glEnable(GL_FOG)
     # 设置雾的颜色
     glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
-    # Say we have no preference between rendering speed and quality.
+    # 如果我们在渲染速度和质量之间没有取舍
     glHint(GL_FOG_HINT, GL_DONT_CARE)
-    # Specify the equation used to compute the blending factor.
+    # 指定用于计算混合因子的公式
     glFogi(GL_FOG_MODE, GL_LINEAR)
-    # How close and far away fog starts and ends. The closer the start and end,
-    # the denser the fog in the fog range.
-    glFogf(GL_FOG_START, 30.0)
+    # 雾的终点和起点有多远. 起点和终点越近, 范围内的雾就越密集
+    glFogf(GL_FOG_START, 20.0)
     glFogf(GL_FOG_END, 80.0)
 
 def setup():

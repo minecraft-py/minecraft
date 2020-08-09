@@ -1,5 +1,5 @@
 # Minecraft
-> 感谢 [Fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目, 并翻译了部分注释, 
+> 感谢 [Fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目, 并翻译了注释, 
 添加了一些 PR 中的内容.
 
 该项目是一个对 Minecraft Java版的复刻, 旨在使用 python 重写 Minecraft 并实现其中的大部分功能.
@@ -11,7 +11,7 @@ pip install -U pyglet kytten glooey
 # 我正在考虑应该使用 kytten 还是 glooey 来实现复杂的 GUI
 ```
 
-然后, 输入: `./Minecraft`即可运行
+然后, 输入`python3 -m Minecraft`运行游戏, 可能需要一些时间.
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:
@@ -26,7 +26,6 @@ pip install -U pyglet kytten glooey
 - [ ] ...
 
 # 控制角色
-
 - `鼠标左键 右键` - 破坏和放置
 - `W A S D` - 分别向前后左右移动
 - `空格` - 跳跃
