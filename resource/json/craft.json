@@ -2,18 +2,20 @@
 	"craft": [
 		{
 			"item": "plank",
-			"type": "disorder",
+			"table": [
+				[". x"],
+				[". ."]
+			],
 			"need": {
-				"log": 1
+				"x": "log"
 			},
 			"times": 1
 		},
 		{
 			"item": "stick",
-			"type": "order",
 			"table":[
-				"x",
-				"x"
+				". x",
+				". x"
 			],
 			"need": {
 				"x": "plank"
@@ -22,7 +24,6 @@
 		},
 		{
 			"item": "crafting table",
-			"type": "order",
 			"table": [
 				"x x",
 				"x x"

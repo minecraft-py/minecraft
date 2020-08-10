@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+# Minecraft 主程序
 
 import json
 import math
@@ -64,7 +64,20 @@ def tex_coords(top, bottom, side):
     result.extend(side * 4)
     return result
 
-TEXTURE_PATH = 'resource/texture/texture.png'
+def tex_coords_all(top, bottom, side0, side1, side2, side3):
+    # 返回纹理正方形所有的面
+    # 同 tex_coords() 类似, 但是要传入全部的四个侧面
+    top = tex_coord(*top)
+    bottom = tex_coord(*bottom)
+    side0, side1 = tex_coord(*side0), tex_coord(*side1)
+    side2, side3 = tex_coord(*side2), tex_coord(*side3)
+    result = []
+    result.extend(top)
+    result.extend(buttom)
+    result.extend([side0, side1, side2, side3])
+    return result
+
+TEXTURE_PATH = 'resource/texture/block.png'
 
 GRASS = tex_coords((1, 0), (0, 1), (0, 0))
 DIRT = tex_coords((0, 1), (0, 1), (0, 1))
@@ -124,7 +137,7 @@ def sectorize(position):
 class Model(object):
 
     def __init__(self):
-        # A Batch is a collection of vertex lists for batched rendering.
+        # Batch 是用于批处理渲染的顶点列表的集合
         self.batch = pyglet.graphics.Batch()
         # A TextureGroup manages an OpenGL texture.
         self.group = TextureGroup(image.load(TEXTURE_PATH).get_texture())
@@ -239,16 +252,16 @@ class Model(object):
                     self.hide_block(key)
 
     def show_block(self, position, immediate=True):
-        """ Show the block at the given `position`. This method assumes the
-        block has already been added with add_block()
-
+        """
+        在 position 处显示方块, 这个方法假设方块在 add_block() 已经添加
         Parameters
         ----------
         position : tuple of len 3
             The (x, y, z) position of the block to show.
         immediate : bool
             Whether or not to show the block immediately.
-
+        @param position 长度为3的元组, 要显示方块的位置
+        @param immediate 是否立即显示方块
         """
         texture = self.world[position]
         self.shown[position] = texture
@@ -258,8 +271,8 @@ class Model(object):
             self._enqueue(self._show_block, position, texture)
 
     def _show_block(self, position, texture):
-        """ Private implementation of the `show_block()` method.
-
+        """
+        show_block() 方法的私有实现
         Parameters
         ----------
         position : tuple of len 3
@@ -267,7 +280,8 @@ class Model(object):
         texture : list of len 3
             The coordinates of the texture squares. Use `tex_coords()` to
             generate.
-
+        @param position 长度为3的元组, 要显示方块的位置
+        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
         """
         x, y, z = position
         vertex_data = cube_vertices(x, y, z, 0.5)
@@ -297,9 +311,7 @@ class Model(object):
             self._enqueue(self._hide_block, position)
 
     def _hide_block(self, position):
-        """ Private implementation of the 'hide_block()` method.
-
-        """
+        # hide_block() 方法的私有实现
         self._shown.pop(position).delete()
 
     def show_sector(self, sector):
