@@ -14,7 +14,7 @@ from pyglet.gl import *
 from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 
-TICKS_PER_SEC = 5
+TICKS_PER_SEC = 60
 SECTOR_SIZE = 16
 
 WALKING_SPEED = 5
@@ -69,8 +69,11 @@ TEXTURE_PATH = 'resource/texture/texture.png'
 GRASS = tex_coords((1, 0), (0, 1), (0, 0))
 DIRT = tex_coords((0, 1), (0, 1), (0, 1))
 SAND = tex_coords((1, 1), (1, 1), (1, 1))
-STONE = tex_coords((2, 1), (2, 1), (2, 1))
+STONE = tex_coords((0, 2), (0, 2), (0, 2))
+LOG = tex_coords((1, 2), (3, 2), (2, 2))
+LEAF = tex_coords((3, 1), (3, 1), (3, 1))
 BRICK = tex_coords((2, 0), (2, 0), (2, 0))
+PLANK = tex_coords((3, 0), (3, 0), (3, 0))
 BEDROCK = tex_coords((2, 1), (2, 1), (2, 1))
 
 FACES = [
@@ -153,7 +156,7 @@ class Model(object):
         for x in range(-n, n + 1, s):
             for z in range(-n, n + 1, s):
                 # 20这个基数是可以改变的, 数字越大, 地形越平缓
-                l = 2 + round(noise2(x / 20, z / 20) * 3)
+                l = 2 + round(noise2(x / 30, z / 30) * 3)
                 for y in range(2, l + 1):
                     self.add_block((x, y, z), GRASS, immediate=False)
 
@@ -404,7 +407,7 @@ class Window(pyglet.window.Window):
         # Velocity in the y (upward) direction.
         self.dy = 0
         # A list of blocks the player can place. Hit num keys to cycle.
-        self.inventory = [GRASS, DIRT, SAND, STONE, BRICK]
+        self.inventory = [GRASS, DIRT, SAND, STONE, LOG, LEAF, BRICK, PLANK]
         # The current block the user can place. Hit num keys to cycle.
         self.block = self.inventory[0]
         # Convenience list of num keys.
@@ -604,7 +607,6 @@ class Window(pyglet.window.Window):
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
                 texture = self.model.world[block]
-                # media.load('resource/sound/default/dig.ogg', streaming=False).play()
                 if texture != BEDROCK:
                     self.model.remove_block(block)
         else:
@@ -775,7 +777,7 @@ def setup_fog():
     # 指定用于计算混合因子的公式
     glFogi(GL_FOG_MODE, GL_LINEAR)
     # 雾的终点和起点有多远. 起点和终点越近, 范围内的雾就越密集
-    glFogf(GL_FOG_START, 20.0)
+    glFogf(GL_FOG_START, 30.0)
     glFogf(GL_FOG_END, 80.0)
 
 def setup():
