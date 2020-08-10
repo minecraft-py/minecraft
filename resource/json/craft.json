@@ -1,0 +1,36 @@
+{
+	"craft": [
+		{
+			"item": "plank",
+			"type": "disorder",
+			"need": {
+				"log": 1
+			},
+			"times": 1
+		},
+		{
+			"item": "stick",
+			"type": "order",
+			"table":[
+				"x",
+				"x"
+			],
+			"need": {
+				"x": "plank"
+			},
+			"times": 4
+		},
+		{
+			"item": "crafting table",
+			"type": "order",
+			"table": [
+				"x x",
+				"x x"
+			],
+			"need": {
+				"x": "plank"
+			},
+			"times": 1
+		}
+	]
+}
