@@ -17,8 +17,9 @@ from pyglet.window import key, mouse
 TICKS_PER_SEC = 60
 SECTOR_SIZE = 16
 
+STEALING_SPEED = 3
 WALKING_SPEED = 5
-RUNNING_SPEED = 10
+RUNNING_SPEED = 18
 FLYING_SPEED = 10
 
 GRAVITY = 20.0
@@ -73,7 +74,7 @@ def tex_coords_all(top, bottom, side0, side1, side2, side3):
     side2, side3 = tex_coord(*side2), tex_coord(*side3)
     result = []
     result.extend(top)
-    result.extend(buttom)
+    result.extend(bottom)
     result.extend([side0, side1, side2, side3])
     return result
 
@@ -83,10 +84,11 @@ GRASS = tex_coords((1, 0), (0, 1), (0, 0))
 DIRT = tex_coords((0, 1), (0, 1), (0, 1))
 SAND = tex_coords((1, 1), (1, 1), (1, 1))
 STONE = tex_coords((0, 2), (0, 2), (0, 2))
-LOG = tex_coords((1, 2), (3, 2), (2, 2))
+LOG = tex_coords((1, 2), (1, 2), (2, 2))
 LEAF = tex_coords((3, 1), (3, 1), (3, 1))
 BRICK = tex_coords((2, 0), (2, 0), (2, 0))
 PLANK = tex_coords((3, 0), (3, 0), (3, 0))
+CRAFT_TABLE = tex_coords((0, 3), (3, 0), (1, 3))
 BEDROCK = tex_coords((2, 1), (2, 1), (2, 1))
 
 FACES = [
@@ -393,6 +395,7 @@ class Window(pyglet.window.Window):
         super(Window, self).__init__(*args, **kwargs)
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
+        self.stealing = False
         self.flying = False
         self.running = False
         # Strafing is moving lateral to the direction you are facing,
@@ -419,7 +422,7 @@ class Window(pyglet.window.Window):
         # Velocity in the y (upward) direction.
         self.dy = 0
         # A list of blocks the player can place. Hit num keys to cycle.
-        self.inventory = [GRASS, DIRT, SAND, STONE, LOG, LEAF, BRICK, PLANK]
+        self.inventory = [GRASS, DIRT, SAND, STONE, LOG, LEAF, BRICK, PLANK, CRAFT_TABLE]
         # The current block the user can place. Hit num keys to cycle.
         self.block = self.inventory[0]
         # Convenience list of num keys.
@@ -536,8 +539,16 @@ class Window(pyglet.window.Window):
             The change in time since the last call.
 
         """
-        # walking
+        # 移动速度
         speed = FLYING_SPEED if self.flying else RUNNING_SPEED if self.running else WALKING_SPEED
+        if self.flying:
+            speed = FLYING_SPEED
+        elif self.running:
+            speed = RUNNING_SPEED
+        elif self.stealing:
+            speed = STEALING_SPEED
+        else:
+            speed = WALKING_SPEED
         d = dt * speed # distance covered this tick.
         dx, dy, dz = self.get_motion_vector()
         # New position in space, before accounting for gravity.
@@ -612,13 +623,14 @@ class Window(pyglet.window.Window):
         if self.exclusive:
             vector = self.get_sight_vector()
             block, previous = self.model.hit_test(self.position, vector)
-            if (button == mouse.RIGHT) or \
-                    ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
+            texture = self.model.world[block]
+            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if previous:
+                if texture == CRAFT_TABLE and (not self.stealing):
+                    self.set_exclusive_mouse(False)
+                elif previous:
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
-                texture = self.model.world[block]
                 if texture != BEDROCK:
                     self.model.remove_block(block)
         else:
@@ -667,6 +679,8 @@ class Window(pyglet.window.Window):
             self.flying = not self.flying
         elif symbol == key.LSHIFT:
             self.running = True
+        elif symbol == key.LCTRL:
+            self.stealing = True
         elif symbol in self.num_keys:
             index = (symbol - self.num_keys[0]) % len(self.inventory)
             self.block = self.inventory[index]
@@ -689,6 +703,8 @@ class Window(pyglet.window.Window):
             self.strafe[1] -= 1
         elif symbol == key.LSHIFT:
             self.running = False
+        elif symbol == key.LCTRL:
+            self.stealing = False
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
