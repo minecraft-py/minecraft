@@ -78,7 +78,7 @@ def tex_coords_all(top, bottom, side0, side1, side2, side3):
     result.extend([side0, side1, side2, side3])
     return result
 
-TEXTURE_PATH = 'resource/texture/block.png'
+TEXTURE_PATH = 'resource/texture/default/block.png'
 
 GRASS = tex_coords((1, 0), (0, 1), (0, 0))
 DIRT = tex_coords((0, 1), (0, 1), (0, 1))
