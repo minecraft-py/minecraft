@@ -10,8 +10,9 @@ from noise import snoise2 as noise2
 
 from pyglet import image
 from pyglet import media
+from pyglet import resource
 from pyglet.gl import *
-from pyglet.graphics import TextureGroup
+from pyglet.graphics import Batch, Group, TextureGroup
 from pyglet.window import key, mouse
 
 TICKS_PER_SEC = 60
@@ -436,9 +437,12 @@ class Window(pyglet.window.Window):
             x=10, y=self.height - 10, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
-        self.loading_label = pyglet.text.Label(font_name='Arial', font_size=25,
+        self.loading_label = pyglet.text.Label(font_name='Arial', font_size=10,
             x=self.width // 2, y=self.height // 2 + 20, anchor_x='center', anchor_y='center',
-            color=(0, 0, 0, 200))
+            color=(255, 255, 255, 200))
+        self.loading_image = resource.image('resource/texture/default/loading.png')
+        self.loading_image.height = self.height
+        self.loading_image.width = self.width
         # This call schedules the `update()` method to be called
         # TICKS_PER_SEC. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
@@ -670,6 +674,9 @@ class Window(pyglet.window.Window):
             self.strafe[1] -= 1
         elif symbol == key.D:
             self.strafe[1] += 1
+        elif symbol == key.E:
+            self.set_exclusive_mouse(False)
+            dialog = kytten.Dialog()
         elif symbol == key.SPACE:
             if self.dy == 0:
                 self.dy = JUMP_SPEED
@@ -761,6 +768,7 @@ class Window(pyglet.window.Window):
         self.set_2d()
         self.draw_label()
         if self.is_init:
+            self.loading_image.delete()
             self.loading_label.delete()
             self.is_init = False
 
@@ -784,6 +792,7 @@ class Window(pyglet.window.Window):
                 x, y, z, pyglet.clock.get_fps())
             self.label.draw()
         else:
+            self.loading_image.blit(0, 0)
             self.loading_label.text = 'Loading...'
             self.loading_label.draw()
 
