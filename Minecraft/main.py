@@ -437,10 +437,10 @@ class Window(pyglet.window.Window):
             x=10, y=self.height - 10, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
-        self.loading_label = pyglet.text.Label(font_name='Arial', font_size=10,
+        self.loading_label = pyglet.text.Label(font_name='Arial', font_size=20,
             x=self.width // 2, y=self.height // 2 + 20, anchor_x='center', anchor_y='center',
             color=(255, 255, 255, 200))
-        self.loading_image = resource.image('resource/texture/default/loading.png')
+        self.loading_image = image.load('resource/texture/default/loading.png')
         self.loading_image.height = self.height
         self.loading_image.width = self.width
         # This call schedules the `update()` method to be called
@@ -544,7 +544,6 @@ class Window(pyglet.window.Window):
 
         """
         # 移动速度
-        speed = FLYING_SPEED if self.flying else RUNNING_SPEED if self.running else WALKING_SPEED
         if self.flying:
             speed = FLYING_SPEED
         elif self.running:
@@ -676,7 +675,6 @@ class Window(pyglet.window.Window):
             self.strafe[1] += 1
         elif symbol == key.E:
             self.set_exclusive_mouse(False)
-            dialog = kytten.Dialog()
         elif symbol == key.SPACE:
             if self.dy == 0:
                 self.dy = JUMP_SPEED
@@ -768,9 +766,9 @@ class Window(pyglet.window.Window):
         self.set_2d()
         self.draw_label()
         if self.is_init:
-            self.loading_image.delete()
             self.loading_label.delete()
             self.is_init = False
+            self.set_exclusive_mouse(True)
 
     def draw_focused_block(self):
         # 在十字线选中的方块绘制黑边
