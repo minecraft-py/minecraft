@@ -173,8 +173,11 @@ class Model(object):
             for z in range(-n, n + 1, s):
                 # 20这个基数是可以改变的, 数字越大, 地形越平缓
                 l = 2 + round(noise2(x / 30, z / 30) * 3)
-                for y in range(2, l + 1):
+                for y in range(1, l):
+                    self.add_block((x, y, z), DIRT, immediate=False)
+                else:
                     self.add_block((x, y, z), GRASS, immediate=False)
+
 
     def hit_test(self, position, vector, max_distance=8):
         """
@@ -215,12 +218,13 @@ class Model(object):
         """
         if position in self.world:
             self.remove_block(position, immediate)
-        self.world[position] = texture
-        self.sectors.setdefault(sectorize(position), []).append(position)
-        if immediate:
-            if self.exposed(position):
-                self.show_block(position)
-            self.check_neighbors(position)
+        if -1 < position[1] < 256:
+            self.world[position] = texture
+            self.sectors.setdefault(sectorize(position), []).append(position)
+            if immediate:
+                if self.exposed(position):
+                    self.show_block(position)
+                self.check_neighbors(position)
 
     def remove_block(self, position, immediate=True):
         """
@@ -257,12 +261,7 @@ class Model(object):
     def show_block(self, position, immediate=True):
         """
         在 position 处显示方块, 这个方法假设方块在 add_block() 已经添加
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position of the block to show.
-        immediate : bool
-            Whether or not to show the block immediately.
+
         @param position 长度为3的元组, 要显示方块的位置
         @param immediate 是否立即显示方块
         """
@@ -276,13 +275,7 @@ class Model(object):
     def _show_block(self, position, texture):
         """
         show_block() 方法的私有实现
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position of the block to show.
-        texture : list of len 3
-            The coordinates of the texture squares. Use `tex_coords()` to
-            generate.
+
         @param position 长度为3的元组, 要显示方块的位置
         @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
         """
@@ -432,7 +425,7 @@ class Window(pyglet.window.Window):
             key._6, key._7, key._8, key._9, key._0]
         # Instance of the model that handles the world.
         self.model = Model()
-        # The label that is displayed in the top of the canvas.
+        # 这个标签在画布的左上角显示
         self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
             x=10, y=self.height - 10, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
@@ -443,9 +436,10 @@ class Window(pyglet.window.Window):
         self.loading_image = image.load('resource/texture/default/loading.png')
         self.loading_image.height = self.height
         self.loading_image.width = self.width
-        # This call schedules the `update()` method to be called
-        # TICKS_PER_SEC. This is the main game event loop.
+        # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
+        # 每10秒更新一次方块数据
+        pyglet.clock.schedule_interval(self.update_status, 10.0)
 
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
@@ -533,6 +527,9 @@ class Window(pyglet.window.Window):
         for _ in range(m):
             self._update(dt / m)
 
+    def upgrade_status(self, dt):
+        pass
+
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
         of the motion logic lives, along with gravity and collision detection.
@@ -619,9 +616,9 @@ class Window(pyglet.window.Window):
         """
         当玩家按下鼠标按键时调用
   
-        @param x, y(int) 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
-        @param button(int) 哪个按键被按下: 1 = 左键, 4 = 右键
-        @param modifiers(int) 表示单击鼠标按钮时按下的任何修改键的数字
+        @param x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
+        @param button 哪个按键被按下: 1 = 左键, 4 = 右键
+        @param modifiers 表示单击鼠标按钮时按下的任何修改键的数字
         """
         if self.exclusive:
             vector = self.get_sight_vector()
@@ -643,8 +640,8 @@ class Window(pyglet.window.Window):
         """
         当玩家移动鼠标时调用
 
-        @param x, y(int) 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
-        @param dx, dy(float) 鼠标移动的距离
+        @param x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
+        @param dx, dy 鼠标移动的距离
         """
         if self.exclusive:
             m = 0.15

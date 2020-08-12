@@ -9,8 +9,7 @@ Minecraft 支持多平台, 使用 GPL 开源, 在配置低的电脑上也可以�
 
 要游玩 Minecraft, 请先下载依赖项:
 ```shell
-pip install -U pyglet kytten glooey
-# 我正在考虑应该使用 kytten 还是 glooey 来实现复杂的 GUI
+pip install -U pyglet glooey
 ```
 
 然后, 输入`python3 -m Minecraft`运行游戏, 可能需要一些时间来加载.
