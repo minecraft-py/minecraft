@@ -438,8 +438,8 @@ class Window(pyglet.window.Window):
         self.loading_image.width = self.width
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
-        # 每10秒更新一次方块数据
-        pyglet.clock.schedule_interval(self.update_status, 10.0)
+        # 每20秒更新一次方块数据
+        pyglet.clock.schedule_interval(self.update_status, 20.0)
 
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
@@ -527,9 +527,22 @@ class Window(pyglet.window.Window):
         for _ in range(m):
             self._update(dt / m)
 
-    def upgrade_status(self, dt):
-        pass
-
+    def update_status(self, dt):
+        area = []
+        for x in range(int(self.position[0]) - 8, int(self.position[0]) + 8):
+            for y in range(int(self.position[1]) - 8, int(self.position[1]) + 8):
+                for z in range(int(self.position[2]) - 8, int(self.position[2]) + 8):
+                    area.append((x, y, z))
+        for position in area:
+            if position in self.model.world:
+                block = self.model.world[position]
+                if block == DIRT:
+                    if (position[0], position[1] + 1, position[2]) not in self.model.world:
+                        self.model.add_block(position, GRASS)
+                elif block == GRASS:
+                    if (position[0], position[1] + 1, position[2]) in self.model.world:
+                        self.model.add_block(position, DIRT)
+            
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
         of the motion logic lives, along with gravity and collision detection.
@@ -553,7 +566,7 @@ class Window(pyglet.window.Window):
         dx, dy, dz = self.get_motion_vector()
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
-        # gravity
+        # 重力
         if not self.flying:
             # Update your vertical speed: if you are falling, speed up until you
             # hit terminal velocity; if you are jumping, slow down until you
@@ -765,7 +778,6 @@ class Window(pyglet.window.Window):
         if self.is_init:
             self.loading_label.delete()
             self.is_init = False
-            self.set_exclusive_mouse(True)
 
     def draw_focused_block(self):
         # 在十字线选中的方块绘制黑边
