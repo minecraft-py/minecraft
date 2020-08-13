@@ -439,7 +439,7 @@ class Window(pyglet.window.Window):
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
         # 每10秒更新一次方块数据
-        pyglet.clock.schedule_interval(self.update_status, 20.0)
+        pyglet.clock.schedule_interval(self.update_status, 10.0)
 
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
