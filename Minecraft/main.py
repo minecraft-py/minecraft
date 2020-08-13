@@ -438,7 +438,7 @@ class Window(pyglet.window.Window):
         self.loading_image.width = self.width
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
-        # 每20秒更新一次方块数据
+        # 每10秒更新一次方块数据
         pyglet.clock.schedule_interval(self.update_status, 20.0)
 
     def set_exclusive_mouse(self, exclusive):
@@ -537,9 +537,11 @@ class Window(pyglet.window.Window):
             for position in area:
                 if position in self.model.world:
                     block = self.model.world[position]
-                    if block == DIRT and random.randint(1, 10) >= 6:
-                        if (position[0], position[1] + 1, position[2]) not in self.model.world:
-                            self.model.add_block(position, GRASS)
+                    if block == DIRT and random.randint(1, 10) >= 4:
+                        for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                            if (pos := (position[0] + x, position[1], position[2] + z)) in self.model.world:
+                                if self.model[pos] == GRASS:
+                                    self.model.add_block(position, GRASS)
                     elif block == GRASS:
                         if (position[0], position[1] + 1, position[2]) in self.model.world:
                             self.model.add_block(position, DIRT)
