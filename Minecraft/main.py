@@ -533,15 +533,16 @@ class Window(pyglet.window.Window):
             for y in range(int(self.position[1]) - 8, int(self.position[1]) + 8):
                 for z in range(int(self.position[2]) - 8, int(self.position[2]) + 8):
                     area.append((x, y, z))
-        for position in area:
-            if position in self.model.world:
-                block = self.model.world[position]
-                if block == DIRT:
-                    if (position[0], position[1] + 1, position[2]) not in self.model.world:
-                        self.model.add_block(position, GRASS)
-                elif block == GRASS:
-                    if (position[0], position[1] + 1, position[2]) in self.model.world:
-                        self.model.add_block(position, DIRT)
+        else:
+            for position in area:
+                if position in self.model.world:
+                    block = self.model.world[position]
+                    if block == DIRT and random.randint(1, 10) >= 6:
+                        if (position[0], position[1] + 1, position[2]) not in self.model.world:
+                            self.model.add_block(position, GRASS)
+                    elif block == GRASS:
+                        if (position[0], position[1] + 1, position[2]) in self.model.world:
+                            self.model.add_block(position, DIRT)
             
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
