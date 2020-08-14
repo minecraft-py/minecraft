@@ -7,6 +7,7 @@ import time
 from collections import deque
 
 from noise import snoise2 as noise2
+from noise import snoise3 as noise3
 
 from pyglet import image
 from pyglet import media
@@ -17,6 +18,8 @@ from pyglet.window import key, mouse
 
 TICKS_PER_SEC = 60
 SECTOR_SIZE = 16
+
+MAX_SIZE = 50
 
 STEALING_SPEED = 3
 WALKING_SPEED = 5
@@ -160,24 +163,30 @@ class Model(object):
 
     def _initialize(self):
         # 放置所有方块以初始化世界
-        n = 256  # 世界一半的长度和宽度
-        s = 1    # 步长
-        y = 0   # 初始 y 值
-        for x in range(-n, n + 1, s):
-            for z in range(-n, n + 1, s):
-                # 在地表生成基岩和草方块
-                self.add_block((x, 1, z), GRASS, immediate=False)
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                # 在地表生成基岩
                 self.add_block((x, 0, z), BEDROCK, immediate=False)
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for y in range(1, 6):
+                for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                    self.add_block((x, y, z), STONE, immediate=False)
         # 使用噪声生成地形
-        for x in range(-n, n + 1, s):
-            for z in range(-n, n + 1, s):
-                # 20这个基数是可以改变的, 数字越大, 地形越平缓
-                l = 2 + round(noise2(x / 30, z / 30) * 3)
-                for y in range(1, l):
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                l = 6 + round(noise2(x / 18, z / 18) * 3)
+                for y in range(6, l):
                     self.add_block((x, y, z), DIRT, immediate=False)
                 else:
                     self.add_block((x, y, z), GRASS, immediate=False)
-
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                # 生成树木
+                if random.randint(1, 256) >= 254:
+                    for y in range(7 + round(noise2(x / 18 ,z / 18) * 3), 11 + round(noise2(x / 18 ,z / 18) * 3)):
+                        self.add_block((x, y, z), LOG, immediate=False)
+                    else:
+                        self.add_block((x, 11 + round(noise2(x / 18 ,z / 18) * 3), z), LEAF, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """
@@ -401,7 +410,7 @@ class Window(pyglet.window.Window):
         self.strafe = [0, 0]
         # Current (x, y, z) position in the world, specified with floats. Note
         # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 4 + round(noise2(0 ,0) * 3), 0)
+        self.position = (0, 8 + round(noise2(0 ,0) * 3), 0)
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -425,12 +434,12 @@ class Window(pyglet.window.Window):
             key._6, key._7, key._8, key._9, key._0]
         # Instance of the model that handles the world.
         self.model = Model()
-        # 这个标签在画布的左上角显示
+        # 这个标签在画布的上方显示
         self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
-            x=10, y=self.height - 10, anchor_x='left', anchor_y='center',
+            x=self.width // 2, y=self.height - 15, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
-        self.loading_label = pyglet.text.Label(font_name='Arial', font_size=20,
+        self.loading_label = pyglet.text.Label('', font_name='Arial', font_size=20,
             x=self.width // 2, y=self.height // 2 + 20, anchor_x='center', anchor_y='center',
             color=(255, 255, 255, 200))
         self.loading_image = image.load('resource/texture/default/loading.png')
@@ -529,18 +538,18 @@ class Window(pyglet.window.Window):
 
     def update_status(self, dt):
         area = []
-        for x in range(int(self.position[0]) - 8, int(self.position[0]) + 8):
-            for y in range(int(self.position[1]) - 8, int(self.position[1]) + 8):
-                for z in range(int(self.position[2]) - 8, int(self.position[2]) + 8):
+        for x in range(int(self.position[0]) - 16, int(self.position[0]) + 17):
+            for y in range(int(self.position[1]) - 16, int(self.position[1]) + 17):
+                for z in range(int(self.position[2]) - 16, int(self.position[2]) + 17):
                     area.append((x, y, z))
         else:
             for position in area:
                 if position in self.model.world:
                     block = self.model.world[position]
-                    if block == DIRT and random.randint(1, 10) >= 4:
+                    if block == DIRT and random.randint(1, 10) >= 8:
                         for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                             if (pos := (position[0] + x, position[1], position[2] + z)) in self.model.world:
-                                if self.model[pos] == GRASS:
+                                if self.model.world[pos] == GRASS and (pos[0], pos[1] + 1, pos[2]) not in self.model.world:
                                     self.model.add_block(position, GRASS)
                     elif block == GRASS:
                         if (position[0], position[1] + 1, position[2]) in self.model.world:
@@ -639,7 +648,10 @@ class Window(pyglet.window.Window):
         if self.exclusive:
             vector = self.get_sight_vector()
             block, previous = self.model.hit_test(self.position, vector)
-            texture = self.model.world[block]
+            if block:
+                texture = self.model.world[block]
+            else:
+                texture = None
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
                 if texture == CRAFT_TABLE and (not self.stealing):
@@ -727,7 +739,8 @@ class Window(pyglet.window.Window):
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
-        self.label.y = height - 10
+        self.label.x = self.width // 2
+        self.label.y = self.height - 15
         # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()
