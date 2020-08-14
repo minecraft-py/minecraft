@@ -2,12 +2,12 @@
 
 import json
 import math
+import os
 import random
 import time
 from collections import deque
 
 from noise import snoise2 as noise2
-from noise import snoise3 as noise3
 
 from pyglet import image
 from pyglet import media
@@ -79,7 +79,10 @@ def tex_coords_all(top, bottom, side0, side1, side2, side3):
     result = []
     result.extend(top)
     result.extend(bottom)
-    result.extend([side0, side1, side2, side3])
+    result.extend(side0)
+    result.extend(side1)
+    result.extend(side2)
+    result.extend(side3)
     return result
 
 TEXTURE_PATH = 'resource/texture/default/block.png'
@@ -154,6 +157,8 @@ class Model(object):
         self.shown = {}
         # Mapping from position to a pyglet `VertextList` for all shown blocks.
         self._shown = {}
+        # 记录玩家改变的方块
+        self.change = {}
         # Mapping from sector to a list of positions inside that sector.
         self.sectors = {}
         # Simple function queue implementation. The queue is populated with
@@ -166,27 +171,19 @@ class Model(object):
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 # 在地表生成基岩
-                self.add_block((x, 0, z), BEDROCK, immediate=False)
+                self.add_block((x, 0, z), BEDROCK, immediate=False, record=False)
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for y in range(1, 6):
                 for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                    self.add_block((x, y, z), STONE, immediate=False)
+                    self.add_block((x, y, z), STONE, immediate=False, record=False)
         # 使用噪声生成地形
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 l = 6 + round(noise2(x / 18, z / 18) * 3)
                 for y in range(6, l):
-                    self.add_block((x, y, z), DIRT, immediate=False)
+                    self.add_block((x, y, z), DIRT, immediate=False, record=False)
                 else:
-                    self.add_block((x, y, z), GRASS, immediate=False)
-        for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                # 生成树木
-                if random.randint(1, 256) >= 254:
-                    for y in range(7 + round(noise2(x / 18 ,z / 18) * 3), 11 + round(noise2(x / 18 ,z / 18) * 3)):
-                        self.add_block((x, y, z), LOG, immediate=False)
-                    else:
-                        self.add_block((x, 11 + round(noise2(x / 18 ,z / 18) * 3), z), LEAF, immediate=False)
+                    self.add_block((x, y, z), GRASS, immediate=False, record=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """
@@ -217,18 +214,21 @@ class Model(object):
                 return True
         return False
 
-    def add_block(self, position, texture, immediate=True):
+    def add_block(self, position, texture, immediate=True, record=True):
         """
         在 position 处添加一个纹理为 texture 的方块
 
         @param pssition 长度为3的元组, 要添加方块的位置
         @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
-        @patam immediate 是否立即绘制方块
+        @param immediate 是否立即绘制方块
+        @param record 是否记录方块更改(在生存地形时不记录)
         """
         if position in self.world:
             self.remove_block(position, immediate)
         if -1 < position[1] < 256:
-            self.world[position] = texture
+            if record == False:
+                self.world[position] = texture
+            self.change[' '.join([str(i) for i in position])] = texture
             self.sectors.setdefault(sectorize(position), []).append(position)
             if immediate:
                 if self.exposed(position):
@@ -241,13 +241,18 @@ class Model(object):
 
         @param position 长度为3的元组, 要移除方块的位置
         @param immediate 是否要从画布上立即移除方块
+        @param record
         """
-        del self.world[position]
-        self.sectors[sectorize(position)].remove(position)
-        if immediate:
-            if position in self.shown:
-                self.hide_block(position)
-            self.check_neighbors(position)
+        try:
+            del self.world[position]
+            self.change[' '.join([str(i) for i in position])] == 'AIR'
+            self.sectors[sectorize(position)].remove(position)
+            if immediate:
+                if position in self.shown:
+                    self.hide_block(position)
+                self.check_neighbors(position)
+        except:
+            pass
 
     def check_neighbors(self, position):
         """
@@ -298,16 +303,11 @@ class Model(object):
             ('t2f/static', texture_data))
 
     def hide_block(self, position, immediate=True):
-        """ Hide the block at the given `position`. Hiding does not remove the
-        block from the world.
+        """
+        隐藏在 position 处的方块, 它不移除方块
 
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position of the block to hide.
-        immediate : bool
-            Whether or not to immediately remove the block from the canvas.
-
+        @param position 长度为3的元组, 要隐藏方块的位置
+        @param immediate 是否立即隐藏方块
         """
         self.shown.pop(position)
         if immediate:
@@ -396,7 +396,7 @@ class Window(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
-        # Whether or not the window exclusively captures the mouse.
+        # 窗口是否捕获鼠标
         self.exclusive = False
         self.stealing = False
         self.flying = False
@@ -408,8 +408,7 @@ class Window(pyglet.window.Window):
         # otherwise. The second element is -1 when moving left, 1 when moving
         # right, and 0 otherwise.
         self.strafe = [0, 0]
-        # Current (x, y, z) position in the world, specified with floats. Note
-        # that, perhaps unlike in math class, the y-axis is the vertical axis.
+        # 玩家在世界中的位置 (x, y, z)
         self.position = (0, 8 + round(noise2(0 ,0) * 3), 0)
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
@@ -424,15 +423,15 @@ class Window(pyglet.window.Window):
         self.reticle = None
         # Velocity in the y (upward) direction.
         self.dy = 0
-        # A list of blocks the player can place. Hit num keys to cycle.
+        # 玩家可以放置的方块, 使用数字键切换
         self.inventory = [GRASS, DIRT, SAND, STONE, LOG, LEAF, BRICK, PLANK, CRAFT_TABLE]
-        # The current block the user can place. Hit num keys to cycle.
+        # 玩家手持的方块
         self.block = self.inventory[0]
-        # Convenience list of num keys.
+        # 数字键列表
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9, key._0]
-        # Instance of the model that handles the world.
+        # model 的实例
         self.model = Model()
         # 这个标签在画布的上方显示
         self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
@@ -449,12 +448,19 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
         # 每10秒更新一次方块数据
         pyglet.clock.schedule_interval(self.update_status, 10.0)
+        # 每60秒保存一次进度
+        pyglet.clock.schedule_interval(self.save, 60.0)
+
+    def save(self, dt):
+        """
+        这个函数被 pyglet 计时器反复调用
+
+        @param dt 距上次调用的时间
+        """
+        pass
 
     def set_exclusive_mouse(self, exclusive):
-        """ If `exclusive` is True, the game will capture the mouse, if False
-        the game will ignore the mouse.
-
-        """
+        # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
         super(Window, self).set_exclusive_mouse(exclusive)
         self.exclusive = exclusive
 
@@ -494,11 +500,11 @@ class Window(pyglet.window.Window):
                 m = math.cos(y_angle)
                 dy = math.sin(y_angle)
                 if self.strafe[1]:
-                    # Moving left or right.
+                    # 向左或右移动
                     dy = 0.0
                     m = 1
                 if self.strafe[0] > 0:
-                    # Moving backwards.
+                    # 向后移动
                     dy *= -1
                 # When you are flying up or down, you have less left and right
                 # motion.
@@ -515,14 +521,10 @@ class Window(pyglet.window.Window):
         return (dx, dy, dz)
 
     def update(self, dt):
-        """ This method is scheduled to be called repeatedly by the pyglet
-        clock.
+        """
+        这个方法被 pyglet 计时器反复调用
 
-        Parameters
-        ----------
-        dt : float
-            The change in time since the last call.
-
+        @param dt 距上次调用的时间
         """
         self.model.process_queue()
         sector = sectorize(self.position)
@@ -537,23 +539,24 @@ class Window(pyglet.window.Window):
             self._update(dt / m)
 
     def update_status(self, dt):
+        # 这个函数定时改变方块状态
         area = []
         for x in range(int(self.position[0]) - 16, int(self.position[0]) + 17):
             for y in range(int(self.position[1]) - 16, int(self.position[1]) + 17):
                 for z in range(int(self.position[2]) - 16, int(self.position[2]) + 17):
+                    # 以玩家为中心的 16*16*16 范围
                     area.append((x, y, z))
         else:
-            for position in area:
-                if position in self.model.world:
-                    block = self.model.world[position]
-                    if block == DIRT and random.randint(1, 10) >= 8:
-                        for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-                            if (pos := (position[0] + x, position[1], position[2] + z)) in self.model.world:
-                                if self.model.world[pos] == GRASS and (pos[0], pos[1] + 1, pos[2]) not in self.model.world:
-                                    self.model.add_block(position, GRASS)
-                    elif block == GRASS:
-                        if (position[0], position[1] + 1, position[2]) in self.model.world:
-                            self.model.add_block(position, DIRT)
+            for position in [exist for exist in area if area in self.model.world]:
+                block = self.model.world[position]
+                if block == DIRT and random.randint(1, 10) >= 8:
+                    for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                        if (pos := (position[0] + x, position[1], position[2] + z)) in self.model.world:
+                            if self.model.world[pos] == GRASS and (pos[0], pos[1] + 1, pos[2]) not in self.model.world:
+                                self.model.add_block(position, GRASS)
+                elif block == GRASS:
+                    if (position[0], position[1] + 1, position[2]) in self.model.world:
+                        self.model.add_block(position, DIRT)
             
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
@@ -679,16 +682,11 @@ class Window(pyglet.window.Window):
             self.rotation = (x, y)
 
     def on_key_press(self, symbol, modifiers):
-        """ Called when the player presses a key. See pyglet docs for key
-        mappings.
+        """
+        当玩家按下一个按键时调用
 
-        Parameters
-        ----------
-        symbol : int
-            Number representing the key that was pressed.
-        modifiers : int
-            Number representing any modifying keys that were pressed.
-
+        @param symbol 按下的键
+        @param modifiers 同时按下的修饰键
         """
         if symbol == key.W:
             self.strafe[0] -= 1
