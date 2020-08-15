@@ -8,7 +8,7 @@ import time
 from collections import deque
 
 import Minecraft.saver as saver
-from Minecraft.block import *
+from Minecraft.block import block
 
 from noise import snoise2 as noise2
 
@@ -126,19 +126,19 @@ class Model(object):
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 # 在地表生成基岩
-                self.add_block((x, 0, z), BEDROCK, immediate=False, record=False)
+                self.add_block((x, 0, z), 'bedrock', immediate=False, record=False)
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for y in range(1, 6):
                 for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                    self.add_block((x, y, z), STONE, immediate=False, record=False)
+                    self.add_block((x, y, z), 'stone', immediate=False, record=False)
         # 使用噪声生成地形
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 l = 6 + round(noise2(x / 18, z / 18) * 3)
                 for y in range(6, l):
-                    self.add_block((x, y, z), DIRT, immediate=False, record=False)
+                    self.add_block((x, y, z), 'dirt', immediate=False, record=False)
                 else:
-                    self.add_block((x, y, z), GRASS, immediate=False, record=False)
+                    self.add_block((x, y, z), 'grass', immediate=False, record=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """
@@ -202,7 +202,7 @@ class Model(object):
         """
         try:
             del self.world[position]
-            self.change[' '.join([str(i) for i in position])] == 'AIR'
+            self.change[' '.join([str(i) for i in position])] == 'air'
             self.sectors[sectorize(position)].remove(position)
             if immediate:
                 if position in self.shown:
@@ -237,7 +237,7 @@ class Model(object):
         @param immediate 是否立即显示方块
         """
         try:
-            texture = self.world[position]
+            texture = block[self.world[position]]
             self.shown[position] = texture
             if immediate:
                 self._show_block(position, texture)
@@ -385,7 +385,7 @@ class Window(pyglet.window.Window):
         # Velocity in the y (upward) direction.
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = [GRASS, DIRT, SAND, STONE, LOG, LEAF, BRICK, PLANK, CRAFT_TABLE]
+        self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log', 'leaf', 'brick', 'plank', 'craft_table']
         # 玩家手持的方块
         self.block = self.inventory[0]
         # 数字键列表
@@ -510,14 +510,14 @@ class Window(pyglet.window.Window):
         else:
             for position in [exist for exist in area if exist in self.model.world]:
                 block = self.model.world[position]
-                if block == DIRT and random.randint(1, 10) >= 8:
+                if block == 'dirt' and random.randint(1, 10) >= 8:
                     for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                         if (pos := (position[0] + x, position[1], position[2] + z)) in self.model.world:
-                            if self.model.world[pos] == GRASS and (pos[0], pos[1] + 1, pos[2]) not in self.model.world:
-                                self.model.add_block(position, GRASS)
-                elif block == GRASS:
+                            if self.model.world[pos] == 'grass' and (pos[0], pos[1] + 1, pos[2]) not in self.model.world:
+                                self.model.add_block(position, 'grass')
+                elif block == 'grass':
                     if (position[0], position[1] + 1, position[2]) in self.model.world:
-                        self.model.add_block(position, DIRT)
+                        self.model.add_block(position, 'dirt')
             
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
@@ -619,12 +619,12 @@ class Window(pyglet.window.Window):
                 texture = None
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if texture == CRAFT_TABLE and (not self.stealing):
+                if texture == 'craft_table' and (not self.stealing):
                     self.set_exclusive_mouse(False)
                 elif previous:
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
-                if texture != BEDROCK:
+                if texture != 'bedrock':
                     self.model.remove_block(block)
         else:
             self.set_exclusive_mouse(True)
