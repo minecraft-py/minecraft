@@ -505,12 +505,12 @@ class Window(pyglet.window.Window):
         for x in range(int(self.position[0]) - 16, int(self.position[0]) + 17):
             for y in range(int(self.position[1]) - 16, int(self.position[1]) + 17):
                 for z in range(int(self.position[2]) - 16, int(self.position[2]) + 17):
-                    # 以玩家为中心的 16*16*16 范围
+                    # 以玩家为中心的 32*32*32 范围
                     area.append((x, y, z))
         else:
             for position in [exist for exist in area if exist in self.model.world]:
                 block = self.model.world[position]
-                if block == 'dirt' and random.randint(1, 10) >= 8:
+                if block == 'dirt' and random.randint(1, 10) == 10:
                     for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                         if (pos := (position[0] + x, position[1], position[2] + z)) in self.model.world:
                             if self.model.world[pos] == 'grass' and (pos[0], pos[1] + 1, pos[2]) not in self.model.world:
