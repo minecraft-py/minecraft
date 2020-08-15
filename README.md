@@ -1,6 +1,6 @@
 # Minecraft
 > 感谢 [Fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目, 并翻译了注释, 
-添加了一些 PR 中的内容.
+添加了一些 PR 中的内容, 并添加了一些自定义内容.
 
 该项目是一个对 Minecraft Java版的复刻, 旨在使用 python 重写 Minecraft 并实现其中的大部分功能.
 
