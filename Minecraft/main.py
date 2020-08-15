@@ -7,16 +7,18 @@ import random
 import time
 from collections import deque
 
+import Minecraft.saver as saver
+from Minecraft.block import *
+
 from noise import snoise2 as noise2
 
+import pyglet
 from pyglet import image
-from pyglet import media
-from pyglet import resource
 from pyglet.gl import *
-from pyglet.graphics import Batch, Group, TextureGroup
+from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 
-TICKS_PER_SEC = 60
+TICKS_PER_SEC = 30
 SECTOR_SIZE = 16
 
 MAX_SIZE = 50
@@ -51,52 +53,7 @@ def cube_vertices(x, y, z, n):
         x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
     ]
 
-def tex_coord(x, y, n=4):
-    # 返回纹理正方形绑定的顶点
-    m = 1.0 / n
-    dx = x * m
-    dy = y * m
-    return dx, dy, dx + m, dy, dx + m, dy + m, dx, dy + m
-
-def tex_coords(top, bottom, side):
-    # 返回纹理正方形的顶面, 底面, 侧面
-    top = tex_coord(*top)
-    bottom = tex_coord(*bottom)
-    side = tex_coord(*side)
-    result = []
-    result.extend(top)
-    result.extend(bottom)
-    result.extend(side * 4)
-    return result
-
-def tex_coords_all(top, bottom, side0, side1, side2, side3):
-    # 返回纹理正方形所有的面
-    # 同 tex_coords() 类似, 但是要传入全部的四个侧面
-    top = tex_coord(*top)
-    bottom = tex_coord(*bottom)
-    side0, side1 = tex_coord(*side0), tex_coord(*side1)
-    side2, side3 = tex_coord(*side2), tex_coord(*side3)
-    result = []
-    result.extend(top)
-    result.extend(bottom)
-    result.extend(side0)
-    result.extend(side1)
-    result.extend(side2)
-    result.extend(side3)
-    return result
-
 TEXTURE_PATH = 'resource/texture/default/block.png'
-
-GRASS = tex_coords((1, 0), (0, 1), (0, 0))
-DIRT = tex_coords((0, 1), (0, 1), (0, 1))
-SAND = tex_coords((1, 1), (1, 1), (1, 1))
-STONE = tex_coords((0, 2), (0, 2), (0, 2))
-LOG = tex_coords((1, 2), (1, 2), (2, 2))
-LEAF = tex_coords((3, 1), (3, 1), (3, 1))
-BRICK = tex_coords((2, 0), (2, 0), (2, 0))
-PLANK = tex_coords((3, 0), (3, 0), (3, 0))
-CRAFT_TABLE = tex_coords((0, 3), (3, 0), (1, 3))
-BEDROCK = tex_coords((2, 1), (2, 1), (2, 1))
 
 FACES = [
     ( 0, 1, 0),
@@ -106,7 +63,6 @@ FACES = [
     ( 0, 0, 1),
     ( 0, 0,-1),
 ]
-
 
 def normalize(position):
     """ Accepts `position` of arbitrary precision and returns the block
@@ -124,7 +80,6 @@ def normalize(position):
     x, y, z = position
     x, y, z = (int(round(x)), int(round(y)), int(round(z)))
     return (x, y, z)
-
 
 def sectorize(position):
     """ Returns a tuple representing the sector for the given `position`.
@@ -204,7 +159,8 @@ class Model(object):
                 return key, previous
             previous = key
             x, y, z = x + dx / m, y + dy / m, z + dz / m
-        return None, None
+        else:
+            return None, None
 
     def exposed(self, position):
         # 如果 position 所有的六个面旁边都有方块, 返回 False. 否则返回 True
@@ -212,7 +168,8 @@ class Model(object):
         for dx, dy, dz in FACES:
             if (x + dx, y + dy, z + dz) not in self.world:
                 return True
-        return False
+        else:
+            return False
 
     def add_block(self, position, texture, immediate=True, record=True):
         """
@@ -225,7 +182,8 @@ class Model(object):
         """
         if position in self.world:
             self.remove_block(position, immediate)
-        if -1 < position[1] < 256:
+        if 0 <= position[1] <= 256:
+            # 建筑限制为基岩以上, 256格以下
             if record == False:
                 self.world[position] = texture
             self.change[' '.join([str(i) for i in position])] = texture
@@ -241,7 +199,6 @@ class Model(object):
 
         @param position 长度为3的元组, 要移除方块的位置
         @param immediate 是否要从画布上立即移除方块
-        @param record
         """
         try:
             del self.world[position]
@@ -279,12 +236,15 @@ class Model(object):
         @param position 长度为3的元组, 要显示方块的位置
         @param immediate 是否立即显示方块
         """
-        texture = self.world[position]
-        self.shown[position] = texture
-        if immediate:
-            self._show_block(position, texture)
-        else:
-            self._enqueue(self._show_block, position, texture)
+        try:
+            texture = self.world[position]
+            self.shown[position] = texture
+            if immediate:
+                self._show_block(position, texture)
+            else:
+                self._enqueue(self._show_block, position, texture)
+        except:
+            pass
 
     def _show_block(self, position, texture):
         """
@@ -357,12 +317,13 @@ class Model(object):
                     if after:
                         x, y, z = after
                         after_set.add((x + dx, y + dy, z + dz))
-        show = after_set - before_set
-        hide = before_set - after_set
-        for sector in show:
-            self.show_sector(sector)
-        for sector in hide:
-            self.hide_sector(sector)
+        else:
+            show = after_set - before_set
+            hide = before_set - after_set
+            for sector in show:
+                self.show_sector(sector)
+            for sector in hide:
+                self.hide_sector(sector)
 
     def _enqueue(self, func, *args):
         # 把 func 添加到内部的队列
@@ -547,7 +508,7 @@ class Window(pyglet.window.Window):
                     # 以玩家为中心的 16*16*16 范围
                     area.append((x, y, z))
         else:
-            for position in [exist for exist in area if area in self.model.world]:
+            for position in [exist for exist in area if exist in self.model.world]:
                 block = self.model.world[position]
                 if block == DIRT and random.randint(1, 10) >= 8:
                     for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
@@ -638,7 +599,8 @@ class Window(pyglet.window.Window):
                         # falling / rising.
                         self.dy = 0
                     break
-        return tuple(p)
+        else:
+            return tuple(p)
 
     def on_mouse_press(self, x, y, button, modifiers):
         """

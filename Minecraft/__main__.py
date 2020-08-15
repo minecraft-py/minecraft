@@ -1,4 +1,4 @@
-from Minecraft.main import *
+from .main import *
 
 if __name__ == '__main__':
     window = Window(width=800, height=600, caption='Minecraft', resizable=True)
