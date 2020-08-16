@@ -1,5 +1,6 @@
 # Minecraft 启动器
 
+import os
 from tkinter import Listbox, Tk
 import tkinter.ttk as ttk
 
@@ -20,7 +21,8 @@ class MinecraftLauncher(Tk):
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
-        self.game_item_list.insert('end', 'demo')
+        for item in os.listdir('resource/save'):
+            self.game_item_list.insert('end', item)
         self.del_button = ttk.Button(self, text='Delete')
         self.del_button.state(['disabled'])
         self.rename_button = ttk.Button(self, text='Rename')
