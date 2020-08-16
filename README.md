@@ -22,7 +22,7 @@ pip install -U pyglet glooey
 - [x] 与方块交互
 - [x] 世界生成
 - [x] 随机世界生成(使用 Simplex 噪声, 但世界唯一)
-- [ ] 启动器(使用 tkinter 实现)
+- [x] 启动器(使用 tkinter 实现)
 - [ ] 更多地形
 - [ ] 使用`E`键打开物品栏
 - [ ] ...
