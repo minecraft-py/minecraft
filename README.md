@@ -9,10 +9,17 @@ Minecraft 支持多平台, 使用 GPL 开源, 在配置低的电脑上也可以�
 
 要游玩 Minecraft, 请先下载依赖项:
 ```shell
-pip install -U pyglet glooey
+pip install -r requirements.txt
 ```
 
 然后, 输入`python3 -m Minecraft`运行游戏, 可能需要一些时间来加载.
+
+
+如果你在使用 Bash, 可以在`~/.bashrc`或`/etc/.profile`写入:
+```shell
+alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
+```
+来快速启动 Minecraft.
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:
