@@ -20,6 +20,7 @@ pip install -r requirements.txt
 alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 ```
 来快速启动 Minecraft.
+> 在`demo`存档中有好玩的东西
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:
@@ -29,7 +30,8 @@ alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 - [x] 与方块交互
 - [x] 世界生成
 - [x] 随机世界生成(使用 Simplex 噪声, 但世界唯一)
-- [x] 启动器(使用 tkinter 实现)
+- [x] 启动器(使用 tkinter 实现, 十分简陋)
+- [x] 保持用户对世界的更改(仅限 demo 存档)
 - [ ] 更多地形
 - [ ] 使用`E`键打开物品栏
 - [ ] ...

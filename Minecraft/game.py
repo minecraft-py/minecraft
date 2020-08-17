@@ -134,11 +134,12 @@ class Model(object):
         # 使用噪声生成地形
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                l = 6 + round(noise2(x / 18, z / 18) * 3)
+                l = 6 + round(noise2(x / 10, z / 10) * 3)
                 for y in range(6, l):
                     self.add_block((x, y, z), 'dirt', immediate=False, record=False)
                 else:
                     self.add_block((x, y, z), 'grass', immediate=False, record=False)
+        saver.load_block('demo', self.add_block, self.remove_block)
 
     def hit_test(self, position, vector, max_distance=8):
         """
@@ -181,35 +182,33 @@ class Model(object):
         @param record 是否记录方块更改(在生存地形时不记录)
         """
         if position in self.world:
-            self.remove_block(position, immediate)
+            self.remove_block(position, immediate, record=False)
         if 0 <= position[1] <= 256:
             # 建筑限制为基岩以上, 256格以下
-            if record == False:
-                self.world[position] = texture
-            self.change[' '.join([str(i) for i in position])] = texture
+            if record == True:
+                self.change[' '.join([str(i) for i in position])] = texture
+            self.world[position] = texture
             self.sectors.setdefault(sectorize(position), []).append(position)
             if immediate:
                 if self.exposed(position):
                     self.show_block(position)
                 self.check_neighbors(position)
 
-    def remove_block(self, position, immediate=True):
+    def remove_block(self, position, immediate=True, record=True):
         """
         在 position 处移除一个方块
 
         @param position 长度为3的元组, 要移除方块的位置
         @param immediate 是否要从画布上立即移除方块
         """
-        try:
-            del self.world[position]
-            self.change[' '.join([str(i) for i in position])] == 'air'
-            self.sectors[sectorize(position)].remove(position)
-            if immediate:
-                if position in self.shown:
-                    self.hide_block(position)
-                self.check_neighbors(position)
-        except:
-            pass
+        del self.world[position]
+        if record:
+            self.change[' '.join([str(i) for i in position])] = 'air'
+        self.sectors[sectorize(position)].remove(position)
+        if immediate:
+            if position in self.shown:
+                self.hide_block(position)
+            self.check_neighbors(position)
 
     def check_neighbors(self, position):
         """
@@ -410,7 +409,7 @@ class Window(pyglet.window.Window):
         # 每10秒更新一次方块数据
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每60秒保存一次进度
-        pyglet.clock.schedule_interval(self.save, 60.0)
+        pyglet.clock.schedule_interval(self.save, 30.0)
 
     def save(self, dt):
         """
@@ -418,7 +417,7 @@ class Window(pyglet.window.Window):
 
         @param dt 距上次调用的时间
         """
-        pass
+        saver.save('demo', self.model.change)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
