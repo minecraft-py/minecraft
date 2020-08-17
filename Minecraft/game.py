@@ -235,15 +235,16 @@ class Model(object):
         @param position 长度为3的元组, 要显示方块的位置
         @param immediate 是否立即显示方块
         """
-        try:
+        if texture in block:
             texture = block[self.world[position]]
-            self.shown[position] = texture
-            if immediate:
-                self._show_block(position, texture)
-            else:
-                self._enqueue(self._show_block, position, texture)
-        except:
-            pass
+        else:
+            texture = block['undefined']
+        self.shown[position] = texture
+        if immediate:
+            self._show_block(position, texture)
+        else:
+            self._enqueue(self._show_block, position, texture)
+
 
     def _show_block(self, position, texture):
         """
