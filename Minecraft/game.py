@@ -187,7 +187,10 @@ class Model(object):
             # 建筑限制为基岩以上, 256格以下
             if record == True:
                 self.change[' '.join([str(i) for i in position])] = texture
-            self.world[position] = texture
+            if texture in block:
+                self.world[position] = texture
+            else:
+                self.world[position] = 'undefined'
             self.sectors.setdefault(sectorize(position), []).append(position)
             if immediate:
                 if self.exposed(position):
@@ -201,14 +204,15 @@ class Model(object):
         @param position 长度为3的元组, 要移除方块的位置
         @param immediate 是否要从画布上立即移除方块
         """
-        del self.world[position]
-        if record:
-            self.change[' '.join([str(i) for i in position])] = 'air'
-        self.sectors[sectorize(position)].remove(position)
-        if immediate:
-            if position in self.shown:
-                self.hide_block(position)
-            self.check_neighbors(position)
+        if position in self.world:
+            del self.world[position]
+            if record:
+                self.change[' '.join([str(i) for i in position])] = 'air'
+            self.sectors[sectorize(position)].remove(position)
+            if immediate:
+                if position in self.shown:
+                    self.hide_block(position)
+                self.check_neighbors(position)
 
     def check_neighbors(self, position):
         """
@@ -235,10 +239,7 @@ class Model(object):
         @param position 长度为3的元组, 要显示方块的位置
         @param immediate 是否立即显示方块
         """
-        if texture in block:
-            texture = block[self.world[position]]
-        else:
-            texture = block['undefined']
+        texture = block[self.world[position]]
         self.shown[position] = texture
         if immediate:
             self._show_block(position, texture)
@@ -664,6 +665,7 @@ class Window(pyglet.window.Window):
             if self.dy == 0:
                 self.dy = JUMP_SPEED
         elif symbol == key.ESCAPE:
+            self.save(0)
             self.set_exclusive_mouse(False)
         elif symbol == key.TAB:
             self.flying = not self.flying

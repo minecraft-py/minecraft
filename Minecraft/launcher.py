@@ -21,7 +21,7 @@ class MinecraftLauncher(Tk):
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
-        for item in os.listdir('resource/save'):
+        for item in [i for i in os.listdir('resource/save') if i[0] != '.']:
             self.game_item_list.insert('end', item)
         self.del_button = ttk.Button(self, text='Delete')
         self.del_button.state(['disabled'])
