@@ -34,7 +34,10 @@ def save_block(name, change):
     @param name 存档名, 为 JSON 文件
     @param change 方块数据, 符合 JSON 标准的 python 字典
     """
-    json.dump(change, open('resource/save/%s/%s.world' % (name, name), 'w+'), indent='\t')
+    data = json.load(open('resource/save/%s/%s' % (name, name)))
+    for position, block in change.items():
+        data[position] = block
+    json.dump(data, open('resource/save/%s/%s.world' % (name, name), 'w+'), indent='\t')
 
 def save_player(name, position, bag):
     """将玩家数据存入文件
