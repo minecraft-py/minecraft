@@ -414,6 +414,7 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
+        self.position, self.block = saver.load_player('demo')
 
     def save(self, dt):
         """
@@ -421,7 +422,8 @@ class Window(pyglet.window.Window):
 
         @param dt 距上次调用的时间
         """
-        saver.save('demo', self.model.change)
+        saver.save_block('demo', self.model.change)
+        saver.save_player('demo', self.position, self.block)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之

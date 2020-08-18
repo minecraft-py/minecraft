@@ -7,6 +7,21 @@ import tkinter.ttk as ttk
 from Minecraft.game import *
 import pyglet
 
+def is_game_restore(name):
+    """
+    判断一个目录是否为游戏存档
+
+    @param name resource/save 目录下的子目录
+    """
+    path = 'resource/save/'
+    if os.path.isdir(path + name):
+        if ('%s.world' % name) in os.listdir(path + name) and ('%s.player' % name) in os.listdir(path + name):
+            return True
+        else:
+            return False
+    else:
+        return False
+
 
 class MinecraftLauncher(Tk):
 
@@ -21,7 +36,7 @@ class MinecraftLauncher(Tk):
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
-        for item in [i for i in os.listdir('resource/save') if i[0] != '.']:
+        for item in [i for i in os.listdir('resource/save') if is_game_restore(i)]:
             self.game_item_list.insert('end', item)
         self.del_button = ttk.Button(self, text='Delete')
         self.del_button.state(['disabled'])
