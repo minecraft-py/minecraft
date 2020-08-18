@@ -21,7 +21,7 @@ from pyglet.window import key, mouse
 TICKS_PER_SEC = 30
 SECTOR_SIZE = 16
 
-MAX_SIZE = 50
+MAX_SIZE = 128
 
 STEALING_SPEED = 3
 WALKING_SPEED = 5
