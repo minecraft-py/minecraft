@@ -1,5 +1,5 @@
 # Minecraft
-> 感谢 [Fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目, 并翻译了注释, 
+> 感谢 [fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目, 并翻译了注释, 
 添加了一些 PR 中的内容, 并添加了一些自定义内容.
 
 该项目是一个对 Minecraft Java版的复刻, 旨在使用 python 重写 Minecraft 并实现其中的大部分功能.
@@ -31,8 +31,9 @@ alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 - [x] 世界生成
 - [x] 随机世界生成(使用 Simplex 噪声, 但世界唯一)
 - [x] 启动器(使用 tkinter 实现, 十分简陋)
-- [x] 保持用户对世界的更改(仅限 demo 存档)
+- [x] 保存用户对世界的更改(仅限 demo 存档)
 - [ ] 更多地形
+- [ ] 区块系统
 - [ ] 使用`E`键打开物品栏
 - [ ] ...
 
@@ -46,3 +47,8 @@ alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 - `F2` - 截屏
 - `ESC` - 退出游戏
 - `数字键` - 循环切换物品(目前有9种方块)
+
+# 贡献者
+感谢以下的开发者的贡献:
+
+- [wzh656](https://github.com/wzh656)

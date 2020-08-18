@@ -188,6 +188,7 @@ class Model(object):
             if record == True:
                 self.change[' '.join([str(i) for i in position])] = texture
             if texture in block:
+                # 将不存在的方块替换为 undefined
                 self.world[position] = texture
             else:
                 self.world[position] = 'undefined'
@@ -205,6 +206,7 @@ class Model(object):
         @param immediate 是否要从画布上立即移除方块
         """
         if position in self.world:
+            # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
             del self.world[position]
             if record:
                 self.change[' '.join([str(i) for i in position])] = 'air'
