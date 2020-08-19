@@ -1,5 +1,3 @@
-> 请切换至`dev`分支查看正在开发的内容
-
 # Minecraft
 > 感谢 [fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目, 并翻译了注释, 
 添加了一些 PR 中的内容, 并添加了一些自定义内容.
