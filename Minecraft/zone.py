@@ -39,14 +39,20 @@ class Zone(object):
     def generate(self):
         # 生成区块
         for x in self.x_range:
-            for y in range(0, 41):
+            for y in range(0, 65):
                 for z in self.z_range:
                     if y == 0:
                         # 生成基岩
                        self.add_block((x, y, z), 'bedrock', record=False)
-                    else:
+                    elif y < 60:
                         # 生成石头
                         self.add_block((x, y, z), 'stone', record=False)
+                    elif 60 < y < 64:
+                        # 生成泥土
+                        self.add_block((x, y, z), 'dirt', record=False)
+                    elif y == 64:
+                        # 生成草
+                        self.add_block((x, y, z), 'grass', record=False)
         self.load_block()
 
     def load_block(self):
@@ -71,14 +77,33 @@ class Zone(object):
 class ZoneGroup(object):
     
     def __init__(self, max_sight=5):
+        # max_sight 是玩家的最大视距
         self.max_sight = max_sight - 1
+        # zones 是玩家可见的区块列表: {(x, z): zone}
+        self.zones = {}
 
-    def setxy(self, x, z):
+    def setxy(self, x, z, world):
         """
         设置玩家所在的区块
 
         @param x 玩家所在的 x 轴位置
         @param z 玩家所在的 z 轴位置
+        @param world 应该为 Minecraft.game.Model.world 字典
         """
         self.x = x // 16
         self.z = z // 16
+        zone_x_start, zone_x_end = self.x - self.max_sight, self.x + self.max_sight
+        zone_z_start, zone_z_end = self.z - self.max_sight, self.z + self.max_sight
+        zone = {}
+        for x in range(zone_x_start, zone_x_end + 1):
+            for z in range(zone_z_start, zone_z_end + 1):
+                if (x, z) in self.zones:
+                    zone[(x, z)] = self.zones[(x, z)]
+                else:
+                    zone[(x, z)] = Zone(x, z)
+                    zone[(x, z)].generate()
+        else:
+            for position in self.zones:
+                del self.zones[position]
+            else:
+                self.zones = zone
