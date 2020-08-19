@@ -32,8 +32,8 @@ class Zone(object):
 
     def remove_block(self, position, immediate=True, record=True):
         # remove_block 方法, 不要手动调用
-        if position in self.world:
-            del self.world[position]
+        if self.world[position] != 'air':
+            self.world[position] = 'air'
             self._remove_block_function(position, immediate, record)
 
     def generate(self):
@@ -56,6 +56,7 @@ class Zone(object):
         self.load_block()
 
     def load_block(self):
+        # Minecraft.saver.load_block 的重写, 读取一个区块的更改
         blocks = json.load(open('resource/save/demo/demo.world'))
         for x in self.x_range:
             for y in range(0, 257):
