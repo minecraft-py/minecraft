@@ -4,6 +4,7 @@ dist/
 lib/
 lib64/
 sdist/
+save/demo/
 var/
 wheels/
 pyre/
