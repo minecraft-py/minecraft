@@ -27,14 +27,21 @@ def load_player(name):
     data = json.load(open('resource/save/%s/%s.player' % (name, name)))
     return tuple([float(i) for i in data['position'].split(' ')]), data['bag']
 
-def save_block(name, change):
+def save_block(name, change, full=True):
     """
     将方块数据存入文件
 
     @param name 存档名, 为 JSON 文件
     @param change 方块数据, 符合 JSON 标准的 python 字典
+    @param full 是否全部写入
     """
-    json.dump(change, open('resource/save/%s/%s.world' % (name, name), 'w+'), indent='\t')
+    if not full:
+        data = json.load(open('resource/save/%s/%s' % (name, name)))
+        for position, block in change.items():
+            data[position] = block
+    else:
+        data = change
+    json.dump(data, open('resource/save/%s/%s.world' % (name, name), 'w+'), indent='\t')
 
 def save_player(name, position, bag):
     """将玩家数据存入文件
