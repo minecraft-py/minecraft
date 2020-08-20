@@ -6,13 +6,16 @@ import Minecraft.saver as saver
 
 class Zone(object):
 
-    def __init__(self, x, z):
+    def __init__(self, x, z, add, remove):
         self.base = 40 + round(noise2(x, z) * 50)
         self.x, self.z = x, z
         self.x_start, self.z_start = 16 * x, 16 * z
         self.x_end, self.z_end = 16 * (x + 1), 16 * (z + 1)
         self.x_range, self.z_range = range(self.x_start, self.x_end + 1), range(self.x_start, self.z_end + 1)
+        self.add_block_function = add
+        self.remove_block_function = remove
         self.world = {}
+        self.generate()
 
     def __del__(self):
         data = {}
@@ -27,14 +30,14 @@ class Zone(object):
 
     def add_block(self, position, texture, immediate=True, record=True):
         # add_block 方法, 不要手动调用
-        self._add_block_function(position, texture, immediate, record)
+        self.add_block_function(position, texture, immediate, record)
         self.world[position] = texture
 
     def remove_block(self, position, immediate=True, record=True):
         # remove_block 方法, 不要手动调用
         if self.world[position] != 'air':
             self.world[position] = 'air'
-            self._remove_block_function(position, immediate, record)
+            self.remove_block_function(position, immediate, record)
 
     def generate(self):
         # 生成区块
@@ -68,45 +71,41 @@ class Zone(object):
                         else:
                             self.add_block((x, y, z), block)
 
-    def set_function(self, add, remove):
-        self._add_block_function = add
-        self._remove_block_function = remove
-
 
 class ZoneGroup(object):
     
-    def __init__(self, max_sight=5, add_block=lambda: False, remove_block=lambda: False):
+    def __init__(self, add_block, remove_block, max_sight=5):
         # max_sight 是玩家的最大视距
         self.max_sight = max_sight - 1
+        self.x, self.z = 0, 0
         # zones 是玩家可见的区块列表: {(x, z): zone}
         self.zones = {}
         # ticking_area 是常加载区块, 最多16个
-        self.ticking_area = []
+        self.ticking_area = {}
         # 添加, 删除方块的函数
         self.add = add_block
         self.remove = remove_block
 
-    def set_ticking_area(self, x, z):
+    def set_ticking_area(self, name, x, z):
         """设置常加载区块, 最多16个
 
+        @param name 常加载区块名称
         @param x 区块 x 轴位置
         @param z 区块 z 轴位置
         """
         if len(self.ticking_area) <= 16:
-            self.ticking_area.append((x, z))
-            self.zones[(x, z)] = Zone(x, z)
-            self.zones[(x, z)].set_function(self.add, seld.remove)
-            self.zones[(x, z)].generate()
+            self.ticking_area[name] = Zone(x, z, self.add, self.remove)
 
-    def setxy(self, x, z):
+    def setxz(self, x, z, init=False):
         """
         设置玩家所在的区块
 
         @param x 玩家所在的 x 轴位置
         @param z 玩家所在的 z 轴位置
+        @param init 是否第一次加载
         """
         # zone 的创建需要很多资源, 下面一行防止过度浪费算力
-        if x // 16 != self.x or z // 16 != self.z:
+        if x // 16 != self.x or z // 16 != self.z or init == True:
             self.x = x // 16
             self.z = z // 16
             zone_x_start, zone_x_end = self.x - self.max_sight, self.x + self.max_sight
@@ -116,10 +115,8 @@ class ZoneGroup(object):
                 for z in range(zone_z_start, zone_z_end + 1):
                     if (x, z) in self.zones:
                         zone[(x, z)] = self.zones[(x, z)]
-                    elif (x, z) not in self.ticking_area:
-                        zone[(x, z)] = Zone(x, z)
-                        zone[(x, z)].set_function(self.add, self.remove)
-                        zone[(x, z)].generate()
+                    elif (x, z) not in self.ticking_area.values():
+                        zone[(x, z)] = Zone(x, z, self.add, self.remove)
                     else:
                         zone[(x, z)] = self.zones[(x, z)]
             else:

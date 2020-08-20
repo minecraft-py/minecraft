@@ -124,21 +124,14 @@ class Model(object):
     def _initialize(self):
         # 放置所有方块以初始化世界
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                # 在地表生成基岩
-                self.add_block((x, 0, z), 'bedrock', immediate=False, record=False)
-        for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for y in range(1, 6):
+            for y in range(0, 5):
                 for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                    self.add_block((x, y, z), 'stone', immediate=False, record=False)
-        # 使用噪声生成地形
-        for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                l = 6 + round(noise2(x / 10, z / 10) * 3)
-                for y in range(6, l):
-                    self.add_block((x, y, z), 'dirt', immediate=False, record=False)
-                else:
-                    self.add_block((x, y, z), 'grass', immediate=False, record=False)
+                    if y == 0:
+                        self.add_block((x, y, z), 'bedrock', record=False)
+                    elif 0 < y <= 3:
+                        self.add_block((x, y, z), 'dirt', record=False)
+                    elif y == 4:
+                        self.add_block((x, y, z), 'grass', record=False)
         saver.load_block('demo', self.add_block, self.remove_block)
 
     def hit_test(self, position, vector, max_distance=8):
