@@ -21,7 +21,7 @@ from pyglet.window import key, mouse
 TICKS_PER_SEC = 30
 SECTOR_SIZE = 16
 
-MAX_SIZE = 128
+MAX_SIZE = 64
 
 STEALING_SPEED = 3
 WALKING_SPEED = 5
@@ -123,6 +123,7 @@ class Model(object):
 
     def _initialize(self):
         # 放置所有方块以初始化世界
+        print('[info] init world')
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for y in range(0, 5):
                 for z in range(-MAX_SIZE, MAX_SIZE + 1):
@@ -132,6 +133,7 @@ class Model(object):
                         self.add_block((x, y, z), 'dirt', record=False)
                     elif y == 4:
                         self.add_block((x, y, z), 'grass', record=False)
+        print('[info] load block')
         saver.load_block('demo', self.add_block, self.remove_block)
 
     def hit_test(self, position, vector, max_distance=8):
@@ -415,6 +417,7 @@ class Window(pyglet.window.Window):
 
         @param dt 距上次调用的时间
         """
+        print('[info] save changes')
         saver.save_block('demo', self.model.change)
         saver.save_player('demo', self.position, self.block)
 
@@ -499,6 +502,7 @@ class Window(pyglet.window.Window):
 
     def update_status(self, dt):
         # 这个函数定时改变方块状态
+        print('[info] update status')
         area = []
         for x in range(int(self.position[0]) - 16, int(self.position[0]) + 17):
             for y in range(int(self.position[1]) - 16, int(self.position[1]) + 17):
@@ -698,6 +702,7 @@ class Window(pyglet.window.Window):
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
+        print('[info] resize to %dx%d' % (self.width, self.height))
         self.label.x = self.width // 2
         self.label.y = self.height - 15
         # 窗口中央的十字线
@@ -787,6 +792,7 @@ class Window(pyglet.window.Window):
 
 def setup_fog():
     # 配置 OpenGL 的雾属性
+    print('[info] setup fog')
     # 启用雾
     glEnable(GL_FOG)
     # 设置雾的颜色
@@ -801,6 +807,7 @@ def setup_fog():
 
 def setup():
     # 基本的 OpenGL 设置
+    print('[info] setup')
     # 设置背景颜色. 比如在 RGBA 模式下的天空
     glClearColor(0.5, 0.69, 1.0, 1)
     # Enable culling (not rendering) of back-facing facets -- facets that aren't
