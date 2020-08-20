@@ -14,6 +14,7 @@ try:
     from noise import snoise2 as noise2
 except ModuleNotFoundError:
     print("[err] Module 'noise' not found. run `pip install noise` to install")
+    exit(1)
 
 try:
     import pyglet
@@ -23,6 +24,7 @@ try:
     from pyglet.window import key, mouse
 except:
     print("[err] Module 'pyglet' not found. run `pip install pyglet` to install")
+    exit(1)
 
 TICKS_PER_SEC = 30
 SECTOR_SIZE = 16
