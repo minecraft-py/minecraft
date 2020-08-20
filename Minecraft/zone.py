@@ -87,7 +87,7 @@ class ZoneGroup(object):
         self.remove = remove_block
 
     def set_ticking_area(self, x, z):
-        """设置常加载区块
+        """设置常加载区块, 最多16个
 
         @param x 区块 x 轴位置
         @param z 区块 z 轴位置
@@ -105,23 +105,25 @@ class ZoneGroup(object):
         @param x 玩家所在的 x 轴位置
         @param z 玩家所在的 z 轴位置
         """
-        self.x = x // 16
-        self.z = z // 16
-        zone_x_start, zone_x_end = self.x - self.max_sight, self.x + self.max_sight
-        zone_z_start, zone_z_end = self.z - self.max_sight, self.z + self.max_sight
-        zone = {}
-        for x in range(zone_x_start, zone_x_end + 1):
-            for z in range(zone_z_start, zone_z_end + 1):
-                if (x, z) in self.zones:
-                    zone[(x, z)] = self.zones[(x, z)]
-                elif (x, z) not in self.ticking_area:
-                    zone[(x, z)] = Zone(x, z)
-                    zone[(x, z)].set_function(self.add, self.remove)
-                    zone[(x, z)].generate()
-                else:
-                    zone[(x, z)] = self.zones[(x, z)]
-        else:
-            for position in self.zones:
-                del self.zones[position]
+        # zone 的创建需要很多资源, 下面一行防止过度浪费算力
+        if x // 16 != self.x or z // 16 != self.z:
+            self.x = x // 16
+            self.z = z // 16
+            zone_x_start, zone_x_end = self.x - self.max_sight, self.x + self.max_sight
+            zone_z_start, zone_z_end = self.z - self.max_sight, self.z + self.max_sight
+            zone = {}
+            for x in range(zone_x_start, zone_x_end + 1):
+                for z in range(zone_z_start, zone_z_end + 1):
+                    if (x, z) in self.zones:
+                        zone[(x, z)] = self.zones[(x, z)]
+                    elif (x, z) not in self.ticking_area:
+                        zone[(x, z)] = Zone(x, z)
+                        zone[(x, z)].set_function(self.add, self.remove)
+                        zone[(x, z)].generate()
+                    else:
+                        zone[(x, z)] = self.zones[(x, z)]
             else:
-                self.zones = zone
+                for position in self.zones:
+                    del self.zones[position]
+                else:
+                    self.zones = zone
