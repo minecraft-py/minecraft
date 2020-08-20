@@ -22,7 +22,7 @@ try:
     from pyglet.graphics import TextureGroup
     from pyglet.window import key, mouse
 except:
-    print("[err] Module 'pyglet' not found. run `pip install pyglrt` to install")
+    print("[err] Module 'pyglet' not found. run `pip install pyglet` to install")
 
 TICKS_PER_SEC = 30
 SECTOR_SIZE = 16
