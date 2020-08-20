@@ -10,13 +10,19 @@ from collections import deque
 import Minecraft.saver as saver
 from Minecraft.block import block
 
-from noise import snoise2 as noise2
+try:
+    from noise import snoise2 as noise2
+except ModuleNotFoundError:
+    print("[err] Module 'noise' not found. run `pip install noise` to install")
 
-import pyglet
-from pyglet import image
-from pyglet.gl import *
-from pyglet.graphics import TextureGroup
-from pyglet.window import key, mouse
+try:
+    import pyglet
+    from pyglet import image
+    from pyglet.gl import *
+    from pyglet.graphics import TextureGroup
+    from pyglet.window import key, mouse
+except:
+    print("[err] Module 'pyglet' not found. run `pip install pyglrt` to install")
 
 TICKS_PER_SEC = 30
 SECTOR_SIZE = 16

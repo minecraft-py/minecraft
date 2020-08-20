@@ -26,7 +26,11 @@ def is_game_restore(name):
 class MinecraftLauncher(Tk):
 
     def __init__(self):
-        Tk.__init__(self)
+        try:
+            Tk.__init__(self)
+        except:
+            print('[err] No display')
+            exit(1)
         self.title('Minecraft Launcher')
         # 小部件
         self.new_button = ttk.Button(self, text='New')
