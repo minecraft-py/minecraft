@@ -827,13 +827,13 @@ def setup_light():
     # 启用双面光照
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE , GL_TRUE)
     # 光源衰减
-    glLightf(GL_LIGHT0 ,GL_CONSTANT_ATTENUATION ,1.0)
-    glLightf(GL_LIGHT0 ,GL_LINEAR_ATTENUATION ,0.0)
-    glLightf(GL_LIGHT0 ,GL_QUADRATIC_ATTENUATION ,0.0)
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION ,1.0)
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION ,0.0)
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION ,0.0)
     # 设置0号光源
-    glLightfv(GL_LIGHT0, GL_AMBIENT, (GLfloat * 4)(1, 1, 1, 1))
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, (GLfloat * 4)(1, 1, 1, 1))
-    glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat * 4)(0, 0, 0, -1))
+    glLightfv(GL_LIGHT0, GL_DIFFUSE , (GLfloat * 4)(1, 1, 1, 1))
+    glLightfv(GL_LIGHT0, GL_SPECULAR, (GLfloat * 4)(1, 1, 1, 1))
+    glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat * 4)(0, 1, 0, 1))
     glEnable(GL_LIGHT0)
     glEnable(GL_LIGHTING)
 
