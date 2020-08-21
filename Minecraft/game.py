@@ -108,11 +108,12 @@ def sectorize(position):
 
 class Model(object):
 
-    def __init__(self):
+    def __init__(self, name):
         # Batch 是用于批处理渲染的顶点列表的集合
         self.batch = pyglet.graphics.Batch()
         # A TextureGroup manages an OpenGL texture.
         self.group = TextureGroup(image.load(TEXTURE_PATH).get_texture())
+        self.name = 'demo'
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}
@@ -133,23 +134,24 @@ class Model(object):
         # 放置所有方块以初始化世界
         print('[info] init world')
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for y in range(0, 5):
+            for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                self.add_block((x, 0, z), 'bedrock', record=False)
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for y in range(1, 3):
                 for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                    if y == 0:
-                        self.add_block((x, y, z), 'bedrock', record=False)
-                    elif 0 < y <= 3:
-                        self.add_block((x, y, z), 'dirt', record=False)
-                    elif y == 4:
-                        self.add_block((x, y, z), 'grass', record=False)
+                    self.add_block((x, y, z), 'dirt', record=False)
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                self.add_block((x, y, z), 'grass', record=False)
         print('[info] load block')
-        saver.load_block('demo', self.add_block, self.remove_block)
+        saver.load_block(self.name, self.add_block, self.remove_block)
 
     def hit_test(self, position, vector, max_distance=8):
         """
         从当前位置开始视线搜索, 如果有任何方块与之相交, 返回之.
         如果没有找到, 返回 (None, None)
 
-        @patam position 长度为3的元组, 当前位置
+        @param position 长度为3的元组, 当前位置
         @param vector 长度为3的元组, 视线向量
         @param max_distance 在多少方块的范围内搜索
         """
@@ -182,7 +184,7 @@ class Model(object):
         @param pssition 长度为3的元组, 要添加方块的位置
         @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
         @param immediate 是否立即绘制方块
-        @param record 是否记录方块更改(在生存地形时不记录)
+        @param record 是否记录方块更改(在生成地形时不记录)
         """
         if position in self.world:
             self.remove_block(position, immediate, record=False)
@@ -207,6 +209,7 @@ class Model(object):
 
         @param position 长度为3的元组, 要移除方块的位置
         @param immediate 是否要从画布上立即移除方块
+        @param record 是否记录方块更改(在破坏后放置时不记录)
         """
         if position in self.world:
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
@@ -376,7 +379,7 @@ class Window(pyglet.window.Window):
         # right, and 0 otherwise.
         self.strafe = [0, 0]
         # 玩家在世界中的位置 (x, y, z)
-        self.position = (0, 8 + round(noise2(0 ,0) * 3), 0)
+        self.position = (0, 4, 0)
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -398,8 +401,6 @@ class Window(pyglet.window.Window):
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9, key._0]
-        # model 的实例
-        self.model = Model()
         # 这个标签在画布的上方显示
         self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
             x=self.width // 2, y=self.height - 15, anchor_x='left', anchor_y='center',
@@ -417,6 +418,7 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
+        # 读取玩家位置和背包
         self.position, self.block = saver.load_player('demo')
 
     def save(self, dt):
@@ -426,13 +428,18 @@ class Window(pyglet.window.Window):
         @param dt 距上次调用的时间
         """
         print('[info] save changes')
-        saver.save_block('demo', self.model.change)
-        saver.save_player('demo', self.position, self.block)
+        saver.save_block(self.name, self.model.change)
+        saver.save_player(self.name, self.position, self.block)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
         super(Window, self).set_exclusive_mouse(exclusive)
         self.exclusive = exclusive
+
+    def set_name(self, name):
+        # 设置游戏存档名
+        self.name = name
+        self.model = Model(name)
 
     def get_sight_vector(self):
         """ Returns the current line of sight vector indicating the direction
@@ -509,7 +516,7 @@ class Window(pyglet.window.Window):
             self._update(dt / m)
 
     def update_status(self, dt):
-        # 这个函数定时改变方块状态
+        # 这个函数定时改变世界状态
         print('[info] update status')
         area = []
         for x in range(int(self.position[0]) - 16, int(self.position[0]) + 17):
@@ -679,14 +686,15 @@ class Window(pyglet.window.Window):
         elif symbol == key.TAB:
             self.flying = not self.flying
         elif symbol == key.LSHIFT:
-            self.running = True
-        elif symbol == key.LCTRL:
             self.stealing = True
+        elif symbol == key.LCTRL:
+            self.running = True
         elif symbol in self.num_keys:
             index = (symbol - self.num_keys[0]) % len(self.inventory)
             self.block = self.inventory[index]
         elif symbol == key.F2:
-            pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot.png')
+            pyglet.image.get_buffer_manager().get_color_buffer().save(time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
+            print("[info] screenshot saved in: %s" % time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
 
     def on_key_release(self, symbol, modifiers):
         """
@@ -703,9 +711,9 @@ class Window(pyglet.window.Window):
         elif symbol == key.D:
             self.strafe[1] -= 1
         elif symbol == key.LSHIFT:
-            self.running = False
-        elif symbol == key.LCTRL:
             self.stealing = False
+        elif symbol == key.LCTRL:
+            self.running = False
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
@@ -813,6 +821,22 @@ def setup_fog():
     glFogf(GL_FOG_START, 30.0)
     glFogf(GL_FOG_END, 80.0)
 
+def setup_light():
+    # 设置 OpenGL 环境光
+    print('[info] setup light')
+    # 启用双面光照
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE , GL_TRUE)
+    # 光源衰减
+    glLightf(GL_LIGHT0 ,GL_CONSTANT_ATTENUATION ,1.0)
+    glLightf(GL_LIGHT0 ,GL_LINEAR_ATTENUATION ,0.0)
+    glLightf(GL_LIGHT0 ,GL_QUADRATIC_ATTENUATION ,0.0)
+    # 设置0号光源
+    glLightfv(GL_LIGHT0, GL_AMBIENT, (GLfloat * 4)(1, 1, 1, 1))
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, (GLfloat * 4)(1, 1, 1, 1))
+    glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat * 4)(0, 0, 0, -1))
+    glEnable(GL_LIGHT0)
+    glEnable(GL_LIGHTING)
+
 def setup():
     # 基本的 OpenGL 设置
     print('[info] setup')
@@ -829,4 +853,5 @@ def setup():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     setup_fog()
+    setup_light()
 

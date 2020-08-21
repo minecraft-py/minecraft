@@ -48,6 +48,6 @@ def save_player(name, position, bag):
     @param name 存档名, 为 JSON 文件
     """
     data = {}
-    data['position'] = ' '.join([str(i) for i in position])
+    data['position'] = ' '.join([('%.1f' % i) for i in position])
     data['bag'] = bag
     json.dump(data, open('resource/save/%s/%s.player' % (name, name), 'w+'), indent='\t')
