@@ -134,7 +134,7 @@ class Model(object):
         # _show_block() and _hide_block() calls
         self.queue = deque()
 
-    def init_world(self):
+    async def init_world(self):
         # 放置所有方块以初始化世界
         print('[info] init world')
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
@@ -785,7 +785,7 @@ class Window(pyglet.window.Window):
         self.set_2d()
         self.draw_label()
         if self.is_init:
-            self.model.init_world()
+            await self.model.init_world()
             self.loading_label.delete()
             self.is_init = False
 
