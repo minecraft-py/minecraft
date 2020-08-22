@@ -7,8 +7,10 @@ import random
 import time
 from collections import deque
 
-import Minecraft.saver as saver
-from Minecraft.source import block, sound, path
+try:
+    import glooey
+except:
+    print("[err] Module 'glooey' not fuond. run `pip install glooey` to install, exit")
 
 try:
     from noise import snoise2 as noise2
@@ -25,6 +27,9 @@ try:
 except:
     print("[err] Module 'pyglet' not found. run `pip install pyglet` to install, exit")
     exit(1)
+
+import Minecraft.saver as saver
+from Minecraft.source import block, sound, path
 
 TICKS_PER_SEC = 20
 SECTOR_SIZE = 16
@@ -109,6 +114,7 @@ class Model(object):
     def __init__(self, name):
         # Batch 是用于批处理渲染的顶点列表的集合
         self.batch = pyglet.graphics.Batch()
+        self.group = pyglet.graphics.Group()
         # A TextureGroup manages an OpenGL texture.
         self.group = TextureGroup(image.load(os.path.join(path['texture'], 'block.png')).get_texture())
         # 存档名
