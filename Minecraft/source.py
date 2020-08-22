@@ -1,3 +1,8 @@
+# Minecraft 资源
+
+from os.path import join
+from pyglet import media
+
 def tex_coord(x, y, n=4):
     #返回纹理正方形绑定的顶点
     m = 1.0 / n
@@ -44,3 +49,13 @@ block['plank'] = tex_coords((3, 0), (3, 0), (3, 0))
 block['craft_table'] = tex_coords((0, 3), (3, 0), (1, 3))
 block['bedrock'] = tex_coords((2, 1), (2, 1), (2, 1))
 block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
+
+# 从这里到文件末尾处, 你可以更改资源文件或目录, 以指向不同的位置
+path = {}
+path['texture'] = 'resource/texture/default'
+path['save'] = 'resource/save'
+path['sound'] = 'resource/sound/default'
+
+sound = {}
+sound['build'] = media.load(join(path['sound'], 'build.wav'), streaming=False)
+sound['destroy'] = media.load(join(path['sound'], 'destroy.wav'), streaming=False)

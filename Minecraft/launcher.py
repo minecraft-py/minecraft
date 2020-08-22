@@ -5,18 +5,21 @@ from tkinter import Listbox, Tk
 import tkinter.ttk as ttk
 
 from Minecraft.game import *
+from Minecraft.source import path
 import pyglet
 
 def is_game_restore(name):
     """
     判断一个目录是否为游戏存档
 
-    @param name resource/save 目录下的子目录
+    @param name 要检查的游戏目录
     """
-    path = 'resource/save/'
-    if os.path.isdir(path + name):
-        if ('%s.world' % name) in os.listdir(path + name) and ('%s.player' % name) in os.listdir(path + name):
-            return True
+    if os.path.isdir(os.path.join(path['save'], name)):
+        if ('%s.world' % name) in os.listdir(os.path.join(path['save'], name)):
+            if ('%s.player' % name) in os.listdir(os.path.join(path['save'], name)):
+                return True
+            else:
+                return False
         else:
             return False
     else:
@@ -29,7 +32,7 @@ class MinecraftLauncher(Tk):
         try:
             Tk.__init__(self)
         except:
-            print('[err] No display')
+            print('[err] No display, exit')
             exit(1)
         self.title('Minecraft Launcher')
         # 小部件

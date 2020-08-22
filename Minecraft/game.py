@@ -8,12 +8,12 @@ import time
 from collections import deque
 
 import Minecraft.saver as saver
-from Minecraft.block import block
+from Minecraft.source import block, sound, path
 
 try:
     from noise import snoise2 as noise2
 except ModuleNotFoundError:
-    print("[err] Module 'noise' not found. run `pip install noise` to install")
+    print("[err] Module 'noise' not found. run `pip install noise` to install, exit")
     exit(1)
 
 try:
@@ -23,10 +23,10 @@ try:
     from pyglet.graphics import TextureGroup
     from pyglet.window import key, mouse
 except:
-    print("[err] Module 'pyglet' not found. run `pip install pyglet` to install")
+    print("[err] Module 'pyglet' not found. run `pip install pyglet` to install, exit")
     exit(1)
 
-TICKS_PER_SEC = 30
+TICKS_PER_SEC = 20
 SECTOR_SIZE = 16
 
 MAX_SIZE = 64
@@ -60,8 +60,6 @@ def cube_vertices(x, y, z, n):
         x-n,y-n,z+n, x+n,y-n,z+n, x+n,y+n,z+n, x-n,y+n,z+n,  # 前面
         x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
     ]
-
-TEXTURE_PATH = 'resource/texture/default/block.png'
 
 FACES = [
     ( 0, 1, 0),
@@ -112,8 +110,9 @@ class Model(object):
         # Batch 是用于批处理渲染的顶点列表的集合
         self.batch = pyglet.graphics.Batch()
         # A TextureGroup manages an OpenGL texture.
-        self.group = TextureGroup(image.load(TEXTURE_PATH).get_texture())
-        self.name = 'demo'
+        self.group = TextureGroup(image.load(os.path.join(path['texture'], 'block.png')).get_texture())
+        # 存档名
+        self.name = name
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}
@@ -128,9 +127,8 @@ class Model(object):
         # Simple function queue implementation. The queue is populated with
         # _show_block() and _hide_block() calls
         self.queue = deque()
-        self._initialize()
 
-    def _initialize(self):
+    def init_world(self):
         # 放置所有方块以初始化世界
         print('[info] init world')
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
@@ -193,9 +191,9 @@ class Model(object):
             if record == True:
                 self.change[' '.join([str(i) for i in position])] = texture
             if texture in block:
-                # 将不存在的方块替换为 undefined
                 self.world[position] = texture
             else:
+                # 将不存在的方块替换为 undefined
                 self.world[position] = 'undefined'
             self.sectors.setdefault(sectorize(position), []).append(position)
             if immediate:
@@ -209,7 +207,7 @@ class Model(object):
 
         @param position 长度为3的元组, 要移除方块的位置
         @param immediate 是否要从画布上立即移除方块
-        @param record 是否记录方块更改(在破坏后放置时不记录)
+        @param record 是否记录方块更改(在 add_block 破坏后放置时不记录)
         """
         if position in self.world:
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
@@ -253,7 +251,6 @@ class Model(object):
             self._show_block(position, texture)
         else:
             self._enqueue(self._show_block, position, texture)
-
 
     def _show_block(self, position, texture):
         """
@@ -402,14 +399,14 @@ class Window(pyglet.window.Window):
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9, key._0]
         # 这个标签在画布的上方显示
-        self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
-            x=self.width // 2, y=self.height - 15, anchor_x='left', anchor_y='center',
+        self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
+            x=0, y=self.height - 15, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
         self.loading_label = pyglet.text.Label('', font_name='Arial', font_size=20,
             x=self.width // 2, y=self.height // 2 + 20, anchor_x='center', anchor_y='center',
             color=(255, 255, 255, 200))
-        self.loading_image = image.load('resource/texture/default/loading.png')
+        self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
         self.loading_image.height = self.height
         self.loading_image.width = self.width
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
@@ -491,6 +488,10 @@ class Window(pyglet.window.Window):
                 dy = 0.0
                 dx = math.cos(x_angle)
                 dz = math.sin(x_angle)
+        elif self.flying and not self.dy == 0:
+            dx = 0.0
+            dy = self.dy
+            dz = 0.0
         else:
             dy = 0.0
             dx = 0.0
@@ -604,7 +605,7 @@ class Window(pyglet.window.Window):
                 d = (p[i] - np[i]) * face[i]
                 if d < pad:
                     continue
-                for dy in range(height):  # check each height
+                for dy in range(height):
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
@@ -678,7 +679,9 @@ class Window(pyglet.window.Window):
         elif symbol == key.E:
             self.set_exclusive_mouse(False)
         elif symbol == key.SPACE:
-            if self.dy == 0:
+            if self.flying:
+                self.dy = 0.5 * JUMP_SPEED
+            elif self.dy == 0:
                 self.dy = JUMP_SPEED
         elif symbol == key.ESCAPE:
             self.save(0)
@@ -686,9 +689,13 @@ class Window(pyglet.window.Window):
         elif symbol == key.TAB:
             self.flying = not self.flying
         elif symbol == key.LSHIFT:
-            self.stealing = True
+            if self.flying:
+                self.dy = -0.5 * JUMP_SPEED
+            else:
+                self.stealing = True
         elif symbol == key.LCTRL:
-            self.running = True
+            if not self.flying:
+                self.running = True
         elif symbol in self.num_keys:
             index = (symbol - self.num_keys[0]) % len(self.inventory)
             self.block = self.inventory[index]
@@ -719,7 +726,7 @@ class Window(pyglet.window.Window):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
         print('[info] resize to %dx%d' % (self.width, self.height))
-        self.label.x = self.width // 2
+        self.label.x = 0
         self.label.y = self.height - 15
         # 窗口中央的十字线
         if self.reticle:
@@ -772,6 +779,7 @@ class Window(pyglet.window.Window):
         self.set_2d()
         self.draw_label()
         if self.is_init:
+            self.model.init_world()
             self.loading_label.delete()
             self.is_init = False
 
@@ -853,5 +861,5 @@ def setup():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     setup_fog()
-    setup_light()
+    # setup_light()
 

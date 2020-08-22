@@ -1,16 +1,18 @@
 # 读取和写入游戏进度
 
 import json
+from os.path import join
+from Minecraft.source import path
 
 def load_block(name, add_block, remove_block):
     """
-    读取游戏方块数据
+    读取游戏方块数据(该 API 将在下一个版本中废除)
 
     @param name 存档名, 为 JSON 文件
     @param add_block 添加方块的函数, 函数原型为 Minecraft.game.Model.add_block
     @param remove_block 移除方块的函数, 函数原型为 Minecraft.game.Model.remove_block
     """
-    blocks = json.load(open('resource/save/%s/%s.world' % (name, name)))
+    blocks = json.load(open(join(path['save'], '%s/%s.world' % (name, name))))
     for position, block in blocks.items():
         position = tuple([int(i) for i in position.split(' ')])
         if block == 'air':
@@ -24,7 +26,7 @@ def load_player(name):
 
     @param name 存档名, 为 JSON 文件
     """
-    data = json.load(open('resource/save/%s/%s.player' % (name, name)))
+    data = json.load(open(join(path['save'], '%s/%s.player' % (name, name))))
     return tuple([float(i) for i in data['position'].split(' ')]), data['bag']
 
 def save_block(name, change, full=True):
@@ -36,12 +38,12 @@ def save_block(name, change, full=True):
     @param full 是否全部写入
     """
     if not full:
-        data = json.load(open('resource/save/%s/%s' % (name, name)))
+        data = json.load(open(join(path['save'], '%s/%s' % (name, name))))
         for position, block in change.items():
             data[position] = block
     else:
         data = change
-    json.dump(data, open('resource/save/%s/%s.world' % (name, name), 'w+'), indent='\t')
+    json.dump(data, open(join(path['save'], '%s/%s.world' % (name, name)), 'w+'), indent='\t')
 
 def save_player(name, position, bag):
     """将玩家数据存入文件
@@ -50,4 +52,4 @@ def save_player(name, position, bag):
     data = {}
     data['position'] = ' '.join([('%.1f' % i) for i in position])
     data['bag'] = bag
-    json.dump(data, open('resource/save/%s/%s.player' % (name, name), 'w+'), indent='\t')
+    json.dump(data, open(join(path['save'], '%s/%s.player' % (name, name)), 'w+'), indent='\t')

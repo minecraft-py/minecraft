@@ -41,8 +41,8 @@ alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 - `鼠标左键 鼠标右键` - 破坏 和 放置(交互)
 - `W A S D` - 移动玩家
 - `空格` - 跳跃
-- `左Shift` - 疾跑
-- `左Ctrl` - 潜行(不改变高度), 在交互方块的毗邻放置方块
+- `左Ctrl` - 疾跑
+- `左Shift` - 潜行(不改变高度), 在交互方块的毗邻放置方块
 - `TAB` - 飞行与行走的切换
 - `F2` - 截屏
 - `ESC` - 退出游戏
