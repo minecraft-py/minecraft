@@ -23,6 +23,7 @@ try:
     from pyglet import image
     from pyglet.gl import *
     from pyglet.graphics import TextureGroup
+    from pyglet.sprite import Sprite
     from pyglet.window import key, mouse
 except:
     print("[err] Module 'pyglet' not found. run `pip install pyglet` to install, exit")
@@ -113,16 +114,16 @@ class Model(object):
 
     def __init__(self, name):
         # Batch 是用于批处理渲染的顶点列表的集合
-        self.batch = pyglet.graphics.Batch()
-        self.group = pyglet.graphics.Group()
-        # A TextureGroup manages an OpenGL texture.
+        self.batch3d = pyglet.graphics.Batch()
+        # 为了分开绘制3D物体和2D的 HUD, 我们需要两个 Batch
+        self.batch2d = pyglet.graphics.Batch()
+        # 纹理的集合
         self.group = TextureGroup(image.load(os.path.join(path['texture'], 'block.png')).get_texture())
         # 存档名
         self.name = name
-        # A mapping from position to the texture of the block at that position.
-        # This defines all the blocks that are currently in the world.
+        # world 存储着世界上所有的方块
         self.world = {}
-        # Same mapping as `world` but only contains blocks that are shown.
+        # 类似于 world, 但它只存储要显示的方块
         self.shown = {}
         # Mapping from position to a pyglet `VertextList` for all shown blocks.
         self._shown = {}
@@ -134,8 +135,8 @@ class Model(object):
         # _show_block() and _hide_block() calls
         self.queue = deque()
 
-    async def init_world(self):
-        # 放置所有方块以初始化世界
+    def init_world(self):
+        # 放置所有方块以初始化世界, 非常耗时
         print('[info] init world')
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
@@ -270,7 +271,7 @@ class Model(object):
         texture_data = list(texture)
         # 创建向量列表
         # FIXME 应该使用 add_indexed() 来代替
-        self._shown[position] = self.batch.add(24, GL_QUADS, self.group,
+        self._shown[position] = self.batch3d.add(24, GL_QUADS, self.group,
             ('v3f/static', vertex_data),
             ('t2f/static', texture_data))
 
@@ -405,7 +406,7 @@ class Window(pyglet.window.Window):
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9, key._0]
         # 这个标签在画布的上方显示
-        self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
+        self.label = pyglet.text.Label('', font_name='Arial', font_size=15,
             x=0, y=self.height - 15, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
@@ -423,6 +424,12 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 读取玩家位置和背包
         self.position, self.block = saver.load_player('demo')
+
+    def init_hud(self):
+        self.apple = []
+        for i in range(1, 11):
+            self.apple.append(Sprite(image.load(os.path.join(path['texture'], 'apple.png')),
+                x=self.width - i * 17, y=self.height - 17, batch=self.model.batch2d))
 
     def save(self, dt):
         """
@@ -778,14 +785,16 @@ class Window(pyglet.window.Window):
         if not self.is_init:
             self.set_3d()
             glColor3d(1, 1, 1)
-            self.model.batch.draw()
+            self.model.batch3d.draw()
             self.draw_focused_block()
             self.set_2d()
+            self.model.batch2d.draw()
             self.draw_reticle()
         self.set_2d()
         self.draw_label()
         if self.is_init:
-            await self.model.init_world()
+            self.model.init_world()
+            self.init_hud()
             self.loading_label.delete()
             self.is_init = False
 
@@ -802,13 +811,14 @@ class Window(pyglet.window.Window):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
     def draw_label(self):
-        # 在屏幕左上方绘制标签
         if not self.is_init:
+        # 在屏幕左上角绘制标签
             x, y, z = self.position
             self.label.text = '(%.1f %.1f %.1f) %-4d' % (
                 x, y, z, pyglet.clock.get_fps())
             self.label.draw()
         else:
+            # 初始化屏幕
             self.loading_image.blit(0, 0)
             self.loading_label.text = 'Loading...'
             self.loading_label.draw()
@@ -856,8 +866,7 @@ def setup():
     print('[info] setup')
     # 设置背景颜色. 比如在 RGBA 模式下的天空
     glClearColor(0.5, 0.69, 1.0, 1)
-    # Enable culling (not rendering) of back-facing facets -- facets that aren't
-    # visible to you.
+    # 启用面剔除
     glEnable(GL_CULL_FACE)
     # Set the texture minification/magnification function to GL_NEAREST (nearest
     # in Manhattan distance) to the specified texture coordinates. GL_NEAREST
