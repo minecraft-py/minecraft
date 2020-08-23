@@ -31,6 +31,7 @@ alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 - [x] 世界生成
 - [x] 随机世界生成(使用 Simplex 噪声, 但世界唯一)
 - [x] 启动器(使用 tkinter 实现, 十分简陋)
+- [x] i18n
 - [x] 保存用户对世界的更改(仅限 demo 存档)
 - [ ] 更多地形
 - [ ] 区块系统
