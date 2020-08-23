@@ -53,6 +53,7 @@ block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
 # 从这里到文件末尾处, 你可以更改资源文件或目录, 以指向不同的位置
 path = {}
 path['texture'] = 'resource/texture/default'
+path['hud'] = join(path['texture'], 'hud')
 path['save'] = 'resource/save'
 path['sound'] = 'resource/sound/default'
 

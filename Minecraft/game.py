@@ -426,9 +426,11 @@ class Window(pyglet.window.Window):
         self.position, self.block = saver.load_player('demo')
 
     def init_hud(self):
-        self.apple = []
+        # 初始化 HUD
+        # 饥饿值
+        self.hunger = []
         for i in range(1, 11):
-            self.apple.append(Sprite(image.load(os.path.join(path['texture'], 'apple.png')),
+            self.hunger.append(Sprite(image.load(os.path.join(path['hud'], 'apple.png')),
                 x=self.width - i * 17, y=self.height - 17, batch=self.model.batch2d))
 
     def save(self, dt):
@@ -749,6 +751,12 @@ class Window(pyglet.window.Window):
         self.reticle = pyglet.graphics.vertex_list(4,
             ('v2i', (x - n, y, x + n, y, x, y - n, x, y + n))
         )
+        # HUD
+        # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
+        if not self.is_init:
+            for i in range(len(self.hunger)):
+                self.hunger[i].x = self.width - (i + 1) * 17
+                self.hunger[i].y = self.height - 17
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
