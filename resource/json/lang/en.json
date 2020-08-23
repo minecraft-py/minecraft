@@ -1,0 +1,10 @@
+{
+	"launcher-title": "Minecraft Launcher",
+	"launcher-new": "New",
+	"launcher-start": "Start",
+	"launcher-exit": "Exit",
+	"launcher-delete": "Delete",
+	"launcher-rename": "Rename",
+	"game-loading": "Loading...",
+	"game-info": "position: (%.1f, %.1f, %.1f) %-4d fps"
+}

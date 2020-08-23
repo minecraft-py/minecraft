@@ -30,7 +30,7 @@ except:
     exit(1)
 
 import Minecraft.saver as saver
-from Minecraft.source import block, sound, path
+from Minecraft.source import block, sound, path, lang
 
 TICKS_PER_SEC = 20
 SECTOR_SIZE = 16
@@ -822,13 +822,13 @@ class Window(pyglet.window.Window):
         if not self.is_init:
         # 在屏幕左上角绘制标签
             x, y, z = self.position
-            self.label.text = '(%.1f %.1f %.1f) %-4d' % (
+            self.label.text = lang['game-info'] % (
                 x, y, z, pyglet.clock.get_fps())
             self.label.draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
-            self.loading_label.text = 'Loading...'
+            self.loading_label.text = lang['game-loading']
             self.loading_label.draw()
 
     def draw_reticle(self):

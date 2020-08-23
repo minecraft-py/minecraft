@@ -1,5 +1,6 @@
 # Minecraft 资源
 
+import json
 from os.path import join
 from pyglet import media
 
@@ -52,6 +53,7 @@ block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
 
 # 从这里到文件末尾处, 你可以更改资源文件或目录, 以指向不同的位置
 path = {}
+path['lang'] = join('resource/json/lang', 'en' + '.json')
 path['texture'] = 'resource/texture/default'
 path['hud'] = join(path['texture'], 'hud')
 path['save'] = 'resource/save'
@@ -60,3 +62,5 @@ path['sound'] = 'resource/sound/default'
 sound = {}
 sound['build'] = media.load(join(path['sound'], 'build.wav'), streaming=False)
 sound['destroy'] = media.load(join(path['sound'], 'destroy.wav'), streaming=False)
+
+lang = json.load(open(path['lang']))
