@@ -23,6 +23,7 @@ try:
     from pyglet import image
     from pyglet.gl import *
     from pyglet.graphics import TextureGroup
+    from pyglet.shapes import Rectangle
     from pyglet.sprite import Sprite
     from pyglet.window import key, mouse
 except:
@@ -375,6 +376,7 @@ class Window(pyglet.window.Window):
         self.stealing = False
         self.flying = False
         self.running = False
+        self.die = False
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
         #
@@ -410,20 +412,33 @@ class Window(pyglet.window.Window):
             x=0, y=self.height - 15, anchor_x='left', anchor_y='center',
             color=(0, 0, 0, 255))
         self.is_init =True
-        self.loading_label = pyglet.text.Label('', font_name='Arial', font_size=20,
+        # 这个标签在画布正中偏上显示
+        self.center_label = pyglet.text.Label('', font_name='Arial', font_size=20,
             x=self.width // 2, y=self.height // 2 + 20, anchor_x='center', anchor_y='center',
             color=(255, 255, 255, 200))
+        # 泥土块图片
         self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
         self.loading_image.height = self.height
         self.loading_image.width = self.width
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
+        # 检测玩家是否应该死亡
+        pyglet.clock.schedule_interval(self.check_die, 1.0 / TICKS_PER_SEC)
         # 每10秒更新一次方块数据
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 读取玩家位置和背包
         self.position, self.block = saver.load_player('demo')
+
+    def check_die(self, dt):
+        """
+        这个函数被 pyglet 计时器反复调用
+
+        @param dt 距上次调用的时间
+        """
+        if self.position[1] < -2:
+            self.die = True
 
     def init_hud(self):
         # 初始化 HUD
@@ -576,17 +591,18 @@ class Window(pyglet.window.Window):
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
-        if not self.flying:
-            # Update your vertical speed: if you are falling, speed up until you
-            # hit terminal velocity; if you are jumping, slow down until you
-            # start falling.
-            self.dy -= dt * GRAVITY
-            self.dy = max(self.dy, -TERMINAL_VELOCITY)
-            dy += self.dy * dt
-        # collisions
-        x, y, z = self.position
-        x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
-        self.position = (x, y, z)
+        if not self.die:
+            if not self.flying:
+                # Update your vertical speed: if you are falling, speed up until you
+                # hit terminal velocity; if you are jumping, slow down until you
+                # start falling.
+                self.dy -= dt * GRAVITY
+                self.dy = max(self.dy, -TERMINAL_VELOCITY)
+                dy += self.dy * dt
+            # collisions
+            x, y, z = self.position
+            x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+            self.position = (x, y, z)
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -652,12 +668,13 @@ class Window(pyglet.window.Window):
                 texture = None
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if texture == 'craft_table' and (not self.stealing):
-                    self.set_exclusive_mouse(False)
-                elif previous:
-                    self.model.add_block(previous, self.block)
+                if not self.die:
+                    if texture == 'craft_table' and (not self.stealing):
+                        self.set_exclusive_mouse(False)
+                    elif previous:
+                        self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
-                if texture != 'bedrock':
+                if texture != 'bedrock' and not self.die:
                     self.model.remove_block(block)
         else:
             self.set_exclusive_mouse(True)
@@ -796,14 +813,16 @@ class Window(pyglet.window.Window):
             self.model.batch3d.draw()
             self.draw_focused_block()
             self.set_2d()
-            self.model.batch2d.draw()
-            self.draw_reticle()
+            if not self.die:
+                self.model.batch2d.draw()
+                self.draw_reticle()
+            else:
+                glClearColor(0.3, 0.0, 0.0, 0.6)
         self.set_2d()
         self.draw_label()
         if self.is_init:
             self.model.init_world()
             self.init_hud()
-            self.loading_label.delete()
             self.is_init = False
 
     def draw_focused_block(self):
@@ -820,16 +839,21 @@ class Window(pyglet.window.Window):
 
     def draw_label(self):
         if not self.is_init:
-        # 在屏幕左上角绘制标签
-            x, y, z = self.position
-            self.label.text = lang['game.info'] % (
-                x, y, z, pyglet.clock.get_fps())
-            self.label.draw()
+            if self.die:
+                # 玩家死亡
+                self.center_label.text = lang['game.die.text']
+                self.center_label.draw()
+            else:
+                # 在屏幕左上角绘制标签
+                x, y, z = self.position
+                self.label.text = lang['game.info'] % (
+                        x, y, z, pyglet.clock.get_fps())
+                self.label.draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
-            self.loading_label.text = lang['game.loading']
-            self.loading_label.draw()
+            self.center_label.text = lang['game.loading']
+            self.center_label.draw()
 
     def draw_reticle(self):
         # 在屏幕中央画十字线

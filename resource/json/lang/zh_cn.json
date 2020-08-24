@@ -6,5 +6,6 @@
 	"launcher.delete": "删除",
 	"launcher.rename": "重命名",
 	"game.loading": "初始化...",
-	"game.info": "位置: (%.1f, %.1f, %.1f) %-4d fps"
+	"game.info": "位置: (%.1f, %.1f, %.1f) %-4d fps",
+	"game.die.text": "你死了"
 }

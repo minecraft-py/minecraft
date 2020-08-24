@@ -6,5 +6,6 @@
 	"launcher.delete": "Delete",
 	"launcher.rename": "Rename",
 	"game.loading": "Loading...",
-	"game.info": "position: (%.1f, %.1f, %.1f) %-4d fps"
+	"game.info": "position: (%.1f, %.1f, %.1f) %-4d fps",
+	"game.die.text": "You die"
 }
