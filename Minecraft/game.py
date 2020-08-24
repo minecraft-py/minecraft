@@ -8,11 +8,6 @@ import time
 from collections import deque
 
 try:
-    import glooey
-except:
-    print("[err] Module 'glooey' not fuond. run `pip install glooey` to install, exit")
-
-try:
     from noise import snoise2 as noise2
 except ModuleNotFoundError:
     print("[err] Module 'noise' not found. run `pip install noise` to install, exit")
@@ -373,6 +368,7 @@ class Window(pyglet.window.Window):
         super(Window, self).__init__(*args, **kwargs)
         # 窗口是否捕获鼠标
         self.exclusive = False
+        # 玩家状态: 是否潜行, 是否飞行...
         self.stealing = False
         self.flying = False
         self.running = False
@@ -414,12 +410,14 @@ class Window(pyglet.window.Window):
         self.is_init =True
         # 这个标签在画布正中偏上显示
         self.center_label = pyglet.text.Label('', font_name='Arial', font_size=20,
-            x=self.width // 2, y=self.height // 2 + 20, anchor_x='center', anchor_y='center',
-            color=(255, 255, 255, 200))
-        # 泥土块图片
+            x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center',
+            color=(255, 255, 255, 255))
+        # 加载用图片
         self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
         self.loading_image.height = self.height
         self.loading_image.width = self.width
+        # 覆盖屏幕的矩形
+        self.full_screen = Rectangle(0, 0, self.width, self.height)
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
         # 检测玩家是否应该死亡
@@ -438,6 +436,7 @@ class Window(pyglet.window.Window):
         @param dt 距上次调用的时间
         """
         if self.position[1] < -2:
+            self.set_exclusive_mouse(False)
             self.die = True
 
     def init_hud(self):
@@ -676,7 +675,7 @@ class Window(pyglet.window.Window):
             elif button == pyglet.window.mouse.LEFT and block:
                 if texture != 'bedrock' and not self.die:
                     self.model.remove_block(block)
-        else:
+        elif not self.die:
             self.set_exclusive_mouse(True)
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -760,6 +759,8 @@ class Window(pyglet.window.Window):
         print('[info] resize to %dx%d' % (self.width, self.height))
         self.label.x = 0
         self.label.y = self.height - 15
+        self.center_label.x = self.width // 2
+        self.center_label.y = self.height // 2 + 50
         # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()
@@ -768,6 +769,10 @@ class Window(pyglet.window.Window):
         self.reticle = pyglet.graphics.vertex_list(4,
             ('v2i', (x - n, y, x + n, y, x, y - n, x, y + n))
         )
+        # 覆盖屏幕的矩形
+        self.full_screen.position = (0, 0)
+        self.full_screen.width = self.width
+        self.full_screen.height = self.height
         # HUD
         # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
         if not self.is_init:
@@ -817,7 +822,9 @@ class Window(pyglet.window.Window):
                 self.model.batch2d.draw()
                 self.draw_reticle()
             else:
-                glClearColor(0.3, 0.0, 0.0, 0.6)
+                self.full_screen.color = (200, 0, 0)
+                self.full_screen.opacity = 100
+                self.full_screen.draw()
         self.set_2d()
         self.draw_label()
         if self.is_init:
@@ -841,9 +848,10 @@ class Window(pyglet.window.Window):
         if not self.is_init:
             if self.die:
                 # 玩家死亡
-                self.center_label.font_size = 50
+                self.center_label.font_size = 80
                 self.center_label.text = lang['game.die.text']
                 self.center_label.draw()
+                self.center_label.font_size = 20
             else:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.position
