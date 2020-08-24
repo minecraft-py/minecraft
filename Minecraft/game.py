@@ -686,7 +686,7 @@ class Window(pyglet.window.Window):
         @param x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
         @param dx, dy 鼠标移动的距离
         """
-        if self.exclusive:
+        if self.exclusive and not self.die:
             m = 0.15
             x, y = self.rotation
             x, y = x + dx * m, y + dy * m
@@ -841,6 +841,7 @@ class Window(pyglet.window.Window):
         if not self.is_init:
             if self.die:
                 # 玩家死亡
+                self.center_label.font_size = 50
                 self.center_label.text = lang['game.die.text']
                 self.center_label.draw()
             else:
