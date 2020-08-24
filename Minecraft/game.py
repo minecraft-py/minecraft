@@ -430,7 +430,7 @@ class Window(pyglet.window.Window):
         # 饥饿值
         self.hunger = []
         for i in range(1, 11):
-            self.hunger.append(Sprite(image.load(os.path.join(path['hud'], 'apple.png')),
+            self.hunger.append(Sprite(image.load(os.path.join(path['texture.hud'], 'apple.png')),
                 x=self.width - i * 17, y=self.height - 17, batch=self.model.batch2d))
 
     def save(self, dt):
@@ -822,13 +822,13 @@ class Window(pyglet.window.Window):
         if not self.is_init:
         # 在屏幕左上角绘制标签
             x, y, z = self.position
-            self.label.text = lang['game-info'] % (
+            self.label.text = lang['game.info'] % (
                 x, y, z, pyglet.clock.get_fps())
             self.label.draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
-            self.loading_label.text = lang['game-loading']
+            self.loading_label.text = lang['game.loading']
             self.loading_label.draw()
 
     def draw_reticle(self):
@@ -865,7 +865,8 @@ def setup_light():
     # 设置0号光源
     glLightfv(GL_LIGHT0, GL_DIFFUSE , (GLfloat * 4)(1, 1, 1, 1))
     glLightfv(GL_LIGHT0, GL_SPECULAR, (GLfloat * 4)(1, 1, 1, 1))
-    glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat * 4)(0, 1, 0, 1))
+    glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat * 4)(0, 0, 0, -1))
+    # 开灯
     glEnable(GL_LIGHT0)
     glEnable(GL_LIGHTING)
 

@@ -1,10 +1,10 @@
 {
-	"launcher-title": "Minecraft 启动器",
-	"launcher-new": "新世界",
-	"launcher-start": "开始游戏",
-	"launcher-exit": "退出",
-	"launcher-delete": "删除",
-	"launcher-rename": "重命名",
-	"game-loading": "初始化...",
-	"game-info": "位置: (%.1f, %.1f, %.1f) %-4d fps"
+	"launcher.title": "Minecraft 启动器",
+	"launcher.new": "新世界",
+	"launcher.start": "开始游戏",
+	"launcher.exit": "退出",
+	"launcher.delete": "删除",
+	"launcher.rename": "重命名",
+	"game.loading": "初始化...",
+	"game.info": "位置: (%.1f, %.1f, %.1f) %-4d fps"
 }

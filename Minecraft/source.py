@@ -51,16 +51,18 @@ block['craft_table'] = tex_coords((0, 3), (3, 0), (1, 3))
 block['bedrock'] = tex_coords((2, 1), (2, 1), (2, 1))
 block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
 
-# 从这里到文件末尾处, 你可以更改资源文件或目录, 以指向不同的位置
 path = {}
-path['lang'] = join('resource/json/lang', 'en' + '.json')
+path['json'] = 'resource/json'
+path['json.lang'] = join(path['json'], 'lang')
 path['texture'] = 'resource/texture/default'
-path['hud'] = join(path['texture'], 'hud')
+path['texture.hud'] = join(path['texture'], 'hud')
 path['save'] = 'resource/save'
 path['sound'] = 'resource/sound/default'
+
+settings = json.load(open(join(path['json'], 'settings.json')))
 
 sound = {}
 sound['build'] = media.load(join(path['sound'], 'build.wav'), streaming=False)
 sound['destroy'] = media.load(join(path['sound'], 'destroy.wav'), streaming=False)
 
-lang = json.load(open(path['lang']))
+lang = json.load(open(join(path['json.lang'], settings['lang'] + '.json')))

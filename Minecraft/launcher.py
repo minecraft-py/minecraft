@@ -34,20 +34,20 @@ class MinecraftLauncher(Tk):
         except:
             print('[err] No display, exit')
             exit(1)
-        self.title(lang['launcher-title'])
+        self.title(lang['launcher.title'])
         # 小部件
-        self.new_button = ttk.Button(self, text=lang['launcher-new'])
+        self.new_button = ttk.Button(self, text=lang['launcher.new'])
         self.new_button.state(['disabled'])
-        self.start_button = ttk.Button(self, text=lang['launcher-start'], command=self.start_game)
-        self.exit_button = ttk.Button(self, text=lang['launcher-exit'],  command=lambda: exit())
+        self.start_button = ttk.Button(self, text=lang['launcher.start'], command=self.start_game)
+        self.exit_button = ttk.Button(self, text=lang['launcher.exit'],  command=lambda: exit())
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
         for item in [i for i in os.listdir('resource/save') if is_game_restore(i)]:
             self.game_item_list.insert('end', item)
-        self.del_button = ttk.Button(self, text=lang['launcher-delete'])
+        self.del_button = ttk.Button(self, text=lang['launcher.delete'])
         self.del_button.state(['disabled'])
-        self.rename_button = ttk.Button(self, text=lang['launcher-rename'])
+        self.rename_button = ttk.Button(self, text=lang['launcher.rename'])
         self.rename_button.state(['disabled'])
         # 显示
         self.new_button.grid(column=0, row=0, padx=5, pady=5)
