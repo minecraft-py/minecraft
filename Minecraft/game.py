@@ -20,9 +20,16 @@ try:
     from pyglet.graphics import TextureGroup
     from pyglet.shapes import Rectangle
     from pyglet.sprite import Sprite
+    from pyglet.text import decode_attributed
     from pyglet.window import key, mouse
 except:
     print("[err] Module 'pyglet' not found. run `pip install pyglet` to install, exit")
+    exit(1)
+
+try:
+    import pyshaders
+except:
+    print("[err] Module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
     exit(1)
 
 import Minecraft.saver as saver
@@ -404,14 +411,12 @@ class Window(pyglet.window.Window):
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9, key._0]
         # 这个标签在画布的上方显示
-        self.label = pyglet.text.Label('', font_name='Arial', font_size=15,
-            x=0, y=self.height - 15, anchor_x='left', anchor_y='center',
-            color=(0, 0, 0, 255))
+        self.label = pyglet.text.DocumentLabel(decode_attributed(''),
+            x=0, y=self.height - 15, anchor_x='left', anchor_y='center')
         self.is_init =True
         # 这个标签在画布正中偏上显示
-        self.center_label = pyglet.text.Label('', font_name='Arial', font_size=20,
-            x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center',
-            color=(255, 255, 255, 255))
+        self.center_label = pyglet.text.DocumentLabel(decode_attributed(''),
+            x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center',)
         # 加载用图片
         self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
         self.loading_image.height = self.height
@@ -733,6 +738,8 @@ class Window(pyglet.window.Window):
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
             print("[info] screenshot saved in: %s" % time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
+        elif symbol == key.F11:
+            self.set_fullscreen(not self.fullscreen)
 
     def on_key_release(self, symbol, modifiers):
         """
@@ -848,20 +855,20 @@ class Window(pyglet.window.Window):
         if not self.is_init:
             if self.die:
                 # 玩家死亡
-                self.center_label.font_size = 80
-                self.center_label.text = lang['game.die.text']
+                self.center_label.document = decode_attributed('{color (255, 255, 255)}{font_size 50}' +
+                        lang['game.text.die'])
                 self.center_label.draw()
-                self.center_label.font_size = 20
             else:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.position
-                self.label.text = lang['game.info'] % (
-                        x, y, z, pyglet.clock.get_fps())
+                self.label.document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
+                        lang['game.text.info'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label.draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
-            self.center_label.text = lang['game.loading']
+            self.center_label.document = decode_attributed('{color (255, 255, 255, 255)}{font_size 25}' +
+                    lang['game.text.loading'])
             self.center_label.draw()
 
     def draw_reticle(self):

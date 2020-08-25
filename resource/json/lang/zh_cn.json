@@ -5,7 +5,7 @@
 	"launcher.exit": "退出",
 	"launcher.delete": "删除",
 	"launcher.rename": "重命名",
-	"game.loading": "初始化...",
-	"game.info": "位置: (%.1f, %.1f, %.1f) %-4d fps",
-	"game.die.text": "你失败了"
+	"game.text.loading": "初始化...",
+	"game.text.info": "位置: (%.1f, %.1f, %.1f) %-4d fps",
+	"game.text.die": "你失败了"
 }

@@ -56,6 +56,7 @@ path['json'] = 'resource/json'
 path['json.lang'] = join(path['json'], 'lang')
 path['texture'] = 'resource/texture/default'
 path['texture.hud'] = join(path['texture'], 'hud')
+path['shaders'] = 'resource/shaders'
 path['save'] = 'resource/save'
 path['sound'] = 'resource/sound/default'
 

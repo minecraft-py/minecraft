@@ -11,6 +11,8 @@ Minecraft 支持多平台, 使用 GPL 开源, 在配置低的电脑上也可以�
 ```shell
 pip install -r requirements.txt
 ```
+> 我翻阅了`pyglet`的 Github 代码库, 发现有些解决方法在 pyglet 2.0 更容易实现.
+所以这一部分涉及到 pyglet 未来版本的代码将在 v2.0 发布之后继续开发.
 
 然后, 输入`python3 -m Minecraft`运行游戏, 可能需要一些时间来加载.
 
@@ -46,6 +48,7 @@ alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 - `左Shift` - 潜行(不改变高度), 在交互方块的毗邻放置方块
 - `TAB` - 飞行与行走的切换
 - `F2` - 截屏
+- `F11` - 切换全屏
 - `ESC` - 退出游戏
 - `数字键` - 循环切换物品(目前有9种方块)
 

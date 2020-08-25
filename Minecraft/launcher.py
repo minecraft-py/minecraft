@@ -63,7 +63,7 @@ class MinecraftLauncher(Tk):
         self.iconify()
         window = Window(width=800, height=600, caption='Minecraft', resizable=True)
         window.set_name('demo')
-        window.set_exclusive_mouse(True)
+        window.set_exclusive_mouse(False)
         setup()
         pyglet.app.run()
         self.deiconify()
