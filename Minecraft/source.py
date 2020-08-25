@@ -1,7 +1,7 @@
 # Minecraft 资源
 
 import json
-from os.path import join
+from os.path import join, isfile
 from pyglet import media
 
 def tex_coord(x, y, n=4):
@@ -61,6 +61,11 @@ path['save'] = 'resource/save'
 path['sound'] = 'resource/sound/default'
 
 settings = json.load(open(join(path['json'], 'settings.json')))
+if isfile(join(path['json'], 'player.json')):
+    player = json.load(open(join(path['json'], 'player.json')))
+else:
+    print('[info] you have not registered, exit')
+    exit(1)
 
 sound = {}
 sound['build'] = media.load(join(path['sound'], 'build.wav'), streaming=False)

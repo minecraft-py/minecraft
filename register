@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+
+from time import time
+from random import randint
+from os import path
+from json import dump
+
+if __name__ == '__main__':
+    if not path.isfile('resource/json/player.json'):
+        player_id = hex(int(time()) * randint(1024, 8192) // randint(16, 64))[2:]
+        print('Your id is %s, do not change it' % player_id)
+        player_name = input('Your name: ')
+        dump({'id': player_id, 'name': player_name}, open('resource/json/player.json', 'w+'), indent='\t')
+        print('Regsitered successfully, you can use your id to play multiplayer game!')
+    else:
+        print('You have regsitered!')
+        exit(1)

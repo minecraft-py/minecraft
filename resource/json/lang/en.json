@@ -7,5 +7,6 @@
 	"launcher.rename": "Rename",
 	"game.text.loading": "Loading...",
 	"game.text.info": "position: (%.1f, %.1f, %.1f) %-4d fps",
-	"game.text.die": "You die"
+	"game.text.die": "You die",
+	"game.text.die.fall_into_void": "%s falling into the void"
 }

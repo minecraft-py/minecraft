@@ -855,7 +855,7 @@ class Window(pyglet.window.Window):
         if not self.is_init:
             if self.die:
                 # 玩家死亡
-                self.center_label.document = decode_attributed('{color (255, 255, 255)}{font_size 50}' +
+                self.center_label.document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
                         lang['game.text.die'])
                 self.center_label.draw()
             else:
@@ -867,7 +867,7 @@ class Window(pyglet.window.Window):
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
-            self.center_label.document = decode_attributed('{color (255, 255, 255, 255)}{font_size 25}' +
+            self.center_label.document = decode_attributed('{color (255, 255, 255, 255)}{font_size 15}' +
                     lang['game.text.loading'])
             self.center_label.draw()
 

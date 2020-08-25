@@ -7,5 +7,6 @@
 	"launcher.rename": "重命名",
 	"game.text.loading": "初始化...",
 	"game.text.info": "位置: (%.1f, %.1f, %.1f) %-4d fps",
-	"game.text.die": "你失败了"
+	"game.text.die": "你失败了",
+	"game.text.die.fall_into_void": "%s 坠入了虚空"
 }
