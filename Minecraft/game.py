@@ -446,6 +446,10 @@ class Window(pyglet.window.Window):
             self.set_exclusive_mouse(False)
             self.die_reason = lang['game.text.die.fall_into_void'] % player['name']
             self.die = True
+        elif self.position[1] > 512:
+            self.set_exclusive_mouse(False)
+            self.die_reason = lang['game.text.die.no_oxygen'] % player['name']
+            self.die = True
 
     def init_hud(self):
         # 初始化 HUD
