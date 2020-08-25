@@ -33,7 +33,7 @@ except:
     exit(1)
 
 import Minecraft.saver as saver
-from Minecraft.source import block, sound, path, lang
+from Minecraft.source import block, sound, path, player, lang
 
 TICKS_PER_SEC = 20
 SECTOR_SIZE = 16
@@ -416,7 +416,9 @@ class Window(pyglet.window.Window):
         self.is_init =True
         # 这个标签在画布正中偏上显示
         self.center_label = pyglet.text.DocumentLabel(decode_attributed(''),
-            x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center',)
+            x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center')
+        self.action_bar = pyglet.text.DocumentLabel(decode_attributed(''),
+                x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
         # 加载用图片
         self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
         self.loading_image.height = self.height
@@ -442,6 +444,7 @@ class Window(pyglet.window.Window):
         """
         if self.position[1] < -2:
             self.set_exclusive_mouse(False)
+            self.die_reason = lang['game.text.die.fall_into_void'] % player['name']
             self.die = True
 
     def init_hud(self):
@@ -768,6 +771,8 @@ class Window(pyglet.window.Window):
         self.label.y = self.height - 15
         self.center_label.x = self.width // 2
         self.center_label.y = self.height // 2 + 50
+        self.action_bar.x = self.width // 2
+        self.action_bar.y = self.height // 2 - 100
         # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()
@@ -857,7 +862,10 @@ class Window(pyglet.window.Window):
                 # 玩家死亡
                 self.center_label.document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
                         lang['game.text.die'])
+                self.action_bar.document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
+                        self.die_reason)
                 self.center_label.draw()
+                self.action_bar.draw()
             else:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.position

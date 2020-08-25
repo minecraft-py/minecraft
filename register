@@ -12,7 +12,7 @@ if __name__ == '__main__':
         player_name = ''
         while player_name == '':
             player_name = input('Your name: ')
-        # dump({'id': player_id, 'name': player_name}, open('resource/json/player.json', 'w+'), indent='\t')
+        dump({'id': player_id, 'name': player_name}, open('resource/json/player.json', 'w+'), indent='\t')
         print('Regsitered successfully, you can use your id to play multiplayer game!')
     else:
         print('You have regsitered!')
