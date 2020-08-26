@@ -417,6 +417,7 @@ class Window(pyglet.window.Window):
         # 这个标签在画布正中偏上显示
         self.center_label = pyglet.text.DocumentLabel(decode_attributed(''),
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center')
+        # 这个标签在画布正中偏下显示
         self.action_bar = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
         # 加载用图片
@@ -434,7 +435,7 @@ class Window(pyglet.window.Window):
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 读取玩家位置和背包
-        self.position, self.block = saver.load_player('demo')
+        self.position, self.respawn_position, self.block = saver.load_player('demo')
 
     def check_die(self, dt):
         """
@@ -467,7 +468,7 @@ class Window(pyglet.window.Window):
         """
         print('[info] save changes')
         saver.save_block(self.name, self.model.change)
-        saver.save_player(self.name, self.position, self.block)
+        saver.save_player(self.name, self.position, self.respawn_position, self.block)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -726,9 +727,15 @@ class Window(pyglet.window.Window):
                 self.dy = 0.5 * JUMP_SPEED
             elif self.dy == 0:
                 self.dy = JUMP_SPEED
+        elif symbol == key.ENTER:
+            if self.die:
+                self.die = False
+                self.position = self.respawn_position
         elif symbol == key.ESCAPE:
             self.save(0)
             self.set_exclusive_mouse(False)
+            if self.die:
+                self.close()
         elif symbol == key.TAB:
             self.flying = not self.flying
         elif symbol == key.LSHIFT:
