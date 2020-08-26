@@ -9,5 +9,5 @@
 	"game.text.info": "position: (%.1f, %.1f, %.1f) %-4d fps",
 	"game.text.die": "You die",
 	"game.text.die.fall_into_void": "%s falling into the void",
-	"game.text.die.no_oxygen": "%s have no oxygen to breath"
+	"game.text.die.no_oxygen": "%s don't have oxygen to breath"
 }

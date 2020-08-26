@@ -880,7 +880,7 @@ class Window(pyglet.window.Window):
             else:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.position
-                self.label.document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
+                self.label.document = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' +
                         lang['game.text.info'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label.draw()
         else:
