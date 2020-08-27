@@ -447,20 +447,23 @@ class Window(pyglet.window.Window):
 
         @param dt 距上次调用的时间
         """
-        if self.position[1] < -2:
-            self.set_exclusive_mouse(False)
-            self.die_reason = lang['game.text.die.fall_into_void'] % player['name']
-            self.die = True
-        elif self.position[1] > 512:
-            self.set_exclusive_mouse(False)
-            self.die_reason = lang['game.text.die.no_oxygen'] % player['name']
-            self.die = True
+        if not self.die:
+            if self.position[1] < -2:
+                self.set_exclusive_mouse(False)
+                self.die_reason = lang['game.text.die.fall_into_void'] % player['name']
+                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.die_reason))
+                self.die = True
+            elif self.position[1] > 512:
+                self.set_exclusive_mouse(False)
+                self.die_reason = lang['game.text.die.no_oxygen'] % player['name']
+                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.die_reason))
+                self.die = True
 
     def init_hud(self):
         # 初始化 HUD
         self.hud = {}
         # E 键打开的背包
-        self.hud['bag'] = Bag(50, 50, self.width - 100, self.height - 100)
+        self.hud['bag'] = Bag(100, 100, self.width - 200, self.width - 200)
         # 饥饿值
         self.hunger = []
         for i in range(1, 11):
@@ -735,13 +738,14 @@ class Window(pyglet.window.Window):
                 self.press_e = not self.press_e
         elif symbol == key.SPACE:
             if self.flying:
-                self.dy = 0.5 * JUMP_SPEED
+                self.dy = 0.1 * JUMP_SPEED
             elif self.dy == 0:
                 self.dy = JUMP_SPEED
         elif symbol == key.ENTER:
             if self.die:
                 self.die = False
                 self.position = self.respawn_position
+                self.set_exclusive_mouse(True)
         elif symbol == key.ESCAPE:
             self.save(0)
             self.set_exclusive_mouse(False)
@@ -751,7 +755,7 @@ class Window(pyglet.window.Window):
             self.flying = not self.flying
         elif symbol == key.LSHIFT:
             if self.flying:
-                self.dy = -0.5 * JUMP_SPEED
+                self.dy = -0.1 * JUMP_SPEED
             else:
                 self.stealing = True
         elif symbol == key.LCTRL:
@@ -780,8 +784,14 @@ class Window(pyglet.window.Window):
             self.strafe[1] += 1
         elif symbol == key.D:
             self.strafe[1] -= 1
+        elif symbol == key.SPACE:
+            if self.flying:
+                self.dy = 0
         elif symbol == key.LSHIFT:
-            self.stealing = False
+            if self.flying:
+                self.dy = 0
+            else:
+                self.stealing = False
         elif symbol == key.LCTRL:
             self.running = False
 
@@ -810,7 +820,7 @@ class Window(pyglet.window.Window):
         # HUD
         # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
         if not self.is_init:
-            self.hud['bag'].resize(50, 50, self.width - 100, self.height - 100)
+            self.hud['bag'].resize(100, 100, self.width - 200, self.height - 200)
             for i in range(len(self.hunger)):
                 self.hunger[i].x = self.width - (i + 1) * 17
                 self.hunger[i].y = self.height - 17

@@ -74,17 +74,12 @@ class Bag():
 
     def __init__(self, x, y, width, height):
         self._element = {}
-        self._element['seq1'] = Rectangle(x, y, width, height, color=(200, 200, 200))
-        self._element['seq2'] = Rectangle(x + 2, y + 2, width - 4, height - 4, color=(192, 192, 192))
+        self._element['seq'] = Rectangle(x, y, width, height, color=(200, 200, 200))
 
     def draw(self):
-        self._element['seq1'].draw()
-        self._element['seq2'].draw()
+        self._element['seq'].draw()
 
     def resize(self, x, y, width, height):
-        self._element['seq1'].position = (x, y)
-        self._element['seq2'].position = (x + 2, + 2)
-        self._element['seq1'].width = width
-        self._element['seq1'].height = height
-        self._element['seq2'].width = width - 4
-        self._element['seq2'].height = height - 4
+        self._element['seq'].position = (x, y)
+        self._element['seq'].width = width
+        self._element['seq'].height = height
