@@ -34,6 +34,7 @@ except:
 
 import Minecraft.saver as saver
 from Minecraft.source import block, sound, path, player, lang
+from Minecraft.hud import Bag
 
 TICKS_PER_SEC = 20
 SECTOR_SIZE = 16
@@ -380,6 +381,8 @@ class Window(pyglet.window.Window):
         self.flying = False
         self.running = False
         self.die = False
+        self.in_hud = False
+        self.press_e = False
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
         #
@@ -412,7 +415,7 @@ class Window(pyglet.window.Window):
             key._6, key._7, key._8, key._9, key._0]
         # 这个标签在画布的上方显示
         self.label = pyglet.text.DocumentLabel(decode_attributed(''),
-            x=0, y=self.height - 15, anchor_x='left', anchor_y='center')
+            x=0, y=self.height - 10, anchor_x='left', anchor_y='center')
         self.is_init =True
         # 这个标签在画布正中偏上显示
         self.center_label = pyglet.text.DocumentLabel(decode_attributed(''),
@@ -436,6 +439,7 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 读取玩家位置和背包
         self.position, self.respawn_position, self.block = saver.load_player('demo')
+        print('[info] welcome %s(id: %s)' % (player['name'], player['id']))
 
     def check_die(self, dt):
         """
@@ -454,11 +458,15 @@ class Window(pyglet.window.Window):
 
     def init_hud(self):
         # 初始化 HUD
+        self.hud = {}
+        # E 键打开的背包
+        self.hud['bag'] = Bag(50, 50, self.width - 100, self.height - 100)
         # 饥饿值
         self.hunger = []
         for i in range(1, 11):
-            self.hunger.append(Sprite(image.load(os.path.join(path['texture.hud'], 'apple.png')),
+            self.hunger.append(Sprite(image.load(os.path.join(path['texture.hud'], 'hunger.png')),
                 x=self.width - i * 17, y=self.height - 17, batch=self.model.batch2d))
+            self.hunger[i - 1].scale = 16 / 9
 
     def save(self, dt):
         """
@@ -603,7 +611,7 @@ class Window(pyglet.window.Window):
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
-        if not self.die:
+        if not self.die and not self.in_hud:
             if not self.flying:
                 # Update your vertical speed: if you are falling, speed up until you
                 # hit terminal velocity; if you are jumping, slow down until you
@@ -680,7 +688,7 @@ class Window(pyglet.window.Window):
                 texture = None
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if not self.die:
+                if not self.die and not self.in_hud:
                     if texture == 'craft_table' and (not self.stealing):
                         self.set_exclusive_mouse(False)
                     elif previous:
@@ -688,7 +696,7 @@ class Window(pyglet.window.Window):
             elif button == pyglet.window.mouse.LEFT and block:
                 if texture != 'bedrock' and not self.die:
                     self.model.remove_block(block)
-        elif not self.die:
+        elif not self.die and not self.in_hud:
             self.set_exclusive_mouse(True)
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -721,7 +729,10 @@ class Window(pyglet.window.Window):
         elif symbol == key.D:
             self.strafe[1] += 1
         elif symbol == key.E:
-            self.set_exclusive_mouse(False)
+            if not self.die:
+                self.set_exclusive_mouse(False)
+                self.in_hud = not self.in_hud
+                self.press_e = not self.press_e
         elif symbol == key.SPACE:
             if self.flying:
                 self.dy = 0.5 * JUMP_SPEED
@@ -779,7 +790,7 @@ class Window(pyglet.window.Window):
         # 标签
         print('[info] resize to %dx%d' % (self.width, self.height))
         self.label.x = 0
-        self.label.y = self.height - 15
+        self.label.y = self.height - 10
         self.center_label.x = self.width // 2
         self.center_label.y = self.height // 2 + 50
         self.action_bar.x = self.width // 2
@@ -799,6 +810,7 @@ class Window(pyglet.window.Window):
         # HUD
         # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
         if not self.is_init:
+            self.hud['bag'].resize(50, 50, self.width - 100, self.height - 100)
             for i in range(len(self.hunger)):
                 self.hunger[i].x = self.width - (i + 1) * 17
                 self.hunger[i].y = self.height - 17
@@ -844,6 +856,11 @@ class Window(pyglet.window.Window):
             if not self.die:
                 self.model.batch2d.draw()
                 self.draw_reticle()
+                if self.in_hud and self.press_e:
+                    self.full_screen.color = (0, 0, 0)
+                    self.full_screen.opacity = 100
+                    self.full_screen.draw()
+                    self.hud['bag'].draw()
             else:
                 self.full_screen.color = (200, 0, 0)
                 self.full_screen.opacity = 100
