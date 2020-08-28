@@ -6,7 +6,10 @@
 ## 游玩
 要游玩 Minecraft, 请先在终端输入:
 ```shell
-git clone https://github.com/jason-bowen-zheng/Minecraft.git
+# 非中国用户使用下面这行
+git clone https://github.com/jason-bowen-zheng/Minecraft
+# 位于中国的用户使用下面这行
+git clone https://gitee.com/jason-bowen-zheng/Minecraft
 cd Minecraft
 pip install -r requirements.txt
 ```
