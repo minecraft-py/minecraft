@@ -882,6 +882,7 @@ class Window(pyglet.window.Window):
         if self.is_init:
             self.model.init_world()
             self.init_player()
+            self.set_exclusive_mouse(True)
             self.is_init = False
 
     def draw_focused_block(self):
