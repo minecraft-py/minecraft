@@ -33,7 +33,7 @@ except:
     exit(1)
 
 import Minecraft.saver as saver
-from Minecraft.source import block, sound, path, player, lang
+from Minecraft.source import block, sound, path, player, lang, settings
 from Minecraft.hud import Bag
 
 TICKS_PER_SEC = 20
@@ -198,7 +198,7 @@ class Model(object):
         if position in self.world:
             self.remove_block(position, immediate, record=False)
         if 0 <= position[1] <= 256:
-            # 建筑限制为基岩以上, 256格以下
+            # 建筑限制为基岩以上, 256格以下.
             if record == True:
                 self.change[' '.join([str(i) for i in position])] = texture
             if texture in block:
@@ -377,21 +377,27 @@ class Window(pyglet.window.Window):
         # 窗口是否捕获鼠标
         self.exclusive = False
         # 玩家状态: 是否潜行, 是否飞行...
-        self.stealing = False
-        self.flying = False
-        self.running = False
-        self.die = False
-        self.in_hud = False
-        self.press_e = False
+        self.player = {}
+        self.player['stealing'] = False
+        self.player['flying'] = False
+        self.player['running'] = False
+        self.player['die'] = False
+        self.player['in_hud'] = False
+        self.player['press_e'] = False
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
         #
         # First element is -1 when moving forward, 1 when moving back, and 0
         # otherwise. The second element is -1 when moving left, 1 when moving
         # right, and 0 otherwise.
-        self.strafe = [0, 0]
+        self.player['strafe'] = [0, 0]
         # 玩家在世界中的位置 (x, y, z)
-        self.position = (0, 4, 0)
+        self.player['position'] = (0, 4, 0)
+        self.player['respawn_position'] = (0, 4, 0)
+        # 拓展功能
+        self.ext = {}
+        self.ext['open'] = False
+        self.ext['running'] = False
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -414,14 +420,15 @@ class Window(pyglet.window.Window):
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9, key._0]
         # 这个标签在画布的上方显示
-        self.label = pyglet.text.DocumentLabel(decode_attributed(''),
+        self.label = {}
+        self.label['top'] = pyglet.text.DocumentLabel(decode_attributed(''),
             x=0, y=self.height - 10, anchor_x='left', anchor_y='center')
         self.is_init =True
         # 这个标签在画布正中偏上显示
-        self.center_label = pyglet.text.DocumentLabel(decode_attributed(''),
+        self.label['center'] = pyglet.text.DocumentLabel(decode_attributed(''),
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center')
         # 这个标签在画布正中偏下显示
-        self.action_bar = pyglet.text.DocumentLabel(decode_attributed(''),
+        self.label['actionbar'] = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
         # 加载用图片
         self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
@@ -438,7 +445,7 @@ class Window(pyglet.window.Window):
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 读取玩家位置和背包
-        self.position, self.respawn_position, self.block = saver.load_player('demo')
+        self.player['position'], self.player['respawn_position'], self.block = saver.load_player('demo')
         print('[info] welcome %s(id: %s)' % (player['name'], player['id']))
 
     def check_die(self, dt):
@@ -447,20 +454,20 @@ class Window(pyglet.window.Window):
 
         @param dt 距上次调用的时间
         """
-        if not self.die:
-            if self.position[1] < -2:
+        if not self.player['die']:
+            if self.player['position'][1] < -2:
                 self.set_exclusive_mouse(False)
-                self.die_reason = lang['game.text.die.fall_into_void'] % player['name']
-                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.die_reason))
-                self.die = True
-            elif self.position[1] > 512:
+                self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
+                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
+                self.player['die'] = True
+            elif self.player['position'][1] > 512:
                 self.set_exclusive_mouse(False)
-                self.die_reason = lang['game.text.die.no_oxygen'] % player['name']
-                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.die_reason))
-                self.die = True
+                self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
+                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
+                self.player['die'] = True
 
-    def init_hud(self):
-        # 初始化 HUD
+    def init_player(self):
+        # 初始化玩家
         self.hud = {}
         # E 键打开的背包
         self.hud['bag'] = Bag(100, 100, self.width - 200, self.width - 200)
@@ -479,7 +486,7 @@ class Window(pyglet.window.Window):
         """
         print('[info] save changes')
         saver.save_block(self.name, self.model.change)
-        saver.save_player(self.name, self.position, self.respawn_position, self.block)
+        saver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -518,30 +525,18 @@ class Window(pyglet.window.Window):
             Tuple containing the velocity in x, y, and z respectively.
 
         """
-        if any(self.strafe):
+        if any(self.player['strafe']):
             x, y = self.rotation
-            strafe = math.degrees(math.atan2(*self.strafe))
+            strafe = math.degrees(math.atan2(*self.player['strafe']))
             y_angle = math.radians(y)
             x_angle = math.radians(x + strafe)
-            if self.flying:
-                m = math.cos(y_angle)
-                dy = math.sin(y_angle)
-                if self.strafe[1]:
-                    # 向左或右移动
-                    dy = 0.0
-                    m = 1
-                if self.strafe[0] > 0:
-                    # 向后移动
-                    dy *= -1
-                # When you are flying up or down, you have less left and right
-                # motion.
-                dx = math.cos(x_angle) * m
-                dz = math.sin(x_angle) * m
+            if self.player['flying']:
+                pass
             else:
                 dy = 0.0
                 dx = math.cos(x_angle)
                 dz = math.sin(x_angle)
-        elif self.flying and not self.dy == 0:
+        elif self.player['flying'] and not self.dy == 0:
             dx = 0.0
             dy = self.dy
             dz = 0.0
@@ -558,7 +553,7 @@ class Window(pyglet.window.Window):
         @param dt 距上次调用的时间
         """
         self.model.process_queue()
-        sector = sectorize(self.position)
+        sector = sectorize(self.player['position'])
         if sector != self.sector:
             self.model.change_sectors(self.sector, sector)
             if self.sector is None:
@@ -573,9 +568,9 @@ class Window(pyglet.window.Window):
         # 这个函数定时改变世界状态
         print('[info] update status')
         area = []
-        for x in range(int(self.position[0]) - 16, int(self.position[0]) + 17):
-            for y in range(int(self.position[1]) - 16, int(self.position[1]) + 17):
-                for z in range(int(self.position[2]) - 16, int(self.position[2]) + 17):
+        for x in range(int(self.player['position'][0]) - 16, int(self.player['position'][0]) + 17):
+            for y in range(int(self.player['position'][1]) - 16, int(self.player['position'][1]) + 17):
+                for z in range(int(self.player['position'][2]) - 16, int(self.player['position'][2]) + 17):
                     # 以玩家为中心的 32*32*32 范围
                     area.append((x, y, z))
         else:
@@ -601,11 +596,11 @@ class Window(pyglet.window.Window):
 
         """
         # 移动速度
-        if self.flying:
+        if self.player['flying']:
             speed = FLYING_SPEED
-        elif self.running:
+        elif self.player['running'] or self.ext['running']:
             speed = RUNNING_SPEED
-        elif self.stealing:
+        elif self.player['stealing']:
             speed = STEALING_SPEED
         else:
             speed = WALKING_SPEED
@@ -614,8 +609,8 @@ class Window(pyglet.window.Window):
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
-        if not self.die and not self.in_hud:
-            if not self.flying:
+        if not self.player['die'] and not self.player['in_hud']:
+            if not self.player['flying']:
                 # Update your vertical speed: if you are falling, speed up until you
                 # hit terminal velocity; if you are jumping, slow down until you
                 # start falling.
@@ -623,9 +618,9 @@ class Window(pyglet.window.Window):
                 self.dy = max(self.dy, -TERMINAL_VELOCITY)
                 dy += self.dy * dt
             # collisions
-            x, y, z = self.position
+            x, y, z = self.player['position']
             x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
-            self.position = (x, y, z)
+            self.player['position'] = (x, y, z)
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -684,22 +679,22 @@ class Window(pyglet.window.Window):
         """
         if self.exclusive:
             vector = self.get_sight_vector()
-            block, previous = self.model.hit_test(self.position, vector)
+            block, previous = self.model.hit_test(self.player['position'], vector)
             if block:
                 texture = self.model.world[block]
             else:
                 texture = None
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if not self.die and not self.in_hud:
-                    if texture == 'craft_table' and (not self.stealing):
+                if not self.player['die'] and not self.player['in_hud']:
+                    if texture == 'craft_table' and (not self.player['stealing']):
                         self.set_exclusive_mouse(False)
                     elif previous:
                         self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
-                if texture != 'bedrock' and not self.die:
+                if texture != 'bedrock' and not self.player['die']:
                     self.model.remove_block(block)
-        elif not self.die and not self.in_hud:
+        elif not self.player['die'] and not self.player['in_hud']:
             self.set_exclusive_mouse(True)
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -709,7 +704,7 @@ class Window(pyglet.window.Window):
         @param x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
         @param dx, dy 鼠标移动的距离
         """
-        if self.exclusive and not self.die:
+        if self.exclusive and not self.player['die']:
             m = 0.15
             x, y = self.rotation
             x, y = x + dx * m, y + dy * m
@@ -724,49 +719,56 @@ class Window(pyglet.window.Window):
         @param modifiers 同时按下的修饰键
         """
         if symbol == key.W:
-            self.strafe[0] -= 1
+            self.player['strafe'][0] -= 1
         elif symbol == key.S:
-            self.strafe[0] += 1
+            self.player['strafe'][0] += 1
         elif symbol == key.A:
-            self.strafe[1] -= 1
+            self.player['strafe'][1] -= 1
         elif symbol == key.D:
-            self.strafe[1] += 1
+            self.player['strafe'][1] += 1
         elif symbol == key.E:
-            if not self.die:
+            if not self.player['die']:
                 self.set_exclusive_mouse(False)
-                self.in_hud = not self.in_hud
-                self.press_e = not self.press_e
+                self.player['in_hud'] = not self.player['in_hud']
+                self.player['press_e'] = not self.player['press_e']
+        elif symbol == key.R:
+            if self.ext['open']:
+                self.ext['running'] = not self.ext['running']
+                self.ext['open'] = False
+                print('[info] %s(id: %s) extra function running: %s' % (player['name'], player['id'], self.ext['running']))
         elif symbol == key.SPACE:
-            if self.flying:
+            if self.player['flying']:
                 self.dy = 0.1 * JUMP_SPEED
             elif self.dy == 0:
                 self.dy = JUMP_SPEED
         elif symbol == key.ENTER:
-            if self.die:
-                self.die = False
-                self.position = self.respawn_position
+            if self.player['die']:
+                self.player['die'] = False
+                self.player['position'] = self.player['respawn_position']
                 self.set_exclusive_mouse(True)
         elif symbol == key.ESCAPE:
             self.save(0)
             self.set_exclusive_mouse(False)
-            if self.die:
+            if self.player['die']:
                 self.close()
         elif symbol == key.TAB:
-            self.flying = not self.flying
+            self.player['flying'] = not self.player['flying']
         elif symbol == key.LSHIFT:
-            if self.flying:
+            if self.player['flying']:
                 self.dy = -0.1 * JUMP_SPEED
             else:
-                self.stealing = True
+                self.player['stealing'] = True
         elif symbol == key.LCTRL:
-            if not self.flying:
-                self.running = True
+            if not self.player['flying']:
+                self.player['running'] = True
         elif symbol in self.num_keys:
             index = (symbol - self.num_keys[0]) % len(self.inventory)
             self.block = self.inventory[index]
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
             print("[info] screenshot saved in: %s" % time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
+        elif symbol == key.F3:
+            self.ext['open'] = True
         elif symbol == key.F11:
             self.set_fullscreen(not self.fullscreen)
 
@@ -777,34 +779,34 @@ class Window(pyglet.window.Window):
         @param symbol 按下的键
         """
         if symbol == key.W:
-            self.strafe[0] += 1
+            self.player['strafe'][0] += 1
         elif symbol == key.S:
-            self.strafe[0] -= 1
+            self.player['strafe'][0] -= 1
         elif symbol == key.A:
-            self.strafe[1] += 1
+            self.player['strafe'][1] += 1
         elif symbol == key.D:
-            self.strafe[1] -= 1
+            self.player['strafe'][1] -= 1
         elif symbol == key.SPACE:
-            if self.flying:
+            if self.player['flying']:
                 self.dy = 0
         elif symbol == key.LSHIFT:
-            if self.flying:
+            if self.player['flying']:
                 self.dy = 0
             else:
-                self.stealing = False
+                self.player['stealing'] = False
         elif symbol == key.LCTRL:
-            self.running = False
+            self.player['running'] = False
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
         print('[info] resize to %dx%d' % (self.width, self.height))
-        self.label.x = 0
-        self.label.y = self.height - 10
-        self.center_label.x = self.width // 2
-        self.center_label.y = self.height // 2 + 50
-        self.action_bar.x = self.width // 2
-        self.action_bar.y = self.height // 2 - 100
+        self.label['top'].x = 0
+        self.label['top'].y = self.height - 10
+        self.label['center'].x = self.width // 2
+        self.label['center'].y = self.height // 2 + 50
+        self.label['actionbar'].x = self.width // 2
+        self.label['actionbar'].y = self.height // 2 - 100
         # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()
@@ -851,7 +853,7 @@ class Window(pyglet.window.Window):
         x, y = self.rotation
         glRotatef(x, 0, 1, 0)
         glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
-        x, y, z = self.position
+        x, y, z = self.player['position']
         glTranslatef(-x, -y, -z)
 
     def on_draw(self):
@@ -863,10 +865,10 @@ class Window(pyglet.window.Window):
             self.model.batch3d.draw()
             self.draw_focused_block()
             self.set_2d()
-            if not self.die:
+            if not self.player['die']:
                 self.model.batch2d.draw()
                 self.draw_reticle()
-                if self.in_hud and self.press_e:
+                if self.player['in_hud'] and self.player['press_e']:
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
                     self.full_screen.draw()
@@ -879,13 +881,13 @@ class Window(pyglet.window.Window):
         self.draw_label()
         if self.is_init:
             self.model.init_world()
-            self.init_hud()
+            self.init_player()
             self.is_init = False
 
     def draw_focused_block(self):
         # 在十字线选中的方块绘制黑边
         vector = self.get_sight_vector()
-        block = self.model.hit_test(self.position, vector)[0]
+        block = self.model.hit_test(self.player['position'], vector)[0]
         if block:
             x, y, z = block
             vertex_data = cube_vertices(x, y, z, 0.51)
@@ -896,26 +898,26 @@ class Window(pyglet.window.Window):
 
     def draw_label(self):
         if not self.is_init:
-            if self.die:
+            if self.player['die']:
                 # 玩家死亡
-                self.center_label.document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
+                self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
                         lang['game.text.die'])
-                self.action_bar.document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
+                self.label['actionbar'].document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
                         self.die_reason)
-                self.center_label.draw()
-                self.action_bar.draw()
+                self.label['center'].draw()
+                self.label['actionbar'].draw()
             else:
                 # 在屏幕左上角绘制标签
-                x, y, z = self.position
-                self.label.document = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' +
+                x, y, z = self.player['position']
+                self.label['top'].document = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' +
                         lang['game.text.info'] % (x, y, z, pyglet.clock.get_fps()))
-                self.label.draw()
+                self.label['top'].draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
-            self.center_label.document = decode_attributed('{color (255, 255, 255, 255)}{font_size 15}' +
+            self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 15}' +
                     lang['game.text.loading'])
-            self.center_label.draw()
+            self.label['center'].draw()
 
     def draw_reticle(self):
         # 在屏幕中央画十字线
