@@ -1,4 +1,5 @@
 > 感谢 [fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目
+
 > [English](README.md) | 简体中文
 
 # Minecraft
