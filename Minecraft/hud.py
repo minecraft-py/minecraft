@@ -39,7 +39,7 @@ class Dialogue():
         print('[info][%s] dialogue add: %s' % (time.strftime('%H:%M:%S'), text))
         self.dialogue.append(text)
         self.last = time.time()
-        if len(self.shown) < 5:
+        if len(self.shown) < 10:
             self.shown.append(text)
         else:
             self.shown.pop(0)
