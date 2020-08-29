@@ -27,7 +27,7 @@ class Dialogue():
 
     def __init__(self, width, height):
         self.dialogue_label = pyglet.text.DocumentLabel(decode_attributed(''),
-                x=0, y=height - 100, width=width // 2, multiline=True)
+                x=0, y=height - 75, width=width // 2, multiline=True)
         # 全部聊天内容
         self.dialogue = []
         # 实际显示的聊天内容
@@ -47,13 +47,13 @@ class Dialogue():
 
     def draw(self):
         # 两个换行符表示真正的换行
-        text = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' + '\n\n'.join(self.shown))
+        text = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' + '\n\n'.join(self.shown))
         self.dialogue_label.document = text
         self.dialogue_label.draw()
         
     def resize(self, width, height):
         self.dialogue_label.x = 0
-        self.dialogue_label.y = height - 100
+        self.dialogue_label.y = height - 75
         self.dialogue_label.width = width // 2
 
     def update(self):

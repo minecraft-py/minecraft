@@ -398,6 +398,7 @@ class Window(pyglet.window.Window):
         self.ext = {}
         self.ext['open'] = False
         self.ext['running'] = False
+        self.ext['position'] = False
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -422,7 +423,7 @@ class Window(pyglet.window.Window):
         # 这个标签在画布的上方显示
         self.label = {}
         self.label['top'] = pyglet.text.DocumentLabel(decode_attributed(''),
-            x=0, y=self.height - 10, anchor_x='left', anchor_y='center')
+            x=0, y=self.height - 30, anchor_x='left', anchor_y='center')
         self.is_init =True
         # 这个标签在画布正中偏上显示
         self.label['center'] = pyglet.text.DocumentLabel(decode_attributed(''),
@@ -479,9 +480,9 @@ class Window(pyglet.window.Window):
         self.status['hunger'] = []
         for i in range(1, 11):
             self.status['heart'].append(Sprite(image.load(os.path.join(path['texture.hud'], 'heart.png')),
-                x=self.width - i * 21, y=self.height - 21, batch=self.model.batch2d))
+                x=(i - 1) * 21, y=self.height - 21, batch=self.model.batch2d))
             self.status['hunger'].append(Sprite(image.load(os.path.join(path['texture.hud'], 'hunger.png')),
-                x=self.width - i * 21, y=self.height - 44, batch=self.model.batch2d))
+                x=self.width - i * 21, y=self.height - 21, batch=self.model.batch2d))
 
     def save(self, dt):
         """
@@ -739,11 +740,18 @@ class Window(pyglet.window.Window):
                 self.set_exclusive_mouse(False)
                 self.player['in_hud'] = not self.player['in_hud']
                 self.player['press_e'] = not self.player['press_e']
+        elif symbol == key.P:
+            if self.ext['open']:
+                self.ext['position'] = not self.ext['position']
+                self.ext['open'] = False
+                print('[info][%s] %s(id: %s) extra function position: %s' % (time.strftime('%H:%M:%S'),player['name'],
+                    player['id'], self.ext['position']))
         elif symbol == key.R:
             if self.ext['open']:
                 self.ext['running'] = not self.ext['running']
                 self.ext['open'] = False
-                print('[info] %s(id: %s) extra function running: %s' % (player['name'], player['id'], self.ext['running']))
+                print('[info][%s] %s(id: %s) extra function running: %s' % (time.strftime('%H:%M:%S'), player['name'],
+                    player['id'], self.ext['running']))
         elif symbol == key.SPACE:
             if self.player['flying']:
                 self.dy = 0.1 * JUMP_SPEED
@@ -810,7 +818,7 @@ class Window(pyglet.window.Window):
         # 标签
         print('[info][%s] resize to %dx%d' % (time.strftime('%H:%M:%S'), self.width, self.height))
         self.label['top'].x = 0
-        self.label['top'].y = self.height - 10
+        self.label['top'].y = self.height - 30
         self.label['center'].x = self.width // 2
         self.label['center'].y = self.height // 2 + 50
         self.label['actionbar'].x = self.width // 2
@@ -834,10 +842,10 @@ class Window(pyglet.window.Window):
         if not self.is_init:
             self.hud['bag'].resize(100, 100, self.width - 200, self.height - 200)
             for i in range(len(self.status['heart'])):
-                self.status['heart'][i].x = self.width - (i + 1) * 21
+                self.status['heart'][i].x = i * 21
                 self.status['heart'][i].y = self.height - 21
                 self.status['hunger'][i].x = self.width - (i + 1) * 21
-                self.status['hunger'][i].y = self.height - 44
+                self.status['hunger'][i].y = self.height - 21 
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -919,10 +927,10 @@ class Window(pyglet.window.Window):
                         self.die_reason)
                 self.label['center'].draw()
                 self.label['actionbar'].draw()
-            else:
+            elif self.ext['position']:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.player['position']
-                self.label['top'].document = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' +
+                self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
                         lang['game.text.info'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label['top'].draw()
             self.dialogue.draw()
