@@ -23,7 +23,7 @@ class Bag():
 
 
 class Dialogue():
-    # 显示在左边面的聊天记录
+    # 显示在左面的聊天记录
 
     def __init__(self, width, height):
         self.dialogue_label = pyglet.text.DocumentLabel(decode_attributed(''),
@@ -46,7 +46,8 @@ class Dialogue():
             self.shown.append(text)
 
     def draw(self):
-        text = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' + '\n'.join(self.shown))
+        # 两个换行符表示真正的换行
+        text = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' + '\n\n'.join(self.shown))
         self.dialogue_label.document = text
         self.dialogue_label.draw()
         
