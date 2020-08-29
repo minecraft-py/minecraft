@@ -49,6 +49,7 @@ alias Minecraft="cd ~/Minecraft && python3 -m Minecraft && cd - >> /dev/null"
 - `TAB` - 飞行与行走的切换
 - `F2` - 截屏
 - `F3` - 拓展功能(先按`F3`, 松开, 再按下一个按键)
+  - `P` - 显示玩家坐标
   - `R` - 强制疾跑(飞行忽略)
 - `F11` - 切换全屏
 - `ESC` - 退出游戏
