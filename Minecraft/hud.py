@@ -1,76 +1,13 @@
 # 游戏用户界面小部件
 
 import pyglet
-import pyglet.text
-from pyglet.shapes import Line, Rectangle
-
-class BaseHUD(pyglet.event.EventDispatcher):
-
-    def __init__(self, x, y, width, height):
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
-
-    @property
-    def x(self):
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        self._x = value
-
-    @property
-    def y(self):
-        return self._y
-
-    @y.setter
-    def y(self, value):
-        self._y = value
-
-    @property
-    def width(self):
-        return self._width
-
-    @width.setter
-    def width(self, value):
-        self._width = value
-
-    @property
-    def height(self):
-        return self._height
-
-    @height.setter
-    def height(self, value):
-        self._height = value
-
-    @property
-    def aabb(self):
-        return self._x, self._y, self._x + self._width, self._y + self._height
-
-    def _check_hit(self, x, y):
-        return self._x < x < self._x + self._width and self._y < y < self._y + self._height
-
-    def on_mouse_press(self, x, y, buttons, modifiers):
-        pass
-
-    def on_mouse_release(self, x, y, buttons, modifiers):
-        pass
-
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        pass
-
-    def on_mouse_scroll(self, x, y, mouse, direction):
-        pass
-
-
-BaseHUD.register_event_type('on_mouse_press')
-BaseHUD.register_event_type('on_mouse_release')
-BaseHUD.register_event_type('on_mouse_drag')
-BaseHUD.register_event_type('on_mouse_scroll')
+from pyglet.text import decode_attributed
+from pyglet.shapes import Rectangle
+import time
 
 
 class Bag():
+    # 按 E 键打开的背包
 
     def __init__(self, x, y, width, height):
         self._element = {}
@@ -83,3 +20,41 @@ class Bag():
         self._element['seq'].position = (x, y)
         self._element['seq'].width = width
         self._element['seq'].height = height
+
+
+class Dialogue():
+    # 显示在左边面的聊天记录
+
+    def __init__(self, width, height):
+        self.dialogue_label = pyglet.text.DocumentLabel(decode_attributed(''),
+                x=0, y=height - 100, width=width // 2, multiline=True)
+        # 全部聊天内容
+        self.dialogue = []
+        # 实际显示的聊天内容
+        self.shown = []
+        # 最后一条聊天发送的时间
+        self.last = time.time()
+
+    def add_dialogue(self, text):
+        print('[info][%s] dialogue add: %s' % (time.strftime('%H:%M:%S'), text))
+        self.dialogue.append(text)
+        self.last = time.time()
+        if len(self.shown) < 5:
+            self.shown.append(text)
+        else:
+            self.shown.pop(0)
+            self.shown.append(text)
+
+    def draw(self):
+        text = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' + '\n'.join(self.shown))
+        self.dialogue_label.document = text
+        self.dialogue_label.draw()
+        
+    def resize(self, width, height):
+        self.dialogue_label.x = 0
+        self.dialogue_label.y = height - 100
+        self.dialogue_label.width = width // 2
+
+    def update(self):
+        if time.time() - self.last > 10.0:
+            self.shown.clear()

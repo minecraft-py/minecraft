@@ -34,7 +34,7 @@ except:
 
 import Minecraft.saver as saver
 from Minecraft.source import block, sound, path, player, lang, settings
-from Minecraft.hud import Bag
+from Minecraft.hud import Bag, Dialogue
 
 TICKS_PER_SEC = 20
 SECTOR_SIZE = 16
@@ -141,7 +141,7 @@ class Model(object):
 
     def init_world(self):
         # 放置所有方块以初始化世界, 非常耗时
-        print('[info] init world')
+        print('[info][%s] init world' % time.strftime('%H:%M:%S'))
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, 0, z), 'bedrock', record=False)
@@ -152,7 +152,7 @@ class Model(object):
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, y, z), 'grass', record=False)
-        print('[info] load block')
+        print('[info][%s] load block' % time.strftime('%H:%M:%S'))
         saver.load_block(self.name, self.add_block, self.remove_block)
 
     def hit_test(self, position, vector, max_distance=8):
@@ -407,7 +407,7 @@ class Window(pyglet.window.Window):
         self.rotation = (0, 0)
         # Which sector the player is currently in.
         self.sector = None
-        # The crosshairs at the center of the screen.
+        # 这个十字在屏幕中央
         self.reticle = None
         # Velocity in the y (upward) direction.
         self.dy = 0
@@ -436,6 +436,8 @@ class Window(pyglet.window.Window):
         self.loading_image.width = self.width
         # 覆盖屏幕的矩形
         self.full_screen = Rectangle(0, 0, self.width, self.height)
+        # 聊天区
+        self.dialogue = Dialogue(self.width, self.height)
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
         # 检测玩家是否应该死亡
@@ -444,9 +446,7 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
-        # 读取玩家位置和背包
-        self.player['position'], self.player['respawn_position'], self.block = saver.load_player('demo')
-        print('[info] welcome %s(id: %s)' % (player['name'], player['id']))
+        print('[info][%s] welcome %s(id: %s)' % (time.strftime('%H:%M:%S'), player['name'], player['id']))
 
     def check_die(self, dt):
         """
@@ -458,12 +458,14 @@ class Window(pyglet.window.Window):
             if self.player['position'][1] < -2:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
-                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
+                print('[info][%s] %s(id: %s) die: %s' % (time.strftime('%H:%M:%S'),
+                    player['name'], player['id'], self.player['die_reason']))
                 self.player['die'] = True
             elif self.player['position'][1] > 512:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
-                print('[info] %s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
+                print('[info][%s] %s(id: %s) die: %s' % (time.strftime('%H:%M:%S'),
+                    player['name'], player['id'], self.player['die_reason']))
                 self.player['die'] = True
 
     def init_player(self):
@@ -472,11 +474,14 @@ class Window(pyglet.window.Window):
         # E 键打开的背包
         self.hud['bag'] = Bag(100, 100, self.width - 200, self.width - 200)
         # 饥饿值
-        self.hunger = []
+        self.status = {}
+        self.status['heart'] = []
+        self.status['hunger'] = []
         for i in range(1, 11):
-            self.hunger.append(Sprite(image.load(os.path.join(path['texture.hud'], 'hunger.png')),
-                x=self.width - i * 17, y=self.height - 17, batch=self.model.batch2d))
-            self.hunger[i - 1].scale = 16 / 9
+            self.status['heart'].append(Sprite(image.load(os.path.join(path['texture.hud'], 'heart.png')),
+                x=self.width - i * 21, y=self.height - 21, batch=self.model.batch2d))
+            self.status['hunger'].append(Sprite(image.load(os.path.join(path['texture.hud'], 'hunger.png')),
+                x=self.width - i * 21, y=self.height - 44, batch=self.model.batch2d))
 
     def save(self, dt):
         """
@@ -484,7 +489,7 @@ class Window(pyglet.window.Window):
 
         @param dt 距上次调用的时间
         """
-        print('[info] save changes')
+        print('[info][%s] save changes' % time.strftime('%H:%M:%S'))
         saver.save_block(self.name, self.model.change)
         saver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
 
@@ -497,6 +502,8 @@ class Window(pyglet.window.Window):
         # 设置游戏存档名
         self.name = name
         self.model = Model(name)
+        # 读取玩家位置和背包
+        self.player['position'], self.player['respawn_position'], self.block = saver.load_player(self.name)
 
     def get_sight_vector(self):
         """ Returns the current line of sight vector indicating the direction
@@ -553,6 +560,7 @@ class Window(pyglet.window.Window):
         @param dt 距上次调用的时间
         """
         self.model.process_queue()
+        self.dialogue.update()
         sector = sectorize(self.player['position'])
         if sector != self.sector:
             self.model.change_sectors(self.sector, sector)
@@ -566,12 +574,12 @@ class Window(pyglet.window.Window):
 
     def update_status(self, dt):
         # 这个函数定时改变世界状态
-        print('[info] update status')
+        print('[info][%s] update status' % time.strftime('%H:%M:%S'))
         area = []
         for x in range(int(self.player['position'][0]) - 16, int(self.player['position'][0]) + 17):
-            for y in range(int(self.player['position'][1]) - 16, int(self.player['position'][1]) + 17):
+            for y in range(int(self.player['position'][1]) - 2, int(self.player['position'][1]) + 3):
                 for z in range(int(self.player['position'][2]) - 16, int(self.player['position'][2]) + 17):
-                    # 以玩家为中心的 32*32*32 范围
+                    # 以玩家为中心的 32*32*4 范围
                     area.append((x, y, z))
         else:
             for position in [exist for exist in area if exist in self.model.world]:
@@ -800,7 +808,7 @@ class Window(pyglet.window.Window):
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
-        print('[info] resize to %dx%d' % (self.width, self.height))
+        print('[info][%s] resize to %dx%d' % (time.strftime('%H:%M:%S'), self.width, self.height))
         self.label['top'].x = 0
         self.label['top'].y = self.height - 10
         self.label['center'].x = self.width // 2
@@ -819,13 +827,17 @@ class Window(pyglet.window.Window):
         self.full_screen.position = (0, 0)
         self.full_screen.width = self.width
         self.full_screen.height = self.height
+        # 聊天区
+        self.dialogue.resize(self.width, self.height)
         # HUD
         # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
         if not self.is_init:
             self.hud['bag'].resize(100, 100, self.width - 200, self.height - 200)
-            for i in range(len(self.hunger)):
-                self.hunger[i].x = self.width - (i + 1) * 17
-                self.hunger[i].y = self.height - 17
+            for i in range(len(self.status['heart'])):
+                self.status['heart'][i].x = self.width - (i + 1) * 21
+                self.status['heart'][i].y = self.height - 21
+                self.status['hunger'][i].x = self.width - (i + 1) * 21
+                self.status['hunger'][i].y = self.height - 44
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -913,6 +925,7 @@ class Window(pyglet.window.Window):
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 200)}{background_color (0, 0, 0, 32)}' +
                         lang['game.text.info'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label['top'].draw()
+            self.dialogue.draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
@@ -929,7 +942,7 @@ class Window(pyglet.window.Window):
 
 def setup_fog():
     # 配置 OpenGL 的雾属性
-    print('[info] setup fog')
+    print('[info][%s] setup fog' % time.strftime('%H:%M:%S'))
     # 启用雾
     glEnable(GL_FOG)
     # 设置雾的颜色
@@ -944,7 +957,7 @@ def setup_fog():
 
 def setup_light():
     # 设置 OpenGL 环境光
-    print('[info] setup light')
+    print('[info][%s] setup light' % time.strftime('%H:%M:%S'))
     # 启用双面光照
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE , GL_TRUE)
     # 光源衰减
@@ -961,7 +974,7 @@ def setup_light():
 
 def setup():
     # 基本的 OpenGL 设置
-    print('[info] setup')
+    print('[info][%s] setup' % time.strftime('%H:%M:%S'))
     # 设置背景颜色. 比如在 RGBA 模式下的天空
     glClearColor(0.5, 0.69, 1.0, 1)
     # 启用面剔除
