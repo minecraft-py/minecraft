@@ -1,11 +1,12 @@
 # Minecraft 主程序
 
+from collections import deque
 import json
 import math
 import os
 import random
+import sys
 import time
-from collections import deque
 
 try:
     from noise import snoise2 as noise2
@@ -396,9 +397,10 @@ class Window(pyglet.window.Window):
         self.player['respawn_position'] = (0, 4, 0)
         # 拓展功能
         self.ext = {}
+        self.ext['debug'] = False
         self.ext['open'] = False
-        self.ext['running'] = False
         self.ext['position'] = False
+        self.ext['running'] = False
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -734,7 +736,14 @@ class Window(pyglet.window.Window):
         elif symbol == key.A:
             self.player['strafe'][1] -= 1
         elif symbol == key.D:
-            self.player['strafe'][1] += 1
+            if self.ext['open']:
+                self.ext['debug'] = not self.ext['debug']
+                self.ext['position'] = False
+                self.ext['open'] = False
+                print('[info][%s] %s(id: %s) extra function debug: %s' % (time.strftime('%H:%M:%S'),player['name'],
+                    player['id'], self.ext['debug']))
+            else:
+                self.player['strafe'][1] += 1
         elif symbol == key.E:
             if not self.player['die']:
                 self.set_exclusive_mouse(False)
@@ -743,6 +752,7 @@ class Window(pyglet.window.Window):
         elif symbol == key.P:
             if self.ext['open']:
                 self.ext['position'] = not self.ext['position']
+                self.ext['debug'] = False
                 self.ext['open'] = False
                 print('[info][%s] %s(id: %s) extra function position: %s' % (time.strftime('%H:%M:%S'),player['name'],
                     player['id'], self.ext['position']))
