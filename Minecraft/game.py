@@ -8,10 +8,15 @@ import random
 import sys
 import time
 
+import Minecraft.saver as saver
+from Minecraft.source import block, sound, path, player, lang, settings
+from Minecraft.hud import Bag, Dialogue
+from Minecraft.utils import *
+
 try:
     from noise import snoise2 as noise2
 except ModuleNotFoundError:
-    print("[err] Module 'noise' not found. run `pip install noise` to install, exit")
+    log_err("Module 'noise' not found. run `pip install noise` to install, exit")
     exit(1)
 
 try:
@@ -24,96 +29,14 @@ try:
     from pyglet.text import decode_attributed
     from pyglet.window import key, mouse
 except:
-    print("[err] Module 'pyglet' not found. run `pip install pyglet` to install, exit")
+    log_err("Module 'pyglet' not found. run `pip install pyglet` to install, exit")
     exit(1)
 
 try:
     import pyshaders
 except:
-    print("[err] Module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
+    log_err("Module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
     exit(1)
-
-import Minecraft.saver as saver
-from Minecraft.source import block, sound, path, player, lang, settings
-from Minecraft.hud import Bag, Dialogue
-
-TICKS_PER_SEC = 20
-SECTOR_SIZE = 16
-
-MAX_SIZE = 64
-
-STEALING_SPEED = 3
-WALKING_SPEED = 5
-RUNNING_SPEED = 8
-FLYING_SPEED = 10
-
-GRAVITY = 20.0
-MAX_JUMP_HEIGHT = 1.0 # 大约是每个方块的高度
-# 获得跳跃的高度, 首先计算公式:
-#    v_t = v_0 + a * t
-# for the time at which you achieve maximum height, where a is the acceleration
-# due to gravity and v_t = 0. This gives:
-#    t = - v_0 / a
-# Use t and the desired MAX_JUMP_HEIGHT to solve for v_0 (jump speed) in
-#    s = s_0 + v_0 * t + (a * t ** 2) / 2
-JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
-TERMINAL_VELOCITY = 50
-
-PLAYER_HEIGHT = 2
-
-def cube_vertices(x, y, z, n):
-    # 返回在 x, y, z 坐标的方形顶点
-    return [
-        x-n,y+n,z-n, x-n,y+n,z+n, x+n,y+n,z+n, x+n,y+n,z-n,  # 顶部
-        x-n,y-n,z-n, x+n,y-n,z-n, x+n,y-n,z+n, x-n,y-n,z+n,  # 底部
-        x-n,y-n,z-n, x-n,y-n,z+n, x-n,y+n,z+n, x-n,y+n,z-n,  # 左边
-        x+n,y-n,z+n, x+n,y-n,z-n, x+n,y+n,z-n, x+n,y+n,z+n,  # 右边
-        x-n,y-n,z+n, x+n,y-n,z+n, x+n,y+n,z+n, x-n,y+n,z+n,  # 前面
-        x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
-    ]
-
-FACES = [
-    ( 0, 1, 0),
-    ( 0,-1, 0),
-    (-1, 0, 0),
-    ( 1, 0, 0),
-    ( 0, 0, 1),
-    ( 0, 0,-1),
-]
-
-def normalize(position):
-    """ Accepts `position` of arbitrary precision and returns the block
-    containing that position.
-
-    Parameters
-    ----------
-    position : tuple of len 3
-
-    Returns
-    -------
-    block_position : tuple of ints of len 3
-
-    """
-    x, y, z = position
-    x, y, z = (int(round(x)), int(round(y)), int(round(z)))
-    return (x, y, z)
-
-def sectorize(position):
-    """ Returns a tuple representing the sector for the given `position`.
-
-    Parameters
-    ----------
-    position : tuple of len 3
-
-    Returns
-    -------
-    sector : tuple of len 3
-
-    """
-    x, y, z = normalize(position)
-    x, y, z = x // SECTOR_SIZE, y // SECTOR_SIZE, z // SECTOR_SIZE
-    return (x, 0, z)
-
 
 class Model(object):
 
@@ -142,7 +65,7 @@ class Model(object):
 
     def init_world(self):
         # 放置所有方块以初始化世界, 非常耗时
-        print('[info][%s] init world' % time.strftime('%H:%M:%S'))
+        log_info('init world')
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, 0, z), 'bedrock', record=False)
@@ -153,7 +76,7 @@ class Model(object):
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, y, z), 'grass', record=False)
-        print('[info][%s] load block' % time.strftime('%H:%M:%S'))
+        log_info('load block')
         saver.load_block(self.name, self.add_block, self.remove_block)
 
     def hit_test(self, position, vector, max_distance=8):
@@ -449,7 +372,7 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
-        print('[info][%s] welcome %s(id: %s)' % (time.strftime('%H:%M:%S'), player['name'], player['id']))
+        log_info('welcome %s(id: %s)' % (player['name'], player['id']))
 
     def check_die(self, dt):
         """
@@ -461,15 +384,15 @@ class Window(pyglet.window.Window):
             if self.player['position'][1] < -2:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
-                print('[info][%s] %s(id: %s) die: %s' % (time.strftime('%H:%M:%S'),
-                    player['name'], player['id'], self.player['die_reason']))
+                log_info('%s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
                 self.player['die'] = True
+                self.dialogue.add_dialogue(self.player['die_reason'])
             elif self.player['position'][1] > 512:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
-                print('[info][%s] %s(id: %s) die: %s' % (time.strftime('%H:%M:%S'),
-                    player['name'], player['id'], self.player['die_reason']))
+                log_info('%s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
                 self.player['die'] = True
+                self.dialogue.add_dialogue(self.player['die_reason'])
 
     def init_player(self):
         # 初始化玩家
@@ -492,7 +415,7 @@ class Window(pyglet.window.Window):
 
         @param dt 距上次调用的时间
         """
-        print('[info][%s] save changes' % time.strftime('%H:%M:%S'))
+        log_info('save changes')
         saver.save_block(self.name, self.model.change)
         saver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
 
@@ -577,7 +500,7 @@ class Window(pyglet.window.Window):
 
     def update_status(self, dt):
         # 这个函数定时改变世界状态
-        print('[info][%s] update status' % time.strftime('%H:%M:%S'))
+        log_info('update status')
         area = []
         for x in range(int(self.player['position'][0]) - 16, int(self.player['position'][0]) + 17):
             for y in range(int(self.player['position'][1]) - 2, int(self.player['position'][1]) + 3):
@@ -620,7 +543,7 @@ class Window(pyglet.window.Window):
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
-        if not self.player['die'] and not self.player['in_hud']:
+        if not self.player['die']:
             if not self.player['flying']:
                 # Update your vertical speed: if you are falling, speed up until you
                 # hit terminal velocity; if you are jumping, slow down until you
@@ -628,10 +551,11 @@ class Window(pyglet.window.Window):
                 self.dy -= dt * GRAVITY
                 self.dy = max(self.dy, -TERMINAL_VELOCITY)
                 dy += self.dy * dt
-            # collisions
-            x, y, z = self.player['position']
-            x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
-            self.player['position'] = (x, y, z)
+            if not self.player['in_hud']:
+                # collisions
+                x, y, z = self.player['position']
+                x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+                self.player['position'] = (x, y, z)
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -740,7 +664,7 @@ class Window(pyglet.window.Window):
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
                 self.ext['open'] = False
-                print('[info][%s] %s(id: %s) extra function debug: %s' % (time.strftime('%H:%M:%S'),player['name'],
+                log_info('%s(id: %s) extra function debug: %s' % (player['name'],
                     player['id'], self.ext['debug']))
             else:
                 self.player['strafe'][1] += 1
@@ -754,13 +678,13 @@ class Window(pyglet.window.Window):
                 self.ext['position'] = not self.ext['position']
                 self.ext['debug'] = False
                 self.ext['open'] = False
-                print('[info][%s] %s(id: %s) extra function position: %s' % (time.strftime('%H:%M:%S'),player['name'],
+                log_info('%s(id: %s) extra function position: %s' % (player['name'],
                     player['id'], self.ext['position']))
         elif symbol == key.R:
             if self.ext['open']:
                 self.ext['running'] = not self.ext['running']
                 self.ext['open'] = False
-                print('[info][%s] %s(id: %s) extra function running: %s' % (time.strftime('%H:%M:%S'), player['name'],
+                log_info('%s(id: %s) extra function running: %s' % (player['name'],
                     player['id'], self.ext['running']))
         elif symbol == key.SPACE:
             if self.player['flying']:
@@ -792,9 +716,9 @@ class Window(pyglet.window.Window):
             self.block = self.inventory[index]
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
-            print("[info] screenshot saved in: %s" % time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
+            log_info('screenshot saved in: %s' % time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
         elif symbol == key.F3:
-            self.ext['open'] = True
+            self.ext['open'] = not self.ext['open']
         elif symbol == key.F11:
             self.set_fullscreen(not self.fullscreen)
 
@@ -826,7 +750,7 @@ class Window(pyglet.window.Window):
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
-        print('[info][%s] resize to %dx%d' % (time.strftime('%H:%M:%S'), self.width, self.height))
+        log_info('resize to %dx%d' % (self.width, self.height))
         self.label['top'].x = 0
         self.label['top'].y = self.height - 30
         self.label['center'].x = self.width // 2
@@ -931,10 +855,11 @@ class Window(pyglet.window.Window):
         if not self.is_init:
             if self.player['die']:
                 # 玩家死亡
+                self.dialogue.draw()
                 self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
                         lang['game.text.die'])
                 self.label['actionbar'].document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
-                        self.die_reason)
+                        self.player['die_reason'])
                 self.label['center'].draw()
                 self.label['actionbar'].draw()
             elif self.ext['position']:
@@ -943,7 +868,7 @@ class Window(pyglet.window.Window):
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
                         lang['game.text.info'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label['top'].draw()
-            self.dialogue.draw()
+                self.dialogue.draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)
@@ -960,7 +885,7 @@ class Window(pyglet.window.Window):
 
 def setup_fog():
     # 配置 OpenGL 的雾属性
-    print('[info][%s] setup fog' % time.strftime('%H:%M:%S'))
+    log_info('setup fog')
     # 启用雾
     glEnable(GL_FOG)
     # 设置雾的颜色
@@ -975,7 +900,7 @@ def setup_fog():
 
 def setup_light():
     # 设置 OpenGL 环境光
-    print('[info][%s] setup light' % time.strftime('%H:%M:%S'))
+    log_info('setup light')
     # 启用双面光照
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE , GL_TRUE)
     # 光源衰减
@@ -992,7 +917,7 @@ def setup_light():
 
 def setup():
     # 基本的 OpenGL 设置
-    print('[info][%s] setup' % time.strftime('%H:%M:%S'))
+    log_info('setup')
     # 设置背景颜色. 比如在 RGBA 模式下的天空
     glClearColor(0.5, 0.69, 1.0, 1)
     # 启用面剔除

@@ -4,6 +4,7 @@ import pyglet
 from pyglet.text import decode_attributed
 from pyglet.shapes import Rectangle
 import time
+from Minecraft.utils import *
 
 
 class Bag():
@@ -36,7 +37,13 @@ class Dialogue():
         self.last = time.time()
 
     def add_dialogue(self, text):
-        print('[info][%s] dialogue add: %s' % (time.strftime('%H:%M:%S'), text))
+        log_info('dialogue add: %s' % text)
+        try:
+            decode_attributed(text)
+        except:
+            text = '{color (255, 0, 0, 255)}decode error'
+        else:
+            pass
         self.dialogue.append(text)
         self.last = time.time()
         if len(self.shown) < 10:
@@ -58,4 +65,6 @@ class Dialogue():
 
     def update(self):
         if time.time() - self.last > 10.0:
+            if len(self.dialogue) > 8192:
+                self.dialogue.clear()
             self.shown.clear()

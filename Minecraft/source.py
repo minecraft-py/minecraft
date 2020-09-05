@@ -1,42 +1,10 @@
 # Minecraft 资源
 
 import json
+from os import environ
 from os.path import join, isfile
 from pyglet import media
-
-def tex_coord(x, y, n=4):
-    #返回纹理正方形绑定的顶点
-    m = 1.0 / n
-    dx = x * m
-    dy = y * m
-    return dx, dy, dx + m, dy, dx + m, dy + m, dx, dy + m
-
-def tex_coords(top, bottom, side):
-    # 返回纹理正方形的顶面, 底面, 侧面
-    top = tex_coord(*top)
-    bottom = tex_coord(*bottom)
-    side = tex_coord(*side)
-    result = []
-    result.extend(top)
-    result.extend(bottom)
-    result.extend(side * 4)
-    return result
-
-def tex_coords_all(top, bottom, side0, side1, side2, side3):
-    # 返回纹理正方形所有的面
-    # 同 tex_coords() 类似, 但是要传入全部的四个侧面
-    top = tex_coord(*top)
-    bottom = tex_coord(*bottom)
-    side0, side1 = tex_coord(*side0), tex_coord(*side1)
-    side2, side3 = tex_coord(*side2), tex_coord(*side3)
-    result = []
-    result.extend(top)
-    result.extend(bottom)
-    result.extend(side0)
-    result.extend(side1)
-    result.extend(side2)
-    result.extend(side3)
-    return result
+from Minecraft.utils import *
 
 block = {}
 block['grass'] = tex_coords((1, 0), (0, 1), (0, 0))
@@ -52,20 +20,22 @@ block['bedrock'] = tex_coords((2, 1), (2, 1), (2, 1))
 block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
 
 path = {}
-path['json'] = 'resource/json'
+path['mcpypath'] = environ['MCPYPATH']
+path['json'] = 'data/json'
 path['json.lang'] = join(path['json'], 'lang')
-path['texture'] = 'resource/texture/default'
-path['texture.hud'] = join(path['texture'], 'hud')
-path['shaders'] = 'resource/shaders'
-path['save'] = 'resource/save'
-path['sound'] = 'resource/sound/default'
 
-settings = json.load(open(join(path['json'], 'settings.json')))
-if isfile(join(path['json'], 'player.json')):
-    player = json.load(open(join(path['json'], 'player.json')))
+settings = json.load(open(join(path['mcpypath'], 'settings.json')))
+if isfile(join(path['mcpypath'], 'player.json')):
+    player = json.load(open(join(path['mcpypath'], 'player.json')))
 else:
-    print('[info] you have not registered, exit')
+    log_info('you have not registered, exit')
     exit(1)
+
+path['texture'] = 'data/texture/default'
+path['texture.hud'] = join(path['texture'], 'hud')
+path['shaders'] = 'data/shaders'
+path['save'] = join(path['mcpypath'], 'save')
+path['sound'] = 'data/sound/default'
 
 sound = {}
 sound['build'] = media.load(join(path['sound'], 'build.wav'), streaming=False)

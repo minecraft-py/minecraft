@@ -11,8 +11,7 @@ git clone https://github.com/jason-bowen-zheng/Minecraft
 # 位于中国的用户使用下面这行
 git clone https://gitee.com/jason-bowen-zheng/Minecraft
 cd Minecraft
-pip install -r requirements.txt
-./register
+./install
 ```
 或参见[安装指南](GUIDE.md).
 

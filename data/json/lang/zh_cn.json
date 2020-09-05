@@ -1,0 +1,20 @@
+{
+    "game.text.die": "\u4f60\u5931\u8d25\u4e86",
+    "game.text.die.fall_into_void": "%s \u5760\u5165\u4e86\u865a\u7a7a",
+    "game.text.die.no_oxygen": "%s \u6ca1\u6709\u6c27\u6c14\u4e86\u53ef\u4ee5\u547c\u5438\u4e86",
+    "game.text.info": "\u4f4d\u7f6e: (%.1f, %.1f, %.1f) %-4d fps",
+    "game.text.loading": "\u521d\u59cb\u5316...",
+    "launcher.delete": "\u5220\u9664",
+    "launcher.dialog.text.delete": "\u8fd9\u5c06\u5220\u9664 %s \u5b58\u6863(\u5f88\u957f\u65f6\u95f4)?",
+    "launcher.dialog.text.name": "\u5b58\u6863\u540d:",
+    "launcher.dialog.text.ok": "\u786e\u8ba4",
+    "launcher.dialog.text.rename": "\u91cd\u547d\u540d:",
+    "launcher.dialog.title.delete": "\u5220\u9664\u5b58\u6863",
+    "launcher.dialog.title.new": "\u65b0\u5efa\u5b58\u6863",
+    "launcher.dialog.title.rename": "\u91cd\u547d\u540d\u5b58\u6863",
+    "launcher.exit": "\u9000\u51fa",
+    "launcher.new": "\u65b0\u4e16\u754c",
+    "launcher.rename": "\u91cd\u547d\u540d",
+    "launcher.start": "\u5f00\u59cb\u6e38\u620f",
+    "launcher.title": "Minecraft \u542f\u52a8\u5668"
+}

@@ -62,22 +62,13 @@ https://github.com/jason-bowen-zheng/Minecraft/archive/master.zip
 https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
 ```
 
-# 下载依赖项
-在终端输入:
-```
-# 也有可能需要 root 权限
-pip install -r requirements.txt
-```
-简单吧!
+# 游玩前步骤
+首先, 你必须先新建一个`MCPYPATH`的系统变量, 用于存放数据. 类 UNIX 建议在`/share/mcpy`.
 
-# 注册
-如果想要玩多人游戏(未实现), 或者只是游玩单人游戏, 你必须先注册, 注册程序会像原版一样分配给你一个 UUID(我们叫 id):
-```shell
-./register
-# 或
-python register
-```
-会根据你运行程序的时间和2个随机数生成一个不重复的 id, 并询问你想要的玩家名.
+然后, 直接运行`./install`(为 shell 文件), 会自动安装依赖项以及注册.
+
+## 注册
+注册程序非常简单, 会依据当前 UNIX 时间戳和几个随机数来生成一个独一无二的 id.
 
 # 游玩
 在 Windows, 双击`Minecraft.bat`即可启动启动器.

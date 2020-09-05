@@ -1,0 +1,14 @@
+#!/usr/bin/sh
+
+echo "[install requirements]"
+pip install -r requirements.txt
+echo "[register]"
+./register
+echo "[copy files]"
+cp data/json/settings.json $MCPYPATH/settings.json
+if test ! -d $MCPYPATH/save
+then
+	mkdir $MCPYPATH/save
+else
+	echo "$MCPYPATH/save existed"
+fi
