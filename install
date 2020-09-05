@@ -10,5 +10,11 @@ if test ! -d $MCPYPATH/save
 then
 	mkdir $MCPYPATH/save
 else
-	echo "$MCPYPATH/save existed"
+	echo "install: $MCPYPATH/save existed"
+fi
+if test ! -d $MCPYPATH/screenshot
+then
+	mkdir $MCPYPATH/screenshot
+else
+	echo "install: $MCPYPATH/screenshot existed"
 fi

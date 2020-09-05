@@ -19,6 +19,5 @@ if __name__ == '__main__':
             print('Regsitered successfully, you can use your id to play multiplayer game!')
         else:
             print('You have regsitered!')
-            exit(1)
     else:
         print("'$MCPYPATH' not found")

@@ -715,8 +715,9 @@ class Window(pyglet.window.Window):
             index = (symbol - self.num_keys[0]) % len(self.inventory)
             self.block = self.inventory[index]
         elif symbol == key.F2:
-            pyglet.image.get_buffer_manager().get_color_buffer().save(time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
-            log_info('screenshot saved in: %s' % time.strftime('%Y-%m-%d %H:%M:%S screenshot.png'))
+            pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
+                path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
+            log_info('screenshot saved in: %s' % time.strftime('$MCPYPATH/screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
         elif symbol == key.F3:
             self.ext['open'] = not self.ext['open']
         elif symbol == key.F11:

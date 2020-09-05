@@ -35,6 +35,7 @@ path['texture'] = 'data/texture/default'
 path['texture.hud'] = join(path['texture'], 'hud')
 path['shaders'] = 'data/shaders'
 path['save'] = join(path['mcpypath'], 'save')
+path['screenshot'] = join(path['mcpypath'], 'screenshot')
 path['sound'] = 'data/sound/default'
 
 sound = {}
