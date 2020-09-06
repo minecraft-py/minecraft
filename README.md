@@ -4,7 +4,7 @@
 用 python 做开源的 Minecraft
 
 ## 游玩
-要游玩 Minecraft, 请先在终端输入:
+要游玩 Minecraft, 请先在类 UNIX 的终端输入:
 ```shell
 # 非中国用户使用下面这行
 git clone https://github.com/jason-bowen-zheng/Minecraft
@@ -13,7 +13,7 @@ git clone https://gitee.com/jason-bowen-zheng/Minecraft
 cd Minecraft
 ./install
 ```
-或参见[安装指南](GUIDE.md).
+或参见[安装指南](docs/GUIDE.md).
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:
@@ -22,7 +22,7 @@ cd Minecraft
 - [x] 更多方块
 - [x] 与方块交互
 - [x] 世界生成
-- [x] 随机世界生成(使用 Simplex 噪声, 现已移除)
+- [x] 随机世界生成(使用 Simplex 噪声, 由于性能问题, 现已移除)
 - [x] 启动器(使用 tkinter 实现, 十分简陋)
 - [x] i18n
 - [x] 保存用户对世界的更改
