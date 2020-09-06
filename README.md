@@ -13,7 +13,7 @@ git clone https://gitee.com/jason-bowen-zheng/Minecraft
 cd Minecraft
 ./install
 ```
-或参见[安装指南](docs/GUIDE.md).
+或参见[安装指南](docs/guide.md).
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:

@@ -70,6 +70,8 @@ https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
 ## 注册
 注册程序非常简单, 会依据当前 UNIX 时间戳和几个随机数来生成一个独一无二的 id.
 
+你必须起一个名字, 最少两个字符(ASCII 字符 + 数字 + 下划线). 其中, 第一个字符不能为数字.
+
 # 游玩
 在 Windows, 双击`Minecraft.bat`即可启动启动器.
 
