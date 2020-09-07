@@ -867,7 +867,7 @@ class Window(pyglet.window.Window):
                 # 在屏幕左上角绘制标签
                 x, y, z = self.player['position']
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        lang['game.text.info'] % (x, y, z, pyglet.clock.get_fps()))
+                        lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label['top'].draw()
                 self.dialogue.draw()
         else:
