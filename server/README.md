@@ -14,19 +14,19 @@
 - `remove <id> <x> <y> <z>` - 破坏方块
 
 ## 玩家相关
-- `moveto <id <x> <y> <z>` - 移动
-- `lookat <id <rx> <ry>` - 视线方向
-- `hotkey <id <block>` - 玩家手持物品
-- `throw <id <block> <times>` - 玩家丢出物品
+- `moveto <id> <x> <y> <z>` - 移动
+- `lookat <id> <x> <y> <z>` - 视线方向
+- `hotkey <id> <block>` - 玩家手持物品
+- `throw <id> <block> <times>` - 玩家丢出物品
 - `get id <x> <y> <z>` - 玩家拾起物品
 
 ## 杂项
 - `dialogue <id> <message>` - 聊天
-- `command <id <command>` - 执行命令
+- `command <id> <command>` - 执行命令
 
 # 服务器应答
 - `ok` - 允许操作
-- `no` - 禁止操作
+- `no <reason>` - 禁止操作
 - `unknow` - 未知操作
 - `message <text>` - 发送消息, text 应为能被`pyglet.text.decode_attributed()`解析的字符串
 - `ban <reason>` - 踢出游戏

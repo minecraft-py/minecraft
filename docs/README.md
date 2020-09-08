@@ -1,4 +1,5 @@
 # Minecraft 文档
+该目录及其子目录是详细的 Minecraft 文档.
 
 ## 目录
 - [简介](intro.md)
