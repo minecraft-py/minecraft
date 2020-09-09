@@ -25,6 +25,15 @@ path['json'] = 'data/json'
 path['json.lang'] = join(path['json'], 'lang')
 
 settings = json.load(open(join(path['mcpypath'], 'settings.json')))
+# 检查 settings.json 的正确性
+for key in ['lang']:
+    if key not in settings:
+        log_err("settings.json: miss '%s' key" % key)
+        exit(1)
+if not isfile(join(path['json.lang'], settings['lang'] + '.json')):
+    log_err("settings.json: language '%s' not found" % settings['lang'])
+    exit(1)
+
 if isfile(join(path['mcpypath'], 'player.json')):
     player = json.load(open(join(path['mcpypath'], 'player.json')))
 else:
@@ -42,4 +51,4 @@ sound = {}
 sound['build'] = media.load(join(path['sound'], 'build.wav'), streaming=False)
 sound['destroy'] = media.load(join(path['sound'], 'destroy.wav'), streaming=False)
 
-lang = json.load(open(join(path['json.lang'], settings['lang'] + '.json')))
+lang = json.load(open(join(path['json.lang'], settings['lang'] + '.json'))) 
