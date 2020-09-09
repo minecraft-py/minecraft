@@ -1,20 +1,25 @@
 #!/usr/bin/sh
 
 echo "[install requirements]"
-pip install -r requirements.txt
+pip install -r requirements.txt >> /dev/null
 echo "[register]"
-./register
+python3 register
 echo "[copy files]"
-cp data/json/settings.json $MCPYPATH/settings.json
-if test ! -d $MCPYPATH/save
+if test -d $MCPYPATH
 then
-	mkdir $MCPYPATH/save
+	cp data/json/settings.json $MCPYPATH/settings.json
+	if test ! -d $MCPYPATH/save
+	then
+		mkdir $MCPYPATH/save
+	else
+		echo "install: $MCPYPATH/save existed"
+	fi
+	if test ! -d $MCPYPATH/screenshot
+	then
+		mkdir $MCPYPATH/screenshot
+	else
+		echo "install: $MCPYPATH/screenshot existed"
+	fi
 else
-	echo "install: $MCPYPATH/save existed"
-fi
-if test ! -d $MCPYPATH/screenshot
-then
-	mkdir $MCPYPATH/screenshot
-else
-	echo "install: $MCPYPATH/screenshot existed"
+	echo "MCPYPATH path not found"
 fi
