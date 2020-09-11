@@ -1,6 +1,9 @@
 > 感谢 [fogleman](https://github.com/fogleman/Minecraft), 这个项目正是克隆于他的 Minecraft 项目
 
 # Minecraft
+
+[![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 用 python 做开源的 Minecraft
 
 ## 游玩
