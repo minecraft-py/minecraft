@@ -629,6 +629,8 @@ class Window(pyglet.window.Window):
             elif button == pyglet.window.mouse.LEFT and block:
                 if texture != 'bedrock' and not self.player['die']:
                     self.model.remove_block(block)
+            elif button == pyglet.window.mouse.MIDDLE and block:
+                self.block = texture
         elif not self.player['die'] and not self.player['in_hud']:
             self.set_exclusive_mouse(True)
 
