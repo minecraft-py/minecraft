@@ -49,17 +49,17 @@ pkg install python-tkinter
 Minecraft 源代码托管在 Github 和 Gitee(中国境内), Gitee 同 Github 同步更新.
 
 如果有 Git, 那么输入:
-```
+```shell
 git clone htts://github.com/jason-bowen-zheng/Minecraft
 # 中国境内用户使用下面这行
 git clone https://gitee.com/jason-bowen-zheng/Minecraft
 ```
 
 没有 Git, 下载并解压到`Minecraft`目录:
-```
-https://github.com/jason-bowen-zheng/Minecraft/archive/master.zip
+```shell
+wget https://github.com/jason-bowen-zheng/Minecraft/archive/master.zip
 # 或
-https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
+wget https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
 ```
 
 # 游玩前步骤
