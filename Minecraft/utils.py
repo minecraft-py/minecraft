@@ -12,15 +12,6 @@ def cube_vertices(x, y, z, n):
         x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
     ]
 
-FACES = [
-    ( 0, 1, 0),
-    ( 0,-1, 0),
-    (-1, 0, 0),
-    ( 1, 0, 0),
-    ( 0, 0, 1),
-    ( 0, 0,-1),
-]
-
 def normalize(position):
     """ Accepts `position` of arbitrary precision and returns the block
     containing that position.
@@ -97,10 +88,19 @@ def log_info(text):
 def log_warn(text):
     print('[%s WARN]: %s' % (time.strftime('%H:%M:%S'), text))
 
+FACES = [
+    ( 0, 1, 0),
+    ( 0,-1, 0),
+    (-1, 0, 0),
+    ( 1, 0, 0),
+    ( 0, 0, 1),
+    ( 0, 0,-1),
+]
+
 TICKS_PER_SEC = 20
 SECTOR_SIZE = 16
 
-MAX_SIZE = 64
+MAX_SIZE = 16
 
 STEALING_SPEED = 3
 WALKING_SPEED = 5
@@ -108,7 +108,7 @@ RUNNING_SPEED = 8
 FLYING_SPEED = 10
 
 GRAVITY = 20.0
-MAX_JUMP_HEIGHT = 1.0 # 大约是每个方块的高度
+MAX_JUMP_HEIGHT = 1.0
 # 获得跳跃的高度, 首先计算公式:
 #    v_t = v_0 + a * t
 # for the time at which you achieve maximum height, where a is the acceleration
