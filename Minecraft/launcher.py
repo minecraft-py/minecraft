@@ -1,6 +1,7 @@
 # Minecraft 启动器
 
 import os
+import re
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
 
@@ -89,6 +90,8 @@ class MinecraftLauncher(Tk):
     def new_world(self, event=None):
         name = self.new_dialog_entry_name.get()
         if name == '':
+            return
+        elif not re.match(r'^([a-z]|[A-Z]|_)\w+$', name):
             return
         else:
             if not os.path.isdir(os.path.join(path['save'], name)):

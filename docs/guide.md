@@ -1,11 +1,11 @@
 # 安装指南
-这是 Minecraft 的安装指南, 适用于菜鸟玩家 或 没有安装 python 的玩家.
+这是 Minecraft 的简明安装指南, 适用于菜鸟玩家 或 没有安装 python 的玩家.
 
 # 下载 python3
 Minecraft 使用 python3 作为开发语言, 使用了 3.8+ 版本的特性, 请安装 python3.8 及以后版本.
 
 ## Windows 用户
-*虽然 Minecraft 在多平台都可以运行, 但是 Windows 系统作者极少使用, 如何安装 python 请自行搜索, 这里只介绍 noise 包的安装*
+*虽然 Minecraft 在多平台都可以运行, 但是 Windows 系统作者极少使用, 如何安装 python 请自行搜索, 记得勾选安装 tk 和 pip, PATH 目录也要添加, 这里只介绍 noise 包的安装*
 
 noise 是 python 的一个噪声函数库, 一部分使用 C 编写, 如果大家没有安装 Visual Studio 14 可能会叫你安装之.
 
@@ -65,7 +65,7 @@ wget https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
 # 游玩前步骤
 首先, 你必须先新建一个`MCPYPATH`的系统变量, 用于存放数据. 类 UNIX 建议在`/share/mcpy/`或`~/.mcpy/`(和`~/.Minecraft/`目录不重名).
 
-然后, 直接运行`./install`(为 shell 文件), 会自动安装依赖项以及注册, 必须给予 root 权限.
+然后, 直接运行`./install`(为 shell 文件, Windows 用户敬请期待), 会自动安装依赖项以及注册, 必须给予 root 权限.
 
 ## 注册
 注册程序非常简单, 会依据当前 UNIX 时间戳和几个随机数来生成一个独一无二的 id.
