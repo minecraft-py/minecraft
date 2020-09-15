@@ -1,10 +1,12 @@
 # Minecraft 启动器
 
 import os
-import re
+from string import punctuation
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
 
+from Minecraft.utils import *
+log_info('loading game lib')
 from Minecraft.game import *
 from Minecraft.source import path, lang
 import pyglet
@@ -33,7 +35,7 @@ class MinecraftLauncher(Tk):
         try:
             Tk.__init__(self)
         except:
-            print('[err] No display, exit')
+            log_err('no display, exit')
             exit(1)
         self.title(lang['launcher.title'])
         # 小部件
@@ -91,7 +93,7 @@ class MinecraftLauncher(Tk):
         name = self.new_dialog_entry_name.get()
         if name == '':
             return
-        elif not re.match(r'^([a-z]|[A-Z]|_)\w+$', name):
+        elif not [s for s in list(punctuation) if s in name] == []:
             return
         else:
             if not os.path.isdir(os.path.join(path['save'], name)):
