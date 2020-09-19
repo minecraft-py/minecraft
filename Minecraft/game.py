@@ -658,9 +658,10 @@ class Window(pyglet.window.Window):
         if 0 <= index <= len(self.inventory) - 1:
             self.block = index
         elif index < 0:
-            self.block = len(self.inventory) - index
+            self.block = len(self.inventory) + index
         elif index > len(self.inventory) - 1:
             self.block = index - len(self.inventory)
+        log_info('%d/%d' % (self.block, len(self.inventory) - 1))
 
     def on_key_press(self, symbol, modifiers):
         """

@@ -28,7 +28,7 @@ def load_player(name):
     """
     data = json.load(open(join(path['save'], '%s/%s.player' % (name, name))))
     return (tuple([float(i) for i in data['position'].split(' ')]),
-            tuple([float(i) for i in data['respawn'].split(' ')]), data['bag'])
+            tuple([float(i) for i in data['respawn'].split(' ')]), data['now_block'])
 
 def save_block(name, change, full=True):
     """
@@ -46,12 +46,12 @@ def save_block(name, change, full=True):
         data = change
     json.dump(data, open(join(path['save'], '%s/%s.world' % (name, name)), 'w+'), indent='\t')
 
-def save_player(name, position, respawn, bag):
+def save_player(name, position, respawn, now_block):
     """将玩家数据存入文件
     @param name 存档名, 为 JSON 文件
     """
     data = {}
     data['position'] = ' '.join([('%.1f' % i) for i in position])
     data['respawn'] = ' '.join([('%.1f' % i) for i in respawn])
-    data['bag'] = bag
+    data['now_block'] = now_block
     json.dump(data, open(join(path['save'], '%s/%s.player' % (name, name)), 'w+'), indent='\t')
