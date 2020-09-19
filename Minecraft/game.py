@@ -340,7 +340,7 @@ class Window(pyglet.window.Window):
         # 玩家可以放置的方块, 使用数字键切换
         self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log', 'leaf', 'brick', 'plank', 'craft_table']
         # 玩家手持的方块
-        self.block = self.inventory[0]
+        self.block = 0
         # 数字键列表
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
@@ -625,7 +625,7 @@ class Window(pyglet.window.Window):
                     if texture == 'craft_table' and (not self.player['stealing']):
                         self.set_exclusive_mouse(False)
                     elif previous:
-                        self.model.add_block(previous, self.block)
+                        self.model.add_block(previous, self.inventory[self.block])
             elif button == pyglet.window.mouse.LEFT and block:
                 if texture != 'bedrock' and not self.player['die']:
                     self.model.remove_block(block)
@@ -647,6 +647,20 @@ class Window(pyglet.window.Window):
             x, y = x + dx * m, y + dy * m
             y = max(-90, min(90, y))
             self.rotation = (x, y)
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        """
+        当鼠标滚轮滚动时调用
+
+        @param scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
+        """
+        index = self.block + scroll_y
+        if 0 <= index <= len(self.inventory) - 1:
+            self.block = index
+        elif index < 0:
+            self.block = len(self.inventory) - index
+        elif index > len(self.inventory) - 1:
+            self.block = index - len(self.inventory)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -714,8 +728,7 @@ class Window(pyglet.window.Window):
             if not self.player['flying']:
                 self.player['running'] = True
         elif symbol in self.num_keys:
-            index = (symbol - self.num_keys[0]) % len(self.inventory)
-            self.block = self.inventory[index]
+            self.block = (symbol - self.num_keys[0]) % len(self.inventory)
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
