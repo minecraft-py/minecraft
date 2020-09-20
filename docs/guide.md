@@ -65,7 +65,7 @@ wget https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
 # 游玩前步骤
 首先, 你必须先新建一个`MCPYPATH`的系统变量, 用于存放数据. 类 UNIX 建议在`/share/mcpy/`或`~/.mcpy/`(和`~/.Minecraft/`目录不重名).
 
-然后, 直接运行`./install`(为 shell 文件, Windows 用户敬请期待), 会自动安装依赖项以及注册, 必须给予 root 权限.
+然后, 直接运行`./install`(为 shell 文件, Windows为`install.bat`), 会自动安装依赖项以及注册, 必须给予 root 权限.
 
 ## 注册
 注册程序非常简单, 会依据当前 UNIX 时间戳和几个随机数来生成一个独一无二的 id.
@@ -81,3 +81,4 @@ wget https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
 ```shell
 alias mcpy="cd ~/Minecraft && python -m Minecraft && cd - >> /dev/null"
 ```
+
