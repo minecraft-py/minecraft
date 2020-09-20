@@ -18,7 +18,7 @@ then
 	then
 		mkdir $MCPYPATH/screenshot
 	else
-		echo "$0: /screenshot existed"
+		echo "$0: $MCPYPATH/screenshot existed"
 	fi
 else
 	echo "$0: MCPYPATH path not found"
