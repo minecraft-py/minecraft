@@ -12,14 +12,14 @@ then
 	then
 		mkdir $MCPYPATH/save
 	else
-		echo "install: $MCPYPATH/save existed"
+		echo "$0: $MCPYPATH/save existed"
 	fi
 	if test ! -d $MCPYPATH/screenshot
 	then
 		mkdir $MCPYPATH/screenshot
 	else
-		echo "install: $MCPYPATH/screenshot existed"
+		echo "$0: /screenshot existed"
 	fi
 else
-	echo "MCPYPATH path not found"
+	echo "$0: MCPYPATH path not found"
 fi

@@ -1,3 +1,4 @@
+Js2Py>=0.70
 pyglet>=1.5.7
 pyshaders>=1.4.1
 noise>=1.2.2
