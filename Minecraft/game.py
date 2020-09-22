@@ -14,6 +14,13 @@ from Minecraft.hud import Bag, Dialogue
 from Minecraft.utils import *
 
 try:
+    import js2py as js
+    import js2py.base as base
+except ModuleNotFoundError:
+    log_err("Module 'Js2Py' not found, run `pip install js2py` to install, exit")
+    exit(1)
+
+try:
     from noise import snoise2 as noise2
 except ModuleNotFoundError:
     log_err("Module 'noise' not found. run `pip install noise` to install, exit")
@@ -430,6 +437,19 @@ class Window(pyglet.window.Window):
         self.model = Model(name)
         # 读取玩家位置和背包
         self.player['position'], self.player['respawn_position'], self.block = saver.load_player(self.name)
+        # 读取 js 脚本
+        if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
+            log_info('found script.js')
+            self.has_script = True
+            self.script = open(os.path.join(path['mcpypath'], 'save', name, 'script.js')).read()
+            self.js = js.EvalJs()
+            try:
+                self.js.eval(self.script)
+            except Exception as err:
+                log_err('script.js: %s' % str(err))
+                exit(1)
+        else:
+            self.has_script = False
 
     def get_sight_vector(self):
         """ Returns the current line of sight vector indicating the direction
@@ -852,6 +872,12 @@ class Window(pyglet.window.Window):
         self.draw_label()
         if self.is_init:
             self.model.init_world()
+            if self.has_script:
+                try:
+                    if hasattr(self.js, 'on_init'):
+                        log_info('run script.js:on_init')
+                except Exception as err:
+                    log_warn('script.js: on_init: %s' % str(err))
             self.init_player()
             self.set_exclusive_mouse(True)
             self.is_init = False
