@@ -441,10 +441,9 @@ class Window(pyglet.window.Window):
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
             log_info('found script.js')
             self.has_script = True
-            self.script = open(os.path.join(path['mcpypath'], 'save', name, 'script.js')).read()
             self.js = js.EvalJs()
             try:
-                self.js.eval(self.script)
+                self.js.eval(open(os.path.join(path['mcpypath'], 'save', name, 'script.js')).read())
             except Exception as err:
                 log_err('script.js: %s' % str(err))
                 exit(1)
@@ -530,7 +529,7 @@ class Window(pyglet.window.Window):
         else:
             for position in [exist for exist in area if exist in self.model.world]:
                 block = self.model.world[position]
-                if block == 'dirt' and random.randint(1, 10) == 10:
+                if block == 'dirt' and random.randint(0, 10) == 10:
                     for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                         if (pos := (position[0] + x, position[1], position[2] + z)) in self.model.world:
                             if self.model.world[pos] == 'grass' and (pos[0], pos[1] + 1, pos[2]) not in self.model.world:
@@ -681,7 +680,6 @@ class Window(pyglet.window.Window):
             self.block = len(self.inventory) + index
         elif index > len(self.inventory) - 1:
             self.block = index - len(self.inventory)
-        log_info('%d/%d' % (self.block, len(self.inventory) - 1))
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -875,7 +873,8 @@ class Window(pyglet.window.Window):
             if self.has_script:
                 try:
                     if hasattr(self.js, 'on_init'):
-                        log_info('run script.js:on_init')
+                        log_info('found script.js:on_init, run')
+                        self.js.on_init()
                 except Exception as err:
                     log_warn('script.js: on_init: %s' % str(err))
             self.init_player()
@@ -888,7 +887,7 @@ class Window(pyglet.window.Window):
         block = self.model.hit_test(self.player['position'], vector)[0]
         if block:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.51)
+            vertex_data = cube_vertices(x, y, z, 0.505)
             glColor3d(0, 0, 0)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))

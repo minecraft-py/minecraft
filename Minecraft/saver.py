@@ -12,7 +12,7 @@ def load_block(name, add_block, remove_block):
     @param add_block 添加方块的函数, 函数原型为 Minecraft.game.Model.add_block
     @param remove_block 移除方块的函数, 函数原型为 Minecraft.game.Model.remove_block
     """
-    blocks = json.load(open(join(path['save'], '%s/%s.world' % (name, name))))
+    blocks = json.load(open(join(path['save'], '%s/%s.world' % ((name,) * 2))))
     for position, block in blocks.items():
         position = tuple([int(i) for i in position.split(' ')])
         if block == 'air':
@@ -26,9 +26,9 @@ def load_player(name):
 
     @param name 存档名, 为 JSON 文件
     """
-    data = json.load(open(join(path['save'], '%s/%s.player' % (name, name))))
+    data = json.load(open(join(path['save'], '%s/%s.player' % ((name,) * 2))))
     return (tuple([float(i) for i in data['position'].split(' ')]),
-            tuple([float(i) for i in data['respawn'].split(' ')]), data['now_block'])
+            tuple([float(i) for i in data['respawn'].split(' ')]), int(data['now_block']))
 
 def save_block(name, change, full=True):
     """
@@ -39,12 +39,12 @@ def save_block(name, change, full=True):
     @param full 是否全部写入
     """
     if not full:
-        data = json.load(open(join(path['save'], '%s/%s' % (name, name))))
+        data = json.load(open(join(path['save'], '%s/%s' % ((name,) * 2))))
         for position, block in change.items():
             data[position] = block
     else:
         data = change
-    json.dump(data, open(join(path['save'], '%s/%s.world' % (name, name)), 'w+'), indent='\t')
+    json.dump(data, open(join(path['save'], '%s/%s.world' % ((name,) * 2)), 'w+'), indent='\t')
 
 def save_player(name, position, respawn, now_block):
     """将玩家数据存入文件
@@ -54,4 +54,4 @@ def save_player(name, position, respawn, now_block):
     data['position'] = ' '.join([('%.1f' % i) for i in position])
     data['respawn'] = ' '.join([('%.1f' % i) for i in respawn])
     data['now_block'] = now_block
-    json.dump(data, open(join(path['save'], '%s/%s.player' % (name, name)), 'w+'), indent='\t')
+    json.dump(data, open(join(path['save'], '%s/%s.player' % ((name,) * 2)), 'w+'), indent='\t')

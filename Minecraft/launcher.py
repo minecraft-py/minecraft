@@ -67,6 +67,8 @@ class MinecraftLauncher(Tk):
                 title=lang['launcher.dialog.title.delete']):
             os.remove(os.path.join(path['save'], select, '%s.world' % select))
             os.remove(os.path.join(path['save'], select, '%s.player' % select))
+            if os.path.isfile(os.path.join(path['save'], select, 'script.js')):
+                os.remove(os.path.join(path['save'], select, 'script.js'))
             os.rmdir(os.path.join(path['save'], select))
         else:
             pass
@@ -101,7 +103,7 @@ class MinecraftLauncher(Tk):
                 world = open(os.path.join(path['save'], name, '%s.world' % name), 'w+')
                 world.write('{}\n')
                 world.close()
-                player = {'position': '0.0 3.8 0.0', 'respawn': '0.0 3.8 0.0', 'bag': 'grass'}
+                player = {'position': '0.0 3.8 0.0', 'respawn': '0.0 3.8 0.0', 'now_block': 0}
                 json.dump(player, open(os.path.join(path['save'], name, '%s.player' % name), 'w+'), indent='\t')
                 self.new_dialog.destroy()
         self.refresh()
