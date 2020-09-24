@@ -5,7 +5,7 @@ from string import punctuation
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
 
-from Minecraft.utils import *
+from Minecraft.utils.utils import *
 log_info('loading game lib')
 from Minecraft.game import *
 from Minecraft.source import path, lang

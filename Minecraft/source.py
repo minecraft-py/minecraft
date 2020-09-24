@@ -4,7 +4,7 @@ import json
 from os import environ
 from os.path import join, isfile
 from pyglet import media
-from Minecraft.utils import *
+from Minecraft.utils.utils import *
 
 block = {}
 block['grass'] = tex_coords((1, 0), (0, 1), (0, 0))
@@ -42,6 +42,7 @@ else:
 
 path['texture'] = 'data/texture/default'
 path['texture.hud'] = join(path['texture'], 'hud')
+path['texture.ui'] = join(path['texture'], 'ui')
 path['shaders'] = 'data/shaders'
 path['save'] = join(path['mcpypath'], 'save')
 path['screenshot'] = join(path['mcpypath'], 'screenshot')

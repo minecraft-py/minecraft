@@ -4,7 +4,7 @@ import time
 import Minecraft.saver as saver
 
 
-class Model(object):
+class World(object):
 
     def __init__(self, name):
         # Batch 是用于批处理渲染的顶点列表的集合

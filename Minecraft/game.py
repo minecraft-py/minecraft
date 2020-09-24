@@ -10,8 +10,9 @@ import time
 
 import Minecraft.saver as saver
 from Minecraft.source import block, sound, path, player, lang, settings
-from Minecraft.hud import Bag, Dialogue
-from Minecraft.utils import *
+from Minecraft.gui.bag import Bag
+from Minecraft.gui.dialogue import Dialogue
+from Minecraft.utils.utils import *
 
 try:
     import js2py as js
@@ -405,7 +406,7 @@ class Window(pyglet.window.Window):
         # 初始化玩家
         self.hud = {}
         # E 键打开的背包
-        self.hud['bag'] = Bag(100, 100, self.width - 200, self.width - 200)
+        self.hud['bag'] = Bag(self.width, self.height)
         # 饥饿值
         self.status = {}
         self.status['heart'] = []
@@ -437,6 +438,7 @@ class Window(pyglet.window.Window):
         self.model = Model(name)
         # 读取玩家位置和背包
         self.player['position'], self.player['respawn_position'], self.block = saver.load_player(self.name)
+        self.player['position'] = self.player['position'][0], self.player['position'][1] + 1, self.player['position'][2]
         # 读取 js 脚本
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
             log_info('found script.js')
@@ -646,7 +648,7 @@ class Window(pyglet.window.Window):
                     elif previous:
                         self.model.add_block(previous, self.inventory[self.block])
             elif button == pyglet.window.mouse.LEFT and block:
-                if texture != 'bedrock' and not self.player['die']:
+                if texture != 'bedrock' and not self.player['die'] and not self.player['in_hud']:
                     self.model.remove_block(block)
             elif button == pyglet.window.mouse.MIDDLE and block:
                 self.block = texture
@@ -809,7 +811,7 @@ class Window(pyglet.window.Window):
         # HUD
         # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
         if not self.is_init:
-            self.hud['bag'].resize(100, 100, self.width - 200, self.height - 200)
+            self.hud['bag'].resize(self.width, self.height)
             for i in range(len(self.status['heart'])):
                 self.status['heart'][i].x = i * 21
                 self.status['heart'][i].y = self.height - 21

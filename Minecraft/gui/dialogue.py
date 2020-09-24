@@ -1,26 +1,9 @@
-# 游戏用户界面小部件
-
 import pyglet
 from pyglet.text import decode_attributed
-from pyglet.shapes import Rectangle
+
 import time
-from Minecraft.utils import *
 
-
-class Bag():
-    # 按 E 键打开的背包
-
-    def __init__(self, x, y, width, height):
-        self._element = {}
-        self._element['seq'] = Rectangle(x, y, width, height, color=(200, 200, 200))
-
-    def draw(self):
-        self._element['seq'].draw()
-
-    def resize(self, x, y, width, height):
-        self._element['seq'].position = (x, y)
-        self._element['seq'].width = width
-        self._element['seq'].height = height
+from Minecraft.utils.utils import *
 
 
 class Dialogue():
