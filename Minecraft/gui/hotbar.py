@@ -37,7 +37,7 @@ class HotBar(GUI):
             self._element[i].opacity = 200
         if 0 <= index < len(self._element):
             self._element[index] = Sprite(image.load(join(path['texture.ui'], 'hotbar-highlight.png')),
-                    x=(width - 270) // 2 + index * 30, y=2)
+                    x=(width - 270) // 2 + index * 30 - 1, y=2)
             self._element[index].scale = 1.5
             self.index = index
 
