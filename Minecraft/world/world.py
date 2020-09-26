@@ -1,6 +1,10 @@
 from collections import deque
 import math
 import time
+
+import pyglet
+from pyglet.graphics import TextureGroup
+
 import Minecraft.saver as saver
 
 

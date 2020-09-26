@@ -5,11 +5,13 @@ from string import punctuation
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
 
+import pyglet
+
 from Minecraft.utils.utils import *
 log_info('loading game lib')
 from Minecraft.game import *
 from Minecraft.source import path, lang
-import pyglet
+
 
 def is_game_restore(name):
     """

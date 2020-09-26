@@ -3,7 +3,9 @@
 import json
 from os import environ
 from os.path import join, isfile
+
 from pyglet import media
+
 from Minecraft.utils.utils import *
 
 block = {}

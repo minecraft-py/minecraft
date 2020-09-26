@@ -4,12 +4,14 @@ from pyglet.text import decode_attributed
 import time
 
 from Minecraft.utils.utils import *
+from Minecraft.gui.base import GUI
 
 
-class Dialogue():
+class Dialogue(GUI):
     # 显示在左面的聊天记录
 
     def __init__(self, width, height):
+        GUI.__init__(self, width, height)
         self.dialogue_label = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=0, y=height - 75, width=width // 2, multiline=True)
         # 全部聊天内容

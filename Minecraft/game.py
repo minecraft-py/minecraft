@@ -8,12 +8,6 @@ import random
 import sys
 import time
 
-import Minecraft.saver as saver
-from Minecraft.source import block, sound, path, player, lang, settings
-from Minecraft.gui.bag import Bag
-from Minecraft.gui.dialogue import Dialogue
-from Minecraft.utils.utils import *
-
 try:
     import js2py as js
     import js2py.base as base
@@ -45,6 +39,16 @@ try:
 except:
     log_err("Module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
     exit(1)
+
+import Minecraft.saver as saver
+from Minecraft.source import block, sound, path, player, lang, settings
+from Minecraft.gui.bag import Bag
+from Minecraft.gui.dialogue import Dialogue
+from Minecraft.gui.hotbar import HotBar
+from Minecraft.gui.hud.heart import Heart
+from Minecraft.gui.hud.hunger import Hunger
+from Minecraft.utils.utils import *
+
 
 class Model(object):
 
@@ -407,16 +411,14 @@ class Window(pyglet.window.Window):
         self.hud = {}
         # E 键打开的背包
         self.hud['bag'] = Bag(self.width, self.height)
+        # 生命值
+        self.hud['heart'] = Heart(self.width, self.height, batch=self.model.batch2d)
         # 饥饿值
-        self.status = {}
-        self.status['heart'] = []
-        self.status['hunger'] = []
-        for i in range(1, 11):
-            self.status['heart'].append(Sprite(image.load(os.path.join(path['texture.hud'], 'heart.png')),
-                x=(i - 1) * 21, y=self.height - 21, batch=self.model.batch2d))
-            self.status['hunger'].append(Sprite(image.load(os.path.join(path['texture.hud'], 'hunger.png')),
-                x=self.width - i * 21, y=self.height - 21, batch=self.model.batch2d))
-
+        self.hud['hunger'] = Hunger(self.width, self.height, batch=self.model.batch2d)
+        # 工具栏
+        self.hud['hotbar'] = HotBar(self.width, self.height)
+        self.hud['hotbar'].set_index(self.width, self.block)
+        
     def save(self, dt):
         """
         这个函数被 pyglet 计时器反复调用
@@ -438,7 +440,6 @@ class Window(pyglet.window.Window):
         self.model = Model(name)
         # 读取玩家位置和背包
         self.player['position'], self.player['respawn_position'], self.block = saver.load_player(self.name)
-        self.player['position'] = self.player['position'][0], self.player['position'][1] + 1, self.player['position'][2]
         # 读取 js 脚本
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
             log_info('found script.js')
@@ -676,12 +677,14 @@ class Window(pyglet.window.Window):
         @param scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
         """
         index = self.block + scroll_y
-        if 0 <= index <= len(self.inventory) - 1:
-            self.block = index
-        elif index < 0:
+        if index < 0:
             self.block = len(self.inventory) + index
         elif index > len(self.inventory) - 1:
-            self.block = index - len(self.inventory)
+            self.block = index - len(self.inventory) - 1
+        else:
+            self.block = index
+        log_info('mouse scroll: %d of %d' % (self.block, len(self.inventory) - 1))
+        self.hud['hotbar'].set_index(self.width, index)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -750,6 +753,7 @@ class Window(pyglet.window.Window):
                 self.player['running'] = True
         elif symbol in self.num_keys:
             self.block = (symbol - self.num_keys[0]) % len(self.inventory)
+            self.hud['hotbar'].set_index(self.width, self.block)
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
@@ -812,11 +816,9 @@ class Window(pyglet.window.Window):
         # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
         if not self.is_init:
             self.hud['bag'].resize(self.width, self.height)
-            for i in range(len(self.status['heart'])):
-                self.status['heart'][i].x = i * 21
-                self.status['heart'][i].y = self.height - 21
-                self.status['hunger'][i].x = self.width - (i + 1) * 21
-                self.status['hunger'][i].y = self.height - 21 
+            self.hud['heart'].resize(self.width, self.height)
+            self.hud['hunger'].resize(self.width, self.height)
+            self.hud['hotbar'].resize(self.width, self.height)
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -858,6 +860,7 @@ class Window(pyglet.window.Window):
             self.set_2d()
             if not self.player['die']:
                 self.model.batch2d.draw()
+                self.hud['hotbar'].draw()
                 self.draw_reticle()
                 if self.player['in_hud'] and self.player['press_e']:
                     self.full_screen.color = (0, 0, 0)
