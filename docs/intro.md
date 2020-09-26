@@ -10,6 +10,7 @@
 依赖项的版本为开发机使用的版本或该依赖项的最高版本, 定义在`requirements.txt`中:
 
 - `Js2Py>=0.70`: 运行 javascript 的 python 库
+- `psutil>=5.7.2`(可选的): 检测游戏重复启动
 - `pyglet>=1.5.7`: OpenGL 库
 - `pyshaders>=1.4.1`: 编译与链接 GLSL
 - `noise>=1.2.2`: python + C 的噪声函数库

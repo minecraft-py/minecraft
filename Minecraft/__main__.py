@@ -11,8 +11,9 @@ if __name__ == '__main__':
         else:
             for p in psutil.process_iter():
                 if p.name() == 'python' and p.cmdline()[:3] == ['python', '-m', 'Minecraft']:
-                    log_err('Minecraft process exist, exit')
-                    exit()
-        MinecraftLauncher().mainloop()
+                    log_err('Minecraft process(pid: %d) exist, exit' % p.pid)
+                    exit(1)
+            else:
+                MinecraftLauncher().mainloop()
     else:
         log_err("path 'MCPYPATH' not found")
