@@ -1,4 +1,4 @@
-from os import environ
+from os import environ, getpid
 from Minecraft.launcher import *
 from Minecraft.utils import *
 
@@ -10,7 +10,7 @@ if __name__ == '__main__':
             pass
         else:
             for p in psutil.process_iter():
-                if p.name() == 'python' and p.cmdline()[:3] == ['python', '-m', 'Minecraft']:
+                if p.name() == 'python' and p.cmdline()[:3] == ['python', '-m', 'Minecraft'] and p.pid != getpid():
                     log_err('Minecraft process(pid: %d) exist, exit' % p.pid)
                     exit(1)
             else:

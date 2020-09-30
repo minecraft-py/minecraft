@@ -677,10 +677,10 @@ class Window(pyglet.window.Window):
         @param scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
         """
         index = self.block + scroll_y
-        if index < 0:
-            self.block = len(self.inventory) + index
-        elif index > len(self.inventory) - 1:
-            self.block = index - len(self.inventory) - 1
+        if index > len(self.inventory) - 1:
+            self.block = 0
+        elif index < 0:
+            self.block = len(self.inventory) - 1
         else:
             self.block = index
         log_info('mouse scroll: %d of %d' % (self.block, len(self.inventory) - 1))
@@ -903,7 +903,7 @@ class Window(pyglet.window.Window):
             if self.player['die']:
                 # 玩家死亡
                 self.dialogue.draw()
-                self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
+                self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' % +
                         lang['game.text.die'])
                 self.label['actionbar'].document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
                         self.player['die_reason'])

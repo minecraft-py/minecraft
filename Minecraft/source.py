@@ -42,6 +42,7 @@ else:
     log_info('you have not registered, exit')
     exit(1)
 
+path['fonts'] = 'data/fonts/default.ttf'
 path['texture'] = 'data/texture/default'
 path['texture.hud'] = join(path['texture'], 'hud')
 path['texture.ui'] = join(path['texture'], 'ui')
