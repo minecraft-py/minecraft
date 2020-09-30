@@ -22,7 +22,6 @@ class Dialogue(GUI):
         self.last = time.time()
 
     def add_dialogue(self, text):
-        log_info('dialogue add: %s' % text)
         try:
             decode_attributed(text)
         except:
@@ -39,9 +38,13 @@ class Dialogue(GUI):
 
     def draw(self):
         # 两个换行符表示真正的换行
-        text = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' + '\n\n'.join(self.shown))
-        self.dialogue_label.document = text
-        self.dialogue_label.draw()
+        shown = ''
+        for text in self.shown:
+            shown += '{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' + text + '\n' * 2
+        else:
+            text = decode_attributed(shown)
+            self.dialogue_label.document = text
+            self.dialogue_label.draw()
         
     def resize(self, width, height):
         self.dialogue_label.x = 0
