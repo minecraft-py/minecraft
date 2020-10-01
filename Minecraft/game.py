@@ -204,7 +204,7 @@ class Model(object):
         show_block() 方法的私有实现
 
         @param position 长度为3的元组, 要显示方块的位置
-        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
+        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 Minecraft.utils.utils.tex_coords() 创建
         """
         x, y, z = position
         vertex_data = cube_vertices(x, y, z, 0.5)
@@ -893,7 +893,7 @@ class Window(pyglet.window.Window):
         if block:
             x, y, z = block
             vertex_data = cube_vertices(x, y, z, 0.505)
-            glColor3d(0, 0, 0)
+            glColor4d(0, 0, 0, 0.5)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
@@ -926,7 +926,7 @@ class Window(pyglet.window.Window):
     def draw_reticle(self):
         # 在屏幕中央画十字线
         if not self.is_init:
-            glColor3d(0, 0, 0)
+            glColor4i(0, 0, 0, 1)
             self.reticle.draw(GL_LINES)
 
 
