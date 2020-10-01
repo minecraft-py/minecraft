@@ -903,7 +903,7 @@ class Window(pyglet.window.Window):
             if self.player['die']:
                 # 玩家死亡
                 self.dialogue.draw()
-                self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' % +
+                self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
                         lang['game.text.die'])
                 self.label['actionbar'].document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
                         self.player['die_reason'])
