@@ -8,6 +8,15 @@ import random
 import sys
 import time
 
+import Minecraft.saver as saver
+from Minecraft.source import block, sound, path, player, lang, settings
+from Minecraft.gui.bag import Bag
+from Minecraft.gui.dialogue import Dialogue
+from Minecraft.gui.hotbar import HotBar
+from Minecraft.gui.hud.heart import Heart
+from Minecraft.gui.hud.hunger import Hunger
+from Minecraft.utils.utils import *
+
 try:
     import js2py as js
     import js2py.base as base
@@ -39,15 +48,6 @@ try:
 except:
     log_err("Module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
     exit(1)
-
-import Minecraft.saver as saver
-from Minecraft.source import block, sound, path, player, lang, settings
-from Minecraft.gui.bag import Bag
-from Minecraft.gui.dialogue import Dialogue
-from Minecraft.gui.hotbar import HotBar
-from Minecraft.gui.hud.heart import Heart
-from Minecraft.gui.hud.hunger import Hunger
-from Minecraft.utils.utils import *
 
 
 class Model(object):
@@ -330,6 +330,8 @@ class Window(pyglet.window.Window):
         # 玩家在世界中的位置 (x, y, z)
         self.player['position'] = (0, 4, 0)
         self.player['respawn_position'] = (0, 4, 0)
+        # 玩家视角
+        self.player['fovy'] = 65
         # 拓展功能
         self.ext = {}
         self.ext['debug'] = False
@@ -840,7 +842,7 @@ class Window(pyglet.window.Window):
         glViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(65.0, width / float(height), 0.1, 60.0)
+        gluPerspective(self.player['fovy'], width / float(height), 0.1, 60.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         x, y = self.rotation
