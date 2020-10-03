@@ -759,7 +759,7 @@ class Window(pyglet.window.Window):
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
-            log_info('screenshot saved in: %s' % time.strftime('$MCPYPATH/screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
+            log_info(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
         elif symbol == key.F3:
             self.ext['open'] = not self.ext['open']
         elif symbol == key.F11:
@@ -804,7 +804,7 @@ class Window(pyglet.window.Window):
         if self.reticle:
             self.reticle.delete()
         x, y = self.width // 2, self.height // 2
-        n = 10
+        n = 12
         self.reticle = pyglet.graphics.vertex_list(4,
             ('v2i', (x - n, y, x + n, y, x, y - n, x, y + n))
         )
@@ -928,8 +928,10 @@ class Window(pyglet.window.Window):
     def draw_reticle(self):
         # 在屏幕中央画十字线
         if not self.is_init:
-            glColor4i(0, 0, 0, 1)
+            glColor4f(1.0, 1.0, 1.0, 0.8)
+            glLineWidth(3.0)
             self.reticle.draw(GL_LINES)
+            glLineWidth(1.0)
 
 
 def setup_fog():
@@ -971,6 +973,9 @@ def setup():
     glClearColor(0.5, 0.69, 1.0, 1)
     # 启用面剔除
     glEnable(GL_CULL_FACE)
+    # 反走样
+    glEnable(GL_BLEND)
+    glEnable(GL_LINE_SMOOTH)
     # Set the texture minification/magnification function to GL_NEAREST (nearest
     # in Manhattan distance) to the specified texture coordinates. GL_NEAREST
     # "is generally faster than GL_LINEAR, but it can produce textured images
