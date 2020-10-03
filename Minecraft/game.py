@@ -932,7 +932,7 @@ class Window(pyglet.window.Window):
     def draw_reticle(self):
         # 在屏幕中央画十字线
         if not self.is_init:
-            glColor4f(1.0, 1.0, 1.0, 0.6)
+            glColor4f(1.0, 1.0, 1.0, 0.8)
             glLineWidth(3.0)
             self.reticle.draw(GL_LINES)
             glLineWidth(1.0)
