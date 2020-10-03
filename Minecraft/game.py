@@ -319,6 +319,7 @@ class Window(pyglet.window.Window):
         self.player['running'] = False
         self.player['die'] = False
         self.player['in_hud'] = False
+        self.player['hide_hud'] = False
         self.player['press_e'] = False
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
@@ -756,6 +757,8 @@ class Window(pyglet.window.Window):
         elif symbol in self.num_keys:
             self.block = (symbol - self.num_keys[0]) % len(self.inventory)
             self.hud['hotbar'].set_index(self.width, self.block)
+        elif symbol == key.F1:
+            self.player['hide_hud'] = not self.player['hide_hud']
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
@@ -860,7 +863,7 @@ class Window(pyglet.window.Window):
             self.model.batch3d.draw()
             self.draw_focused_block()
             self.set_2d()
-            if not self.player['die']:
+            if not self.player['die'] and not self.player['hide_hud']:
                 self.model.batch2d.draw()
                 self.hud['hotbar'].draw()
                 self.draw_reticle()
@@ -869,12 +872,13 @@ class Window(pyglet.window.Window):
                     self.full_screen.opacity = 100
                     self.full_screen.draw()
                     self.hud['bag'].draw()
-            else:
+            elif self.player['die']:
                 self.full_screen.color = (200, 0, 0)
                 self.full_screen.opacity = 100
                 self.full_screen.draw()
         self.set_2d()
-        self.draw_label()
+        if not self.player['hide_hud']:
+            self.draw_label()
         if self.is_init:
             self.model.init_world()
             if self.has_script:
@@ -928,7 +932,7 @@ class Window(pyglet.window.Window):
     def draw_reticle(self):
         # 在屏幕中央画十字线
         if not self.is_init:
-            glColor4f(1.0, 1.0, 1.0, 0.8)
+            glColor4f(1.0, 1.0, 1.0, 0.6)
             glLineWidth(3.0)
             self.reticle.draw(GL_LINES)
             glLineWidth(1.0)
