@@ -716,6 +716,11 @@ class Window(pyglet.window.Window):
                 self.set_exclusive_mouse(False)
                 self.player['in_hud'] = not self.player['in_hud']
                 self.player['press_e'] = not self.player['press_e']
+        elif symbol == key.X:
+            if self.player['fovy'] == 65:
+                self.player['fovy'] = 20
+            else:
+                self.player['fovy'] = 65
         elif symbol == key.P:
             if self.ext['open']:
                 self.ext['position'] = not self.ext['position']
