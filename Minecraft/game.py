@@ -363,8 +363,8 @@ class Window(pyglet.window.Window):
         # 这个标签在画布的上方显示
         self.label = {}
         self.label['top'] = pyglet.text.DocumentLabel(decode_attributed(''),
-            x=0, y=self.height - 30, anchor_x='left', anchor_y='center')
-        self.is_init =True
+            x=0, y=self.height - 30,width=self.width // 2, multiline=True, anchor_x='left', anchor_y='center')
+        self.is_init = True
         # 这个标签在画布正中偏上显示
         self.label['center'] = pyglet.text.DocumentLabel(decode_attributed(''),
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center')
@@ -388,6 +388,19 @@ class Window(pyglet.window.Window):
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         log_info('welcome %s(id: %s)' % (player['name'], player['id']))
+
+    def __sizeof__(self):
+        if not self.is_init:
+            total = 0
+            for obj in dir(self.model):
+                total += sys.getsizeof(getattr(self.model, obj))
+            else:
+                for obj in dir(self):
+                    total += sys.getsizeof(getattr(self, obj))
+                else:
+                    return total
+        else:
+            return 0
 
     def check_die(self, dt):
         """
@@ -804,6 +817,7 @@ class Window(pyglet.window.Window):
         log_info('resize to %dx%d' % (self.width, self.height))
         self.label['top'].x = 0
         self.label['top'].y = self.height - 30
+        self.label['top'].width = self.width // 2
         self.label['center'].x = self.width // 2
         self.label['center'].y = self.height // 2 + 50
         self.label['actionbar'].x = self.width // 2
@@ -925,6 +939,16 @@ class Window(pyglet.window.Window):
                 x, y, z = self.player['position']
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
                         lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps()))
+                self.label['top'].draw()
+                self.dialogue.draw()
+            elif self.ext['debug']:
+                x, y, z = self.player['position']
+                rx, ry = self.rotation
+                mem = sys.getsizeof(self)
+                self.label['top'].y = self.height - 60
+                self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
+                        '\n\n'.join(lang['game.text.debug']) % (x, y, z, math.radians(rx),
+                            math.radians(ry), mem, pyglet.clock.get_fps()))
                 self.label['top'].draw()
                 self.dialogue.draw()
         else:
