@@ -947,8 +947,7 @@ class Window(pyglet.window.Window):
                 mem = sys.getsizeof(self)
                 self.label['top'].y = self.height - 60
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        '\n\n'.join(lang['game.text.debug']) % (x, y, z, math.radians(rx),
-                            math.radians(ry), mem, pyglet.clock.get_fps()))
+                        '\n\n'.join(lang['game.text.debug']) % (x, y, z, rx, ry, mem, pyglet.clock.get_fps()))
                 self.label['top'].draw()
                 self.dialogue.draw()
         else:

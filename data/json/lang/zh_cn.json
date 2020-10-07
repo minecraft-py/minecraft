@@ -1,4 +1,5 @@
 {
+	"describe": "中文(简体)",
 	"game.text.die": "你失败了",
 	"game.text.die.fall_into_void": "%s 坠入了虚空",
 	"game.text.die.no_oxygen": "%s 没有氧气了可以呼吸了",
@@ -14,7 +15,7 @@
 	"launcher.dialog.title.new": "新建存档",
 	"launcher.dialog.title.rename": "重命名存档",
 	"launcher.exit": "退出",
-	"launcher.new": "新世界",
+	"launcher.new": "新的世界",
 	"launcher.rename": "重命名",
 	"launcher.start": "开始游戏",
 	"launcher.title": "Minecraft 启动器"
