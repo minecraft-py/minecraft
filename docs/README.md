@@ -9,3 +9,4 @@
 - [启动器](launcher.md)
 - 游戏
   - [存档](game/save.md)
+  - [javascript](game/js.md)

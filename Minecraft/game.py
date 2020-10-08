@@ -96,9 +96,9 @@ class Model(object):
         从当前位置开始视线搜索, 如果有任何方块与之相交, 返回之.
         如果没有找到, 返回 (None, None)
 
-        @param position 长度为3的元组, 当前位置
-        @param vector 长度为3的元组, 视线向量
-        @param max_distance 在多少方块的范围内搜索
+        :param: position 长度为3的元组, 当前位置
+        :param: vector 长度为3的元组, 视线向量
+        :param: max_distance 在多少方块的范围内搜索
         """
         m = 8
         x, y, z = position
@@ -126,10 +126,10 @@ class Model(object):
         """
         在 position 处添加一个纹理为 texture 的方块
 
-        @param pssition 长度为3的元组, 要添加方块的位置
-        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
-        @param immediate 是否立即绘制方块
-        @param record 是否记录方块更改(在生成地形时不记录)
+        :param: pssition 长度为3的元组, 要添加方块的位置
+        :param: texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
+        :param: immediate 是否立即绘制方块
+        :param: record 是否记录方块更改(在生成地形时不记录)
         """
         if position in self.world:
             self.remove_block(position, immediate, record=False)
@@ -152,9 +152,9 @@ class Model(object):
         """
         在 position 处移除一个方块
 
-        @param position 长度为3的元组, 要移除方块的位置
-        @param immediate 是否要从画布上立即移除方块
-        @param record 是否记录方块更改(在 add_block 破坏后放置时不记录)
+        :param: position 长度为3的元组, 要移除方块的位置
+        :param: immediate 是否要从画布上立即移除方块
+        :param: record 是否记录方块更改(在 add_block 破坏后放置时不记录)
         """
         if position in self.world:
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
@@ -189,8 +189,8 @@ class Model(object):
         """
         在 position 处显示方块, 这个方法假设方块在 add_block() 已经添加
 
-        @param position 长度为3的元组, 要显示方块的位置
-        @param immediate 是否立即显示方块
+        :param: position 长度为3的元组, 要显示方块的位置
+        :param: immediate 是否立即显示方块
         """
         texture = block[self.world[position]]
         self.shown[position] = texture
@@ -203,8 +203,8 @@ class Model(object):
         """
         show_block() 方法的私有实现
 
-        @param position 长度为3的元组, 要显示方块的位置
-        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 Minecraft.utils.utils.tex_coords() 创建
+        :param: position 长度为3的元组, 要显示方块的位置
+        :param: texture 长度为3的列表, 纹理正方形的坐标, 使用 Minecraft.utils.utils.tex_coords() 创建
         """
         x, y, z = position
         vertex_data = cube_vertices(x, y, z, 0.5)
@@ -219,8 +219,8 @@ class Model(object):
         """
         隐藏在 position 处的方块, 它不移除方块
 
-        @param position 长度为3的元组, 要隐藏方块的位置
-        @param immediate 是否立即隐藏方块
+        :param: position 长度为3的元组, 要隐藏方块的位置
+        :param: immediate 是否立即隐藏方块
         """
         self.shown.pop(position)
         if immediate:
@@ -406,7 +406,7 @@ class Window(pyglet.window.Window):
         """
         这个函数被 pyglet 计时器反复调用
 
-        @param dt 距上次调用的时间
+        :param: dt 距上次调用的时间
         """
         if not self.player['die']:
             if self.player['position'][1] < -2:
@@ -439,7 +439,7 @@ class Window(pyglet.window.Window):
         """
         这个函数被 pyglet 计时器反复调用
 
-        @param dt 距上次调用的时间
+        :param: dt 距上次调用的时间
         """
         log_info('save changes')
         saver.save_block(self.name, self.model.change)
@@ -460,7 +460,12 @@ class Window(pyglet.window.Window):
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
             log_info('found script.js')
             self.has_script = True
-            self.js = js.EvalJs()
+            self.js = js.EvalJs({
+                    'add_block': lambda x, y, z, block: self.model.add_block((x.to_py(), y.to_py(), z.to_py()),
+                        block.to_py()),
+                    'get_block': lambda x, y, z: js.base.PyJsString(self.model.world[(x.to_py(), y.to_py(), z.to_py())]) if (x.to_py(), y.to_py(), z.to_py()) in self.model.world else js.base.PyJsString('air'),
+                    'remove_block': lambda x, y, z: self.model.remove_block(x.to_py(), y.to_py(), z.to_py())
+                }, enable_require=True)
             try:
                 self.js.eval(open(os.path.join(path['mcpypath'], 'save', name, 'script.js')).read())
             except Exception as err:
