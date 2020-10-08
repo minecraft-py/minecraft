@@ -10,7 +10,7 @@ javascript 可以使用`require`函数.
 ```javascript
 function add_block(x, y, z, block);
 ```
-添加方块的函数:
+添加方块的函数
 
 - `x, y, z` - 方块的坐标
 - `block` - 方块的名称(如`grass`)
