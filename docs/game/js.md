@@ -14,8 +14,7 @@ function add_block(x, y, z, block);
 
 - `x, y, z` - 方块的坐标
 - `block` - 方块的名称(如`grass`)
-
-- - -
+> `block`为`air`则移除坐标处方块
 
 ```javascript
 function get_block(x, y, z);
@@ -23,10 +22,15 @@ function get_block(x, y, z);
 返回坐标处的方块
 
 - `x, y, z` - 方块的坐标
+> 如果方块不存在, 返回字符串`air`
 
-如果方块不存在, 返回字符串`air`
+```javascript
+function get_settings(key);
+```
+返回`$MCPYPATH/settings.json`的内容
 
-- - -
+- `key` - 要返回的键值
+> 键不存在返回`null`
 
 ```javascript
 function remove_block(x, y, z);
@@ -35,8 +39,6 @@ function remove_block(x, y, z);
 
 - `x, y, z` - 方块的坐标
 
-- - -
-
 ```javascript
 function test_block(x, y, z, block);
 ```
@@ -44,5 +46,4 @@ function test_block(x, y, z, block);
 
 - `x, y, z` - 方块的坐标
 - `block` - 检测方块的类型
-
-没有任何方块为`air`
+> 没有任何方块为`air`

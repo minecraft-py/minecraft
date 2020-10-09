@@ -463,6 +463,13 @@ class Window(pyglet.window.Window):
             return self.model.world[(x, y, z)]
         else:
             return 'air'
+
+    def _js_get_settings(self, key):
+        # get_settings 的 javascript 函数定义
+        if key in settings:
+            return settings[key]
+        else:
+            return None
     
     def _js_remove_block(self, x, y, z):
         # remove_block 的 javascript 函数定义
@@ -492,6 +499,7 @@ class Window(pyglet.window.Window):
             self.js = js.EvalJs({
                     'add_block': self._js_add_block,
                     'get_block': self._js_get_block,
+                    'get_settings': self._js_get_settings,
                     'remove_block': self._js_remove_block,
                     'test_block': self._js_test_block
                 }, enable_require=True)
