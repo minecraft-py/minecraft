@@ -450,6 +450,35 @@ class Window(pyglet.window.Window):
         super(Window, self).set_exclusive_mouse(exclusive)
         self.exclusive = exclusive
 
+    def _js_add_block(self, x, y, z, block):
+        # add_block 的 javascript 函数定义
+        if block == 'air':
+            self.model.remove_block((x, y, z))
+        else:
+            self.model.add_block((x, y, z), block)
+
+    def _js_get_block(self, x, y, z):
+        # get_block 的 javascript 函数定义
+        if (x, y, z) in self.model.world:
+            return self.model.world[(x, y, z)]
+        else:
+            return 'air'
+    
+    def _js_remove_block(self, x, y, z):
+        # remove_block 的 javascript 函数定义
+        self.model.remove_block((x, y, z))
+
+    def _js_test_block(self, x, y, z, block):
+        # test_block 的 javascript 函数定义
+        if (x, y, z) not in self.model.world and block != 'air':
+            return False
+        elif (x, y, z) not in self.model.world and block == 'air':
+            return True
+        elif self.model.world[(x, y, z)] != block:
+            return False
+        else:
+            return True
+        
     def set_name(self, name):
         # 设置游戏存档名
         self.name = name
@@ -461,10 +490,10 @@ class Window(pyglet.window.Window):
             log_info('found script.js')
             self.has_script = True
             self.js = js.EvalJs({
-                    'add_block': lambda x, y, z, block: self.model.add_block((x.to_py(), y.to_py(), z.to_py()),
-                        block.to_py()),
-                    'get_block': lambda x, y, z: js.base.PyJsString(self.model.world[(x.to_py(), y.to_py(), z.to_py())]) if (x.to_py(), y.to_py(), z.to_py()) in self.model.world else js.base.PyJsString('air'),
-                    'remove_block': lambda x, y, z: self.model.remove_block(x.to_py(), y.to_py(), z.to_py())
+                    'add_block': self._js_add_block,
+                    'get_block': self._js_get_block,
+                    'remove_block': self._js_remove_block,
+                    'test_block': self._js_test_block
                 }, enable_require=True)
             try:
                 self.js.eval(open(os.path.join(path['mcpypath'], 'save', name, 'script.js')).read())

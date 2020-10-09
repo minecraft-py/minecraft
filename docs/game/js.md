@@ -34,3 +34,15 @@ function remove_block(x, y, z);
 移除坐标处的方块
 
 - `x, y, z` - 方块的坐标
+
+- - -
+
+```javascript
+function test_block(x, y, z, block);
+```
+检测坐标处的方块, 相等返回`true`, 否则返回`false`
+
+- `x, y, z` - 方块的坐标
+- `block` - 检测方块的类型
+
+没有任何方块为`air`
