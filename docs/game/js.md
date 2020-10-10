@@ -25,6 +25,15 @@ function get_block(x, y, z);
 > 如果方块不存在, 返回字符串`air`
 
 ```javascript
+function get_gl_lib(s);
+```
+返回`pyglet.gl`库中的常数或函数
+
+- `s` - 对象名称(如`glColor3f`)
+> 对象`s`不存在则返回`null`
+返回的函数是可以运行的
+
+```javascript
 function get_settings(key);
 ```
 返回`$MCPYPATH/settings.json`的内容

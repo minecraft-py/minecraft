@@ -464,6 +464,13 @@ class Window(pyglet.window.Window):
         else:
             return 'air'
 
+    def _js_get_gl_lib(self, s):
+        # get_gl_lib 的 javascript 函数定义
+        if hasattr(pyglet.gl, s):
+            return getattr(pyglet.gl, s)
+        else:
+            return None
+
     def _js_get_settings(self, key):
         # get_settings 的 javascript 函数定义
         if key in settings:
@@ -499,6 +506,7 @@ class Window(pyglet.window.Window):
             self.js = js.EvalJs({
                     'add_block': self._js_add_block,
                     'get_block': self._js_get_block,
+                    'get_gl_lib': self._js_get_gl_lib,
                     'get_settings': self._js_get_settings,
                     'remove_block': self._js_remove_block,
                     'test_block': self._js_test_block
@@ -960,7 +968,7 @@ class Window(pyglet.window.Window):
         if block:
             x, y, z = block
             vertex_data = cube_vertices(x, y, z, 0.505)
-            glColor4d(0, 0, 0, 0.5)
+            glColor4f(0.0, 0.0, 0.0, 0.8)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
