@@ -9,12 +9,12 @@ if not exist %MCPYPATH%\settings.json (
 	copy data\json\settings.json /A %MCPYPATH%\settings.json
 )
 if exist %MCPYPATH%\save (
-	echo %%0: %MCPYPATH%\save existed
+	echo %0: %MCPYPATH%\save existed
 ) else (
 	mkdir %MCPYPATH%\save
 )
 if exist %MCPYPATH%\screenshot (
-	echo %%0: %MCPYPATH%\screenshot existed
+	echo %0: %MCPYPATH%\screenshot existed
 ) else (
 	mkdir %MCPYPATH%\screenshot
 )
