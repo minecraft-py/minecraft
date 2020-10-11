@@ -41,6 +41,14 @@ function get_settings(key);
 > 键不存在返回`null`
 
 ```javascript
+function log_info(s);
+```
+打印信息
+
+- `s` - 要打印的内容
+> 同样的, 还有`log_err`, `log_warn`函数用于显示不同的消息前缀
+
+```javascript
 function remove_block(x, y, z);
 ```
 移除坐标处的方块

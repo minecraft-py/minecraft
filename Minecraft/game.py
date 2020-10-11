@@ -477,6 +477,18 @@ class Window(pyglet.window.Window):
             return settings[key]
         else:
             return None
+
+    def _js_log_info(self, s):
+        # log_info 的 javascript 函数定义
+        log_info(s)
+
+    def _js_log_err(self, s):
+        # log_err 的 javascript 函数定义
+        log_err(s)
+
+    def _js_log_warn(self, s):
+        # log_warn 的 javascript 函数定义
+        log_warn(s)
     
     def _js_remove_block(self, x, y, z):
         # remove_block 的 javascript 函数定义
@@ -507,6 +519,9 @@ class Window(pyglet.window.Window):
                     'add_block': self._js_add_block,
                     'get_block': self._js_get_block,
                     'get_gl_lib': self._js_get_gl_lib,
+                    'log_info': self._js_log_info,
+                    'log_err': self._js_log_err,
+                    'log_warn': self._js_log_warn,
                     'get_settings': self._js_get_settings,
                     'remove_block': self._js_remove_block,
                     'test_block': self._js_test_block
@@ -997,7 +1012,7 @@ class Window(pyglet.window.Window):
                 mem = sys.getsizeof(self)
                 self.label['top'].y = self.height - 60
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        '\n\n'.join(lang['game.text.debug']) % (x, y, z, rx, ry, mem, pyglet.clock.get_fps()))
+                        '\n\n'.join(lang['game.text.debug']) % (x, y, z, 0.0, ry, mem, pyglet.clock.get_fps()))
                 self.label['top'].draw()
                 self.dialogue.draw()
         else:
