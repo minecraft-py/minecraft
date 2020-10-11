@@ -18,6 +18,8 @@ cd Minecraft
 ```
 或参见[安装指南](docs/guide.md).
 
+另外, 本项目有详细的[文档](docs/README.md).
+
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:
 
