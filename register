@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 
-from time import time
+from json import dump
+from os import environ, path
 from random import randint
 from re import match
-from os import environ, path
-from json import dump
+from time import time
+import uuid
 
 if __name__ == '__main__':
     if 'MCPYPATH' in environ:
         if not path.isfile(path.join(environ['MCPYPATH'], 'player.json')):
-            player_id = hex(int(time() * 100) * randint(1024, 8192) // randint(16, 64))[2:]
-            print('Your id is %s, do not change it' % player_id)
+            player_id = str(uuid.uuid4())
+            print('Your uuid is %s, do not change it' % player_id)
             player_name = ''
             while not match(r'^([a-z]|[A-Z]|_)\w+$', player_name):
                 player_name = input('Your name: ')
