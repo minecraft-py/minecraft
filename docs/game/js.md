@@ -8,7 +8,7 @@ javascript 可以使用`require`函数.
 
 # Minecraft 定义的函数
 ```javascript
-function add_block(x, y, z, block);
+addBlock(x, y, z, block);
 ```
 添加方块的函数
 
@@ -17,7 +17,7 @@ function add_block(x, y, z, block);
 > `block`为`air`则移除坐标处方块
 
 ```javascript
-function get_block(x, y, z);
+getBlock(x, y, z);
 ```
 返回坐标处的方块
 
@@ -25,7 +25,7 @@ function get_block(x, y, z);
 > 如果方块不存在, 返回字符串`air`
 
 ```javascript
-function get_gl_lib(s);
+getGLlib(s);
 ```
 返回`pyglet.gl`库中的常数或函数
 
@@ -33,7 +33,7 @@ function get_gl_lib(s);
 > 对象`s`不存在则返回`null`. 返回的函数是可以运行的
 
 ```javascript
-function get_settings(key);
+getSettings(key);
 ```
 返回`$MCPYPATH/settings.json`的内容
 
@@ -41,22 +41,27 @@ function get_settings(key);
 > 键不存在返回`null`
 
 ```javascript
-function log_info(s);
+loadGLlib(s);
+```
+与`getGLlib`类似, 但是直接定义一个函数, 没有返回值.
+
+```javascript
+logInfo(s);
 ```
 打印信息
 
 - `s` - 要打印的内容
-> 同样的, 还有`log_err`, `log_warn`函数用于显示不同的消息前缀
+> 同样的, 还有`logErr`, `logWarn`函数用于显示不同的消息前缀
 
 ```javascript
-function remove_block(x, y, z);
+removeBlock(x, y, z);
 ```
 移除坐标处的方块
 
 - `x, y, z` - 方块的坐标
 
 ```javascript
-function test_block(x, y, z, block);
+testBlock(x, y, z, block);
 ```
 检测坐标处的方块, 相等返回`true`, 否则返回`false`
 

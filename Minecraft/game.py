@@ -450,52 +450,56 @@ class Window(pyglet.window.Window):
         super(Window, self).set_exclusive_mouse(exclusive)
         self.exclusive = exclusive
 
-    def _js_add_block(self, x, y, z, block):
-        # add_block 的 javascript 函数定义
+    def _js_addBlock(self, x, y, z, block):
+        # addBlock 的 javascript 函数定义
         if block == 'air':
             self.model.remove_block((x, y, z))
         else:
             self.model.add_block((x, y, z), block)
 
-    def _js_get_block(self, x, y, z):
-        # get_block 的 javascript 函数定义
+    def _js_getBlock(self, x, y, z):
+        # getBlock 的 javascript 函数定义
         if (x, y, z) in self.model.world:
             return self.model.world[(x, y, z)]
         else:
             return 'air'
 
-    def _js_get_gl_lib(self, s):
-        # get_gl_lib 的 javascript 函数定义
+    def _js_getGLlib(self, s):
+        # getGLlib 的 javascript 函数定义
         if hasattr(pyglet.gl, s):
             return getattr(pyglet.gl, s)
         else:
             return None
 
-    def _js_get_settings(self, key):
-        # get_settings 的 javascript 函数定义
+    def _js_getSettings(self, key):
+        # getSettings 的 javascript 函数定义
         if key in settings:
             return settings[key]
         else:
             return None
 
-    def _js_log_info(self, s):
-        # log_info 的 javascript 函数定义
+    def _js_loadGLlib(self, s):
+        # loadGLlib 的 javascript 函数定义
+        self.js.eval("%s = getGLlib(\"%s\");" % (s, s))
+
+    def _js_logInfo(self, s):
+        # logInfo 的 javascript 函数定义
         log_info(s)
 
-    def _js_log_err(self, s):
-        # log_err 的 javascript 函数定义
+    def _js_logErr(self, s):
+        # logErr 的 javascript 函数定义
         log_err(s)
 
-    def _js_log_warn(self, s):
-        # log_warn 的 javascript 函数定义
+    def _js_logWarn(self, s):
+        # logWarn 的 javascript 函数定义
         log_warn(s)
     
-    def _js_remove_block(self, x, y, z):
-        # remove_block 的 javascript 函数定义
+    def _js_removeBlock(self, x, y, z):
+        # removeBlock 的 javascript 函数定义
         self.model.remove_block((x, y, z))
 
-    def _js_test_block(self, x, y, z, block):
-        # test_block 的 javascript 函数定义
+    def _js_testBlock(self, x, y, z, block):
+        # testBlock 的 javascript 函数定义
         if (x, y, z) not in self.model.world and block != 'air':
             return False
         elif (x, y, z) not in self.model.world and block == 'air':
@@ -516,15 +520,16 @@ class Window(pyglet.window.Window):
             log_info('found script.js')
             self.has_script = True
             self.js = js.EvalJs({
-                    'add_block': self._js_add_block,
-                    'get_block': self._js_get_block,
-                    'get_gl_lib': self._js_get_gl_lib,
-                    'log_info': self._js_log_info,
-                    'log_err': self._js_log_err,
-                    'log_warn': self._js_log_warn,
-                    'get_settings': self._js_get_settings,
-                    'remove_block': self._js_remove_block,
-                    'test_block': self._js_test_block
+                    'addBlock': self._js_addBlock,
+                    'getBlock': self._js_getBlock,
+                    'getGLlib': self._js_getGLlib,
+                    'getSettings': self._js_getSettings,
+                    'loadGLlib': self._js_loadGLlib,
+                    'logInfo': self._js_logInfo,
+                    'logErr': self._js_logErr,
+                    'logWarn': self._js_logWarn,
+                    'removeBlock': self._js_removeBlock,
+                    'testBlock': self._js_testBlock
                 }, enable_require=True)
             try:
                 self.js.eval(open(os.path.join(path['mcpypath'], 'save', name, 'script.js')).read())
@@ -586,7 +591,7 @@ class Window(pyglet.window.Window):
         """
         这个方法被 pyglet 计时器反复调用
 
-        @param dt 距上次调用的时间
+        :param: dt 距上次调用的时间
         """
         self.model.process_queue()
         self.dialogue.update()
@@ -711,9 +716,9 @@ class Window(pyglet.window.Window):
         """
         当玩家按下鼠标按键时调用
   
-        @param x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
-        @param button 哪个按键被按下: 1 = 左键, 4 = 右键
-        @param modifiers 表示单击鼠标按钮时按下的任何修改键的数字
+        :param: x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
+        :param: button 哪个按键被按下: 1 = 左键, 4 = 右键
+        :param: modifiers 表示单击鼠标按钮时按下的任何修改键的数字
         """
         if self.exclusive:
             vector = self.get_sight_vector()
@@ -741,8 +746,8 @@ class Window(pyglet.window.Window):
         """
         当玩家移动鼠标时调用
 
-        @param x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
-        @param dx, dy 鼠标移动的距离
+        :param: x, y 鼠标点击时的坐标, 如果被捕获的话它们总是在屏幕中央
+        :param: dx, dy 鼠标移动的距离
         """
         if self.exclusive and not self.player['die']:
             m = 0.15
@@ -755,7 +760,7 @@ class Window(pyglet.window.Window):
         """
         当鼠标滚轮滚动时调用
 
-        @param scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
+        :param: scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
         """
         index = self.block + scroll_y
         if index > len(self.inventory) - 1:
@@ -771,8 +776,8 @@ class Window(pyglet.window.Window):
         """
         当玩家按下一个按键时调用
 
-        @param symbol 按下的键
-        @param modifiers 同时按下的修饰键
+        :param: symbol 按下的键
+        :param: modifiers 同时按下的修饰键
         """
         if symbol == key.W:
             self.player['strafe'][0] -= 1
@@ -855,7 +860,7 @@ class Window(pyglet.window.Window):
         """
         当玩家释放一个按键时调用
         
-        @param symbol 按下的键
+        :param: symbol 释放的键
         """
         if symbol == key.W:
             self.player['strafe'][0] += 1
