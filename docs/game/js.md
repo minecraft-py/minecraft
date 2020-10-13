@@ -1,5 +1,5 @@
 # javascript
-Minecraft 可以在某些特定的时刻运行 javascript. javascript 文件位于`$MCPYPATH/<存档名>/script.js`. 是一个存档目录的可选文件.
+Minecraft 可以在某些特定的时刻运行 javascript. javascript 文件位于`$MCPYPATH/save/<存档名>/script.js`. 是一个存档目录的可选文件.
 
 javascript 可以使用`require`函数.
 
@@ -44,6 +44,7 @@ getSettings(key);
 loadGLlib(s);
 ```
 与`getGLlib`类似, 但是直接定义一个函数, 没有返回值.
+> 该函数封装了`getGLlib`函数
 
 ```javascript
 logInfo(s);
