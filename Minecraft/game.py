@@ -850,6 +850,7 @@ class Window(pyglet.window.Window):
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
+            self.dialogue.add_dialogue(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
             log_info(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
         elif symbol == key.F3:
             self.ext['open'] = not self.ext['open']
@@ -1006,12 +1007,13 @@ class Window(pyglet.window.Window):
                 self.label['actionbar'].draw()
             elif self.ext['position']:
                 # 在屏幕左上角绘制标签
+                self.dialogue.draw()
                 x, y, z = self.player['position']
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
                         lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label['top'].draw()
-                self.dialogue.draw()
             elif self.ext['debug']:
+                self.dialogue.draw()
                 x, y, z = self.player['position']
                 rx, ry = self.rotation
                 mem = sys.getsizeof(self)
@@ -1019,7 +1021,6 @@ class Window(pyglet.window.Window):
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
                         '\n\n'.join(lang['game.text.debug']) % (x, y, z, 0.0, ry, mem, pyglet.clock.get_fps()))
                 self.label['top'].draw()
-                self.dialogue.draw()
         else:
             # 初始化屏幕
             self.loading_image.blit(0, 0)

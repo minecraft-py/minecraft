@@ -3,6 +3,7 @@
 import json
 from os import environ
 from os.path import join, isfile
+import re
 
 from pyglet import media
 
@@ -38,8 +39,11 @@ if not isfile(join(path['json.lang'], settings['lang'] + '.json')):
 
 if isfile(join(path['mcpypath'], 'player.json')):
     player = json.load(open(join(path['mcpypath'], 'player.json')))
+    if not re.match('^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$', player['id']):
+        log_err('invalid player id: %s' % player['id'])
+        exit(1)
 else:
-    log_info('you have not registered, exit')
+    log_err('you have not registered, exit')
     exit(1)
 
 path['fonts'] = 'data/fonts/default.ttf'
