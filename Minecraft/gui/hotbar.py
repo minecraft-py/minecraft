@@ -41,7 +41,7 @@ class HotBar(GUI):
             self._element[i].scale = 2
         if 0 <= index < len(self._element):
             self._element[index] = Sprite(image.load(join(path['texture.ui'], 'hotbar-highlight.png')),
-                    x=(width - 360) // 2 + index * 40 - 2, y=3)
+                    x=(width - 360) // 2 + index * 40 - 4, y=3)
             self._element[index].scale = 2
             self.index = index
 
@@ -52,4 +52,4 @@ class HotBar(GUI):
             if i != self.index:
                 self._element[i].position = (width - 360) // 2 + i * 40, 5
             else:
-                self._element[i].position = (width - 360) // 2 + i * 40 - 2, 3
+                self._element[i].position = (width - 360) // 2 + i * 40 - 4, 3
