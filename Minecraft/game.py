@@ -473,10 +473,21 @@ class Window(pyglet.window.Window):
 
     def _js_getSettings(self, key):
         # getSettings 的 javascript 函数定义
-        if key in settings:
-            return settings[key]
+        if key.find('.') == -1:
+            if key in settings:
+                return settings[key]
+            else:
+                return None
         else:
-            return None
+            key = key.split('.')
+            item = None
+            for i in key:
+                if i in settings:
+                    item = settings[i]
+                else:
+                    return None
+            else:
+                return None
 
     def _js_loadGLlib(self, s):
         # loadGLlib 的 javascript 函数定义
