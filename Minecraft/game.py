@@ -441,7 +441,6 @@ class Window(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
-        log_info('save changes')
         saver.save_block(self.name, self.model.change)
         saver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
 
@@ -528,7 +527,6 @@ class Window(pyglet.window.Window):
         self.player['position'], self.player['respawn_position'], self.block = saver.load_player(self.name)
         # 读取 js 脚本
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
-            log_info('found script.js')
             self.has_script = True
             self.js = js.EvalJs({
                     'addBlock': self._js_addBlock,
@@ -619,7 +617,6 @@ class Window(pyglet.window.Window):
 
     def update_status(self, dt):
         # 这个函数定时改变世界状态
-        log_info('update status')
         area = []
         for x in range(int(self.player['position'][0]) - 16, int(self.player['position'][0]) + 17):
             for y in range(int(self.player['position'][1]) - 2, int(self.player['position'][1]) + 3):
@@ -1058,7 +1055,6 @@ class Window(pyglet.window.Window):
 
 def setup_fog():
     # 配置 OpenGL 的雾属性
-    log_info('setup fog')
     # 启用雾
     glEnable(GL_FOG)
     # 设置雾的颜色
@@ -1073,7 +1069,6 @@ def setup_fog():
 
 def setup_light():
     # 设置 OpenGL 环境光
-    log_info('setup light')
     # 启用双面光照
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE , GL_TRUE)
     # 光源衰减
