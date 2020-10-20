@@ -745,9 +745,21 @@ class Window(pyglet.window.Window):
                         self.set_exclusive_mouse(False)
                     elif previous:
                         self.model.add_block(previous, self.inventory[self.block])
+                        if self.has_script:
+                            try:
+                                if hasattr(self.js, 'onBuild'):
+                                    self.js.onBuild(previous[0], previous[1], previous[2], self.inventory[self.block])
+                            except Exception as err:
+                                log_warn('script.js: onBuild: %s' % str(err))
             elif button == pyglet.window.mouse.LEFT and block:
                 if texture != 'bedrock' and not self.player['die'] and not self.player['in_hud']:
                     self.model.remove_block(block)
+                    if self.has_script:
+                        try:
+                            if hasattr(self.js, 'onDestroy'):
+                                self.js.onDestroy(previous[0], previous[1], previous[2], texture)
+                        except Exception as err:
+                            log_warn('script.js: onDestroy: %s' % str(err))
             elif button == pyglet.window.mouse.MIDDLE and block:
                 self.block = texture
         elif not self.player['die'] and not self.player['in_hud']:
@@ -896,7 +908,6 @@ class Window(pyglet.window.Window):
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
-        log_info('resize to %dx%d' % (self.width, self.height))
         self.label['top'].x = 0
         self.label['top'].y = self.height - 30
         self.label['top'].width = self.width // 2
@@ -984,11 +995,10 @@ class Window(pyglet.window.Window):
             self.model.init_world()
             if self.has_script:
                 try:
-                    if hasattr(self.js, 'on_init'):
-                        log_info('found script.js:on_init, run')
-                        self.js.on_init()
+                    if hasattr(self.js, 'onInit'):
+                        self.js.onInit()
                 except Exception as err:
-                    log_warn('script.js: on_init: %s' % str(err))
+                    log_warn('script.js: onInit: %s' % str(err))
             self.init_player()
             self.set_exclusive_mouse(True)
             self.is_init = False
@@ -1007,9 +1017,9 @@ class Window(pyglet.window.Window):
 
     def draw_label(self):
         if not self.is_init:
+            self.dialogue.draw()
             if self.player['die']:
                 # 玩家死亡
-                self.dialogue.draw()
                 self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
                         lang['game.text.die'])
                 self.label['actionbar'].document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
@@ -1018,13 +1028,11 @@ class Window(pyglet.window.Window):
                 self.label['actionbar'].draw()
             elif self.ext['position']:
                 # 在屏幕左上角绘制标签
-                self.dialogue.draw()
                 x, y, z = self.player['position']
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
                         lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label['top'].draw()
             elif self.ext['debug']:
-                self.dialogue.draw()
                 x, y, z = self.player['position']
                 rx, ry = self.rotation
                 mem = sys.getsizeof(self)
@@ -1042,7 +1050,7 @@ class Window(pyglet.window.Window):
     def draw_reticle(self):
         # 在屏幕中央画十字线
         if not self.is_init:
-            glColor4f(1.0, 1.0, 1.0, 0.8)
+            glColor3f(1.0, 1.0, 1.0)
             glLineWidth(3.0)
             self.reticle.draw(GL_LINES)
             glLineWidth(1.0)
