@@ -13,5 +13,5 @@
 - `psutil>=5.7.2`(可选的): 检测游戏重复启动
 - `pyglet>=1.5.7`: OpenGL 库
 - `pyshaders>=1.4.1`: 编译与链接 GLSL
-- `noise>=1.2.2`: python + C 的噪声函数库
+- `opensimplex>=0.3`: 简单的 Simplex 噪声函数库
 - `...`: 随着开发进度的增加会有更多的依赖项
