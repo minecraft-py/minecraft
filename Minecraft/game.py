@@ -1,4 +1,4 @@
-# Minecraft 主程序
+# Minecraft 游戏主程序
 
 from collections import deque
 import json
@@ -524,7 +524,10 @@ class Window(pyglet.window.Window):
         self.name = name
         self.model = Model(name)
         # 读取玩家位置和背包
-        self.player['position'], self.player['respawn_position'], self.block = saver.load_player(self.name)
+        data = saver.load_player(self.name)
+        self.player['position'] = data['position']
+        self.player['respawn_position'] = data['respawn']
+        self.block = data['now_block']
         # 读取 js 脚本
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
             self.has_script = True
