@@ -1,12 +1,17 @@
 from collections import deque
 import math
+import os
+import random
 import time
 
-import pyglet
-from pyglet.graphics import TextureGroup
-
 import Minecraft.saver as saver
+from Minecraft.source import block, sound, path, player, lang, settings
+from Minecraft.utils.utils import *
 
+import pyglet
+from pyglet.gl import *
+from pyglet.graphics import TextureGroup
+from pyglet import image
 
 class World(object):
 
@@ -54,9 +59,9 @@ class World(object):
         从当前位置开始视线搜索, 如果有任何方块与之相交, 返回之.
         如果没有找到, 返回 (None, None)
 
-        @param position 长度为3的元组, 当前位置
-        @param vector 长度为3的元组, 视线向量
-        @param max_distance 在多少方块的范围内搜索
+        :param: position 长度为3的元组, 当前位置
+        :param: vector 长度为3的元组, 视线向量
+        :param: max_distance 在多少方块的范围内搜索
         """
         m = 8
         x, y, z = position
@@ -84,10 +89,10 @@ class World(object):
         """
         在 position 处添加一个纹理为 texture 的方块
 
-        @param pssition 长度为3的元组, 要添加方块的位置
-        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
-        @param immediate 是否立即绘制方块
-        @param record 是否记录方块更改(在生成地形时不记录)
+        :param: pssition 长度为3的元组, 要添加方块的位置
+        :param: texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
+        :param: immediate 是否立即绘制方块
+        :param: record 是否记录方块更改(在生成地形时不记录)
         """
         if position in self.world:
             self.remove_block(position, immediate, record=False)
@@ -110,9 +115,9 @@ class World(object):
         """
         在 position 处移除一个方块
 
-        @param position 长度为3的元组, 要移除方块的位置
-        @param immediate 是否要从画布上立即移除方块
-        @param record 是否记录方块更改(在 add_block 破坏后放置时不记录)
+        :param: position 长度为3的元组, 要移除方块的位置
+        :param: immediate 是否要从画布上立即移除方块
+        :param: record 是否记录方块更改(在 add_block 破坏后放置时不记录)
         """
         if position in self.world:
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
@@ -147,8 +152,8 @@ class World(object):
         """
         在 position 处显示方块, 这个方法假设方块在 add_block() 已经添加
 
-        @param position 长度为3的元组, 要显示方块的位置
-        @param immediate 是否立即显示方块
+        :param: position 长度为3的元组, 要显示方块的位置
+        :param: immediate 是否立即显示方块
         """
         texture = block[self.world[position]]
         self.shown[position] = texture
@@ -161,8 +166,8 @@ class World(object):
         """
         show_block() 方法的私有实现
 
-        @param position 长度为3的元组, 要显示方块的位置
-        @param texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
+        :param: position 长度为3的元组, 要显示方块的位置
+        :param: texture 长度为3的列表, 纹理正方形的坐标, 使用 Minecraft.utils.utils.tex_coords() 创建
         """
         x, y, z = position
         vertex_data = cube_vertices(x, y, z, 0.5)
@@ -177,8 +182,8 @@ class World(object):
         """
         隐藏在 position 处的方块, 它不移除方块
 
-        @param position 长度为3的元组, 要隐藏方块的位置
-        @param immediate 是否立即隐藏方块
+        :param: position 长度为3的元组, 要隐藏方块的位置
+        :param: immediate 是否立即隐藏方块
         """
         self.shown.pop(position)
         if immediate:
@@ -191,28 +196,23 @@ class World(object):
         self._shown.pop(position).delete()
 
     def show_sector(self, sector):
-        """ Ensure all blocks in the given sector that should be shown are
-        drawn to the canvas.
-
-        """
+        # 确保该区域中的方块都会被绘制
         for position in self.sectors.get(sector, []):
             if position not in self.shown and self.exposed(position):
                 self.show_block(position, False)
 
     def hide_sector(self, sector):
-        """ Ensure all blocks in the given sector that should be hidden are
-        removed from the canvas.
-
-        """
+        # 隐藏区域
         for position in self.sectors.get(sector, []):
             if position in self.shown:
                 self.hide_block(position, False)
 
     def change_sectors(self, before, after):
-        """ Move from sector `before` to sector `after`. A sector is a
-        contiguous x, y sub-region of world. Sectors are used to speed up
-        world rendering.
+        """
+        改变玩家所在区域
 
+        :param: before 之前的区域
+        :param: after 现在的区域
         """
         before_set = set()
         after_set = set()
@@ -246,20 +246,12 @@ class World(object):
         func(*args)
 
     def process_queue(self):
-        """ Process the entire queue while taking periodic breaks. This allows
-        the game loop to run smoothly. The queue contains calls to
-        _show_block() and _hide_block() so this method should be called if
-        add_block() or remove_block() was called with immediate=False
-
-        """
+        # 处理事件
         start = time.perf_counter()
         while self.queue and time.perf_counter() - start < 1.0 / TICKS_PER_SEC:
             self._dequeue()
 
     def process_entire_queue(self):
-        """ Process the entire queue with no breaks.
-
-        """
+        # 处理所有事件
         while self.queue:
             self._dequeue()
-
