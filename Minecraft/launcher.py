@@ -2,6 +2,7 @@
 
 import os
 from string import punctuation
+import time
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
 
@@ -81,10 +82,14 @@ class MinecraftLauncher(Tk):
         self.new_dialog.title(lang['launcher.dialog.title.new'])
         self.new_dialog_label_name = ttk.Label(self.new_dialog, text=lang['launcher.dialog.text.name'])
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
+        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=lang['launcher.dialog.text.seed'])
+        self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
         self.new_dialog_button_ok = ttk.Button(self.new_dialog, text=lang['launcher.dialog.text.ok'], command=self.new_world)
         self.new_dialog_label_name.grid(column=0, row=0, padx=5, pady=5)
         self.new_dialog_entry_name.grid(column=1, row=0, columnspan=2, padx=5, pady=5)
-        self.new_dialog_button_ok.grid(column=2, row=1, padx=5, pady=5)
+        self.new_dialog_label_seed.grid(column=0, row=1, padx=5, pady=5)
+        self.new_dialog_entry_seed.grid(column=1, row=1, columnspan=2, padx=5, pady=5)
+        self.new_dialog_button_ok.grid(column=2, row=2, padx=5, pady=5)
         self.new_dialog.resizable(False, False)
         self.new_dialog.geometry('+%d+%d' % (self.winfo_x() + 50, self.winfo_y() + 50))
         self.new_dialog.transient(self)
@@ -95,19 +100,27 @@ class MinecraftLauncher(Tk):
 
     def new_world(self, event=None):
         name = self.new_dialog_entry_name.get()
+        seed = self.new_dialog_entry_seed.get()
+        if seed == '':
+            seed = hash(time.ctime())
+        else:
+            seed = hash(seed)
         if name == '':
-            return
+            log_err('invalid world name')
         elif not [s for s in list(punctuation) if s in name] == []:
-            return
+            log_err('invalid world name')
         else:
             if not os.path.isdir(os.path.join(path['save'], name)):
                 os.mkdir(os.path.join(path['save'], name))
                 world = open(os.path.join(path['save'], name, '%s.world' % name), 'w+')
-                world.write('{}\n')
+                world.write('{\n}\n')
                 world.close()
                 player = {'position': '0.0 3.8 0.0', 'respawn': '0.0 3.8 0.0', 'now_block': 0}
                 json.dump(player, open(os.path.join(path['save'], name, '%s.player' % name), 'w+'), indent='\t')
+                info = {'seed': seed, 'type': 'flat'}
+                json.dump(info, open(os.path.join(path['save'], name, '%s.info' % name), 'w+'), indent='\t')
                 self.new_dialog.destroy()
+                log_info('create world succeddfully')
         self.refresh()
 
     def refresh(self):

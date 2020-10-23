@@ -11,6 +11,7 @@
 	"launcher.dialog.text.name": "Name:",
 	"launcher.dialog.text.ok": "OK",
 	"launcher.dialog.text.rename": "Rename:",
+	"launcher.dialog.text.seed": "Seed:",
 	"launcher.dialog.title.delete": "Delete",
 	"launcher.dialog.title.new": "New",
 	"launcher.dialog.title.rename": "Rename",
