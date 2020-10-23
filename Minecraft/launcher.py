@@ -23,7 +23,10 @@ def is_game_restore(name):
     if os.path.isdir(os.path.join(path['save'], name)):
         if ('%s.world' % name) in os.listdir(os.path.join(path['save'], name)):
             if ('%s.player' % name) in os.listdir(os.path.join(path['save'], name)):
-                return True
+                if ('%s.player' % name) in os.listdir(os.path.join(path['save'], name)):
+                    return True
+                else:
+                    return False
             else:
                 return False
         else:
