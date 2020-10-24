@@ -1,5 +1,3 @@
-# Minecraft 启动器
-
 import os
 from string import punctuation
 import time
@@ -21,9 +19,9 @@ def is_game_restore(name):
     @param name 要检查的游戏目录
     """
     if os.path.isdir(os.path.join(path['save'], name)):
-        if ('%s.world' % name) in os.listdir(os.path.join(path['save'], name)):
-            if ('%s.player' % name) in os.listdir(os.path.join(path['save'], name)):
-                if ('%s.player' % name) in os.listdir(os.path.join(path['save'], name)):
+        if 'world.json' in os.listdir(os.path.join(path['save'], name)):
+            if 'info.json' in os.listdir(os.path.join(path['save'], name)):
+                if 'player.json' in os.listdir(os.path.join(path['save'], name)):
                     return True
                 else:
                     return False
@@ -65,14 +63,16 @@ class MinecraftLauncher(Tk):
         self.refresh()
 
     def delete(self, event=None):
+        # 删除世界
         if self.game_item_list.curselection() == ():
             select = self.game_item_list.get(0)
         else:
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
         if messagebox.askyesno(message=lang['launcher.dialog.text.delete'] % select,
                 title=lang['launcher.dialog.title.delete']):
-            os.remove(os.path.join(path['save'], select, '%s.world' % select))
-            os.remove(os.path.join(path['save'], select, '%s.player' % select))
+            os.remove(os.path.join(path['save'], select, 'world.json'))
+            os.remove(os.path.join(path['save'], select, 'info.json'))
+            os.remove(os.path.join(path['save'], select, 'player.json'))
             if os.path.isfile(os.path.join(path['save'], select, 'script.js')):
                 os.remove(os.path.join(path['save'], select, 'script.js'))
             os.rmdir(os.path.join(path['save'], select))
@@ -81,6 +81,7 @@ class MinecraftLauncher(Tk):
         self.refresh()
 
     def new(self, event=None):
+        # 新的世界对话框
         self.new_dialog = Toplevel(self)
         self.new_dialog.title(lang['launcher.dialog.title.new'])
         self.new_dialog_label_name = ttk.Label(self.new_dialog, text=lang['launcher.dialog.text.name'])
@@ -102,6 +103,7 @@ class MinecraftLauncher(Tk):
         self.new_dialog.mainloop()
 
     def new_world(self, event=None):
+        # 创建一个新的世界
         name = self.new_dialog_entry_name.get()
         seed = self.new_dialog_entry_seed.get()
         if seed == '':
@@ -115,23 +117,25 @@ class MinecraftLauncher(Tk):
         else:
             if not os.path.isdir(os.path.join(path['save'], name)):
                 os.mkdir(os.path.join(path['save'], name))
-                world = open(os.path.join(path['save'], name, '%s.world' % name), 'w+')
+                world = open(os.path.join(path['save'], name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
-                player = {'position': '0.0 3.8 0.0', 'respawn': '0.0 3.8 0.0', 'now_block': 0}
-                json.dump(player, open(os.path.join(path['save'], name, '%s.player' % name), 'w+'), indent='\t')
                 info = {'seed': seed, 'type': 'flat'}
-                json.dump(info, open(os.path.join(path['save'], name, '%s.info' % name), 'w+'), indent='\t')
+                json.dump(info, open(os.path.join(path['save'], name, 'info.json'), 'w+'), indent='\t')
+                player = {'position': '0.0 3.8 0.0', 'respawn': '0.0 3.8 0.0', 'now_block': 0}
+                json.dump(player, open(os.path.join(path['save'], name, 'player.json'), 'w+'), indent='\t')
                 self.new_dialog.destroy()
                 log_info('create world succeddfully')
         self.refresh()
 
     def refresh(self):
+        # 刷新
         self.game_item_list.delete(0, 'end')
         for item in [i for i in os.listdir(path['save']) if is_game_restore(i)]:
             self.game_item_list.insert('end', item)
 
     def rename(self):
+        # 重命名对话框
         self.rename_dialog = Toplevel(self)
         self.rename_dialog.title(lang['launcher.dialog.title.rename'])
         self.rename_dialog_label = ttk.Label(self.rename_dialog, text=lang['launcher.dialog.text.name'])
@@ -159,15 +163,18 @@ class MinecraftLauncher(Tk):
         self.refresh()
 
     def start_game(self, event=None):
+        # 启动游戏
         if self.game_item_list.curselection() == ():
             select = self.game_item_list.get(0)
         else:
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
-        self.iconify()
-        window = Window(width=800, height=600, caption='Minecraft', resizable=True)
-        window.set_name(select)
-        window.set_exclusive_mouse(False)
-        setup()
-        pyglet.app.run()
         self.destroy()
-
+        try:
+            game = Game(width=800, height=600, caption='Minecraft', resizable=True)
+            game.set_name(select)
+            game.set_exclusive_mouse(False)
+            setup()
+            pyglet.app.run()
+        except Exception as err:
+            log_err('python: %s' % str(err))
+            exit(1)

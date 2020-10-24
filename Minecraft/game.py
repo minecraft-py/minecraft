@@ -1,5 +1,3 @@
-# Minecraft 游戏主程序
-
 import json
 import math
 import os
@@ -50,10 +48,10 @@ except:
     exit(1)
 
 
-class Window(pyglet.window.Window):
+class Game(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
-        super(Window, self).__init__(*args, **kwargs)
+        super(Game, self).__init__(*args, **kwargs)
         # 窗口是否捕获鼠标
         self.exclusive = False
         # 玩家状态: 是否潜行, 是否飞行...
@@ -65,12 +63,9 @@ class Window(pyglet.window.Window):
         self.player['in_hud'] = False
         self.player['hide_hud'] = False
         self.player['press_e'] = False
-        # Strafing is moving lateral to the direction you are facing,
-        # e.g. moving to the left or right while continuing to face forward.
-        #
-        # First element is -1 when moving forward, 1 when moving back, and 0
-        # otherwise. The second element is -1 when moving left, 1 when moving
-        # right, and 0 otherwise.
+        # strafe = [z, x]
+        # z 代表前后运动
+        # x 代表左右运动
         self.player['strafe'] = [0, 0]
         # 玩家在世界中的位置 (x, y, z)
         self.player['position'] = (0, 4, 0)
@@ -83,18 +78,13 @@ class Window(pyglet.window.Window):
         self.ext['open'] = False
         self.ext['position'] = False
         self.ext['running'] = False
-        # First element is rotation of the player in the x-z plane (ground
-        # plane) measured from the z-axis down. The second is the rotation
-        # angle from the ground plane up. Rotation is in degrees.
-        #
-        # The vertical plane rotation ranges from -90 (looking straight down) to
-        # 90 (looking straight up). The horizontal rotation range is unbounded.
+        # rotation = (水平角 x, 俯仰角 y)
         self.rotation = (0, 0)
-        # Which sector the player is currently in.
+        # 玩家所处的区域
         self.sector = None
         # 这个十字在屏幕中央
         self.reticle = None
-        # Velocity in the y (upward) direction.
+        # y 轴的加速度
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
         self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log', 'leaf', 'brick', 'plank', 'craft_table']
@@ -134,6 +124,7 @@ class Window(pyglet.window.Window):
         log_info('welcome %s(id: %s)' % (player['name'], player['id']))
 
     def __sizeof__(self):
+        # 返回游戏所用的内存(有出入)
         if not self.is_init:
             total = 0
             for obj in dir(self.world):
@@ -190,7 +181,7 @@ class Window(pyglet.window.Window):
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
-        super(Window, self).set_exclusive_mouse(exclusive)
+        super(Game, self).set_exclusive_mouse(exclusive)
         self.exclusive = exclusive
 
     def _js_addBlock(self, x, y, z, block):
@@ -296,17 +287,12 @@ class Window(pyglet.window.Window):
             self.has_script = False
 
     def get_sight_vector(self):
-        """ Returns the current line of sight vector indicating the direction
-        the player is looking.
-
-        """
+        # 返回玩家的视线方向
         x, y = self.rotation
-        # y ranges from -90 to 90, or -pi/2 to pi/2, so m ranges from 0 to 1 and
-        # is 1 when looking ahead parallel to the ground and 0 when looking
-        # straight up or down.
+        # y 的范围为 -90 到 90, 或 -pi/2 到 pi/2.
+        # 所以 m 的范围为 0 到 1
         m = math.cos(math.radians(y))
-        # dy ranges from -1 to 1 and is -1 when looking straight down and 1 when
-        # looking straight up.
+        # dy 的范围为 -1 到 1. 玩家向下看为 -1, 向上看为 1
         dy = math.sin(math.radians(y))
         dx = math.cos(math.radians(x - 90)) * m
         dz = math.sin(math.radians(x - 90)) * m
@@ -382,7 +368,7 @@ class Window(pyglet.window.Window):
         """
         update() 方法的私有实现, 刷新 
         
-        :param: dt 距上次调要用的时间 self.dy, self.position
+        :param: dt 距上次调要用的时间
         """
         # 移动速度
         if self.player['flying']:
@@ -393,21 +379,18 @@ class Window(pyglet.window.Window):
             speed = STEALING_SPEED
         else:
             speed = WALKING_SPEED
-        d = dt * speed # distance covered this tick.
+        d = dt * speed # 这一个游戏刻玩家经过的距离
         dx, dy, dz = self.get_motion_vector()
-        # New position in space, before accounting for gravity.
+        # 玩家新的位置
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
         if not self.player['die']:
             if not self.player['flying']:
-                # Update your vertical speed: if you are falling, speed up until you
-                # hit terminal velocity; if you are jumping, slow down until you
-                # start falling.
                 self.dy -= dt * GRAVITY
                 self.dy = max(self.dy, -TERMINAL_VELOCITY)
                 dy += self.dy * dt
             if not self.player['in_hud']:
-                # collisions
+                # 碰撞检测
                 x, y, z = self.player['position']
                 x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
                 self.player['position'] = (x, y, z)
@@ -418,12 +401,8 @@ class Window(pyglet.window.Window):
 
         :param: position, 玩家位置
         :param:: height 玩家的高度
-        :return: position 碰撞检测之后的箱子.
+        :return: position 碰撞检测之后的位置
         """
-        # How much overlap with a dimension of a surrounding block you need to
-        # have to count as a collision. If 0, touching terrain at all counts as
-        # a collision. If .49, you sink into the ground, as if walking through
-        # tall grass. If >= .5, you'll fall through the ground.
         pad = 0.25
         p = list(position)
         np = normalize(position)
