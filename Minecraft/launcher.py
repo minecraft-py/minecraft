@@ -1,6 +1,7 @@
 import os
 from string import punctuation
 import time
+from traceback import print_last
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
 
@@ -159,13 +160,15 @@ class MinecraftLauncher(Tk):
         self.rename_dialog.mainloop()
 
     def rename_world(self):
+        # 重命名世界
         self.rename_dialog.destroy()
         self.refresh()
 
     def start_game(self, event=None):
         # 启动游戏
         if self.game_item_list.curselection() == ():
-            select = self.game_item_list.get(0)
+            log_info('no world selected')
+            return
         else:
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
         self.destroy()
@@ -176,5 +179,5 @@ class MinecraftLauncher(Tk):
             setup()
             pyglet.app.run()
         except Exception as err:
-            log_err('python: %s' % str(err))
+            log_err('catch error: %s' % str(err))
             exit(1)

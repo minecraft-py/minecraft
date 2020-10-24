@@ -19,13 +19,13 @@ try:
     import js2py as js
     import js2py.base as base
 except ModuleNotFoundError:
-    log_err("Module 'Js2Py' not found, run `pip install js2py` to install, exit")
+    log_err("module 'Js2Py' not found, run `pip install js2py` to install, exit")
     exit(1)
 
 try:
     from noise import snoise2 as noise2
 except ModuleNotFoundError:
-    log_err("Module 'noise' not found. run `pip install noise` to install, exit")
+    log_err("module 'noise' not found. run `pip install noise` to install, exit")
     exit(1)
 
 try:
@@ -38,13 +38,13 @@ try:
     from pyglet.text import decode_attributed
     from pyglet.window import key, mouse
 except:
-    log_err("Module 'pyglet' not found. run `pip install pyglet` to install, exit")
+    log_err("module 'pyglet' not found. run `pip install pyglet` to install, exit")
     exit(1)
 
 try:
     import pyshaders
 except:
-    log_err("Module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
+    log_err("module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
     exit(1)
 
 
@@ -75,7 +75,7 @@ class Game(pyglet.window.Window):
         # 拓展功能
         self.ext = {}
         self.ext['debug'] = False
-        self.ext['open'] = False
+        self.ext['enable'] = False
         self.ext['position'] = False
         self.ext['running'] = False
         # rotation = (水平角 x, 俯仰角 y)
@@ -121,7 +121,7 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每60秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
-        log_info('welcome %s(id: %s)' % (player['name'], player['id']))
+        log_info('welcome %s' % player['name'])
 
     def __sizeof__(self):
         # 返回游戏所用的内存(有出入)
@@ -147,13 +147,13 @@ class Game(pyglet.window.Window):
             if self.player['position'][1] < -2:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
-                log_info('%s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
+                log_info('%s die: %s' % (player['name'], self.player['die_reason']))
                 self.player['die'] = True
                 self.dialogue.add_dialogue(self.player['die_reason'])
             elif self.player['position'][1] > 512:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
-                log_info('%s(id: %s) die: %s' % (player['name'], player['id'], self.player['die_reason']))
+                log_info('%s die: %s' % (player['name'], self.player['die_reason']))
                 self.player['die'] = True
                 self.dialogue.add_dialogue(self.player['die_reason'])
 
@@ -512,12 +512,9 @@ class Game(pyglet.window.Window):
         elif symbol == key.A:
             self.player['strafe'][1] -= 1
         elif symbol == key.D:
-            if self.ext['open']:
+            if self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
-                self.ext['open'] = False
-                log_info('%s(id: %s) extra function debug: %s' % (player['name'],
-                    player['id'], self.ext['debug']))
             else:
                 self.player['strafe'][1] += 1
         elif symbol == key.E:
@@ -531,14 +528,11 @@ class Game(pyglet.window.Window):
             else:
                 self.player['fovy'] = 65
         elif symbol == key.P:
-            if self.ext['open']:
+            if self.ext['enable']:
                 self.ext['position'] = not self.ext['position']
                 self.ext['debug'] = False
-                self.ext['open'] = False
-                log_info('%s(id: %s) extra function position: %s' % (player['name'],
-                    player['id'], self.ext['position']))
         elif symbol == key.R:
-            if self.ext['open']:
+            if self.ext['enable']:
                 self.ext['running'] = not self.ext['running']
                 self.ext['open'] = False
                 log_info('%s(id: %s) extra function running: %s' % (player['name'],
@@ -577,9 +571,8 @@ class Game(pyglet.window.Window):
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
             self.dialogue.add_dialogue(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
-            log_info(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
         elif symbol == key.F3:
-            self.ext['open'] = not self.ext['open']
+            self.ext['enable'] = True
         elif symbol == key.F11:
             self.set_fullscreen(not self.fullscreen)
 
@@ -607,6 +600,8 @@ class Game(pyglet.window.Window):
                 self.player['stealing'] = False
         elif symbol == key.LCTRL:
             self.player['running'] = False
+        elif symbol == key.F3:
+            self.ext['enable'] = False
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
@@ -791,7 +786,6 @@ def setup_light():
 
 def setup():
     # 基本的 OpenGL 设置
-    log_info('setup')
     # 设置背景颜色. 比如在 RGBA 模式下的天空
     glClearColor(0.5, 0.69, 1.0, 1)
     # 启用面剔除
