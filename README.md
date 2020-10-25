@@ -60,4 +60,5 @@ cd Minecraft
 # 贡献者
 感谢以下的开发者的贡献:
 
-- [wzh656](https://github.com/wzh656)
+- [ismaelxyz](https://github.com/ismaelxyz) 贡献了西班牙文的翻译
+- [wzh656](https://github.com/wzh656) 提供了一些游戏上的建议
