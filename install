@@ -28,7 +28,7 @@ then
 		mkdir $MCPYPATH/texture/default -p
 		cp data/texture/* $MCPYPATH/texture/default -r
 	else
-		rm $MCPYPATH/texture/default -r
+		rm $MCPYPATH/texture/default/* -r
 		cp data/texture/* $MCPYPATH/texture/default -r
 	fi
 else
