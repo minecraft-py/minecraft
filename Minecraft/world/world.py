@@ -5,7 +5,7 @@ import random
 import time
 
 import Minecraft.saver as saver
-from Minecraft.source import block, sound, path, player, lang, settings
+from Minecraft.source import block, path, settings
 from Minecraft.utils.utils import *
 
 import pyglet

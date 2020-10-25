@@ -46,17 +46,11 @@ else:
     log_err('you have not registered, exit')
     exit(1)
 
-path['fonts'] = 'data/fonts/default.ttf'
-path['texture'] = 'data/texture/default'
+path['texture'] = join(path['mcpypath'], 'texture/default')
 path['texture.hud'] = join(path['texture'], 'hud')
 path['texture.ui'] = join(path['texture'], 'ui')
 path['shaders'] = 'data/shaders'
 path['save'] = join(path['mcpypath'], 'save')
 path['screenshot'] = join(path['mcpypath'], 'screenshot')
-path['sound'] = 'data/sound/default'
-
-sound = {}
-sound['build'] = media.load(join(path['sound'], 'build.wav'), streaming=False)
-sound['destroy'] = media.load(join(path['sound'], 'destroy.wav'), streaming=False)
 
 lang = json.load(open(join(path['json.lang'], settings['lang'] + '.json')))

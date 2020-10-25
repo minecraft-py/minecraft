@@ -6,7 +6,7 @@ import sys
 import time
 
 import Minecraft.saver as saver
-from Minecraft.source import block, sound, path, player, lang, settings
+from Minecraft.source import block, path, player, lang, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar

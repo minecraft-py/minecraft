@@ -18,4 +18,11 @@ if exist %MCPYPATH%\screenshot (
 ) else (
 	mkdir %MCPYPATH%\screenshot
 )
+if exist %MCPYPATH%\texture\default (
+	mkdir %MCPYPATH%\texture\default
+	copy data\texture\* %MCPYPATH%\texture\default
+) else (
+	del %MCPYPATH%\texture\default\*
+	copy data\texture\* %MCPYPATH%\texture\default
+)
 pause
