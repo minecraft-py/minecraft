@@ -97,7 +97,7 @@ FACES = [
     ( 0, 0,-1),
 ]
 
-TICKS_PER_SEC = 20
+TICKS_PER_SEC = 60
 SECTOR_SIZE = 16
 
 MAX_SIZE = 16
