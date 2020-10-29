@@ -16,6 +16,8 @@ if __name__ == '__main__':
                     log_err('Minecraft process(pid: %d) exist, exit' % p.pid)
                     exit(1)
         except ModuleNotFoundError:
+            pass
+        finally:
             MinecraftLauncher().mainloop()
     else:
         log_err("path 'MCPYPATH' not found")

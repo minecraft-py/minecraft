@@ -168,7 +168,6 @@ class MinecraftLauncher(Tk):
 
     def rename_world(self, name):
         # 重命名世界
-        
         __import__('shutil').move(os.path.join(path['save'], name),
                                   os.path.join(path['save'], self.rename_dialog_entry.get())
         )
@@ -185,8 +184,7 @@ class MinecraftLauncher(Tk):
         select = self.game_item_list.get(select[0])
         self.destroy()
         try:
-            # TODO: These settings should be saved and loaded from a
-            # json file: width, height, caption, resizable.
+            # TODO: 下面这些设置将会从某个 json 文件中获取
             game = Game(width=800, height=600, caption='Minecraft', resizable=True)
             game.set_name(select)
             game.set_exclusive_mouse(False)
