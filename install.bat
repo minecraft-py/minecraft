@@ -3,7 +3,7 @@
 echo "[install requirements]"
 pip install -r requirements.txt >> nul
 echo "[register]"
-python3 register
+python3 register.py
 echo "[copy files]"
 if not exist %MCPYPATH%\settings.json (
 	copy data\json\settings.json %MCPYPATH%\settings.json
