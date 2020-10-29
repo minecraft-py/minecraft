@@ -11,14 +11,11 @@ if __name__ == '__main__':
     if 'MCPYPATH' in environ:
         try:
             import psutil
-        except ModuleNotFoundError:
-            pass
-        else:
             for p in psutil.process_iter():
                 if exist(p):
                     log_err('Minecraft process(pid: %d) exist, exit' % p.pid)
                     exit(1)
-            else:
-                MinecraftLauncher().mainloop()
+        except ModuleNotFoundError:
+            MinecraftLauncher().mainloop()
     else:
         log_err("path 'MCPYPATH' not found")

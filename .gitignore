@@ -1,3 +1,4 @@
+# Directories
 __pycache__/
 build/
 dist/
@@ -8,5 +9,16 @@ resource/save/
 var/
 wheels/
 pyre/
+.vscode/
+
+# Files
 .*.swp
 .*.swo
+notes.txt
+
+# Binary Files
+.*.exe
+.*.dll
+.*.so
+.*.a
+.*.pyd

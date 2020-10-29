@@ -71,32 +71,34 @@ class MinecraftLauncher(Tk):
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
         if messagebox.askyesno(message=lang['launcher.dialog.text.delete'] % select,
                 title=lang['launcher.dialog.title.delete']):
-            os.remove(os.path.join(path['save'], select, 'world.json'))
-            os.remove(os.path.join(path['save'], select, 'info.json'))
-            os.remove(os.path.join(path['save'], select, 'player.json'))
-            if os.path.isfile(os.path.join(path['save'], select, 'script.js')):
-                os.remove(os.path.join(path['save'], select, 'script.js'))
-            os.rmdir(os.path.join(path['save'], select))
-        else:
-            pass
+            
+            __import__('shutil').rmtree(os.path.join(path['save'], select))
+            
         self.refresh()
 
     def new(self, event=None):
         # 新的世界对话框
         self.new_dialog = Toplevel(self)
         self.new_dialog.title(lang['launcher.dialog.title.new'])
-        self.new_dialog_label_name = ttk.Label(self.new_dialog, text=lang['launcher.dialog.text.name'])
+        self.new_dialog_label_name = ttk.Label(self.new_dialog, 
+                                        text=lang['launcher.dialog.text.name'])
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
-        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=lang['launcher.dialog.text.seed'])
+        self.new_dialog_label_seed = ttk.Label(self.new_dialog,
+                                        text=lang['launcher.dialog.text.seed'])
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
-        self.new_dialog_button_ok = ttk.Button(self.new_dialog, text=lang['launcher.dialog.text.ok'], command=self.new_world)
+        self.new_dialog_button_ok = ttk.Button(self.new_dialog,
+                text=lang['launcher.dialog.text.ok'], command=self.new_world
+                                               )
         self.new_dialog_label_name.grid(column=0, row=0, padx=5, pady=5)
-        self.new_dialog_entry_name.grid(column=1, row=0, columnspan=2, padx=5, pady=5)
+        self.new_dialog_entry_name.grid(column=1, row=0, columnspan=2, padx=5,
+                                        pady=5)
         self.new_dialog_label_seed.grid(column=0, row=1, padx=5, pady=5)
-        self.new_dialog_entry_seed.grid(column=1, row=1, columnspan=2, padx=5, pady=5)
+        self.new_dialog_entry_seed.grid(column=1, row=1, columnspan=2, padx=5,
+                                        pady=5)
         self.new_dialog_button_ok.grid(column=2, row=2, padx=5, pady=5)
         self.new_dialog.resizable(False, False)
-        self.new_dialog.geometry('+%d+%d' % (self.winfo_x() + 50, self.winfo_y() + 50))
+        self.new_dialog.geometry('+%d+%d' % (self.winfo_x() + 50,
+                                 self.winfo_y() + 50))
         self.new_dialog.transient(self)
         self.new_dialog.deiconify()
         self.new_dialog.grab_set()
@@ -139,15 +141,20 @@ class MinecraftLauncher(Tk):
         # 重命名对话框
         self.rename_dialog = Toplevel(self)
         self.rename_dialog.title(lang['launcher.dialog.title.rename'])
-        self.rename_dialog_label = ttk.Label(self.rename_dialog, text=lang['launcher.dialog.text.name'])
+        self.rename_dialog_label = ttk.Label(self.rename_dialog,
+                                        text=lang['launcher.dialog.text.name'])
         self.rename_dialog_entry = ttk.Entry(self.rename_dialog)
-        if self.game_item_list.curselection() == ():
-            self.rename_dialog_entry.insert(0, self.game_item_list.get(0))
-        else:
-            self.rename_dialog_entry.insert(0, self.game_item_list.curselection()[0])
+
+        name = self.game_item_list.curselection()
+        name = self.game_item_list.get(0) if name == () else self.game_item_list.get(name)
+        self.rename_dialog_entry.insert(0, name)
+
+        def send_name():
+            self.rename_world(name)
+
         self.old = os.path.join(path['save'], self.rename_dialog_entry.get())
-        self.rename_dialog_button = ttk.Button(self.rename_dialog, text=lang['launcher.dialog.text.ok'],
-                command=self.rename_world)
+        self.rename_dialog_button = ttk.Button(self.rename_dialog,
+                text=lang['launcher.dialog.text.ok'], command=send_name)
         self.rename_dialog_label.grid(column=0, row=0, padx=5, pady=5)
         self.rename_dialog_entry.grid(column=1, row=0, columnspan=2, padx=5, pady=5)
         self.rename_dialog_button.grid(column=2, row=1, padx=5, pady=5)
@@ -159,20 +166,27 @@ class MinecraftLauncher(Tk):
         self.rename_dialog.wait_window()
         self.rename_dialog.mainloop()
 
-    def rename_world(self):
+    def rename_world(self, name):
         # 重命名世界
+        
+        __import__('shutil').move(os.path.join(path['save'], name),
+                                  os.path.join(path['save'], self.rename_dialog_entry.get())
+        )
         self.rename_dialog.destroy()
         self.refresh()
 
     def start_game(self, event=None):
         # 启动游戏
-        if self.game_item_list.curselection() == ():
+        select = self.game_item_list.curselection()
+        if  select == ():
             log_info('no world selected')
             return
-        else:
-            select = self.game_item_list.get(self.game_item_list.curselection()[0])
+
+        select = self.game_item_list.get(select[0])
         self.destroy()
         try:
+            # TODO: These settings should be saved and loaded from a
+            # json file: width, height, caption, resizable.
             game = Game(width=800, height=600, caption='Minecraft', resizable=True)
             game.set_name(select)
             game.set_exclusive_mouse(False)
