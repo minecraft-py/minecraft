@@ -8,6 +8,9 @@ echo "[copy files]"
 if not exist %MCPYPATH%\settings.json (
 	copy data\json\settings.json %MCPYPATH%\settings.json
 )
+if not exist %MCPYPATH%\window.json (
+	copy data\json\window.json %MCPYPATH%\window.json
+)
 if exist %MCPYPATH%\save (
 	echo %0: %MCPYPATH%\save existed
 ) else (

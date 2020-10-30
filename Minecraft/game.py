@@ -1,4 +1,3 @@
-import json
 import math
 import os
 import random
@@ -32,9 +31,7 @@ try:
     import pyglet
     from pyglet import image
     from pyglet.gl import *
-    from pyglet.graphics import TextureGroup
     from pyglet.shapes import Rectangle
-    from pyglet.sprite import Sprite
     from pyglet.text import decode_attributed
     from pyglet.window import key, mouse
 except:
@@ -425,6 +422,11 @@ class Game(pyglet.window.Window):
                     break
         else:
             return tuple(p)
+
+    def on_close(self):
+        # 当玩家关闭窗口时调用
+        saver.save_window(self.width, self.height)
+        exit()
 
     def on_mouse_press(self, x, y, button, modifiers):
         """

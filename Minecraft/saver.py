@@ -31,6 +31,14 @@ def load_player(name):
                 'now_block': int(data['now_block'])
             }
 
+def load_window():
+    # 读取游戏窗口信息
+    data = json.load(open(join(path['mcpypath'], 'window.json')))
+    return {
+                'width': data['width'],
+                'height': data['height']
+            }
+
 def save_block(name, change, full=True):
     """
     将方块数据存入文件
@@ -53,3 +61,10 @@ def save_player(name, position, respawn, now_block):
     data['respawn'] = ' '.join([('%.1f' % i) for i in respawn])
     data['now_block'] = now_block
     json.dump(data, open(join(path['save'], name, 'player.json'), 'w+'), indent='\t')
+
+def save_window(width, height):
+    data = {
+                'width': width,
+                'height': height
+            }
+    json.dump(data, open(join(path['mcpypath'], 'window.json'), 'w+'), indent='\t')

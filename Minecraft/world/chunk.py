@@ -1,0 +1,2 @@
+class Chunk(object):
+    pass

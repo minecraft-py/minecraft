@@ -1,17 +1,16 @@
 import os
 from string import punctuation
 import time
-from traceback import print_last
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
-
-import pyglet
 
 from Minecraft.utils.utils import *
 log_info('loading game lib')
 from Minecraft.game import *
+from Minecraft.saver import load_window
 from Minecraft.source import path, lang
 
+import pyglet
 
 def is_game_restore(name):
     """
@@ -184,8 +183,8 @@ class MinecraftLauncher(Tk):
         select = self.game_item_list.get(select[0])
         self.destroy()
         try:
-            # TODO: 下面这些设置将会从某个 json 文件中获取
-            game = Game(width=800, height=600, caption='Minecraft', resizable=True)
+            data = load_window()
+            game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
             game.set_name(select)
             game.set_exclusive_mouse(False)
             setup()
