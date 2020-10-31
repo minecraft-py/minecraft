@@ -22,9 +22,9 @@ except ModuleNotFoundError:
     exit(1)
 
 try:
-    from noise import snoise2 as noise2
+    import opensimplex
 except ModuleNotFoundError:
-    log_err("module 'noise' not found. run `pip install noise` to install, exit")
+    log_err("module 'opensimplex' not found. run `pip install opensimplex` to install, exit")
     exit(1)
 
 try:
