@@ -11,6 +11,7 @@ from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
+from Minecraft.gui.loading import Loading
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
@@ -102,10 +103,8 @@ class Game(pyglet.window.Window):
         # 这个标签在画布正中偏下显示
         self.label['actionbar'] = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
-        # 加载用图片
-        self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
-        self.loading_image.height = self.height
-        self.loading_image.width = self.width
+        # 加载窗口
+        self.loading = Loading(self.width, self.height)
         # 覆盖屏幕的矩形
         self.full_screen = Rectangle(0, 0, self.width, self.height)
         # 聊天区
@@ -116,7 +115,7 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.check_die, 1.0 / TICKS_PER_SEC)
         # 每10秒更新一次方块数据
         pyglet.clock.schedule_interval(self.update_status, 10.0)
-        # 每60秒保存一次进度
+        # 每30秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         log_info('welcome %s' % player['name'])
 
@@ -222,7 +221,7 @@ class Game(pyglet.window.Window):
 
     def _js_loadGLlib(self, s):
         # loadGLlib 的 javascript 函数定义
-        self.js.eval("%s = getGLlib(\"%s\");" % (s, s))
+        self.js.eval('%s = getGLlib("%s");' % (s, s))
 
     def _js_logInfo(self, s):
         # logInfo 的 javascript 函数定义
@@ -397,7 +396,7 @@ class Game(pyglet.window.Window):
         碰撞检测
 
         :param: position, 玩家位置
-        :param:: height 玩家的高度
+        :param: height 玩家的高度
         :return: position 碰撞检测之后的位置
         """
         pad = 0.25
@@ -615,6 +614,8 @@ class Game(pyglet.window.Window):
         self.label['center'].y = self.height // 2 + 50
         self.label['actionbar'].x = self.width // 2
         self.label['actionbar'].y = self.height // 2 - 100
+        # 加载窗口
+        self.loading.resize(self.width, self.height)
         # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()
@@ -709,11 +710,15 @@ class Game(pyglet.window.Window):
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.505)
-            glColor4f(0.0, 0.0, 0.0, 0.8)
+            vertex_data = cube_vertices(x, y, z, 0.5001)
+            glColor4f(0.0, 0.0, 0.0, 0.9)
+            glLineWidth(1.5)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            glDisable(GL_CULL_FACE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
+            glEnable(GL_CULL_FACE)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+            glLineWidth(1.0)
 
     def draw_label(self):
         if not self.is_init:
@@ -742,7 +747,7 @@ class Game(pyglet.window.Window):
                 self.label['top'].draw()
         else:
             # 初始化屏幕
-            self.loading_image.blit(0, 0)
+            self.loading.draw()
             self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 15}' +
                     lang['game.text.loading'])
             self.label['center'].draw()

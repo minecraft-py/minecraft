@@ -1,7 +1,10 @@
 from os.path import join
+
+from Minecraft.gui.base import GUI
+
 import pyglet
 from pyglet.shapes import Rectangle
-from Minecraft.gui.base import GUI
+
 
 class Bag(GUI):
 
