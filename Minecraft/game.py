@@ -104,11 +104,11 @@ class Game(pyglet.window.Window):
         self.label['actionbar'] = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
         # 加载窗口
-        self.loading = Loading(self.width, self.height)
+        self.loading = Loading()
         # 覆盖屏幕的矩形
         self.full_screen = Rectangle(0, 0, self.width, self.height)
         # 聊天区
-        self.dialogue = Dialogue(self.width, self.height)
+        self.dialogue = Dialogue()
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
         # 检测玩家是否应该死亡
@@ -157,14 +157,14 @@ class Game(pyglet.window.Window):
         # 初始化玩家
         self.hud = {}
         # E 键打开的背包
-        self.hud['bag'] = Bag(self.width, self.height)
+        self.hud['bag'] = Bag()
         # 生命值
-        self.hud['heart'] = Heart(self.width, self.height, batch=self.world.batch2d)
+        self.hud['heart'] = Heart(batch=self.world.batch2d)
         # 饥饿值
-        self.hud['hunger'] = Hunger(self.width, self.height, batch=self.world.batch2d)
+        self.hud['hunger'] = Hunger(batch=self.world.batch2d)
         # 工具栏
-        self.hud['hotbar'] = HotBar(self.width, self.height)
-        self.hud['hotbar'].set_index(self.width, self.block)
+        self.hud['hotbar'] = HotBar()
+        self.hud['hotbar'].set_index(self.block)
         
     def save(self, dt):
         """
@@ -497,7 +497,7 @@ class Game(pyglet.window.Window):
         else:
             self.block = index
         log_info('mouse scroll: %d of %d' % (self.block, len(self.inventory) - 1))
-        self.hud['hotbar'].set_index(self.width, index)
+        self.hud['hotbar'].set_index(index)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -565,7 +565,7 @@ class Game(pyglet.window.Window):
                 self.player['running'] = True
         elif symbol in self.num_keys:
             self.block = (symbol - self.num_keys[0]) % len(self.inventory)
-            self.hud['hotbar'].set_index(self.width, self.block)
+            self.hud['hotbar'].set_index(self.block)
         elif symbol == key.F1:
             self.player['hide_hud'] = not self.player['hide_hud']
         elif symbol == key.F2:

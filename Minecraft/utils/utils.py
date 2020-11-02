@@ -1,6 +1,8 @@
 import math
 import time
 
+import pyglet
+
 def cube_vertices(x, y, z, n):
     # 返回在 x, y, z 坐标的方形顶点
     return [
@@ -11,6 +13,12 @@ def cube_vertices(x, y, z, n):
         x-n,y-n,z+n, x+n,y-n,z+n, x+n,y+n,z+n, x-n,y+n,z+n,  # 前面
         x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
     ]
+
+def get_size():
+    # 返回窗口大小
+    for w in pyglet.canvas.get_display().get_windows():
+        if w.caption == 'Minecraft':
+            return w.width, w.height
 
 def log_err(text):
     # 打印错误信息
