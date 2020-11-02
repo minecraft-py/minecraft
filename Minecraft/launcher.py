@@ -9,6 +9,7 @@ log_info('loading game lib')
 from Minecraft.game import *
 from Minecraft.saver import load_window
 from Minecraft.source import path, lang
+import json
 
 import pyglet
 
