@@ -1,5 +1,5 @@
-from Minecraft.cube import *
-from Minecraft.util.util import *
+from Minecraft.utils.cube import *
+from Minecraft.utils.utils import *
 
 from pyglet.image import *
 from pyglet.gl import *

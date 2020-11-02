@@ -425,7 +425,7 @@ class Game(pyglet.window.Window):
     def on_close(self):
         # 当玩家关闭窗口时调用
         saver.save_window(self.width, self.height)
-        exit()
+        pyglet.app.exit()
 
     def on_mouse_press(self, x, y, button, modifiers):
         """
