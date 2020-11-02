@@ -10,7 +10,8 @@ from Minecraft.gui.base import GUI
 class Dialogue(GUI):
     # 显示在左面的聊天记录
 
-    def __init__(self, width, height):
+    def __init__(self):
+        width, height = get_size()
         GUI.__init__(self, width, height)
         self.dialogue_label = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=0, y=height - 75, width=width // 2, multiline=True)

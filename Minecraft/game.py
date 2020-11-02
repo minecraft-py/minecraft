@@ -11,6 +11,7 @@ from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
+from Minecraft.gui.loading import Loading
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
@@ -22,9 +23,9 @@ except ModuleNotFoundError:
     exit(1)
 
 try:
-    from noise import snoise2 as noise2
+    import opensimplex
 except ModuleNotFoundError:
-    log_err("module 'noise' not found. run `pip install noise` to install, exit")
+    log_err("module 'opensimplex' not found. run `pip install opensimplex` to install, exit")
     exit(1)
 
 try:
@@ -59,7 +60,7 @@ class Game(pyglet.window.Window):
         self.player['die'] = False
         self.player['in_hud'] = False
         self.player['hide_hud'] = False
-        self.player['press_e'] = False
+        self.player['show_bag'] = False
         # strafe = [z, x]
         # z 代表前后运动
         # x 代表左右运动
@@ -102,21 +103,19 @@ class Game(pyglet.window.Window):
         # 这个标签在画布正中偏下显示
         self.label['actionbar'] = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
-        # 加载用图片
-        self.loading_image = image.load(os.path.join(path['texture'], 'loading.png'))
-        self.loading_image.height = self.height
-        self.loading_image.width = self.width
+        # 加载窗口
+        self.loading = Loading()
         # 覆盖屏幕的矩形
         self.full_screen = Rectangle(0, 0, self.width, self.height)
         # 聊天区
-        self.dialogue = Dialogue(self.width, self.height)
+        self.dialogue = Dialogue()
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
         # 检测玩家是否应该死亡
         pyglet.clock.schedule_interval(self.check_die, 1.0 / TICKS_PER_SEC)
         # 每10秒更新一次方块数据
         pyglet.clock.schedule_interval(self.update_status, 10.0)
-        # 每60秒保存一次进度
+        # 每30秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         log_info('welcome %s' % player['name'])
 
@@ -158,14 +157,14 @@ class Game(pyglet.window.Window):
         # 初始化玩家
         self.hud = {}
         # E 键打开的背包
-        self.hud['bag'] = Bag(self.width, self.height)
+        self.hud['bag'] = Bag()
         # 生命值
-        self.hud['heart'] = Heart(self.width, self.height, batch=self.world.batch2d)
+        self.hud['heart'] = Heart(batch=self.world.batch2d)
         # 饥饿值
-        self.hud['hunger'] = Hunger(self.width, self.height, batch=self.world.batch2d)
+        self.hud['hunger'] = Hunger(batch=self.world.batch2d)
         # 工具栏
-        self.hud['hotbar'] = HotBar(self.width, self.height)
-        self.hud['hotbar'].set_index(self.width, self.block)
+        self.hud['hotbar'] = HotBar()
+        self.hud['hotbar'].set_index(self.block)
         
     def save(self, dt):
         """
@@ -222,7 +221,7 @@ class Game(pyglet.window.Window):
 
     def _js_loadGLlib(self, s):
         # loadGLlib 的 javascript 函数定义
-        self.js.eval("%s = getGLlib(\"%s\");" % (s, s))
+        self.js.eval('%s = getGLlib("%s");' % (s, s))
 
     def _js_logInfo(self, s):
         # logInfo 的 javascript 函数定义
@@ -397,7 +396,7 @@ class Game(pyglet.window.Window):
         碰撞检测
 
         :param: position, 玩家位置
-        :param:: height 玩家的高度
+        :param: height 玩家的高度
         :return: position 碰撞检测之后的位置
         """
         pad = 0.25
@@ -426,7 +425,7 @@ class Game(pyglet.window.Window):
     def on_close(self):
         # 当玩家关闭窗口时调用
         saver.save_window(self.width, self.height)
-        exit()
+        pyglet.app.exit()
 
     def on_mouse_press(self, x, y, button, modifiers):
         """
@@ -498,7 +497,7 @@ class Game(pyglet.window.Window):
         else:
             self.block = index
         log_info('mouse scroll: %d of %d' % (self.block, len(self.inventory) - 1))
-        self.hud['hotbar'].set_index(self.width, index)
+        self.hud['hotbar'].set_index(index)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -521,9 +520,9 @@ class Game(pyglet.window.Window):
                 self.player['strafe'][1] += 1
         elif symbol == key.E:
             if not self.player['die']:
-                self.set_exclusive_mouse(False)
+                self.set_exclusive_mouse(self.player['show_bag'])
                 self.player['in_hud'] = not self.player['in_hud']
-                self.player['press_e'] = not self.player['press_e']
+                self.player['show_bag'] = not self.player['show_bag']
         elif symbol == key.X:
             if self.player['fovy'] == 65:
                 self.player['fovy'] = 20
@@ -566,7 +565,7 @@ class Game(pyglet.window.Window):
                 self.player['running'] = True
         elif symbol in self.num_keys:
             self.block = (symbol - self.num_keys[0]) % len(self.inventory)
-            self.hud['hotbar'].set_index(self.width, self.block)
+            self.hud['hotbar'].set_index(self.block)
         elif symbol == key.F1:
             self.player['hide_hud'] = not self.player['hide_hud']
         elif symbol == key.F2:
@@ -615,6 +614,8 @@ class Game(pyglet.window.Window):
         self.label['center'].y = self.height // 2 + 50
         self.label['actionbar'].x = self.width // 2
         self.label['actionbar'].y = self.height // 2 - 100
+        # 加载窗口
+        self.loading.resize(self.width, self.height)
         # 窗口中央的十字线
         if self.reticle:
             self.reticle.delete()
@@ -679,7 +680,7 @@ class Game(pyglet.window.Window):
                 self.world.batch2d.draw()
                 self.hud['hotbar'].draw()
                 self.draw_reticle()
-                if self.player['in_hud'] and self.player['press_e']:
+                if self.player['in_hud'] and self.player['show_bag']:
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
                     self.full_screen.draw()
@@ -692,6 +693,7 @@ class Game(pyglet.window.Window):
         if not self.player['hide_hud']:
             self.draw_label()
         if self.is_init:
+            self.set_minimum_size(800, 600)
             self.world.init_world()
             if self.has_script:
                 try:
@@ -709,11 +711,15 @@ class Game(pyglet.window.Window):
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.505)
-            glColor4f(0.0, 0.0, 0.0, 0.8)
+            vertex_data = cube_vertices(x, y, z, 0.5001)
+            glColor4f(0.0, 0.0, 0.0, 0.9)
+            glLineWidth(1.5)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            glDisable(GL_CULL_FACE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
+            glEnable(GL_CULL_FACE)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+            glLineWidth(1.0)
 
     def draw_label(self):
         if not self.is_init:
@@ -742,14 +748,14 @@ class Game(pyglet.window.Window):
                 self.label['top'].draw()
         else:
             # 初始化屏幕
-            self.loading_image.blit(0, 0)
+            self.loading.draw()
             self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 15}' +
                     lang['game.text.loading'])
             self.label['center'].draw()
 
     def draw_reticle(self):
         # 在屏幕中央画十字线
-        if not self.is_init:
+        if not self.is_init and not self.player['in_hud']:
             glColor3f(1.0, 1.0, 1.0)
             glLineWidth(3.0)
             self.reticle.draw(GL_LINES)

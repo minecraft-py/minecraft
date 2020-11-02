@@ -97,7 +97,7 @@ class World(object):
         if 0 <= position[1] <= 256:
             # 建筑限制为基岩以上, 256格以下.
             if record == True:
-                self.change[' '.join([str(i) for i in position])] = texture
+                self.change[pos2str(position)] = texture
             if texture in block:
                 self.world[position] = texture
             else:

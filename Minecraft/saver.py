@@ -1,6 +1,8 @@
 import json
 from os.path import join
+
 from Minecraft.source import path
+from Minecraft.utils.utils import *
 
 def load_block(name, add_block, remove_block):
     """
@@ -12,7 +14,7 @@ def load_block(name, add_block, remove_block):
     """
     blocks = json.load(open(join(path['save'], name, 'world.json')))
     for position, block in blocks.items():
-        position = tuple([int(i) for i in position.split(' ')])
+        position = str2pos(position)
         if block == 'air':
             remove_block(position)
         else:
@@ -26,8 +28,8 @@ def load_player(name):
     # 读取玩家数据
     data = json.load(open(join(path['save'], name, 'player.json')))
     return {
-                'position': tuple([float(i) for i in data['position'].split(' ')]),
-                'respawn': tuple([float(i) for i in data['respawn'].split(' ')]),
+                'position': str2pos(data['position'], True),
+                'respawn': str2pos(data['respawn'], True),
                 'now_block': int(data['now_block'])
             }
 
@@ -57,8 +59,8 @@ def save_block(name, change, full=True):
 def save_player(name, position, respawn, now_block):
     # 将玩家数据存入文件
     data = {}
-    data['position'] = ' '.join([('%.1f' % i) for i in position])
-    data['respawn'] = ' '.join([('%.1f' % i) for i in respawn])
+    data['position'] = pos2str(position)
+    data['respawn'] = pos2str(respawn)
     data['now_block'] = now_block
     json.dump(data, open(join(path['save'], name, 'player.json'), 'w+'), indent='\t')
 
