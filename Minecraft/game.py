@@ -60,7 +60,7 @@ class Game(pyglet.window.Window):
         self.player['die'] = False
         self.player['in_hud'] = False
         self.player['hide_hud'] = False
-        self.player['press_e'] = False
+        self.player['show_bag'] = False
         # strafe = [z, x]
         # z 代表前后运动
         # x 代表左右运动
@@ -520,9 +520,9 @@ class Game(pyglet.window.Window):
                 self.player['strafe'][1] += 1
         elif symbol == key.E:
             if not self.player['die']:
-                self.set_exclusive_mouse(False)
+                self.set_exclusive_mouse(self.player['show_bag'])
                 self.player['in_hud'] = not self.player['in_hud']
-                self.player['press_e'] = not self.player['press_e']
+                self.player['show_bag'] = not self.player['show_bag']
         elif symbol == key.X:
             if self.player['fovy'] == 65:
                 self.player['fovy'] = 20
@@ -680,7 +680,7 @@ class Game(pyglet.window.Window):
                 self.world.batch2d.draw()
                 self.hud['hotbar'].draw()
                 self.draw_reticle()
-                if self.player['in_hud'] and self.player['press_e']:
+                if self.player['in_hud'] and self.player['show_bag']:
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
                     self.full_screen.draw()
@@ -693,6 +693,7 @@ class Game(pyglet.window.Window):
         if not self.player['hide_hud']:
             self.draw_label()
         if self.is_init:
+            self.set_minimum_size(800, 600)
             self.world.init_world()
             if self.has_script:
                 try:
@@ -754,7 +755,7 @@ class Game(pyglet.window.Window):
 
     def draw_reticle(self):
         # 在屏幕中央画十字线
-        if not self.is_init:
+        if not self.is_init and not self.player['in_hud']:
             glColor3f(1.0, 1.0, 1.0)
             glLineWidth(3.0)
             self.reticle.draw(GL_LINES)
