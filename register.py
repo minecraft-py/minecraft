@@ -2,19 +2,14 @@
 
 from json import dump
 from os import environ, path, mkdir
-from random import randint
 from re import match
-from time import time
 import uuid
 
-def register_user():
-    
+def register_user(): 
     if 'MCPYPATH' not in environ:
         environ['MCPYPATH'] = path.join(path.expanduser('~'), 'Minecraft')
-    
     if not path.isdir(environ['MCPYPATH']):
         mkdir(environ['MCPYPATH'])
-        
     if not path.isfile(path.join(environ['MCPYPATH'], 'player.json')):
         player_id = str(uuid.uuid4())
         print('Your uuid is %s, do not change it' % player_id)
@@ -26,7 +21,6 @@ def register_user():
         print('Regsitered successfully, you can use your id to play multiplayer game!')
     else:
         print('You have regsitered!')
-
 
 if __name__ == '__main__':
     register_user()

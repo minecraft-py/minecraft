@@ -151,8 +151,7 @@ class Game(pyglet.window.Window):
                 self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
                 log_info('%s die: %s' % (player['name'], self.player['die_reason']))
                 self.player['die'] = True
-                self.dialogue.add_dialogue(self.player['die_reason'])
-           
+                self.dialogue.add_dialogue(self.player['die_reason']) 
             elif self.player['position'][1] > 512:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
@@ -329,7 +328,6 @@ class Game(pyglet.window.Window):
             dx = 0.0
             dy = self.dy
             dz = 0.0
-
         return (dx, dy, dz)
 
     def update(self, dt):
@@ -522,86 +520,69 @@ class Game(pyglet.window.Window):
             self.player['strafe'][0] -= 1
         elif symbol == key.S:
             self.player['strafe'][0] += 1
-
         elif symbol == key.A:
             self.player['strafe'][1] -= 1
-
         elif symbol == key.D:
             self.player['strafe'][1] += 1
-                
         elif symbol == key.I:
              if self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
-
+                self.ext['position'] = False
         elif symbol == key.E:
             if not self.player['die']:
                 self.set_exclusive_mouse(self.player['show_bag'])
                 self.player['in_hud'] = not self.player['in_hud']
                 self.player['show_bag'] = not self.player['show_bag']
-
         elif symbol == key.X:
             if self.player['fovy'] == 65:
                 self.player['fovy'] = 20
             else:
                 self.player['fovy'] = 65
-
         elif symbol == key.P:
             if self.ext['enable']:
                 self.ext['position'] = not self.ext['position']
                 self.ext['debug'] = False
-
         elif symbol == key.R:
             if self.ext['enable']:
                 self.ext['running'] = not self.ext['running']
-                self.ext['open'] = False
                 log_info('%s(id: %s) extra function running: %s' % (player['name'],
                     player['id'], self.ext['running']))
-
         elif symbol == key.SPACE:
             if self.player['flying']:
                 self.dy = 0.1 * JUMP_SPEED
             elif self.dy == 0:
                 self.dy = JUMP_SPEED
-
         elif symbol == key.ENTER:
             if self.player['die']:
                 self.player['die'] = False
                 self.player['position'] = self.player['respawn_position']
                 self.set_exclusive_mouse(True)
-        
         elif symbol == key.ESCAPE:
             self.save(0)
             self.set_exclusive_mouse(False)
             if self.player['die']:
                 self.close()
-        
         elif symbol == key.TAB:
             self.player['flying'] = not self.player['flying']
-        
         elif symbol == key.LSHIFT:
             if self.player['flying']:
                 self.dy = -0.1 * JUMP_SPEED
             else:
                 self.player['stealing'] = True
-        
         elif symbol == key.LCTRL:
             if not self.player['flying']:
                 self.player['running'] = True
-        
         elif symbol in self.num_keys:
             self.block = (symbol - self.num_keys[0]) % len(self.inventory)
             self.hud['hotbar'].set_index(self.block)
-        
         elif symbol == key.F1:
             self.player['hide_hud'] = not self.player['hide_hud']
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
             self.dialogue.add_dialogue(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
-        
         elif symbol == key.F3:
             self.ext['enable'] = True
-        
         elif symbol == key.F11:
             self.set_fullscreen(not self.fullscreen)
 
@@ -615,17 +596,13 @@ class Game(pyglet.window.Window):
             self.player['strafe'][0] += 1
         elif symbol == key.S:
             self.player['strafe'][0] -= 1
-
         elif symbol == key.A:
             self.player['strafe'][1] += 1
-
         elif symbol == key.D:
             self.player['strafe'][1] -= 1
-
         elif symbol == key.SPACE:
             if self.player['flying']:
                 self.dy = 0
-                
         elif symbol == key.LSHIFT:
             if self.player['flying']:
                 self.dy = 0
