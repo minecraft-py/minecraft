@@ -49,4 +49,21 @@ logInfo(s);
 > 同样的, 还有`logErr`, `logWarn`函数用于显示不同的消息前缀
 
 ```javascript
+message(s);
+```
+在聊天区发送消息
+
+- `s` - 要发送的消息
+
+```javascript
 removeBlock(x, y, z);
+```
+移除坐标处的方块
+
+```javascript
+testBlock(x, y, z, block);
+```
+检测坐标处的方块是否与 block 相等
+
+- `block` - 方块名称
+> 没有任何方块为`air`
