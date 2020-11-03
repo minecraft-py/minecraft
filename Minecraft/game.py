@@ -241,6 +241,10 @@ class Game(pyglet.window.Window):
     def _js_logWarn(self, s):
         # logWarn 的 javascript 函数定义
         log_warn(s)
+
+    def _js_message(self, s):
+        # message 的 javascript 函数定义
+        self.dialogue.add_dialogue(s)
     
     def _js_removeBlock(self, x, y, z):
         # removeBlock 的 javascript 函数定义
@@ -278,6 +282,7 @@ class Game(pyglet.window.Window):
                     'logInfo': self._js_logInfo,
                     'logErr': self._js_logErr,
                     'logWarn': self._js_logWarn,
+                    'message': self._js_message,
                     'removeBlock': self._js_removeBlock,
                     'testBlock': self._js_testBlock
                 }, enable_require=True)
@@ -789,47 +794,19 @@ class Game(pyglet.window.Window):
             glLineWidth(1.0)
 
 
-def setup_fog():
-    # 配置 OpenGL 的雾属性
-    # 启用雾
-    glEnable(GL_FOG)
-    # 设置雾的颜色
-    glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
-    # 如果我们在渲染速度和质量之间没有取舍
-    glHint(GL_FOG_HINT, GL_DONT_CARE)
-    # 指定用于计算混合因子的公式
-    glFogi(GL_FOG_MODE, GL_LINEAR)
-    # 雾的终点和起点有多远. 起点和终点越近, 范围内的雾就越密集
-    glFogf(GL_FOG_START, 30.0)
-    glFogf(GL_FOG_END, 80.0)
-
-def setup_light():
-    # 设置 OpenGL 环境光
-    # 启用双面光照
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE , GL_TRUE)
-    # 光源衰减
-    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION ,1.0)
-    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION ,0.0)
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION ,0.0)
-    # 设置0号光源
-    glLightfv(GL_LIGHT0, GL_DIFFUSE , (GLfloat * 4)(1, 1, 1, 1))
-    glLightfv(GL_LIGHT0, GL_SPECULAR, (GLfloat * 4)(1, 1, 1, 1))
-    glLightfv(GL_LIGHT0, GL_POSITION, (GLfloat * 4)(0, 0, 0, -1))
-    # 开灯
-    glEnable(GL_LIGHT0)
-    glEnable(GL_LIGHTING)
-
 def setup():
     # 基本的 OpenGL 设置
-    # 设置背景颜色. 比如在 RGBA 模式下的天空
     glClearColor(0.5, 0.69, 1.0, 1)
-    # 启用面剔除
     glEnable(GL_CULL_FACE)
-    # 反走样
     glEnable(GL_BLEND)
     glEnable(GL_LINE_SMOOTH)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    setup_fog()
-    # setup_light()
+    # 配置 OpenGL 的雾属性
+    glEnable(GL_FOG)
+    glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
+    glHint(GL_FOG_HINT, GL_DONT_CARE)
+    glFogi(GL_FOG_MODE, GL_LINEAR)
+    glFogf(GL_FOG_START, 30.0)
+    glFogf(GL_FOG_END, 80.0)
 
