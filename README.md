@@ -57,6 +57,10 @@ cd Minecraft
 - `F11` - 切换全屏
 - `ESC` - 退出游戏
 
+
+# 笔者
+[jason-bowen-zheng](https://github.com/jason-bowen-zheng)
+
 # 贡献者
 感谢以下的开发者的贡献:
 

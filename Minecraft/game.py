@@ -15,17 +15,19 @@ from Minecraft.gui.loading import Loading
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
+msg = "module '{0}' not found, run `pip install {0}` to install, exit"
+
 try:
     import js2py as js
     import js2py.base as base
 except ModuleNotFoundError:
-    log_err("module 'Js2Py' not found, run `pip install js2py` to install, exit")
+    log_err(msg.format('js2py'))
     exit(1)
 
 try:
     import opensimplex
 except ModuleNotFoundError:
-    log_err("module 'opensimplex' not found. run `pip install opensimplex` to install, exit")
+    log_err(msg.format('opensimplex'))
     exit(1)
 
 try:
@@ -36,15 +38,16 @@ try:
     from pyglet.text import decode_attributed
     from pyglet.window import key, mouse
 except:
-    log_err("module 'pyglet' not found. run `pip install pyglet` to install, exit")
+    log_err(msg.format('pyglet'))
     exit(1)
 
 try:
     import pyshaders
 except:
-    log_err("module 'pyshaders' not found. run `pip install pyshaders` to install, exit")
+    log_err(msg.format('pyshaders'))
     exit(1)
 
+del msg
 
 class Game(pyglet.window.Window):
 
@@ -55,10 +58,10 @@ class Game(pyglet.window.Window):
         # 玩家状态: 是否潜行, 是否飞行...
         self.player = {}
         self.player['stealing'] = False
-        self.player['flying'] = False
-        self.player['running'] = False
-        self.player['die'] = False
-        self.player['in_hud'] = False
+        self.player['flying']   = False
+        self.player['running']  = False
+        self.player['die']      = False
+        self.player['in_hud']   = False
         self.player['hide_hud'] = False
         self.player['show_bag'] = False
         # strafe = [z, x]
@@ -85,7 +88,8 @@ class Game(pyglet.window.Window):
         # y 轴的加速度
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log', 'leaf', 'brick', 'plank', 'craft_table']
+        self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log', 'leaf',
+                          'brick', 'plank', 'craft_table']
         # 玩家手持的方块
         self.block = 0
         # 数字键列表
@@ -95,11 +99,13 @@ class Game(pyglet.window.Window):
         # 这个标签在画布的上方显示
         self.label = {}
         self.label['top'] = pyglet.text.DocumentLabel(decode_attributed(''),
-            x=0, y=self.height - 30,width=self.width // 2, multiline=True, anchor_x='left', anchor_y='center')
+            x=0, y=self.height - 30,width=self.width // 2, multiline=True,
+            anchor_x='left', anchor_y='center')
         self.is_init = True
         # 这个标签在画布正中偏上显示
         self.label['center'] = pyglet.text.DocumentLabel(decode_attributed(''),
-            x=self.width // 2, y=self.height // 2 + 50, anchor_x='center', anchor_y='center')
+            x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
+            anchor_y='center')
         # 这个标签在画布正中偏下显示
         self.label['actionbar'] = pyglet.text.DocumentLabel(decode_attributed(''),
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
@@ -146,6 +152,7 @@ class Game(pyglet.window.Window):
                 log_info('%s die: %s' % (player['name'], self.player['die_reason']))
                 self.player['die'] = True
                 self.dialogue.add_dialogue(self.player['die_reason'])
+           
             elif self.player['position'][1] > 512:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
@@ -300,6 +307,8 @@ class Game(pyglet.window.Window):
 
         :return: 长度为3的元组, 包含 x, y, z 轴上的速度增量
         """
+        dy = dx = dz = 0.0  # Save space in memory
+
         if any(self.player['strafe']):
             x, y = self.rotation
             strafe = math.degrees(math.atan2(*self.player['strafe']))
@@ -315,10 +324,7 @@ class Game(pyglet.window.Window):
             dx = 0.0
             dy = self.dy
             dz = 0.0
-        else:
-            dy = 0.0
-            dx = 0.0
-            dz = 0.0
+
         return (dx, dy, dz)
 
     def update(self, dt):
@@ -337,6 +343,7 @@ class Game(pyglet.window.Window):
             self.sector = sector
         m = 8
         dt = min(dt, 0.2)
+        
         for _ in range(m):
             self._update(dt / m)
 
@@ -510,70 +517,86 @@ class Game(pyglet.window.Window):
             self.player['strafe'][0] -= 1
         elif symbol == key.S:
             self.player['strafe'][0] += 1
+
         elif symbol == key.A:
             self.player['strafe'][1] -= 1
+
         elif symbol == key.D:
-            if self.ext['enable']:
+            self.player['strafe'][1] += 1
+                
+        elif symbol == key.I:
+             if self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
-                self.ext['position'] = False
-            else:
-                self.player['strafe'][1] += 1
+
         elif symbol == key.E:
             if not self.player['die']:
                 self.set_exclusive_mouse(self.player['show_bag'])
                 self.player['in_hud'] = not self.player['in_hud']
                 self.player['show_bag'] = not self.player['show_bag']
+
         elif symbol == key.X:
             if self.player['fovy'] == 65:
                 self.player['fovy'] = 20
             else:
                 self.player['fovy'] = 65
+
         elif symbol == key.P:
             if self.ext['enable']:
                 self.ext['position'] = not self.ext['position']
                 self.ext['debug'] = False
+
         elif symbol == key.R:
             if self.ext['enable']:
                 self.ext['running'] = not self.ext['running']
                 self.ext['open'] = False
                 log_info('%s(id: %s) extra function running: %s' % (player['name'],
                     player['id'], self.ext['running']))
+
         elif symbol == key.SPACE:
             if self.player['flying']:
                 self.dy = 0.1 * JUMP_SPEED
             elif self.dy == 0:
                 self.dy = JUMP_SPEED
+
         elif symbol == key.ENTER:
             if self.player['die']:
                 self.player['die'] = False
                 self.player['position'] = self.player['respawn_position']
                 self.set_exclusive_mouse(True)
+        
         elif symbol == key.ESCAPE:
             self.save(0)
             self.set_exclusive_mouse(False)
             if self.player['die']:
                 self.close()
+        
         elif symbol == key.TAB:
             self.player['flying'] = not self.player['flying']
+        
         elif symbol == key.LSHIFT:
             if self.player['flying']:
                 self.dy = -0.1 * JUMP_SPEED
             else:
                 self.player['stealing'] = True
+        
         elif symbol == key.LCTRL:
             if not self.player['flying']:
                 self.player['running'] = True
+        
         elif symbol in self.num_keys:
             self.block = (symbol - self.num_keys[0]) % len(self.inventory)
             self.hud['hotbar'].set_index(self.block)
+        
         elif symbol == key.F1:
             self.player['hide_hud'] = not self.player['hide_hud']
         elif symbol == key.F2:
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
             self.dialogue.add_dialogue(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
+        
         elif symbol == key.F3:
             self.ext['enable'] = True
+        
         elif symbol == key.F11:
             self.set_fullscreen(not self.fullscreen)
 
@@ -587,13 +610,17 @@ class Game(pyglet.window.Window):
             self.player['strafe'][0] += 1
         elif symbol == key.S:
             self.player['strafe'][0] -= 1
+
         elif symbol == key.A:
             self.player['strafe'][1] += 1
+
         elif symbol == key.D:
             self.player['strafe'][1] -= 1
+
         elif symbol == key.SPACE:
             if self.player['flying']:
                 self.dy = 0
+                
         elif symbol == key.LSHIFT:
             if self.player['flying']:
                 self.dy = 0
