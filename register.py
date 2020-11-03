@@ -7,7 +7,8 @@ import uuid
 
 def register_user(): 
     if 'MCPYPATH' not in environ:
-        environ['MCPYPATH'] = path.join(path.expanduser('~'), 'Minecraft')
+        print('MCPYPATH not found!')
+        exit()
     if not path.isdir(environ['MCPYPATH']):
         mkdir(environ['MCPYPATH'])
     if not path.isfile(path.join(environ['MCPYPATH'], 'player.json')):
