@@ -183,13 +183,18 @@ class MinecraftLauncher(Tk):
 
         select = self.game_item_list.get(select[0])
         self.destroy()
-        try:
-            data = load_window()
-            game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
-            game.set_name(select)
-            game.set_exclusive_mouse(False)
-            setup()
-            pyglet.app.run()
-        except Exception as err:
-            log_err('catch error: %s' % str(err))
-            exit(1)
+        # BUG: The comments below will be removed when a better
+        # bug control, because they don't allow the developers to know
+        # where the bugs are active.
+        #try:
+        data = load_window()
+        game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
+        game.set_name(select)
+        game.set_exclusive_mouse(False)
+        setup()
+        pyglet.app.run()
+        #except Exception as err:
+        #    log_err('catch error: %s' % str(err))
+        #    exit(1)
+
+            
