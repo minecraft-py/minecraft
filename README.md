@@ -51,15 +51,15 @@ cd Minecraft
 - `F1` - 隐藏 HUD
 - `F2` - 截屏
 - `F3` - 拓展功能
-  - `D` - 显示更详细的 debug 信息(`D`和`P`不能同时开启)
+  - `I` - 显示更详细的 debug 信息(`I`和`P`不能同时开启)
   - `P` - 显示玩家坐标
   - `R` - 强制疾跑(飞行忽略)
 - `F11` - 切换全屏
 - `ESC` - 退出游戏
 
 # 贡献者
-感谢以下的开发者的贡献, 按年代顺序:
+感谢以下的开发者的贡献, 按照第一次贡献的时间排序:
 
-- [jason-bowen-zheng](https://github.com/jason-bowen-zheng) Benevolent Dictator for Life
-- [wzh656](https://github.com/wzh656) 提供了一些游戏上的建议
+- [jason-bowen-zheng](https://github.com/jason-bowen-zheng) 仁慈的终身独裁者(BDFL)
 - [ismaelxyz](https://github.com/ismaelxyz) 拉丁美洲大使
+- [wzh656](https://github.com/wzh656) 提供了一些游戏上的建议
