@@ -8,7 +8,7 @@ import uuid
 def register_user(): 
     if 'MCPYPATH' not in environ:
         print('MCPYPATH not found!')
-        exit()
+        exit(1)
     if not path.isdir(environ['MCPYPATH']):
         mkdir(environ['MCPYPATH'])
     if not path.isfile(path.join(environ['MCPYPATH'], 'player.json')):
@@ -17,8 +17,7 @@ def register_user():
         player_name = ''
         while not match(r'^([a-z]|[A-Z]|_)\w+$', player_name):
             player_name = input('Your name: ')
-        dump({'id': player_id, 'name': player_name}, open(path.join(environ['MCPYPATH'], 'player.json'), 'w+'),
-                    indent='\t')
+        dump({'id': player_id, 'name': player_name}, open(path.join(environ['MCPYPATH'], 'player.json'), 'w+'), indent='\t')
         print('Regsitered successfully, you can use your id to play multiplayer game!')
     else:
         print('You have regsitered!')

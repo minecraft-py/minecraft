@@ -34,5 +34,6 @@ if (MCPYPATH := environ.get('MCPYPATH')) != None:
         copytree(path.join('data', 'texture'), path.join(MCPYPATH, 'texture', 'default'))
 else:
     print('MCPYPATH path not found')
+    exit(1)
 # 完成!
 print('[done]')
