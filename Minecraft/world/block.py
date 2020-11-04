@@ -24,10 +24,10 @@ class Block(object):
             self.destroyed += i
 
     def show(self, position, batch):
-        x, y, z = self.position
+        x, y, z = position
         vertex = make_cube(x, y, z, 0.5)
         texture = list(self.texture)
-        return batch.add(len(texture) / 3, GL_QUADS, group,
+        return batch.add(24, GL_QUADS, group,
                 ('v3f/static', vertex),
                 ('t2f/static', texture))
 
