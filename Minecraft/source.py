@@ -1,11 +1,8 @@
-# Minecraft 资源
-
 import json
 from os import environ
-from os.path import join, isfile
+from os.path import , expanduser, isfile, join
 import re
-
-from pyglet import media
+from sys import platforn
 
 from Minecraft.utils.utils import *
 
@@ -23,7 +20,12 @@ block['bedrock'] = tex_coords((2, 1), (2, 1), (2, 1))
 block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
 
 path = {}
-path['mcpypath'] = environ['MCPYPATH']
+if 'MCPYPATH' in environ:
+    path['mcpypath'] = environ['MCPYPATH']
+elif platforn.startswith('win'):
+    path['mcpypath'] = join(environ['MCPYPATH'], 'mcpy')
+else:
+    path['mcpypath'] = join(expanduser('~'), '.mcpy')
 path['json'] = 'data/json'
 path['json.lang'] = join(path['json'], 'lang')
 
