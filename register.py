@@ -5,10 +5,25 @@ from os import environ, path, mkdir
 from re import match
 import uuid
 
+def search_mcpy():
+    from sys import platform
+    # MCPYPATH = ''
+
+    if 'MCPYPATH' in environ:
+        MCPYPATH = environ['MCPYPATH']
+   
+    elif platform.startswith('win'):
+        MCPYPATH = path.join(path.expanduser('~'), 'mcpy')
+   
+    else:
+        MCPYPATH = path.join(path.expanduser('~'), '.mcpy')
+
+    return MCPYPATH
+
 def register_user(): 
     if 'MCPYPATH' not in environ:
-        print('MCPYPATH not found!')
-        exit(1)
+        environ['MCPYPATH'] = search_mcpy()   
+
     if not path.isdir(environ['MCPYPATH']):
         mkdir(environ['MCPYPATH'])
     if not path.isfile(path.join(environ['MCPYPATH'], 'player.json')):

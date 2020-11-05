@@ -2,8 +2,7 @@
 
 from os import environ, mkdir, path, system
 from shutil import copyfile, copytree, rmtree
-from sys import platform
-from register import register_user
+from register import register_user, search_mcpy
 
 # 下载依赖项
 print('[install requirements]')
@@ -17,14 +16,10 @@ print('[register]')
 register_user()
 # 复制运行所需的文件/
 print('[copy lib]')
+
 # 特定的平台, 特定的场景
-MCPYPATH = ''
-if 'MCPYPATH' in environ:
-    MCPYPATH = environ['MCPYPATH']
-elif platform.startswith('win'):
-    MCPYPATH = path.join(environ['HOME'], mcpy)
-else:
-    MCPYPATH = path.join(path.expanduser('~'), '.mcpy')
+MCPYPATH = search_mcpy()
+
 # 正式复制文件/目录
 if not path.isdir(MCPYPATH):
     mkdir(MCPYPATH)
@@ -36,5 +31,9 @@ if not path.isdir(path.join(MCPYPATH, 'save')):
     mkdir(path.join(MCPYPATH, 'save'))
 if not path.isdir(path.join(MCPYPATH, 'screenshot')):
     mkdir(path.join(MCPYPATH, 'screenshot'))
+
+if path.isdir(path.join(MCPYPATH, 'texture', 'default')):
+    rmtree(path.join(MCPYPATH, 'texture', 'default'))
+copytree(path.join('data', 'texture'), path.join(MCPYPATH, 'texture', 'default'))
 # 完成!
 print('[done]')

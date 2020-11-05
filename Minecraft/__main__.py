@@ -1,4 +1,5 @@
-from os import environ, getpid
+from os import getpid
+#from register import search_mcpy
 from Minecraft.launcher import *
 from Minecraft.utils import *
 
@@ -8,16 +9,13 @@ def exist(p):
             return True
 
 if __name__ == '__main__':
-    if 'MCPYPATH' in environ:
-        try:
-            import psutil
-            for p in psutil.process_iter():
-                if exist(p):
-                    log_err('Minecraft process(pid: %d) exist, exit' % p.pid)
-                    exit(1)
-        except ModuleNotFoundError:
-            pass
-        finally:
-            MinecraftLauncher().mainloop()
-    else:
-        log_err("path 'MCPYPATH' not found")
+    try:
+        import psutil
+        for p in psutil.process_iter():
+            if exist(p):
+                log_err('Minecraft process(pid: %d) exist, exit' % p.pid)
+                exit(1)
+    except ModuleNotFoundError:
+        pass
+    finally:
+        MinecraftLauncher().mainloop()

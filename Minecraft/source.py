@@ -1,10 +1,10 @@
 import json
 from os import environ
-from os.path import , expanduser, isfile, join
+from os.path import isfile, join
 import re
-from sys import platforn
 
 from Minecraft.utils.utils import *
+from register import search_mcpy
 
 block = {}
 block['grass'] = tex_coords((1, 0), (0, 1), (0, 0))
@@ -20,12 +20,8 @@ block['bedrock'] = tex_coords((2, 1), (2, 1), (2, 1))
 block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
 
 path = {}
-if 'MCPYPATH' in environ:
-    path['mcpypath'] = environ['MCPYPATH']
-elif platforn.startswith('win'):
-    path['mcpypath'] = join(environ['MCPYPATH'], 'mcpy')
-else:
-    path['mcpypath'] = join(expanduser('~'), '.mcpy')
+
+path['mcpypath'] = search_mcpy()
 path['json'] = 'data/json'
 path['json.lang'] = join(path['json'], 'lang')
 
