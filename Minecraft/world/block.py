@@ -23,6 +23,9 @@ class Block(object):
         else:
             self.destroyed += i
 
+    def on_click(self):
+        pass
+
     def show(self, position, batch):
         x, y, z = position
         vertex = make_cube(x, y, z, 0.5)
@@ -30,8 +33,3 @@ class Block(object):
         return batch.add(24, GL_QUADS, group,
                 ('v3f/static', vertex),
                 ('t2f/static', texture))
-
-
-block = {}
-block['grass'] = Block(50, tex_coords((1, 0), (0, 1), (0, 0)))
-block['dirt'] = Block(50, tex_coords((0, 1), (0, 1), (0, 1)))

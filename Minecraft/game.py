@@ -58,10 +58,10 @@ class Game(pyglet.window.Window):
         # 玩家状态: 是否潜行, 是否飞行...
         self.player = {}
         self.player['stealing'] = False
-        self.player['flying']   = False
-        self.player['running']  = False
-        self.player['die']      = False
-        self.player['in_hud']   = False
+        self.player['flying'] = False
+        self.player['running'] = False
+        self.player['die'] = False
+        self.player['in_hud'] = False
         self.player['hide_hud'] = False
         self.player['show_bag'] = False
         # strafe = [z, x]
@@ -88,8 +88,8 @@ class Game(pyglet.window.Window):
         # y 轴的加速度
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log', 'leaf',
-                          'brick', 'plank', 'craft_table']
+        self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log',
+                'leaf', 'brick', 'plank', 'craft_table']
         # 玩家手持的方块
         self.block = 0
         # 数字键列表
@@ -293,6 +293,15 @@ class Game(pyglet.window.Window):
         else:
             self.has_script = False
 
+    def run_js(self, function, *args):
+        if self.has_script and hasattr(self, 'js'):
+            if hasattr(self.js, function):
+                try:
+                    func = getattr(self.js, function)
+                    return func(*args)
+                except Exception as err:
+                    log_err('javascript: %s: %s' % (function, str(err)))
+
     def get_sight_vector(self):
         # 返回玩家的视线方向
         x, y = self.rotation
@@ -312,7 +321,6 @@ class Game(pyglet.window.Window):
         :return: 长度为3的元组, 包含 x, y, z 轴上的速度增量
         """
         dy = dx = dz = 0.0  # Save space in memory
-
         if any(self.player['strafe']):
             x, y = self.rotation
             strafe = math.degrees(math.atan2(*self.player['strafe']))
@@ -459,21 +467,11 @@ class Game(pyglet.window.Window):
                         self.set_exclusive_mouse(False)
                     elif previous:
                         self.world.add_block(previous, self.inventory[self.block])
-                        if self.has_script:
-                            try:
-                                if hasattr(self.js, 'onBuild'):
-                                    self.js.onBuild(previous[0], previous[1], previous[2], self.inventory[self.block])
-                            except Exception as err:
-                                log_warn('script.js: onBuild: %s' % str(err))
+                        self.run_js('onBuild', previous[0], previous[1], previous[2], self.inventory[self.block])
             elif button == pyglet.window.mouse.LEFT and block:
                 if texture != 'bedrock' and not self.player['die'] and not self.player['in_hud']:
                     self.world.remove_block(block)
-                    if self.has_script:
-                        try:
-                            if hasattr(self.js, 'onDestroy'):
-                                self.js.onDestroy(previous[0], previous[1], previous[2], texture)
-                        except Exception as err:
-                            log_warn('script.js: onDestroy: %s' % str(err))
+                    self.run_js('onDestroy', previous[0], previous[1], previous[2], texture)
             elif button == pyglet.window.mouse.MIDDLE and block:
                 self.block = texture
         elif not self.player['die'] and not self.player['in_hud']:
@@ -516,6 +514,9 @@ class Game(pyglet.window.Window):
         :param: symbol 按下的键
         :param: modifiers 同时按下的修饰键
         """
+        if symbol == key.Q:
+            self.player['die'] = True
+            self.player['die_reason'] = 'killed by self'
         if symbol == key.W:
             self.player['strafe'][0] -= 1
         elif symbol == key.S:
@@ -704,12 +705,7 @@ class Game(pyglet.window.Window):
         if self.is_init:
             self.set_minimum_size(800, 600)
             self.world.init_world()
-            if self.has_script:
-                try:
-                    if hasattr(self.js, 'onInit'):
-                        self.js.onInit()
-                except Exception as err:
-                    log_warn('script.js: onInit: %s' % str(err))
+            self.run_js('onInit')
             self.init_player()
             self.set_exclusive_mouse(True)
             self.is_init = False
@@ -721,7 +717,7 @@ class Game(pyglet.window.Window):
         if block:
             x, y, z = block
             vertex_data = cube_vertices(x, y, z, 0.5001)
-            glColor4f(0.0, 0.0, 0.0, 0.9)
+            glColor3f(0.0, 0.0, 0.0)
             glLineWidth(1.5)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             glDisable(GL_CULL_FACE)
