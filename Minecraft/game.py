@@ -295,12 +295,12 @@ class Game(pyglet.window.Window):
 
     def run_js(self, function, *args):
         if self.has_script and hasattr(self, 'js'):
-            if hasattr(self.js, function):
-                try:
+            try:
+                if hasattr(self.js, function):
                     func = getattr(self.js, function)
                     return func(*args)
-                except Exception as err:
-                    log_err('javascript: %s: %s' % (function, str(err)))
+            except Exception as err:
+                log_err('javascript: %s: %s' % (function, str(err)))
 
     def get_sight_vector(self):
         # 返回玩家的视线方向
@@ -470,8 +470,8 @@ class Game(pyglet.window.Window):
                         self.run_js('onBuild', previous[0], previous[1], previous[2], self.inventory[self.block])
             elif button == pyglet.window.mouse.LEFT and block:
                 if texture != 'bedrock' and not self.player['die'] and not self.player['in_hud']:
-                    self.world.remove_block(block)
                     self.run_js('onDestroy', previous[0], previous[1], previous[2], texture)
+                    self.world.remove_block(block)
             elif button == pyglet.window.mouse.MIDDLE and block:
                 self.block = texture
         elif not self.player['die'] and not self.player['in_hud']:
