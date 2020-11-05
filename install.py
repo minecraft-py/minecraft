@@ -16,10 +16,7 @@ print('[register]')
 register_user()
 # 复制运行所需的文件/
 print('[copy lib]')
-
-# 特定的平台, 特定的场景
 MCPYPATH = search_mcpy()
-
 # 正式复制文件/目录
 if not path.isdir(MCPYPATH):
     mkdir(MCPYPATH)
@@ -31,7 +28,6 @@ if not path.isdir(path.join(MCPYPATH, 'save')):
     mkdir(path.join(MCPYPATH, 'save'))
 if not path.isdir(path.join(MCPYPATH, 'screenshot')):
     mkdir(path.join(MCPYPATH, 'screenshot'))
-
 if path.isdir(path.join(MCPYPATH, 'texture', 'default')):
     rmtree(path.join(MCPYPATH, 'texture', 'default'))
 copytree(path.join('data', 'texture'), path.join(MCPYPATH, 'texture', 'default'))
