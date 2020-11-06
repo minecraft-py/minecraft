@@ -4,32 +4,7 @@ from Minecraft.utils.utils import *
 from pyglet.image import *
 from pyglet.gl import *
 
-group = TextureGroup(image.load(os.path.join(path['texture'], 'block.png')).get_texture())
-
 
 class Block(object):
 
-    def __init__(self, hard, texture):
-        self.hard = hard
-        self.destroyed = 0
-        self.has_destroy = False
-        self.texture = texture
-
-    def destroy(self, i=0.01):
-        if self.destroyed < 0:
-            pass
-        elif self.destroyed >= self.hard:
-            self.has_destroy = True
-        else:
-            self.destroyed += i
-
-    def on_click(self):
-        pass
-
-    def show(self, position, batch):
-        x, y, z = position
-        vertex = make_cube(x, y, z, 0.5)
-        texture = list(self.texture)
-        return batch.add(24, GL_QUADS, group,
-                ('v3f/static', vertex),
-                ('t2f/static', texture))
+    pass
