@@ -768,6 +768,7 @@ class Game(pyglet.window.Window):
 
 
 def setup():
+    sys.setdefaultencoding('utf8')
     # 基本的 OpenGL 设置
     glClearColor(0.5, 0.69, 1.0, 1)
     glEnable(GL_CULL_FACE)
