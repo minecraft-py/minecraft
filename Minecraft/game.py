@@ -320,14 +320,16 @@ class Game(pyglet.window.Window):
 
         :return: 长度为3的元组, 包含 x, y, z 轴上的速度增量
         """
-        dy = dx = dz = 0.0  # Save space in memory
+        dy = dx = dz = 0.0
+        x, y = self.rotation
+        strafe = math.degrees(math.atan2(*self.player['strafe']))
+        y_angle = math.radians(y)
+        x_angle = math.radians(x + strafe)
         if any(self.player['strafe']):
-            x, y = self.rotation
-            strafe = math.degrees(math.atan2(*self.player['strafe']))
-            y_angle = math.radians(y)
-            x_angle = math.radians(x + strafe)
             if self.player['flying']:
-                pass
+                dx = math.cos(x_angle)
+                dy = 0.0
+                dz = math.sin(x_angle)
             else:
                 dy = 0.0
                 dx = math.cos(x_angle)
@@ -497,15 +499,14 @@ class Game(pyglet.window.Window):
 
         :param: scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
         """
-        index = self.block + scroll_y
+        index = int(self.block + scroll_y)
         if index > len(self.inventory) - 1:
             self.block = 0
         elif index < 0:
             self.block = len(self.inventory) - 1
         else:
             self.block = index
-        log_info('mouse scroll: %d of %d' % (self.block, len(self.inventory) - 1))
-        self.hud['hotbar'].set_index(index)
+            self.hud['hotbar'].set_index(index)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -517,6 +518,7 @@ class Game(pyglet.window.Window):
         if symbol == key.Q:
             self.player['die'] = True
             self.player['die_reason'] = 'killed by self'
+            self.set_exclusive_mouse(False)
         if symbol == key.W:
             self.player['strafe'][0] -= 1
         elif symbol == key.S:
@@ -690,11 +692,12 @@ class Game(pyglet.window.Window):
                 self.world.batch2d.draw()
                 self.hud['hotbar'].draw()
                 self.draw_reticle()
-                if self.player['in_hud'] and self.player['show_bag']:
+                if self.player['in_hud'] or not self.exclusive:
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
                     self.full_screen.draw()
-                    self.hud['bag'].draw()
+                    if self.player['show_bag']:
+                        self.hud['bag'].draw()
             elif self.player['die']:
                 self.full_screen.color = (200, 0, 0)
                 self.full_screen.opacity = 100
