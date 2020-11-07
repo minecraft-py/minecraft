@@ -6,6 +6,8 @@ import re
 from Minecraft.utils.utils import *
 from register import search_mcpy
 
+from pyglet import resource
+
 block = {}
 block['grass'] = tex_coords((1, 0), (0, 1), (0, 0))
 block['dirt'] = tex_coords((0, 1), (0, 1), (0, 1))
@@ -25,7 +27,7 @@ path['mcpypath'] = search_mcpy()
 path['json'] = 'data/json'
 path['json.lang'] = join(path['json'], 'lang')
 
-settings = json.load(open(join(path['mcpypath'], 'settings.json')))
+settings = json.load(open(join(path['mcpypath'], 'settings.json'), encoding='utf-8'))
 # 检查 settings.json 的正确性
 for key in ['lang']:
     if key not in settings:
@@ -36,7 +38,7 @@ if not isfile(join(path['json.lang'], settings['lang'] + '.json')):
     exit(1)
 
 if isfile(join(path['mcpypath'], 'player.json')):
-    player = json.load(open(join(path['mcpypath'], 'player.json')))
+    player = json.load(open(join(path['mcpypath'], 'player.json'), encoding='utf-8'))
     if not re.match('^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$', player['id']):
         log_err('invalid player id: %s' % player['id'])
         exit(1)
@@ -51,4 +53,4 @@ path['shaders'] = 'data/shaders'
 path['save'] = join(path['mcpypath'], 'save')
 path['screenshot'] = join(path['mcpypath'], 'screenshot')
 
-lang = json.load(open(join(path['json.lang'], settings['lang'] + '.json')))
+lang = json.load(open(join(path['json.lang'], settings['lang'] + '.json'), encoding='utf-8'))
