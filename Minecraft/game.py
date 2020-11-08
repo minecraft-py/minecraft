@@ -12,6 +12,7 @@ from Minecraft.gui.hotbar import HotBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
+from Minecraft.gui.widget.button import Button
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 

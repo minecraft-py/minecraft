@@ -13,25 +13,13 @@ class Widget(EventDispatcher):
     def position(self):
         return self._x, self._y
 
-    @position.setter
-    def position(self, pos):
-        self._x, self._y = pos
-
     @property
     def x(self):
         return self._x
 
-    @x.setter
-    def x(self, x):
-        self._x = x
-
     @property
     def y(self):
         return self._y
-
-    @y.setter
-    def y(self, y):
-        self._y = y
 
     @property
     def width(self):
@@ -61,3 +49,4 @@ Widget.register_event_type('on_mouse_drag')
 Widget.register_event_type('on_mouse_motion')
 Widget.register_event_type('on_mouse_press')
 Widget.register_event_type('on_mouse_release')
+Widget.register_event_type('on_mouse_scroll')
