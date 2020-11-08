@@ -500,12 +500,12 @@ class Game(pyglet.window.Window):
         """
         index = int(self.block + scroll_y)
         if index > len(self.inventory) - 1:
-            self.block = 0
+            self.block = index = 0
         elif index < 0:
-            self.block = len(self.inventory) - 1
+            self.block = index = len(self.inventory) - 1
         else:
             self.block = index
-            self.hud['hotbar'].set_index(index)
+        self.hud['hotbar'].set_index(index)
 
     def on_key_press(self, symbol, modifiers):
         """
