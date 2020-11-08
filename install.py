@@ -24,6 +24,8 @@ if not path.isfile(path.join(MCPYPATH, 'settings.json')):
     copyfile(path.join('data', 'json', 'settings.json'), path.join(MCPYPATH, 'settings.json'))
 if not path.isfile(path.join(MCPYPATH, 'window.json')):
     copyfile(path.join('data', 'json', 'window.json'), path.join(MCPYPATH, 'window.json'))
+if not path.isdir(path.join(MCPYPATH, 'log')):
+    mkdir(path.join(MCPYPATH, 'log'))
 if not path.isdir(path.join(MCPYPATH, 'save')):
     mkdir(path.join(MCPYPATH, 'save'))
 if not path.isdir(path.join(MCPYPATH, 'screenshot')):

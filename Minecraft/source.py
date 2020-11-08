@@ -46,6 +46,7 @@ else:
     log_err('you have not registered, exit')
     exit(1)
 
+path['log'] = join(path['mcpypath'], 'log')
 path['texture'] = join(path['mcpypath'], 'texture/default')
 path['texture.hud'] = join(path['texture'], 'hud')
 path['texture.ui'] = join(path['texture'], 'ui')

@@ -3,6 +3,7 @@ import json
 import shutil
 from string import punctuation
 import time
+import traceback
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
 
@@ -179,17 +180,14 @@ class MinecraftLauncher(Tk):
             return
         select = self.game_item_list.get(select[0])
         self.destroy()
-        # BUG: The comments below will be removed when a better
-        # bug control, because they don't allow the developers to know
-        # where the bugs are active.
-        #try:
-        data = load_window()
-        game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
-        game.set_name(select)
-        setup()
-        pyglet.app.run()
-        #except Exception as err:
-        #    log_err('catch error: %s' % str(err))
-        #    exit(1)
-
-            
+        try:
+            data = load_window()
+            game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
+            game.set_name(select)
+            setup()
+            pyglet.app.run()
+        except:
+            name = '%d.log' % int(time.time())
+            log_info('catch error, saved in: log/%s' % name)
+            traceback.print_exc(file=open(os.path.join(path['log'], name), 'w+'))
+            exit(1)
