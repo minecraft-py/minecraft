@@ -14,10 +14,9 @@ else:
 # 注册玩家
 print('[register]')
 register_user()
-# 复制运行所需的文件/
+# 复制运行所需的文件
 print('[copy lib]')
 MCPYPATH = search_mcpy()
-# 正式复制文件/目录
 if not path.isdir(MCPYPATH):
     mkdir(MCPYPATH)
 if not path.isfile(path.join(MCPYPATH, 'settings.json')):
