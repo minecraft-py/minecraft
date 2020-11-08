@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 from string import punctuation
 import time
 from tkinter import Listbox, Tk, Toplevel, messagebox
@@ -71,9 +72,7 @@ class MinecraftLauncher(Tk):
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
         if messagebox.askyesno(message=lang['launcher.dialog.text.delete'] % select,
                 title=lang['launcher.dialog.title.delete']):
-            
-            __import__('shutil').rmtree(os.path.join(path['save'], select))
-            
+            shutil.rmtree(os.path.join(path['save'], select))
         self.refresh()
 
     def new(self, event=None):
@@ -168,9 +167,7 @@ class MinecraftLauncher(Tk):
 
     def rename_world(self, name):
         # 重命名世界
-        __import__('shutil').move(os.path.join(path['save'], name),
-                                  os.path.join(path['save'], self.rename_dialog_entry.get())
-        )
+        shutil.move(os.path.join(path['save'], name), os.path.join(path['save'], self.rename_dialog_entry.get()))
         self.rename_dialog.destroy()
         self.refresh()
 
@@ -180,7 +177,6 @@ class MinecraftLauncher(Tk):
         if  select == ():
             log_info('no world selected')
             return
-
         select = self.game_item_list.get(select[0])
         self.destroy()
         # BUG: The comments below will be removed when a better
@@ -190,7 +186,6 @@ class MinecraftLauncher(Tk):
         data = load_window()
         game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
         game.set_name(select)
-        game.set_exclusive_mouse(False)
         setup()
         pyglet.app.run()
         #except Exception as err:

@@ -19,9 +19,8 @@ msg = "module '{0}' not found, run `pip install {0}` to install, exit"
 
 try:
     import js2py as js
-    import js2py.base as base
 except ModuleNotFoundError:
-    log_err(msg.format('js2py'))
+    log_err(msg.format('Js2Py'))
     exit(1)
 
 try:
@@ -47,7 +46,6 @@ except:
     log_err(msg.format('pyshaders'))
     exit(1)
 
-del msg
 
 class Game(pyglet.window.Window):
 
@@ -581,9 +579,10 @@ class Game(pyglet.window.Window):
         elif symbol == key.F1:
             self.player['hide_hud'] = not self.player['hide_hud']
         elif symbol == key.F2:
+            name = 'screenshot-%d.png' % int(time.time())
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
-                path['screenshot'], time.strftime('%Y-%m-%d %H:%M:%S screenshot.png')))
-            self.dialogue.add_dialogue(time.strftime('screenshot saved in: screenshot/%Y-%m-%d %H:%M:%S screenshot.png'))
+                path['screenshot'], name))
+            self.dialogue.add_dialogue('screenshot saved in: %s' % name)
         elif symbol == key.F3:
             self.ext['enable'] = True
         elif symbol == key.F11:
@@ -710,7 +709,6 @@ class Game(pyglet.window.Window):
             self.world.init_world()
             self.run_js('onInit')
             self.init_player()
-            self.set_exclusive_mouse(True)
             self.is_init = False
 
     def draw_focused_block(self):
@@ -763,7 +761,7 @@ class Game(pyglet.window.Window):
 
     def draw_reticle(self):
         # 在屏幕中央画十字线
-        if not self.is_init and not self.player['in_hud']:
+        if not self.is_init and not self.player['in_hud'] and self.exclusive:
             glColor3f(1.0, 1.0, 1.0)
             glLineWidth(3.0)
             self.reticle.draw(GL_LINES)

@@ -3,21 +3,17 @@
 from json import dump
 from os import environ, path, mkdir
 from re import match
+from sys import platform
 import uuid
 
 def search_mcpy():
-    from sys import platform
-    # MCPYPATH = ''
-
     if 'MCPYPATH' in environ:
         MCPYPATH = environ['MCPYPATH']
    
     elif platform.startswith('win'):
         MCPYPATH = path.join(path.expanduser('~'), 'mcpy')
-   
     else:
         MCPYPATH = path.join(path.expanduser('~'), '.mcpy')
-
     return MCPYPATH
 
 def register_user(): 

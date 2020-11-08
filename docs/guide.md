@@ -41,7 +41,7 @@ Minecraft 源代码托管在 Github 和 Gitee(中国境内), Gitee 同 Github �
 如果有 Git, 那么输入:
 ```shell
 git clone htts://github.com/jason-bowen-zheng/Minecraft
-# 中国境内用户使用下面这行
+# Gitee(中国境内)
 git clone https://gitee.com/jason-bowen-zheng/Minecraft
 ```
 
@@ -53,9 +53,15 @@ wget https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
 ```
 
 # 游玩前步骤
-首先, 你必须先新建一个`MCPYPATH`的系统变量, 用于存放数据. 类 UNIX 建议在`/share/mcpy/`或`~/.mcpy/`(和`~/.Minecraft/`目录不重名).
+首先, 必须确定文件复制位置, 可以有如下两种选择:
 
-然后, 直接运行`./install.py`, 会自动安装依赖项以及注册, 必须给予 root 权限.
+- 默认的
+  - Windows 在`%HOME%\mcpy\`目录下
+  - Linux/MacOS 在`~/.mcpy`目录下
+- 设置一个`MCPYPATH`环境变量, 值为游戏文件复制的位置.
+> 程序会检查是否存在`MCPYPATH`环境变量
+
+然后, 运行`install.py`就可以了.
 
 ## 注册
 注册程序非常简单, 会使用`uuid`库来生成一个随机的 uuid.
