@@ -293,9 +293,11 @@ class Game(pyglet.window.Window):
             self.has_script = False
 
     def run_js(self, function, *args):
+        # NOTE: 实验性
         if self.has_script and hasattr(self, 'js'):
             try:
                 if hasattr(self.js, function):
+                    # NOTE: Js2Py.EvalJs 对象的 hasattr 方法有漏洞!
                     func = getattr(self.js, function)
                     return func(*args)
             except Exception as err:
@@ -394,7 +396,8 @@ class Game(pyglet.window.Window):
             speed = STEALING_SPEED
         else:
             speed = WALKING_SPEED
-        d = dt * speed # 这一个游戏刻玩家经过的距离
+        # 一个游戏刻玩家经过的距离
+        d = dt * speed
         dx, dy, dz = self.get_motion_vector()
         # 玩家新的位置
         dx, dy, dz = dx * d, dy * d, dz * d

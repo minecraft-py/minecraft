@@ -1,25 +1,20 @@
-# Directories
+# 目录
 __pycache__/
 build/
 dist/
 lib/
 lib64/
 sdist/
-resource/save/
 var/
 wheels/
 pyre/
 .vscode/
 
-# Files
+# 文件
 .*.swp
 .*.swo
-notes.txt
 
-# Binary Files
-.*.exe
-.*.dll
+# 二进制文件
 .*.so
 .*.a
 .*.pyd
-*.go

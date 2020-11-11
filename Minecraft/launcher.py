@@ -19,7 +19,7 @@ def is_game_restore(name):
     """
     判断一个目录是否为游戏存档
 
-    @param name 要检查的游戏目录
+    :param: name 要检查的游戏目录
     """
     if os.path.isdir(os.path.join(path['save'], name)):
         if 'world.json' in os.listdir(os.path.join(path['save'], name)):

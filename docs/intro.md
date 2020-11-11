@@ -15,3 +15,5 @@
 - `pyshaders>=1.4.1`: 编译与链接 GLSL
 - `opensimplex>=0.3`: 简单的 Simplex 噪声函数库
 - `...`: 随着开发进度的增加会有更多的依赖项
+
+> `Js2Py`有非常严重的 bug. 在解决完成之前, 不要编写 js 供 Minecraft 运行!
