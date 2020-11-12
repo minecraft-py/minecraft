@@ -45,12 +45,9 @@ class MinecraftLauncher(Tk):
             log_err('no display, exit')
             exit(1)
         self.title(lang['launcher.title'])
-        # Load ttk Theme
-        
-        # NOTE: TCL is very primitive, it will only accept Unix style paths.
-        arc_path = os.path.dirname(os.path.abspath(__file__)) + '/Theme'
+        # 导入小部件主题
+        arc_path = os.path.dirname(os.path.abspath(__file__)) + '/theme'
         self.tk.eval('lappend auto_path {%s}' % arc_path)
-        
         s = ttk.Style()
         s.theme_use('arc')
         # 小部件

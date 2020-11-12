@@ -1,6 +1,6 @@
-#  Arc Ttk Theme - Modification for MinePyCraft
+#  Arc Ttk Theme - Modification for Minecraft
 
-#  Copyright (c) 2020 MinePyCraft Team
+#  Copyright (c) 2020 Minecraft Team
 #  Copyright (c) 2015 Sergei Golovan <sgolovan@nes.ru>
 
 #  This file is part of Arc
