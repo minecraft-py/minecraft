@@ -13,6 +13,7 @@ pyre/
 # 文件
 .*.swp
 .*.swo
+notes.txt
 
 # 二进制文件
 .*.so

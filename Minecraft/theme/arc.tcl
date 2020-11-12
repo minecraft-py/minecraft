@@ -22,7 +22,7 @@ namespace eval ttk::theme::arc {
     variable colors
     array set colors {
         -fg             "#5c616c"
-        -bg             "#eedeed"
+        -bg             "#d9d9d9"
         -disabledbg     "#fbfcfc"
         -disabledfg     "#a9acb2"
         -selectbg       "#5294e2"
@@ -305,7 +305,8 @@ namespace eval ttk::theme::arc {
         #
 
         ttk::style configure TButton -padding {8 4 8 4} -width -10 -anchor center
-        ttk::style configure TLabel -background "#d9d9d9"
+        # ttk::style configure TLabel -background "#d9d9d9"
+        ttk::style configure C2.TLabel -background "#d9d9d9"
 
         ttk::style configure TMenubutton -padding {8 4 4 4}
         ttk::style configure Toolbutton -anchor center
