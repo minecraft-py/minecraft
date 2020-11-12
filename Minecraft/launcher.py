@@ -85,11 +85,11 @@ class MinecraftLauncher(Tk):
         # 新的世界对话框
         self.new_dialog = Toplevel(self)
         self.new_dialog.title(lang['launcher.dialog.title.new'])
-        self.new_dialog_label_name = ttk.Label(self.new_dialog, 
-                                        text=lang['launcher.dialog.text.name'])
+        self.new_dialog_label_name = ttk.Label(self.new_dialog,
+                style='C2.TLabel', text=lang['launcher.dialog.text.name'])
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
         self.new_dialog_label_seed = ttk.Label(self.new_dialog,
-                                        text=lang['launcher.dialog.text.seed'])
+                style='C2.TLabel', text=lang['launcher.dialog.text.seed'])
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
         self.new_dialog_button_ok = ttk.Button(self.new_dialog,
                 text=lang['launcher.dialog.text.ok'], command=self.new_world
@@ -147,7 +147,7 @@ class MinecraftLauncher(Tk):
         self.rename_dialog = Toplevel(self)
         self.rename_dialog.title(lang['launcher.dialog.title.rename'])
         self.rename_dialog_label = ttk.Label(self.rename_dialog,
-            text=lang['launcher.dialog.text.name'])
+            style='C2.TLabel', text=lang['launcher.dialog.text.name'])
         self.rename_dialog_entry = ttk.Entry(self.rename_dialog)
         name = self.game_item_list.curselection()
         name = self.game_item_list.get(0) if name == () else self.game_item_list.get(name)

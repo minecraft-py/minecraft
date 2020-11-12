@@ -305,7 +305,8 @@ namespace eval ttk::theme::arc {
         #
 
         ttk::style configure TButton -padding {8 4 8 4} -width -10 -anchor center
-        ttk::style configure TLabel -background "#d9d9d9"
+        # ttk::style configure TLabel -background "#d9d9d9"
+        ttk::style configure C2.TLabel -background "#d9d9d9"
 
         ttk::style configure TMenubutton -padding {8 4 4 4}
         ttk::style configure Toolbutton -anchor center
