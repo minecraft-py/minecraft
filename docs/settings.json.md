@@ -6,6 +6,7 @@
 `settings.json`各个键的意义:
 
 - `lang` - 启动器与游戏语言(在`data/json/lang`目录中, 不存在的语言会报错)
+- `use-arc` - 启动器是否使用 Arc 主题
 
 报错内容:
 

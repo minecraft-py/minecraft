@@ -11,7 +11,7 @@ from Minecraft.utils.utils import *
 log_info('loading game lib')
 from Minecraft.game import *
 from Minecraft.saver import load_window
-from Minecraft.source import path, lang
+from Minecraft.source import lang, path, settings
 
 import pyglet
 
@@ -45,11 +45,10 @@ class MinecraftLauncher(Tk):
             log_err('no display, exit')
             exit(1)
         self.title(lang['launcher.title'])
-        # 导入小部件主题
-        arc_path = os.path.dirname(os.path.abspath(__file__)) + '/theme'
-        self.tk.eval('lappend auto_path {%s}' % arc_path)
-        s = ttk.Style()
-        s.theme_use('arc')
+        if settings['use-arc'] == True:
+            arc_path = os.path.dirname(os.path.abspath(__file__)) + '/theme'
+            self.tk.eval('lappend auto_path {%s}' % arc_path)
+            ttk.Style().theme_use('arc')
         # 小部件
         self.new_button = ttk.Button(self, text=lang['launcher.new'], command=self.new)
         self.start_button = ttk.Button(self, text=lang['launcher.start'], command=self.start_game)
