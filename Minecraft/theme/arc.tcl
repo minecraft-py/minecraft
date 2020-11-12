@@ -22,7 +22,7 @@ namespace eval ttk::theme::arc {
     variable colors
     array set colors {
         -fg             "#5c616c"
-        -bg             "#eedeed"
+        -bg             "#d9d9d9"
         -disabledbg     "#fbfcfc"
         -disabledfg     "#a9acb2"
         -selectbg       "#5294e2"
