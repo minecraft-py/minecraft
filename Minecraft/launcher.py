@@ -146,10 +146,9 @@ class MinecraftLauncher(Tk):
         # 重命名对话框
         self.rename_dialog = Toplevel(self)
         self.rename_dialog.title(lang['launcher.dialog.title.rename'])
-        self.rename_dialog_label = ttk.Label(self.rename_dialog, 
+        self.rename_dialog_label = ttk.Label(self.rename_dialog,
             text=lang['launcher.dialog.text.name'])
         self.rename_dialog_entry = ttk.Entry(self.rename_dialog)
-
         name = self.game_item_list.curselection()
         name = self.game_item_list.get(0) if name == () else self.game_item_list.get(name)
         self.rename_dialog_entry.insert(0, name)
