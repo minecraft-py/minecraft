@@ -45,6 +45,14 @@ class MinecraftLauncher(Tk):
             log_err('no display, exit')
             exit(1)
         self.title(lang['launcher.title'])
+        # Load ttk Theme
+        
+        # NOTE: TCL is very primitive, it will only accept Unix style paths.
+        arc_path = os.path.dirname(os.path.abspath(__file__)) + '/Theme'
+        self.tk.eval('lappend auto_path {%s}' % arc_path)
+        
+        s = ttk.Style()
+        s.theme_use('arc')
         # 小部件
         self.new_button = ttk.Button(self, text=lang['launcher.new'], command=self.new)
         self.start_button = ttk.Button(self, text=lang['launcher.start'], command=self.start_game)
@@ -141,8 +149,8 @@ class MinecraftLauncher(Tk):
         # 重命名对话框
         self.rename_dialog = Toplevel(self)
         self.rename_dialog.title(lang['launcher.dialog.title.rename'])
-        self.rename_dialog_label = ttk.Label(self.rename_dialog,
-                                        text=lang['launcher.dialog.text.name'])
+        self.rename_dialog_label = ttk.Label(self.rename_dialog, 
+            text=lang['launcher.dialog.text.name'])
         self.rename_dialog_entry = ttk.Entry(self.rename_dialog)
 
         name = self.game_item_list.curselection()
