@@ -39,4 +39,4 @@
 
 ## 使用现代化的主题
 ttk 默认的主题在 x11 上并不是很好看, 开发团队从[这里](https://github.com/TkinterEP/ttkthemes)引入了一些 ttk 主题.
-> 可以在`settings.json`中将`use-theme`项设置成`Minecraft/theme`目录下的任何一个主题或使用`normal`来取消使用主题.
+> 可以在`settings.json`中将`use-theme`项设置成`Minecraft/theme`目录下的任何一个主题或使用`ttk`来取消使用主题.
