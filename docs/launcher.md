@@ -37,5 +37,6 @@
 启动器使用`traceback`模块来获取游戏出错信息, 并会将其存储到`$MCPYPATH/log`目录下. 文件名以当前 UNIX 时间戳命名.
 > 这些错误信息对于找到 bug 非常有帮助!
 
-## 使用 Arc 主题
-Arc 样式的使用默认是开启的, 可以在`settins.json`中, 将`use-arc`由`true`变成`false`来关闭 Arc 样式.
+## 使用现代化的主题
+ttk 默认的主题在 x11 上并不是很好看, 开发团队从[这里](https://github.com/TkinterEP/ttkthemes)引入了一些 ttk 主题.
+> 可以在`settings.json`中将`use-theme`项设置成`Minecraft/theme`目录下的任何一个主题或使用`normal`来取消使用主题.

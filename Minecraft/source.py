@@ -1,6 +1,6 @@
 import json
 from os import environ
-from os.path import isfile, join
+from os.path import abspath, dirname, isdir, isfile, join
 import re
 
 from Minecraft.utils.utils import *
@@ -29,12 +29,15 @@ path['json.lang'] = join(path['json'], 'lang')
 
 settings = json.load(open(join(path['mcpypath'], 'settings.json'), encoding='utf-8'))
 # 检查 settings.json 的正确性
-for key in ['lang', 'use-arc']:
+for key in ['lang', 'use-theme']:
     if key not in settings:
         log_err("settings.json: missing '%s' key" % key)
         exit(1)
 if not isfile(join(path['json.lang'], settings['lang'] + '.json')):
     log_err("settings.json: language '%s' not found" % settings['lang'])
+    exit(1)
+if not isdir(join(dirname(__file__), 'theme', settings['use-theme'])) and settings['use-theme'] != 'ttk':
+    log_err("settings.json: theme '%s' not found" % settings['use-theme'])
     exit(1)
 
 if isfile(join(path['mcpypath'], 'player.json')):

@@ -45,10 +45,10 @@ class MinecraftLauncher(Tk):
             log_err('no display, exit')
             exit(1)
         self.title(lang['launcher.title'])
-        if settings['use-arc'] == True:
-            arc_path = os.path.dirname(os.path.abspath(__file__)) + '/theme'
-            self.tk.eval('lappend auto_path {%s}' % arc_path)
-            ttk.Style().theme_use('arc')
+        if settings['use-theme'] != 'ttk':
+            theme_path = os.path.dirname(os.path.abspath(__file__)) + '/theme/' + settings['use-theme']
+            self.tk.eval('lappend auto_path {%s}' % theme_path)
+            ttk.Style().theme_use(settings['use-theme'])
         # 小部件
         self.new_button = ttk.Button(self, text=lang['launcher.new'], command=self.new)
         self.start_button = ttk.Button(self, text=lang['launcher.start'], command=self.start_game)
@@ -84,11 +84,9 @@ class MinecraftLauncher(Tk):
         # 新的世界对话框
         self.new_dialog = Toplevel(self)
         self.new_dialog.title(lang['launcher.dialog.title.new'])
-        self.new_dialog_label_name = ttk.Label(self.new_dialog,
-                style='C2.TLabel', text=lang['launcher.dialog.text.name'])
+        self.new_dialog_label_name = ttk.Label(self.new_dialog, text=lang['launcher.dialog.text.name'])
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
-        self.new_dialog_label_seed = ttk.Label(self.new_dialog,
-                style='C2.TLabel', text=lang['launcher.dialog.text.seed'])
+        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=lang['launcher.dialog.text.seed'])
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
         self.new_dialog_button_ok = ttk.Button(self.new_dialog,
                 text=lang['launcher.dialog.text.ok'], command=self.new_world

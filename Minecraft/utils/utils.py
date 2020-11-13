@@ -1,4 +1,5 @@
 import math
+from os import environ, path
 import time
 
 import pyglet
@@ -42,6 +43,16 @@ def normalize(position):
 def pos2str(position):
     # 将坐标转换为字符串
     return ' '.join([str(s) for s in position])
+
+def search_mcpy():
+    # 寻找文件存储位置
+    if 'MCPYPATH' in environ:
+        MCPYPATH = environ['MCPYPATH']
+    elif platform.startswith('win'):
+        MCPYPATH = path.join(path.expanduser('~'), 'mcpy')
+    else:
+        MCPYPATH = path.join(path.expanduser('~'), '.mcpy')
+    return MCPYPATH
 
 def sectorize(position):
     # 返回坐标所在的区块

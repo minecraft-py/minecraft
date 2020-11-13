@@ -56,9 +56,7 @@ namespace eval ttk::theme::arc {
 
         ttk::style map . -foreground [list disabled $colors(-disabledfg)]
 
-        #
-        # Layouts:
-        #
+        # Layouts
 
         ttk::style layout TButton {
             Button.button -children {
@@ -132,9 +130,7 @@ namespace eval ttk::theme::arc {
             }
         }
 
-        #
-        # Elements:
-        #
+        # Elements
 
         ttk::style element create Button.button image [list $I(button) \
                 pressed     $I(button-active) \
@@ -297,17 +293,11 @@ namespace eval ttk::theme::arc {
         ttk::style element create Treeitem.indicator \
             image [list $I(plus) user2 $I(empty) user1 $I(minus)] \
             -width 15 -sticky w
-
-        #ttk::style element create Separator.separator image $I()
-
-        #
-        # Settings:
-        #
+    
+        # Settings
 
         ttk::style configure TButton -padding {8 4 8 4} -width -10 -anchor center
-        # ttk::style configure TLabel -background "#d9d9d9"
-        ttk::style configure C2.TLabel -background "#d9d9d9"
-
+        ttk::style configure TLabel -background $colors(-bg)
         ttk::style configure TMenubutton -padding {8 4 4 4}
         ttk::style configure Toolbutton -anchor center
         ttk::style map TCheckbutton -background [list active $colors(-checklight)]
@@ -318,8 +308,6 @@ namespace eval ttk::theme::arc {
         ttk::style configure TNotebook.Tab -padding {6 2 6 2} -expand {0 0 2}
         ttk::style map TNotebook.Tab -expand [list selected {1 2 4 2}]
         ttk::style configure TSeparator -background $colors(-bg)
-
-        # Treeview
         ttk::style configure Treeview -background $colors(-window)
         ttk::style configure Treeview.Item -padding {2 0 0 0}
         ttk::style map Treeview \
