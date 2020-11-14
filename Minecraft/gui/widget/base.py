@@ -8,6 +8,7 @@ class Widget(EventDispatcher):
         self._y = y
         self._width = width
         self._height = height
+        self.push_handlers(self)
 
     @property
     def position(self):

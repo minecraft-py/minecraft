@@ -5,7 +5,7 @@
 	"game.text.die.no_oxygen": "%s No puede respirar",
 	"game.text.loading": "Cargando...",
 	"game.text.position": "Posición: (%.1f, %.1f, %.1f) %-4d fps",
-	"game.text.debug": ["XYZ: %.1f, %.1f, %.1f", "ROT: %.2f, %.2f", "MEM: %d", "FPS: %d"],
+	"game.text.debug": ["Minecraft %s", "XYZ: %.1f, %.1f, %.1f", "ROT: %.2f, %.2f", "MEM: %d", "FPS: %d"],
 	"launcher.delete": "Eliminar",
 	"launcher.dialog.text.delete": "¿Desea eliminar: %s, permanentemente?",
 	"launcher.dialog.text.name": "Nombre:",

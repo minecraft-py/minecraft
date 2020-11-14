@@ -1,5 +1,4 @@
 import math
-from os import environ, path
 import time
 
 import pyglet
@@ -46,6 +45,8 @@ def pos2str(position):
 
 def search_mcpy():
     # 寻找文件存储位置
+    _os = __import__('os')
+    environ, path = _os.environ, _os.path
     if 'MCPYPATH' in environ:
         MCPYPATH = environ['MCPYPATH']
     elif platform.startswith('win'):
@@ -109,6 +110,8 @@ FACES = [
     ( 0, 0, 1),
     ( 0, 0,-1),
 ]
+
+VERSION = '0.6'
 
 TICKS_PER_SEC = 60
 SECTOR_SIZE = 16

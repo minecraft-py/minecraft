@@ -70,8 +70,8 @@ class Game(pyglet.window.Window):
         # 玩家在世界中的位置 (x, y, z)
         self.player['position'] = (0, 4, 0)
         self.player['respawn_position'] = (0, 4, 0)
-        # 玩家视角
-        self.player['fovy'] = 65
+        # 玩家视角场
+        self.player['fov'] = settings['fov']
         # 拓展功能
         self.ext = {}
         self.ext['debug'] = False
@@ -464,7 +464,7 @@ class Game(pyglet.window.Window):
                 texture = self.world.world[block]
             else:
                 texture = None
-            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
+            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and block and previous:
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
                 if not self.player['die'] and not self.player['in_hud']:
                     if texture == 'craft_table' and (not self.player['stealing']):
@@ -472,11 +472,11 @@ class Game(pyglet.window.Window):
                     elif previous:
                         self.world.add_block(previous, self.inventory[self.block])
                         self.run_js('onBuild', previous[0], previous[1], previous[2], self.inventory[self.block])
-            elif button == pyglet.window.mouse.LEFT and block:
+            elif button == pyglet.window.mouse.LEFT and previous:
                 if texture != 'bedrock' and not self.player['die'] and not self.player['in_hud']:
                     self.run_js('onDestroy', previous[0], previous[1], previous[2], texture)
                     self.world.remove_block(block)
-            elif button == pyglet.window.mouse.MIDDLE and block:
+            elif button == pyglet.window.mouse.MIDDLE and block and previous:
                 self.block = texture
         elif not self.player['die'] and not self.player['in_hud']:
             self.set_exclusive_mouse(True)
@@ -530,7 +530,7 @@ class Game(pyglet.window.Window):
         elif symbol == key.D:
             self.player['strafe'][1] += 1
         elif symbol == key.I:
-             if self.ext['enable']:
+             if not self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
         elif symbol == key.E:
@@ -538,11 +538,6 @@ class Game(pyglet.window.Window):
                 self.set_exclusive_mouse(self.player['show_bag'])
                 self.player['in_hud'] = not self.player['in_hud']
                 self.player['show_bag'] = not self.player['show_bag']
-        elif symbol == key.X:
-            if self.player['fovy'] == 65:
-                self.player['fovy'] = 20
-            else:
-                self.player['fovy'] = 65
         elif symbol == key.P:
             if self.ext['enable']:
                 self.ext['position'] = not self.ext['position']
@@ -623,7 +618,7 @@ class Game(pyglet.window.Window):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
         self.label['top'].x = 0
-        self.label['top'].y = self.height - 30
+        self.label['top'].y = self.height - 10
         self.label['top'].width = self.width // 2
         self.label['center'].x = self.width // 2
         self.label['center'].y = self.height // 2 + 50
@@ -673,7 +668,7 @@ class Game(pyglet.window.Window):
         glViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(self.player['fovy'], width / float(height), 0.1, 60.0)
+        gluPerspective(self.player['fov'], width / float(height), 0.1, 60.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         x, y = self.rotation
@@ -742,19 +737,20 @@ class Game(pyglet.window.Window):
                         self.player['die_reason'])
                 self.label['center'].draw()
                 self.label['actionbar'].draw()
-            elif self.ext['position']:
+            elif self.ext['position'] and self.exclusive:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.player['position']
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
                         lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps()))
                 self.label['top'].draw()
-            elif self.ext['debug']:
+            elif self.ext['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.rotation
                 mem = sys.getsizeof(self)
+                fps = pyglet.clock.get_fps()
                 self.label['top'].y = self.height - 60
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        '\n\n'.join(lang['game.text.debug']) % (x, y, z, 0.0, ry, mem, pyglet.clock.get_fps()))
+                        '\n\n'.join(lang['game.text.debug']) % (VERSION, x, y, z, 0.0, ry, mem, fps))
                 self.label['top'].draw()
         else:
             # 初始化屏幕
