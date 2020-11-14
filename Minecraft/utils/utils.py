@@ -111,7 +111,7 @@ FACES = [
     ( 0, 0,-1),
 ]
 
-VERSION = '0.6'
+VERSION = 'classic 0.2'
 
 TICKS_PER_SEC = 60
 SECTOR_SIZE = 16

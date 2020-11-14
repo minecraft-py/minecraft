@@ -138,6 +138,22 @@ class Game(pyglet.window.Window):
         else:
             return 0
 
+    def can_place(self, block, position):
+        """
+        检测坐标是否能够放置方块
+
+        :param: block 方块坐标
+        :param: position 玩家坐标
+        """
+        if block != normalize(position):
+            position = position[0], position[1] - 1, position[2]
+            if block != normalize(position):
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def check_die(self, dt):
         """
         这个函数被 pyglet 计时器反复调用
@@ -469,7 +485,7 @@ class Game(pyglet.window.Window):
                 if not self.player['die'] and not self.player['in_hud']:
                     if texture == 'craft_table' and (not self.player['stealing']):
                         self.set_exclusive_mouse(False)
-                    elif previous:
+                    elif previous and self.can_place(previous, self.player['position']):
                         self.world.add_block(previous, self.inventory[self.block])
                         self.run_js('onBuild', previous[0], previous[1], previous[2], self.inventory[self.block])
             elif button == pyglet.window.mouse.LEFT and previous:
@@ -489,9 +505,13 @@ class Game(pyglet.window.Window):
         :param: dx, dy 鼠标移动的距离
         """
         if self.exclusive and not self.player['die']:
-            m = 0.15
+            m = 0.1
             x, y = self.rotation
             x, y = x + dx * m, y + dy * m
+            if x >= 180:
+                x = -180
+            elif x <= -180:
+                x = 180
             y = max(-90, min(90, y))
             self.rotation = (x, y)
 
@@ -750,7 +770,7 @@ class Game(pyglet.window.Window):
                 fps = pyglet.clock.get_fps()
                 self.label['top'].y = self.height - 60
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        '\n\n'.join(lang['game.text.debug']) % (VERSION, x, y, z, 0.0, ry, mem, fps))
+                        '\n\n'.join(lang['game.text.debug']) % (VERSION, x, y, z, rx, ry, mem, fps))
                 self.label['top'].draw()
         else:
             # 初始化屏幕
