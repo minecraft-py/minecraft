@@ -530,7 +530,7 @@ class Game(pyglet.window.Window):
         elif symbol == key.D:
             self.player['strafe'][1] += 1
         elif symbol == key.I:
-             if not self.ext['enable']:
+             if self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
         elif symbol == key.E:
