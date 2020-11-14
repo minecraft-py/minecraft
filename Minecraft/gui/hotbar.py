@@ -1,12 +1,12 @@
 from os.path import join
 
-import pyglet
-from pyglet import image
-from pyglet.sprite import Sprite
-
 from Minecraft.gui.base import GUI
 from Minecraft.source import path
 from Minecraft.utils.utils import *
+
+import pyglet
+from pyglet import image
+from pyglet.sprite import Sprite
 
 
 class HotBar(GUI):

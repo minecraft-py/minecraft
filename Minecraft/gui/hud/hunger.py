@@ -17,8 +17,9 @@ class Hunger(HUD):
         self._status = []
         for i in range(9, -1, -1):
             self._status.append(Sprite(image.load(join(path['texture.hud'], 'hunger.png')),
-                x=(width - 450) // 2 + 450 - (i + 1) * 20, y=64, batch=batch))
+                x=(width - 450) // 2 + 450 - (i + 1) * 20, y=72, batch=batch))
 
     def resize(self, width, height):
         for i in range(9, -1, -1):
-            self._status[i].position = (width - 450) // 2 + 450 - (i + 1) * 20, 64
+            self._status[i].position = (width - 450) // 2 + 450 - (i + 1) * 20, 72
+

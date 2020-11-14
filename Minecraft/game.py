@@ -9,6 +9,7 @@ from Minecraft.source import block, path, player, lang, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar
+from Minecraft.gui.xpbar import XPBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
@@ -186,6 +187,8 @@ class Game(pyglet.window.Window):
         # 工具栏
         self.hud['hotbar'] = HotBar()
         self.hud['hotbar'].set_index(self.block)
+        # 经验条
+        self.hud['xpbar'] = XPBar()
         
     def save(self, dt):
         """
@@ -667,6 +670,7 @@ class Game(pyglet.window.Window):
             self.hud['heart'].resize(self.width, self.height)
             self.hud['hunger'].resize(self.width, self.height)
             self.hud['hotbar'].resize(self.width, self.height)
+            self.hud['xpbar'].resize(self.width, self.height)
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -709,6 +713,7 @@ class Game(pyglet.window.Window):
             if not self.player['die'] and not self.player['hide_hud']:
                 self.world.batch2d.draw()
                 self.hud['hotbar'].draw()
+                self.hud['xpbar'].draw()
                 self.draw_reticle()
                 if self.player['in_hud'] or not self.exclusive:
                     self.full_screen.color = (0, 0, 0)
