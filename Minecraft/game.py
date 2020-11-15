@@ -14,6 +14,7 @@ from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
 from Minecraft.gui.widget.button import Button
+from Minecraft.world.sky import change_sky_color
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
@@ -123,6 +124,8 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update_status, 10.0)
         # 每30秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
+        # 天空颜色变换
+        pyglet.clock.schedule_interval(change_sky_color, 7.5)
         log_info('welcome %s' % player['name'])
 
     def __sizeof__(self):
