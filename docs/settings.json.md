@@ -5,6 +5,7 @@
 
 `settings.json`各个键的意义:
 
+- `fov` - 玩家的视角场, 范围从`50(最小值)`到`100(最大值)`
 - `lang` - 启动器与游戏语言(在`data/json/lang`目录中, 不存在的语言会报错)
 - `use-theme` - 启动器使用的主题(在`Minecraft/theme`目录下, 不存在的主题会报错)
 

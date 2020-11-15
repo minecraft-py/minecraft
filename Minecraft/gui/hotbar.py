@@ -23,7 +23,7 @@ class HotBar(GUI):
         self.end.scale = 2.5
         for i in range(9):
             self._element.append(Sprite(image.load(join(path['texture.ui'], 'hotbar_%d.png' % i)),
-                x=(width - 450) // 2 + i * 50, y=5))
+                x=(width - 450) // 2 + 50 * i, y=5))
             self._element[i].scale = 2.5
         self.set_index(0)
 
@@ -40,11 +40,11 @@ class HotBar(GUI):
         width = get_size()[0]
         for i in range(len(self._element)):
             self._element[i] = Sprite(image.load(join(path['texture.ui'], 'hotbar_%d.png' % i)),
-                x=(width - 450) // 2 + i * 50, y=5)
+                x=(width - 450) // 2 + 50 * i, y=5)
             self._element[i].scale = 2.5
         if 0 <= index < len(self._element):
             self._element[index] = Sprite(image.load(join(path['texture.ui'], 'hotbar_highlight.png')),
-                    x=(width - 450) // 2 + index * 50 - 4, y=3)
+                    x=(width - 450) // 2 + 50 * index - 4, y=3)
             self._element[index].scale = 2.5
             self.index = index
 
@@ -53,6 +53,6 @@ class HotBar(GUI):
         self.end.position = (width - 450) // 2 + 450, 5
         for i in range(len(self._element)):
             if i != self.index:
-                self._element[i].position = (width - 450) // 2 + i * 50, 5
+                self._element[i].position = (width - 450) // 2 + 50 * i, 5
             else:
-                self._element[i].position = (width - 450) // 2 + i * 50 - 4, 3
+                self._element[i].position = (width - 450) // 2 + 50 * i - 4, 3

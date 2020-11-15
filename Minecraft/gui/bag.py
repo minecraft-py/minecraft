@@ -15,7 +15,7 @@ class Bag(GUI):
         self._element = {}
         self._element['panel'] = Rectangle(x=(width - 600) // 2, y=(height - 400) // 2,
                 width=600, height=400, color=(0, 0, 0))
-        self._element['panel'].opacity = 128
+        self._element['panel'].opacity = 200
         
     def draw(self):
         self._element['panel'].draw()

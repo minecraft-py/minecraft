@@ -11,6 +11,7 @@
 - 游戏
   - [存档](game/save.md)
   - [Javascript](game/js.md)
+  - [调试](game/debug.md)
 - Javascript
   - [概况](js/intro.md)
   - [函数](js/function.md)
