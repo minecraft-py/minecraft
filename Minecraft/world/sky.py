@@ -25,9 +25,19 @@ def change_sky_color(dt):
 def get_time():
     # 获取当前游戏时间
     global now, step
-    return [now, step]
+    if step > 0:
+        return now
+    elif step < 0:
+        return -now
+    else:
+        return now
 
-def set_time(now_time, step_time):
+def set_time(now_time):
     # 设置当前游戏时间
     global now, step
-    now, step = now_time, step_time
+    if now_time > 0:
+        now, step = now_time, 0.125
+    elif now_time < 0:
+        now, step = -now_time, -0.125
+    else:
+        now, step = 0, 0.125

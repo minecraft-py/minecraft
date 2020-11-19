@@ -14,7 +14,7 @@ from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
 from Minecraft.gui.widget.button import Button
-from Minecraft.world.sky import change_sky_color
+from Minecraft.world.sky import change_sky_color, get_time, set_time
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
@@ -201,6 +201,7 @@ class Game(pyglet.window.Window):
         """
         saver.save_block(self.name, self.world.change)
         saver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
+        saver.save_info(self.name, 0, get_time())
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -290,6 +291,9 @@ class Game(pyglet.window.Window):
         self.player['position'] = data['position']
         self.player['respawn_position'] = data['respawn']
         self.block = data['now_block']
+        # 读取世界数据
+        self.world_info = saver.load_info(self.name)
+        set_time(self.world_info['time'])
         # 读取 js 脚本
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
             self.has_script = True

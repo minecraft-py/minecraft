@@ -22,7 +22,7 @@ def load_block(name, add_block, remove_block):
 
 def load_info(name):
     # 读取世界信息
-    return json.load(open(join(path['save', name, 'info.json'])))
+    return json.load(open(join(path['save'], name, 'info.json')))
 
 def load_player(name):
     # 读取玩家数据
@@ -55,6 +55,14 @@ def save_block(name, change, full=True):
     else:
         data = change
     json.dump(data, open(join(path['save'], name, 'world.json'), 'w+'), indent='\t')
+
+def save_info(name, day, time):
+    # 将世界信息存入文件
+    data = json.load(open(join(path['save'], name, 'info.json')))
+    data['day'] = day
+    data['time'] = time
+    json.dump(data, open(join(path['save'], name, 'info.json'), 'w+'), indent='\t')
+
 
 def save_player(name, position, respawn, now_block):
     # 将玩家数据存入文件

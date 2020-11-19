@@ -125,7 +125,7 @@ class MinecraftLauncher(Tk):
                 world = open(os.path.join(path['save'], name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
-                info = {'seed': seed, 'type': 'flat'}
+                info = {'seed': seed, 'type': 'flat', 'day': 0, 'time': 4}
                 json.dump(info, open(os.path.join(path['save'], name, 'info.json'), 'w+'), indent='\t')
                 player = {'position': '0.0 3.8 0.0', 'respawn': '0.0 3.8 0.0', 'now_block': 0}
                 json.dump(player, open(os.path.join(path['save'], name, 'player.json'), 'w+'), indent='\t')
