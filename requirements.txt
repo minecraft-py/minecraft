@@ -1,5 +1,5 @@
 Js2Py>=0.70
 psutil>=5.7.2
-pyglet>=1.5.7
+pyglet>=1.5.11
 pyshaders>=1.4.1
 opensimplex>=0.3

@@ -37,6 +37,7 @@ class World(object):
         # Simple function queue implementation. The queue is populated with
         # _show_block() and _hide_block() calls
         self.queue = deque()
+        self.is_init = True
 
     def init_world(self):
         # 放置所有方块以初始化世界, 非常耗时
@@ -51,6 +52,7 @@ class World(object):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, y, z), 'grass', record=False)
         saver.load_block(self.name, self.add_block, self.remove_block)
+        self.is_init = False
 
     def hit_test(self, position, vector, max_distance=8):
         """

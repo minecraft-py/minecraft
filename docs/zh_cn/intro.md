@@ -11,7 +11,7 @@
 
 - `Js2Py>=0.70`: 运行 javascript 的 python 库
 - `psutil>=5.7.2`: 检测游戏重复启动
-- `pyglet>=1.5.7`: OpenGL 库
+- `pyglet>=1.5.11`: OpenGL 库
 - `pyshaders>=1.4.1`: 编译与链接 GLSL
 - `opensimplex>=0.3`: 简单的 Simplex 噪声函数库
 - `...`: 随着开发进度的增加会有更多的依赖项

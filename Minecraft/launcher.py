@@ -130,7 +130,7 @@ class MinecraftLauncher(Tk):
                 player = {'position': '0.0 3.8 0.0', 'respawn': '0.0 3.8 0.0', 'now_block': 0}
                 json.dump(player, open(os.path.join(path['save'], name, 'player.json'), 'w+'), indent='\t')
                 self.new_dialog.destroy()
-                log_info('create world succeddfully')
+                log_info('create world successfully')
         self.refresh()
 
     def refresh(self):

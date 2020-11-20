@@ -6,7 +6,7 @@ from register import register_user, search_mcpy
 
 # 下载依赖项
 print('[install requirements]')
-if (code := system('python -m pip install -r requirements.txt')) != 0:
+if (code := system('python -m pip install -U -r requirements.txt')) != 0:
     print('pip raise error code: %d' % code)
     exit(1)
 else:

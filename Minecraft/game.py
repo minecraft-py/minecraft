@@ -3,6 +3,7 @@ import os
 import random
 import sys
 import time
+from threading import Thread
 
 import Minecraft.saver as saver
 from Minecraft.source import block, path, player, lang, settings
@@ -286,6 +287,8 @@ class Game(pyglet.window.Window):
         # 设置游戏存档名
         self.name = name
         self.world = World(name)
+        self.world_gen_thread = Thread(target=self.world.init_world, name='WorldGen')
+        self.world_gen_thread.start()
         # 读取玩家位置和背包
         data = saver.load_player(self.name)
         self.player['position'] = data['position']
@@ -711,7 +714,7 @@ class Game(pyglet.window.Window):
     def on_draw(self):
         # 当 pyglet 在画布上绘图时调用
         self.clear()
-        if not self.is_init:
+        if not self.is_init and not self.world_gen_thread.is_alive() and not self.world.is_init:
             self.set_3d()
             glColor3d(1, 1, 1)
             self.world.batch3d.draw()
@@ -735,9 +738,8 @@ class Game(pyglet.window.Window):
         self.set_2d()
         if not self.player['hide_hud']:
             self.draw_label()
-        if self.is_init:
+        if self.is_init and not self.world_gen_thread.is_alive():
             self.set_minimum_size(800, 600)
-            self.world.init_world()
             self.run_js('onInit')
             self.init_player()
             self.is_init = False
