@@ -39,6 +39,12 @@ except:
     exit(1)
 
 try:
+    import psutil
+except:
+    log_err(msg.format('psutil'))
+    exit(1)
+
+try:
     import pyshaders
 except:
     log_err(msg.format('pyshaders'))
@@ -557,7 +563,7 @@ class Game(pyglet.window.Window):
         elif symbol == key.D:
             self.player['strafe'][1] += 1
         elif symbol == key.I:
-             if self.ext['enable']:
+             if not self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
         elif symbol == key.E:
@@ -775,7 +781,7 @@ class Game(pyglet.window.Window):
             elif self.ext['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.rotation
-                mem = sys.getsizeof(self)
+                mem = round(psutil.Process(os.getpid()).memory_full_info()[7] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
                 self.label['top'].y = self.height - 60
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
