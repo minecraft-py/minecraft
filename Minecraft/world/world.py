@@ -61,6 +61,7 @@ class World(object):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, y, z), 'grass', record=False)
         archiver.load_block(self.name, self.add_block, self.remove_block)
+        time.sleep(3)
         self.is_init = False
 
     def hit_test(self, position, vector, max_distance=8):
