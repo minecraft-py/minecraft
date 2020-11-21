@@ -5,7 +5,7 @@
 	"game.text.die.no_oxygen": "%s沒有氧氣可以呼吸了",
 	"game.text.loading": "初始化...",
 	"game.text.position": "位置: (%.1f, %.1f, %.1f) %-4d fps",
-	"game.text.debug": ["Minecraft %s", "XYZ: %.1f, %.1f, %.1f", "ROT: %.2f, %.2f", "MEM: %d", "FPS: %d"],
+	"game.text.debug": ["Minecraft %s", "XYZ: %.1f, %.1f, %.1f", "ROT: %.2f, %.2f", "MEM: %.2fMB", "FPS: %d"],
 	"launcher.delete": "刪除",
 	"launcher.dialog.text.delete": "這將刪除 %s 存檔(很長時間)?",
 	"launcher.dialog.text.name": "存檔名:",

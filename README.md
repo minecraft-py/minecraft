@@ -16,8 +16,6 @@ git clone https://gitee.com/jason-bowen-zheng/Minecraft
 cd Minecraft
 ./install.py
 ```
-或参见[安装指南](docs/guide.md).
-
 另外, 本项目有详细的文档([简体中文](docs/zh_cn/README.md), 英语).
 
 # 最终目标
