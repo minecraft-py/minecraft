@@ -11,6 +11,7 @@ from Minecraft.utils.utils import *
 log_info('loading game lib')
 from Minecraft.game import *
 from Minecraft.archiver import load_window
+from Minecraft.repair import repair_archive
 from Minecraft.source import lang, path, settings
 
 import pyglet
@@ -56,6 +57,7 @@ class MinecraftLauncher(Tk):
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
+        self.repair_button = ttk.Button(self, text=lang['launcher.repair'], command=self.repair)
         self.del_button = ttk.Button(self, text=lang['launcher.delete'], command=self.delete)
         self.rename_button = ttk.Button(self, text=lang['launcher.rename'], command=self.rename)
         # 显示
@@ -64,6 +66,7 @@ class MinecraftLauncher(Tk):
         self.exit_button.grid(column=2, row=0, padx=5, pady=5)
         self.game_item_list.grid(column=0, columnspan=4, row=1, padx=3, pady=5, sticky='news')
         self.vscroll.grid(column=4, row=1, padx=2, pady=5, sticky='nes')
+        self.repair_button.grid(column=0, row=2, padx=5, pady=5)
         self.del_button.grid(column=1, row=2, padx=5, pady=5)
         self.rename_button.grid(column=2, row=2, padx=5, pady=5)
         self.resizable(False, False)
@@ -144,7 +147,7 @@ class MinecraftLauncher(Tk):
         self.rename_dialog = Toplevel(self)
         self.rename_dialog.title(lang['launcher.dialog.title.rename'])
         self.rename_dialog_label = ttk.Label(self.rename_dialog,
-            style='C2.TLabel', text=lang['launcher.dialog.text.name'])
+            style='TLabel', text=lang['launcher.dialog.text.name'])
         self.rename_dialog_entry = ttk.Entry(self.rename_dialog)
         name = self.game_item_list.curselection()
         name = self.game_item_list.get(0) if name == () else self.game_item_list.get(name)
@@ -172,6 +175,14 @@ class MinecraftLauncher(Tk):
         shutil.move(os.path.join(path['save'], name), os.path.join(path['save'], self.rename_dialog_entry.get()))
         self.rename_dialog.destroy()
         self.refresh()
+
+    def repair(self, event=None):
+        select =self.game_item_list.curselection()
+        if select == ():
+            log_info('no world selected')
+            return
+        select = self.game_item_list.get(select[0])
+        repair_archive(select)
 
     def start_game(self, event=None):
         # 启动游戏

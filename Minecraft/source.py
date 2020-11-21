@@ -4,7 +4,6 @@ from os.path import abspath, dirname, isdir, isfile, join
 import re
 
 from Minecraft.utils.utils import *
-from register import search_mcpy
 
 from pyglet import resource
 
