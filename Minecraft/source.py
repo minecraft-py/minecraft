@@ -23,7 +23,8 @@ block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
 path = {}
 
 path['mcpypath'] = search_mcpy()
-path['json'] = 'data/json'
+path['data'] = 'data'
+path['json'] = join(path['data'], 'json')
 path['json.lang'] = join(path['json'], 'lang')
 
 settings = json.load(open(join(path['mcpypath'], 'settings.json'), encoding='utf-8'))
@@ -56,10 +57,10 @@ else:
     exit(1)
 
 path['log'] = join(path['mcpypath'], 'log')
-path['texture'] = join(path['mcpypath'], 'texture/default')
+path['texture'] = join(path['mcpypath'], 'texture', 'default')
 path['texture.hud'] = join(path['texture'], 'hud')
 path['texture.ui'] = join(path['texture'], 'ui')
-path['shaders'] = 'data/shaders'
+path['shaders'] = join(path['data'], 'shaders')
 path['save'] = join(path['mcpypath'], 'save')
 path['screenshot'] = join(path['mcpypath'], 'screenshot')
 
