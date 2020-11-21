@@ -5,7 +5,7 @@ import sys
 import time
 from threading import Thread
 
-import Minecraft.saver as saver
+import Minecraft.archiver as archiver
 from Minecraft.source import block, path, player, lang, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
@@ -25,12 +25,6 @@ try:
     import js2py as js
 except ModuleNotFoundError:
     log_err(msg.format('Js2Py'))
-    exit(1)
-
-try:
-    import opensimplex
-except ModuleNotFoundError:
-    log_err(msg.format('opensimplex'))
     exit(1)
 
 try:
@@ -200,9 +194,9 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
-        saver.save_block(self.name, self.world.change)
-        saver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
-        saver.save_info(self.name, 0, get_time())
+        archiver.save_block(self.name, self.world.change)
+        archiver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
+        archiver.save_info(self.name, 0, get_time())
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -287,15 +281,15 @@ class Game(pyglet.window.Window):
         # 设置游戏存档名
         self.name = name
         self.world = World(name)
-        self.world_gen_thread = Thread(target=self.world.init_world, name='WorldGen')
-        self.world_gen_thread.start()
+        # self.world_gen_thread = Thread(target=self.world.init_world, name='WorldGen')
+        # self.world_gen_thread.start()
         # 读取玩家位置和背包
-        data = saver.load_player(self.name)
+        data = archiver.load_player(self.name)
         self.player['position'] = data['position']
         self.player['respawn_position'] = data['respawn']
         self.block = data['now_block']
         # 读取世界数据
-        self.world_info = saver.load_info(self.name)
+        self.world_info = archiver.load_info(self.name)
         set_time(self.world_info['time'])
         # 读取 js 脚本
         if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
@@ -475,7 +469,7 @@ class Game(pyglet.window.Window):
 
     def on_close(self):
         # 当玩家关闭窗口时调用
-        saver.save_window(self.width, self.height)
+        archiver.save_window(self.width, self.height)
         pyglet.app.exit()
 
     def on_mouse_press(self, x, y, button, modifiers):
@@ -714,7 +708,7 @@ class Game(pyglet.window.Window):
     def on_draw(self):
         # 当 pyglet 在画布上绘图时调用
         self.clear()
-        if not self.is_init and not self.world_gen_thread.is_alive() and not self.world.is_init:
+        if not self.is_init:
             self.set_3d()
             glColor3d(1, 1, 1)
             self.world.batch3d.draw()
@@ -738,8 +732,9 @@ class Game(pyglet.window.Window):
         self.set_2d()
         if not self.player['hide_hud']:
             self.draw_label()
-        if self.is_init and not self.world_gen_thread.is_alive():
+        if self.is_init:
             self.set_minimum_size(800, 600)
+            self.world.init_world()
             self.run_js('onInit')
             self.init_player()
             self.is_init = False

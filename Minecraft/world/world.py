@@ -4,9 +4,17 @@ import os
 import random
 import time
 
-import Minecraft.saver as saver
+import Minecraft.archiver as archiver
 from Minecraft.source import block, path, settings
 from Minecraft.utils.utils import *
+
+msg = "module '{0}' not found, run `pip install {0}` to install, exit"
+
+try:
+    from opensimplex import OpenSimplex
+except ModuleNotFoundError:
+    log_err(msg.format('opensimplex'))
+    exit(1)
 
 import pyglet
 from pyglet.gl import *
@@ -24,19 +32,20 @@ class World(object):
         self.group = TextureGroup(image.load(os.path.join(path['texture'], 'block.png')).get_texture())
         # 存档名
         self.name = name
+        # 种子
+        self.seed = archiver.load_info(name)['seed']
+        # Simplex 噪声函数
+        self.simplex = OpenSimplex(seed=self.seed)
         # world 存储着世界上所有的方块
         self.world = {}
         # 类似于 world, 但它只存储要显示的方块
         self.shown = {}
-        # Mapping from position to a pyglet `VertextList` for all shown blocks.
         self._shown = {}
         # 记录玩家改变的方块
         self.change = {}
-        # Mapping from sector to a list of positions inside that sector.
         self.sectors = {}
-        # Simple function queue implementation. The queue is populated with
-        # _show_block() and _hide_block() calls
         self.queue = deque()
+        # 初始化是否完成
         self.is_init = True
 
     def init_world(self):
@@ -51,7 +60,7 @@ class World(object):
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, y, z), 'grass', record=False)
-        saver.load_block(self.name, self.add_block, self.remove_block)
+        archiver.load_block(self.name, self.add_block, self.remove_block)
         self.is_init = False
 
     def hit_test(self, position, vector, max_distance=8):

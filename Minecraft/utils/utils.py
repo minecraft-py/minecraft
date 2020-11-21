@@ -17,7 +17,7 @@ def cube_vertices(x, y, z, n):
 def get_size():
     # 返回窗口大小
     for w in pyglet.canvas.get_display().get_windows():
-        if w.caption == 'Minecraft' and w.__class__.__name__ == 'Game':
+        if w.caption == 'Minecraft' and str(w).startswith('Game'):
             return w.width, w.height
     else:
         return 800, 600

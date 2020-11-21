@@ -10,7 +10,7 @@ import tkinter.ttk as ttk
 from Minecraft.utils.utils import *
 log_info('loading game lib')
 from Minecraft.game import *
-from Minecraft.saver import load_window
+from Minecraft.archiver import load_window
 from Minecraft.source import lang, path, settings
 
 import pyglet
