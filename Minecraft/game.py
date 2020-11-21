@@ -166,7 +166,7 @@ class Game(pyglet.window.Window):
         :param: dt 距上次调用的时间
         """
         if not self.player['die']:
-            if self.player['position'][1] < -2:
+            if self.player['position'][1] < -64:
                 self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
                 log_info('%s die: %s' % (player['name'], self.player['die_reason']))
@@ -563,7 +563,7 @@ class Game(pyglet.window.Window):
         elif symbol == key.D:
             self.player['strafe'][1] += 1
         elif symbol == key.I:
-             if not self.ext['enable']:
+             if self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
         elif symbol == key.E:
@@ -739,6 +739,7 @@ class Game(pyglet.window.Window):
         if not self.player['hide_hud']:
             self.draw_label()
         if self.is_init:
+            print(self.world.world)
             self.set_minimum_size(800, 600)
             self.world.init_world()
             self.run_js('onInit')
