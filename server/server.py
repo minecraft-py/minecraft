@@ -9,6 +9,7 @@ from server.utils import *
 class Server():
 
     def __init__(self):
+        self.console_thread = None
         self.thread = {}
         self.thread_count = -1
 
@@ -18,18 +19,31 @@ class Server():
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(('localhost', 32768))
-        self.socket.listen(1)
+        self.socket.listen(5)
         while True:
             try:
                 conn, addr = self.socket.accept()
             except:
                 log_info('server stopped')
                 break
-            self.thread_count += 1
-            self.thread[self.thread_count] = Thread(target=self.client, args=(conn, addr),
-                    name='t{0}'.format(self.thread_count))
-            log_info('new connection @ %s:%d, total %d thread(s)' % (addr[0], addr[1], self.thread_count + 1))
-            self.thread[self.thread_count].start()
+            data = conn.recv(1024).decode()
+            if data == 'client':
+                # 客户端连接
+                self.thread_count += 1
+                self.thread[self.thread_count] = Thread(target=self.client, args=(conn, addr),
+                        name='t{0}'.format(self.thread_count))
+                log_info('new connection @ %s:%d, total %d thread(s)' % (addr[0], addr[1], self.thread_count + 1))
+                self.thread[self.thread_count].start()
+            elif data == 'console':
+                # 控制台连接
+                if addr[0] == '127.0.0.1' and self.console_thread == None:
+                    log_info('connected to console @ %s:%d' % (addr[0], addr[1]))
+                    self.console_thread = Thread(target=self.console, args=(conn, addr))
+                    self.console_thread.start()
+                else:
+                    conn.send('refused'.encode())
+            else:
+                conn.send('unknow'.encode())
 
     def client(self, conn, addr):
         # 客户端连接
@@ -75,3 +89,7 @@ class Server():
             conn.close()
             return
         client = Client(conn, addr, client_ver, player)
+
+    def console(self, conn, addr):
+        # 控制台连接
+        log_info('new console')
