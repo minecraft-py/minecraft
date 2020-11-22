@@ -1,10 +1,13 @@
 import json
+from os import getpid
 import socket
 import time
 import threading
 
 from server.client import Client
 from server.utils import *
+
+import psutil
 
 class Server():
 
@@ -109,12 +112,14 @@ class Server():
             elif data == 'ip':
                 conn.send('ip addr: {0}:{1}'.format(*addr).encode())
             elif data == 'status':
+                mem = round(psutil.Process(getpid()).memory_full_info()[7] / 1048576, 2)
                 data = ''
                 for t in threading.enumerate():
                     data += t.getName() + ' '
                 data = 'running:\n  ' + data + '\nall client thread:\n  '
                 for t in self.thread.values():
                     data += t.getName() + ' '
+                data += '\nmemory use:\n  %.2fMB' % mem
                 conn.send(data.encode())
             elif data == 'threads':
                 conn.send('total {0} thread(s)'.format(self.thread_count + 1).encode())
