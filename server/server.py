@@ -100,19 +100,24 @@ class Server():
         while True:
             data = conn.recv(1024).decode()
             log_info('command: %s' % data)
-            if data == 'get_thread':
-                conn.send('total {0} thread(s)'.format(self.thread_count + 1).encode())
+            if data == 'exit':
+                conn.close()
+                break
+            elif data == 'help':
+                data = 'available commands:\n  exit help ip status threads version(ver)'
+                conn.send(data.encode())
             elif data == 'ip':
                 conn.send('ip addr: {0}:{1}'.format(*addr).encode())
             elif data == 'status':
                 data = ''
                 for t in threading.enumerate():
-                    s = '%s: %s\n' % (t.getName(), t.is_alive())
-                    data += s
-                else:
-                    conn.send(data.encode())
-            elif data == 'stop':
-                break
+                    data += t.getName() + ' '
+                data = 'running:\n  ' + data + '\nall client thread:\n  '
+                for t in self.thread.values():
+                    data += t.getName() + ' '
+                conn.send(data.encode())
+            elif data == 'threads':
+                conn.send('total {0} thread(s)'.format(self.thread_count + 1).encode())
             elif data == 'version' or data == 'ver':
                 conn.send('version {0}'.format(VERSION).encode())
             else:

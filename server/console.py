@@ -18,8 +18,8 @@ class Console():
                 data = self.socket.recv(1024).decode()
                 print(data)
                 command = input('> ')
-                if command == 'stop':
-                    self.socket.send('stop'.encode())
+                if command == 'exit':
+                    self.socket.send('exit'.encode())
                     self.socket.close()
                     break
                 self.socket.send(command.encode())
