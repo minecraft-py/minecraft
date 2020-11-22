@@ -93,3 +93,11 @@ class Server():
     def console(self, conn, addr):
         # 控制台连接
         log_info('new console')
+        conn.send('Minecraft server version {0}'.format(VERSION).encode())
+        while True:
+            data = conn.recv(1024).decode()
+            log_info('command: %s' % data)
+            if data == 'version' or data == 'ver':
+                conn.send('version {0}'.format(VERSION).encode())
+            else:
+                conn.send('command not found'.encode())
