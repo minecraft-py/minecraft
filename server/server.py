@@ -1,7 +1,7 @@
 import json
 import socket
 import time
-from threading import Thread
+import threading
 
 from server.client import Client
 from server.utils import *
@@ -15,10 +15,10 @@ class Server():
 
     def start(self):
         # 开启服务器
-        log_info('start server')
+        log_info('start server @ localhost:16384')
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.bind(('localhost', 32768))
+        self.socket.bind(('localhost', 16384))
         self.socket.listen(5)
         while True:
             try:
@@ -27,10 +27,12 @@ class Server():
                 log_info('server stopped')
                 break
             data = conn.recv(1024).decode()
+            if self.console_thread != None and not self.console_thread.is_alive():
+                self.console_thread = None
             if data == 'client':
                 # 客户端连接
                 self.thread_count += 1
-                self.thread[self.thread_count] = Thread(target=self.client, args=(conn, addr),
+                self.thread[self.thread_count] = threading.Thread(target=self.client, args=(conn, addr),
                         name='t{0}'.format(self.thread_count))
                 log_info('new connection @ %s:%d, total %d thread(s)' % (addr[0], addr[1], self.thread_count + 1))
                 self.thread[self.thread_count].start()
@@ -38,7 +40,8 @@ class Server():
                 # 控制台连接
                 if addr[0] == '127.0.0.1' and self.console_thread == None:
                     log_info('connected to console @ %s:%d' % (addr[0], addr[1]))
-                    self.console_thread = Thread(target=self.console, args=(conn, addr))
+                    conn.send('welcome'.encode())
+                    self.console_thread = threading.Thread(target=self.console, args=(conn, addr), name='console')
                     self.console_thread.start()
                 else:
                     conn.send('refused'.encode())
@@ -97,7 +100,20 @@ class Server():
         while True:
             data = conn.recv(1024).decode()
             log_info('command: %s' % data)
-            if data == 'version' or data == 'ver':
+            if data == 'get_thread':
+                conn.send('total {0} thread(s)'.format(self.thread_count + 1).encode())
+            elif data == 'ip':
+                conn.send('ip addr: {0}:{1}'.format(*addr).encode())
+            elif data == 'status':
+                data = ''
+                for t in threading.enumerate():
+                    s = '%s: %s\n' % (t.getName(), t.is_alive())
+                    data += s
+                else:
+                    conn.send(data.encode())
+            elif data == 'stop':
+                break
+            elif data == 'version' or data == 'ver':
                 conn.send('version {0}'.format(VERSION).encode())
             else:
                 conn.send('command not found'.encode())
