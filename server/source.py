@@ -1,6 +1,9 @@
+import json
 from os.path import join
 from sys import platform
 import time
+
+from server.utils import *
 
 def search_mcpy():
     # 寻找文件存储位置
@@ -15,4 +18,10 @@ def search_mcpy():
     return MCPYPATH
 
 path = {}
-path['mcpy'] = search_mcpy()
+path['mcpypath'] = search_mcpy()
+
+settings = json.load(open(join(path['mcpypath'], 'server.json'), encoding='utf-8'))
+for key in ['port']:
+    if key not in settings:
+        log_err("server.json: missing '%s' key" % key)
+        exit(1)

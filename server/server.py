@@ -5,6 +5,7 @@ import time
 import threading
 
 from server.client import Client
+from server.source import settings
 from server.utils import *
 
 import psutil
@@ -18,15 +19,16 @@ class Server():
 
     def start(self):
         # 开启服务器
-        log_info('start server @ localhost:16384')
+        log_info('start server @ localhost:%d' % settings['port'])
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.bind(('localhost', 16384))
+        self.socket.bind(('localhost', settings['port']))
         self.socket.listen(5)
         while True:
             try:
                 conn, addr = self.socket.accept()
             except:
+                print()
                 log_info('server stopped')
                 break
             data = conn.recv(1024).decode()
@@ -107,7 +109,7 @@ class Server():
                 conn.close()
                 break
             elif data == 'help':
-                data = 'available commands:\n  exit help ip status threads version(ver)'
+                data = 'available commands:\n  exit help ip status stop threads version(ver)'
                 conn.send(data.encode())
             elif data == 'ip':
                 conn.send('ip addr: {0}:{1}'.format(*addr).encode())
@@ -119,8 +121,11 @@ class Server():
                 data = 'running:\n  ' + data + '\nall client thread:\n  '
                 for t in self.thread.values():
                     data += t.getName() + ' '
-                data += '\nmemory use:\n  %.2fMB' % mem
+                data += '\nmemory used:\n  %.2fMB' % mem
                 conn.send(data.encode())
+            elif data == 'stop':
+                log_info('server stopped by console')
+                psutil.Process(getpid()).kill()
             elif data == 'threads':
                 conn.send('total {0} thread(s)'.format(self.thread_count + 1).encode())
             elif data == 'version' or data == 'ver':

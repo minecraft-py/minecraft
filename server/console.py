@@ -1,6 +1,9 @@
 import readline
 import socket
 
+from server.source import settings
+
+
 class Console():
 
     def __init__(self):
@@ -8,7 +11,7 @@ class Console():
 
     def start(self):
         self.socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.socket.connect(('localhost', 16384))
+        self.socket.connect(('localhost', settings['port']))
         self.socket.send('console'.encode())
         receive = self.socket.recv(1024).decode()
         if receive == 'refused':
@@ -17,9 +20,20 @@ class Console():
             while True:
                 data = self.socket.recv(1024).decode()
                 print(data)
-                command = input('> ')
-                if command == 'exit':
+                try:
+                    command = input('> ')
+                except:
                     self.socket.send('exit'.encode())
                     self.socket.close()
+                    print()
                     break
-                self.socket.send(command.encode())
+                else:
+                    if command == 'exit':
+                        self.socket.send('exit'.encode())
+                        self.socket.close()
+                        break
+                    elif command == 'stop':
+                        self.socket.send('stop'.encode())
+                        self.socket.close()
+                        break
+                    self.socket.send(command.encode())

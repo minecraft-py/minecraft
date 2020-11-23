@@ -19,6 +19,8 @@ print('[copy lib]')
 MCPYPATH = search_mcpy()
 if not path.isdir(MCPYPATH):
     mkdir(MCPYPATH)
+if not path.isfile(path.join(MCPYPATH, 'server.json')):
+    copyfile(path.join('data', 'json', 'server.json'), path.join(MCPYPATH, 'server.json'))
 if not path.isfile(path.join(MCPYPATH, 'settings.json')):
     copyfile(path.join('data', 'json', 'settings.json'), path.join(MCPYPATH, 'settings.json'))
 if not path.isfile(path.join(MCPYPATH, 'window.json')):
