@@ -578,8 +578,6 @@ class Game(pyglet.window.Window):
         elif symbol == key.R:
             if self.ext['enable']:
                 self.ext['running'] = not self.ext['running']
-                log_info('%s(id: %s) extra function running: %s' % (player['name'],
-                    player['id'], self.ext['running']))
         elif symbol == key.SPACE:
             if self.player['flying']:
                 self.dy = 0.1 * JUMP_SPEED
