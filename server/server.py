@@ -4,7 +4,7 @@ import socket
 import time
 import threading
 
-from server.client import Client
+from server.player import Player
 from server.source import settings
 from server.utils import *
 
@@ -13,9 +13,13 @@ import psutil
 class Server():
 
     def __init__(self):
+        # 控制台线程
         self.console_thread = None
-        self.thread = {}
+        # 线程
+        self.thread = []
         self.thread_count = -1
+        # 玩家
+        self.player = {}
 
     def start(self):
         # 开启服务器
@@ -37,8 +41,8 @@ class Server():
             if data == 'client':
                 # 客户端连接
                 self.thread_count += 1
-                self.thread[self.thread_count] = threading.Thread(target=self.client, args=(conn, addr),
-                        name='t{0}'.format(self.thread_count))
+                self.thread.append(threading.Thread(target=self.client, args=(conn, addr),
+                        name='t{0}'.format(self.thread_count)))
                 log_info('new connection @ %s:%d, total %d thread(s)' % (addr[0], addr[1], self.thread_count + 1))
                 self.thread[self.thread_count].start()
             elif data == 'console':
@@ -96,7 +100,7 @@ class Server():
             conn.send('refused'.encode())
             conn.close()
             return
-        client = Client(conn, addr, client_ver, player)
+        self.player[player['id']] = Player(player['name'])
 
     def console(self, conn, addr):
         # 控制台连接
@@ -119,8 +123,8 @@ class Server():
                 for t in threading.enumerate():
                     data += t.getName() + ' '
                 data = 'running:\n  ' + data + '\nall client thread:\n  '
-                for t in self.thread.values():
-                    data += t.getName() + ' '
+                for t in self.thread:
+                    data += t.name + ' '
                 data += '\nmemory used:\n  %.2fMB' % mem
                 conn.send(data.encode())
             elif data == 'stop':
