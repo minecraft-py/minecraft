@@ -45,9 +45,9 @@ class Server():
                         name='t{0}'.format(self.thread_count)))
                 log_info('new connection @ %s:%d, total %d thread(s)' % (addr[0], addr[1], self.thread_count + 1))
                 self.thread[self.thread_count].start()
-            elif data == 'console':
+            elif data == 'console %s' % settings['password']:
                 # 控制台连接
-                if addr[0] == '127.0.0.1' and self.console_thread == None:
+                if self.console_thread == None:
                     log_info('connected to console @ %s:%d' % (addr[0], addr[1]))
                     conn.send('welcome'.encode())
                     self.console_thread = threading.Thread(target=self.console, args=(conn, addr), name='console')
@@ -55,7 +55,7 @@ class Server():
                 else:
                     conn.send('refused'.encode())
             else:
-                conn.send('unknow'.encode())
+                conn.send('refused'.encode())
 
     def client(self, conn, addr):
         # 客户端连接
@@ -108,8 +108,8 @@ class Server():
         conn.send('Minecraft server version {0}'.format(VERSION).encode())
         while True:
             data = conn.recv(1024).decode()
-            log_info('command: %s' % data)
             if data == 'exit':
+                log_info('console exit')
                 conn.close()
                 break
             elif data == 'help':

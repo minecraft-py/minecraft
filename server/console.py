@@ -1,3 +1,5 @@
+from getpass import getpass
+from hashlib import sha256
 import readline
 import socket
 
@@ -12,7 +14,8 @@ class Console():
     def start(self):
         self.socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.socket.connect(('localhost', settings['port']))
-        self.socket.send('console'.encode())
+        password = getpass('server password: ')
+        self.socket.send('console {0}'.format(sha256(password.encode()).hexdigest()).encode())
         receive = self.socket.recv(1024).decode()
         if receive == 'refused':
             print('connection refused')
