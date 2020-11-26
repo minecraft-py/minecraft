@@ -17,4 +17,4 @@
   - [函数](js/function.md)
 - 服务器
   - [概况](server/intro.md)
-  - [server.json](server/server.json.md')
+  - [server.json](server/server.json.md)
