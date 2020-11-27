@@ -10,7 +10,7 @@
 要游玩 Minecraft, 请先在类 UNIX 的终端输入:
 ```shell
 # Github 服务器
-git clone https://github.com/jason-bowen-zheng/Minecraft
+git clone https://github.com/Minecraft-in-python/Minecraft
 # Gitee 服务器
 git clone https://gitee.com/jason-bowen-zheng/Minecraft
 cd Minecraft
