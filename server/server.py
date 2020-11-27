@@ -20,6 +20,7 @@ class Server():
         self.thread_count = -1
         # 玩家
         self.player = {}
+        self.world = {}
 
     def start(self):
         # 开启服务器
@@ -60,6 +61,11 @@ class Server():
     def client(self, conn, addr):
         # 客户端连接
         log_info('new client thread')
+        if (player := self.connect_to_client(conn)) == False:
+            return
+        conn.send('position {0}'.format(pos2str(self.player[player].position)).encode())
+
+    def connect_to_client(self, conn):
         # 互换版本号
         # 发送: server {"version": VERSION}
         conn.send('server {0}'.format(json.dumps({'version': VERSION})).encode())
@@ -72,7 +78,7 @@ class Server():
                 log_info('unknow client version: %s' % version[7:])
                 conn.send('refused'.encode())
                 conn.close()
-                return
+                return False
             else:
                 # 接收到正确版本
                 log_info('client version: %s' % client_ver)
@@ -80,7 +86,7 @@ class Server():
         else:
             conn.send('refused'.encode())
             conn.close()
-            return
+            return False
         # 请求玩家名称及 UUID
         conn.send('get_player'.encode())
         player = conn.recv(1024).decode()
@@ -91,16 +97,18 @@ class Server():
                 log_info('unknow player: %s' % player)
                 conn.send('refused'.encode())
                 conn.close()
-                return
+                return False
             else:
                 # 接收到正确的玩家数据
                 log_info('new player: id: %s, name: %s' % (player['id'], player['name']))
                 conn.send('welcome {0}'.format(player['name']).encode())
+                self.player[player['id']] = Player(player['id'])
+                self.player[player['id']].position = str2pos(settings['spawn_position'])
+                return player['id']
         else:
             conn.send('refused'.encode())
             conn.close()
-            return
-        self.player[player['id']] = Player(player['name'])
+            return False
 
     def console(self, conn, addr):
         # 控制台连接

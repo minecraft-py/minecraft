@@ -12,11 +12,15 @@ class Camera3D:
         self.rx = 0.0
         self.ry = 0.0
 
+    def goto(self, position):
+        self.position = position
+        self.update()
+
     def rotate(self, x, y):
         self.rx = x
         self.ry = y
 
-    def update(self, dt):
+    def update(self, dt=0):
         self.x, self.y, self.z = self.position
 
     def transform(self):

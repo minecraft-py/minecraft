@@ -82,7 +82,7 @@ class Game(pyglet.window.Window):
         self.ext['position'] = False
         self.ext['running'] = False
         # rotation = (水平角 x, 俯仰角 y)
-        self.rotation = (0, 0)
+        self.player['rotation'] = (0, 0)
         # 玩家所处的区域
         self.sector = None
         # 这个十字在屏幕中央
@@ -334,7 +334,7 @@ class Game(pyglet.window.Window):
 
     def get_sight_vector(self):
         # 返回玩家的视线方向
-        x, y = self.rotation
+        x, y = self.player['rotation']
         # y 的范围为 -90 到 90, 或 -pi/2 到 pi/2.
         # 所以 m 的范围为 0 到 1
         m = math.cos(math.radians(y))
@@ -351,7 +351,7 @@ class Game(pyglet.window.Window):
         :return: 长度为3的元组, 包含 x, y, z 轴上的速度增量
         """
         dy = dx = dz = 0.0
-        x, y = self.rotation
+        x, y = self.player['rotation']
         strafe = math.degrees(math.atan2(*self.player['strafe']))
         y_angle = math.radians(y)
         x_angle = math.radians(x + strafe)
@@ -519,14 +519,14 @@ class Game(pyglet.window.Window):
         """
         if self.exclusive and not self.player['die']:
             m = 0.1
-            x, y = self.rotation
+            x, y = self.player['rotation']
             x, y = x + dx * m, y + dy * m
             if x >= 180:
                 x = -180
             elif x <= -180:
                 x = 180
             y = max(-90, min(90, y))
-            self.rotation = (x, y)
+            self.player['rotation'] = (x, y)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         """
@@ -703,7 +703,7 @@ class Game(pyglet.window.Window):
         gluPerspective(self.player['fov'], width / float(height), 0.1, 60.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        x, y = self.rotation
+        x, y = self.player['rotation']
         glRotatef(x, 0, 1, 0)
         glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
         x, y, z = self.player['position']
@@ -737,7 +737,6 @@ class Game(pyglet.window.Window):
         if not self.player['hide_hud']:
             self.draw_label()
         if self.is_init:
-            print(self.world.world)
             self.set_minimum_size(800, 600)
             self.world.init_world()
             self.run_js('onInit')
@@ -779,7 +778,7 @@ class Game(pyglet.window.Window):
                 self.label['top'].draw()
             elif self.ext['debug'] and self.exclusive:
                 x, y, z = self.player['position']
-                rx, ry = self.rotation
+                rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[7] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
                 self.label['top'].y = self.height - 60

@@ -12,6 +12,10 @@ class Player(Entity):
         self.batch = graphics.Batch()
         # 玩家的各个部分
         self.player = {}
+        # 状态
+        self.status = {}
+        self.status['strafe'] = [0, 0]
+        self.status['position'] = (0, 0, 0)
 
     def draw(self):
         self.batch.draw()

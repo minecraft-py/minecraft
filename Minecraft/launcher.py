@@ -22,6 +22,8 @@ def is_game_restore(name):
 
     :param: name 要检查的游戏目录
     """
+    if name == '_server':
+        return False
     if os.path.isdir(os.path.join(path['save'], name)):
         if 'world.json' in os.listdir(os.path.join(path['save'], name)):
             if 'info.json' in os.listdir(os.path.join(path['save'], name)):
@@ -120,7 +122,7 @@ class MinecraftLauncher(Tk):
             seed = hash(seed)
         if name == '':
             log_err('invalid world name')
-        elif not [s for s in list(punctuation) if s in name] == []:
+        elif s == '_server' and not ([s for s in list(punctuation) if s in name] == []):
             log_err('invalid world name')
         else:
             if not os.path.isdir(os.path.join(path['save'], name)):

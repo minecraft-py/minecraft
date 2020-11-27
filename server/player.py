@@ -5,23 +5,23 @@ from server.utils import *
 
 class Player():
 
-    def __init__(self, uuid, name):
+    def __init__(self, uuid):
         self.uuid = uuid
-        self.name = name
-        self.strafe = [0, 0]
-        self.position = (0, 0, 0)
-        self.respawn_position = (0, 0, 0)
-        self.rotation = (0, 0)
+        self.player = {}
+        self.player['position'] = (0, 0, 0)
 
     def __str__(self):
-        return 'Player(%s, %s)' % (self.uuid, self.name)
+        return 'Player(%s, %s)' % (self.uuid)
 
+    def get_json(self):
+        data = {
+                'position': pos2str(self.player['position'])
+            }
+        return 'player {0} {1}'.format(self.uuid, json.dumps(data))
+    
     def update_from_json(self, s):
         data = json.loads(s)
-        self.strafe = data['strafe']
+        self.strafe = str2pos(data['position'], True)
 
-    def update(self, strafe, position, respawn_position, rotation):
-        self.strafe = strafe
+    def update(self, position):
         self.position = position
-        self.respawn_position = respawn_position
-        self.rotation = rotation
