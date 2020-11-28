@@ -42,14 +42,14 @@ Minecraft 源代码托管在 Github 和 Gitee(中国境内), Gitee 同 Github �
 ```shell
 git clone htts://github.com/Minecraft-in-python/Minecraft
 # Gitee(中国境内)
-git clone https://gitee.com/jason-bowen-zheng/Minecraft
+git clone https://gitee.com/Minecraft-in-python/Minecraft
 ```
 
 没有 Git, 下载并解压到`Minecraft`目录:
 ```shell
 wget https://github.com/Minecraft-in-python/Minecraft/archive/master.zip
 # 或
-wget https://gitee.com/jason-bowen-zheng/Minecraft/repository/archive/master.zip
+wget https://gitee.com/Minecraft-in-python/Minecraft/repository/archive/master.zip
 ```
 
 # 游玩前步骤
