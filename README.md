@@ -34,9 +34,3 @@ cd Minecraft
 - [ ] 使用`E`键打开物品栏
 - [ ] ...
 
-# 贡献者
-感谢以下的开发者的贡献, 按照第一次贡献的时间排序:
-
-- [jason-bowen-zheng](https://github.com/jason-bowen-zheng) 仁慈的终身独裁者(BDFL)
-- [ismaelxyz](https://github.com/ismaelxyz) 拉丁美洲大使
-- [wzh656](https://github.com/wzh656) 提供了一些游戏上的建议
