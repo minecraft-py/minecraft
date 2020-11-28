@@ -17,7 +17,7 @@ class Client():
         # 互换版本号
         if data.startswith('server '):
             log_info('server version %s' % json.loads(data[7:])['version'])
-            self.socket.send(('client {"version": "%s"}' % VERSION).encode())
+            self.socket.send(('client {"version": "%s"}' % VERSION['str']).encode())
             data = self.socket.recv(1024).decode()
             if data == 'refused':
                 self.connected = False

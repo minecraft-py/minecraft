@@ -783,7 +783,7 @@ class Game(pyglet.window.Window):
                 fps = pyglet.clock.get_fps()
                 self.label['top'].y = self.height - 60
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        '\n\n'.join(lang['game.text.debug']) % (VERSION, x, y, z, rx, ry, mem, fps))
+                        '\n\n'.join(lang['game.text.debug']) % (VERSION['str'], x, y, z, rx, ry, mem, fps))
                 self.label['top'].draw()
         else:
             # 初始化屏幕

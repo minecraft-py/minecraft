@@ -111,7 +111,12 @@ FACES = [
     ( 0, 0,-1),
 ]
 
-VERSION = 'classic 0.2'
+VERSION = {
+        'major': 0,
+        'minor': 2,
+        'patch': 0,
+        'str': '0.2'
+        }
 
 TICKS_PER_SEC = 60
 SECTOR_SIZE = 16
