@@ -736,8 +736,8 @@ class Game(pyglet.window.Window):
         self.set_2d()
         if not self.player['hide_hud']:
             self.draw_label()
+
         if self.is_init:
-            self.set_minimum_size(800, 600)
             self.world.init_world()
             self.run_js('onInit')
             self.init_player()
