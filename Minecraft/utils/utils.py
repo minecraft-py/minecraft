@@ -1,6 +1,8 @@
+import atexit
 import math
 import time
 
+from colorama import Fore, Style
 import pyglet
 
 def cube_vertices(x, y, z, n):
@@ -24,20 +26,24 @@ def get_size():
 
 def log_err(text):
     # 打印错误信息
-    print('[%s ERR ]: %s' % (time.strftime('%H:%M:%S'), text))
+    print('%s[ERR  %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
 
 def log_info(text):
     # 打印信息
-    print('[%s INFO]: %s' % (time.strftime('%H:%M:%S'), text))
+    print('%s[INFO %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
 
 def log_warn(text):
     # 打印警告信息
-    print('[%s WARN]: %s' % (time.strftime('%H:%M:%S'), text))
+    print('%s[WARN %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
 
 def normalize(position):
     x, y, z = position
     x, y, z = (int(round(x)), int(round(y)), int(round(z)))
     return (x, y, z)
+
+@atexit.register
+def on_exit():
+    log_info('exit')
 
 def pos2str(position):
     # 将坐标转换为字符串

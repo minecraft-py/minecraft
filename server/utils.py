@@ -2,17 +2,19 @@ from sys import platform
 import time
 from threading import get_native_id as get_id
 
+from colorama import Fore, Style
+
 def log_err(text):
     # 打印错误信息
-    print('[%s ERR ]: %d : %s' % (time.strftime('%H:%M:%S'), get_id(), text))
+    print('%s[ERR  %s %d]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), get_id(), Style.RESET_ALL, text))
 
 def log_info(text):
     # 打印信息
-    print('[%s INFO]: %d: %s' % (time.strftime('%H:%M:%S'), get_id(), text))
+    print('%s[INFO %s %d]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), get_id(), Style.RESET_ALL, text))
 
 def log_warn(text):
     # 打印警告信息
-    print('[%s WARN]: %d: %s' % (time.strftime('%H:%M:%S'), get_id(), text))
+    print('%s[WARN %s %d]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), get_id(), Style.RESET_ALL, text))
 
 def pos2str(position):
     # 将坐标转换为字符串

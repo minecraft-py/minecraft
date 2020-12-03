@@ -181,7 +181,7 @@ class MinecraftLauncher(Tk):
     def repair(self, event=None):
         select =self.game_item_list.curselection()
         if select == ():
-            log_info('no world selected')
+            log_warn('no world selected')
             return
         select = self.game_item_list.get(select[0])
         repair_archive(select)
@@ -190,7 +190,7 @@ class MinecraftLauncher(Tk):
         # 启动游戏
         select = self.game_item_list.curselection()
         if  select == ():
-            log_info('no world selected')
+            log_warn('no world selected')
             return
         select = self.game_item_list.get(select[0])
         self.destroy()
@@ -202,6 +202,6 @@ class MinecraftLauncher(Tk):
             pyglet.app.run()
         except:
             name = '%d.log' % int(time.time())
-            log_info('catch error, saved in: log/%s' % name)
+            log_err('catch error, saved in: log/%s' % name)
             traceback.print_exc(file=open(os.path.join(path['log'], name), 'w+'))
             exit(1)
