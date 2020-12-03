@@ -45,7 +45,9 @@ def pos2str(position):
 
 def search_mcpy():
     # 寻找文件存储位置
-    _os = __import__('os')
+    _os  = __import__('os')
+    _sys = __import__('sys')
+    platform = _sys.platform
     environ, path = _os.environ, _os.path
     if 'MCPYPATH' in environ:
         MCPYPATH = environ['MCPYPATH']

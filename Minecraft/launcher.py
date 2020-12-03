@@ -115,7 +115,7 @@ class MinecraftLauncher(Tk):
     def new_world(self, event=None):
         # 创建一个新的世界
         name = self.new_dialog_entry_name.get()
-        seed = self.new_dialog_entry_seed.get()
+        seed = s = self.new_dialog_entry_seed.get()
         if seed == '':
             seed = hash(time.ctime())
         else:
