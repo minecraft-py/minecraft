@@ -5,7 +5,6 @@ from os import environ, mkdir, path, system
 from re import match
 from shutil import copyfile, copytree, rmtree
 from sys import platform
-from register import register_user, search_mcpy
 import uuid
 
 def copy():
@@ -30,20 +29,20 @@ def copy():
 
 def install():
     # 下载依赖项
-    print('[install requirements]')
+    print('[Install requirements]')
     if (code := system('python -m pip install -U -r requirements.txt')) != 0:
         print('pip raise error code: %d' % code)
         exit(1)
     else:
         print('install successfully')
     # 注册玩家
-    print('[register]')
+    print('[Register]')
     register_user()
     # 复制运行所需的文件
-    print('[copy lib]')
+    print('[Copy lib]')
     copy()
     # 完成!
-    print('[done]')
+    print('[Done]')
 
 def search_mcpy():
     # 搜索文件存储位置
