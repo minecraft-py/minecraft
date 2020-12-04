@@ -11,12 +11,19 @@ from pyglet.gl import *
 
 block_texture = {}
 
+def get_texture_coord(x, y, size=16):
+    if x == -1 and y == -1:
+        return ()
+    m = 1.0 / size
+    dx = x * m
+    dy = y * m
+    return dx, dy, dx + m, dy, dx + m, dy + m, dx, dy + m
+
 
 class BlockTextureGroup(Group):
 
-    def __init__(self, names, width=1.0, height=1.0):
+    def __init__(self, names, width=1.0, height=1.0, bgcolor=None):
         super(BlockTextureGroup, self).__init__()
-        i = 0
         self.atlas = None
         self.texture_data = []
         self.block_texture = {}
@@ -25,11 +32,19 @@ class BlockTextureGroup(Group):
                 self.block_texture[name] = block_texture[name] = image.load(join(path['texture'], 'block', name + '.png'))
             else:
                 self.block_texture[name] = block_texture[name]
-            size = self.block_texture[name].width 
+            size = self.block_texture[name].width
+            if bgcolor is not None:
+                data = bytearray(self.block_texture[name].get_image_data().get_data('RGBA', size * 4))
+                for i in range(len(data)):
+                    if data[i] == bgcolor:
+                        data[i] = 0
+                else:
+                    self.block_texture[name].get_image_data().set_data('RGBA', size * 4, bytes(data))
             if self.atlas == None:
                 self.atlas = TextureAtlas(size * len(names), size)
                 self.texture = self.atlas.texture
             subtex = self.atlas.add(self.block_texture[name])
+            i = 0
             for value in subtex.tex_coords:
                 i += 1
                 if i % 3 != 0:
@@ -75,13 +90,19 @@ class BlockTextureGroup(Group):
 
 class Block():
 
-    def __init__(self, top=(), side=(), bottom=(), mode='', width=1.0, height=1.0):
-        self.top_texture = top
-        self.side_texture = side
-        self.bottom_texture = bottom
-        self.mode = mode
+    # 顶部贴图
+    top_texture = ()
+    # 底部贴图
+    bottom_texture = ()
+    # 四边贴图
+    side_texture = ()
+    # 硬度
+    hardness = 1
+
+    def __init__(self, width=1.0, height=1.0, mode=''):
         self.width = width
         self.height = height
+        self.mode = mode
         self.set_texture_data()
 
     def get_texture_data(self):
@@ -137,3 +158,23 @@ class Block():
         if self.mode != 'c':
             self.textures += self.side_texture * 2
         self.texture_group = BlockTextureGroup(self.textures)
+
+
+class Bedrock(Block):
+
+    top_texture = 'bedrock',
+    bottom_texture = 'bedrock',
+    side_texture = 'bedrock',
+    hardness = -1
+
+
+class Grass(Block):
+
+    top_texture = 'grass_top',
+    bottom_texture = 'dirt',
+    side_texture = 'grass_side',
+
+
+block = {}
+block['bedrock'] = Bedrock
+block['grass'] = Grass
