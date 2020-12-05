@@ -6,7 +6,7 @@ import time
 from threading import Thread
 
 import Minecraft.archiver as archiver
-from Minecraft.source import block, path, player, lang, settings
+from Minecraft.source import path, player, lang, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar
@@ -15,6 +15,7 @@ from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
 from Minecraft.gui.widget.button import Button
+from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
@@ -90,8 +91,7 @@ class Game(pyglet.window.Window):
         # y 轴的加速度
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'sand', 'stone', 'log',
-                'leaf', 'brick', 'plank', 'craft_table']
+        self.inventory = ['grass', 'dirt', 'stone', 'log', 'brick', 'plank', 'craft_table']
         # 玩家手持的方块
         self.block = 0
         # 数字键列表
@@ -278,7 +278,7 @@ class Game(pyglet.window.Window):
             return False
         elif (x, y, z) not in self.world.world and block == 'air':
             return True
-        elif self.world.world[(x, y, z)] != block:
+        elif self.world.world[(x, y, z)].name != block:
             return False
         else:
             return True
@@ -401,12 +401,12 @@ class Game(pyglet.window.Window):
         else:
             for position in [exist for exist in area if exist in self.world.world]:
                 block = self.world.world[position]
-                if block == 'dirt' and random.randint(0, 10) == 10:
+                if block.name == 'dirt' and random.randint(0, 10) == 10:
                     for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                         if (pos := (position[0] + x, position[1], position[2] + z)) in self.world.world:
-                            if self.world.world[pos] == 'grass' and (pos[0], pos[1] + 1, pos[2]) not in self.world.world:
+                            if self.world.world[pos].name == 'grass' and (pos[0], pos[1] + 1, pos[2]) not in self.world.world:
                                 self.world.add_block(position, 'grass')
-                elif block == 'grass':
+                elif block.name == 'grass':
                     if (position[0], position[1] + 1, position[2]) in self.world.world:
                         self.world.add_block(position, 'dirt')
             

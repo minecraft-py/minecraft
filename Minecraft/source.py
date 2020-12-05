@@ -7,19 +7,6 @@ from Minecraft.utils.utils import *
 
 from pyglet import resource
 
-block = {}
-block['grass'] = tex_coords((1, 0), (0, 1), (0, 0))
-block['dirt'] = tex_coords((0, 1), (0, 1), (0, 1))
-block['sand'] = tex_coords((1, 1), (1, 1), (1, 1))
-block['stone'] = tex_coords((0, 2), (0, 2), (0, 2))
-block['log'] = tex_coords((1, 2), (1, 2), (2, 2))
-block['leaf'] = tex_coords((3, 1), (3, 1), (3, 1))
-block['brick'] = tex_coords((2, 0), (2, 0), (2, 0))
-block['plank'] = tex_coords((3, 0), (3, 0), (3, 0))
-block['craft_table'] = tex_coords((0, 3), (3, 0), (1, 3))
-block['bedrock'] = tex_coords((2, 1), (2, 1), (2, 1))
-block['undefined'] = tex_coords((3, 2), (3, 2), (3, 2))
-
 path = {}
 
 path['mcpypath'] = search_mcpy()

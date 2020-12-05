@@ -1,4 +1,5 @@
-from os.path import join
+from math import floor
+from os.path import isfile, join
 
 from Minecraft.source import path
 from Minecraft.utils.cube import *
@@ -9,7 +10,6 @@ from pyglet.image.atlas import TextureAtlas
 from pyglet.graphics import Group
 from pyglet.gl import *
 
-block_texture = {}
 
 def get_texture_coord(x, y, size=16):
     if x == -1 and y == -1:
@@ -28,10 +28,10 @@ class BlockTextureGroup(Group):
         self.texture_data = []
         self.block_texture = {}
         for name in names:
-            if name not in block_texture:
-                self.block_texture[name] = block_texture[name] = image.load(join(path['texture'], 'block', name + '.png'))
+            if name == 'missing':
+                self.block_texture[name] = image.load(join(path['texture'], 'misc', 'missing_texture.png'))
             else:
-                self.block_texture[name] = block_texture[name]
+                self.block_texture[name] = image.load(join(path['texture'], 'block', name + '.png'))
             size = self.block_texture[name].width
             if bgcolor is not None:
                 data = bytearray(self.block_texture[name].get_image_data().get_data('RGBA', size * 4))
@@ -90,23 +90,30 @@ class BlockTextureGroup(Group):
 
 class Block():
 
+    textures = ()
     # 顶部贴图
     top_texture = ()
     # 底部贴图
     bottom_texture = ()
+    # 前方贴图
+    front_texture = None
     # 四边贴图
     side_texture = ()
     # 硬度
     hardness = 1
 
-    def __init__(self, width=1.0, height=1.0, mode=''):
+    def __init__(self, name, width=1.0, height=1.0, mode=''):
+        self.name = name
         self.width = width
         self.height = height
         self.mode = mode
-        self.set_texture_data()
+        self.update_texture()
 
     def get_texture_data(self):
-        return self.texture_group.texture_data
+        textures = self.top_texture + self.bottom_texture + self.front_texture + self.side_texture
+        if self.mode != 'x':
+            textures += self.side_texture * 2
+        return list(textures)
 
     def get_vertices(self, x, y, z):
         w = self.width / 2.0
@@ -127,7 +134,7 @@ class Block():
             vertices += (
                 xm, ym, zm,   xp, ym, zm,   xp, ym, zp,   xm, ym, zp    # 底部
             )
-        if self.mode == 'c':
+        if self.mode == 'x':
             vertices += (
                 xm, ym, zm,   xp, ym, zp,   xp, yp, zp,   xm, yp, zm,
                 xm, ym, zp,   xp, ym, zm,   xp, yp, zm,   xm, yp, zp,
@@ -152,29 +159,92 @@ class Block():
             )
         return vertices
 
-    def set_texture_data(self):
-        self.textures = ()
-        self.textures += self.top_texture + self.bottom_texture + self.side_texture
-        if self.mode != 'c':
-            self.textures += self.side_texture * 2
-        self.texture_group = BlockTextureGroup(self.textures)
+    def update_texture(self):
+        if self.textures:
+            self.group = BlockTextureGroup(self.textures)
+        if self.group:
+            self.texture_data = self.group.texture_data
+        if self.top_texture == ():
+            return
+        if self.front_texture is None:
+            self.front_texture = self.side_texture
+        if not self.texture_data:
+            for k in ('top_texture', 'bottom_texture', 'side_texture', 'front_texture'):
+                v = getattr(self, k)
+                if v:
+                    setattr(self, k, get_texture_coord(*v))
+            else:
+                self.texture_data = self.get_texture_data()
+
+
+class BlockColorizer:
+        def __init__(self, name):
+            self.color_data = image.load(join(path['texture'], 'colormap', name + '.png'))
+            if self.color_data is None:
+                return
+            self.color_data = self.color_data.get_data('RGB', self.color_data.width * 3)
+
+        def get_color(self, temperature, humidity):
+            temperature = 1 - temperature
+            if temperature + humidity > 1:
+                delta = (temperature + humidity - 1) / 2
+                temperature -= delta
+                humidity -= delta
+            if self.color_data is None:
+                return 1, 1, 1
+            pos = int(floor(humidity * 255) * 768 + 3 * floor((temperature) * 255))
+            return (float(self.color_data[pos]) / 255,
+                    float(self.color_data[pos + 1]) / 255,
+                    float(self.color_data[pos + 2]) / 255)
 
 
 class Bedrock(Block):
-
-    top_texture = 'bedrock',
-    bottom_texture = 'bedrock',
-    side_texture = 'bedrock',
+    textures = 'bedrock',
     hardness = -1
 
 
+class Brick(Block):
+    textures = 'brick',
+
+
+class CraftTable(Block):
+    textures = 'crafting_table_top', 'planks_oak', 'crafting_table_front', 'crafting_table_side'
+
+    def on_use(self, world):
+        pass
+
+
+class Dirt(Block):
+    textures = 'dirt',
+
+
 class Grass(Block):
-
-    top_texture = 'grass_top',
-    bottom_texture = 'dirt',
-    side_texture = 'grass_side',
+    textures = 'grass_top', 'dirt', 'grass_side'
 
 
-block = {}
-block['bedrock'] = Bedrock
-block['grass'] = Grass
+class Log(Block):
+    textures = 'log_oak_top', 'log_oak'
+
+
+class Missing(Block):
+    textures = 'missing',
+
+
+class Plank(Block):
+    textures = 'planks_oak',
+
+
+class Sand(Block):
+    textures = 'sand',
+
+
+blocks = {}
+blocks['bedrock'] = Bedrock('bedrock')
+blocks['brick'] = Brick('brick')
+blocks['craft_table'] = CraftTable('craft_table')
+blocks['dirt'] = Dirt('dirt')
+blocks['grass'] = Grass('grass')
+blocks['log'] = Log('log')
+blocks['missing'] = Missing('missing')
+blocks['plank'] = Plank('plank')
+blocks['sand'] = Sand('sand')

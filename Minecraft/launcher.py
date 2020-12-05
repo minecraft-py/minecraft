@@ -203,5 +203,5 @@ class MinecraftLauncher(Tk):
         except:
             name = '%d.log' % int(time.time())
             log_err('catch error, saved in: log/%s' % name)
-            traceback.print_exc(file=open(os.path.join(path['log'], name), 'w+'))
+            traceback.print_exc()#file=open(os.path.join(path['log'], name), 'w+'))
             exit(1)

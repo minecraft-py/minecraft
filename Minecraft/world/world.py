@@ -5,7 +5,8 @@ import random
 import time
 
 import Minecraft.archiver as archiver
-from Minecraft.source import block, path, settings
+from Minecraft.source import path, settings
+from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
 msg = "module '{0}' not found, run `pip install {0}` to install, exit"
@@ -28,8 +29,6 @@ class World(object):
         self.batch3d = pyglet.graphics.Batch()
         # 为了分开绘制3D物体和2D的 HUD, 我们需要两个 Batch
         self.batch2d = pyglet.graphics.Batch()
-        # 纹理的集合
-        self.group = TextureGroup(image.load(os.path.join(path['texture'], 'block.png')).get_texture())
         # 存档名
         self.name = name
         # 种子
@@ -95,12 +94,12 @@ class World(object):
         else:
             return False
 
-    def add_block(self, position, texture, immediate=True, record=True):
+    def add_block(self, position, block, immediate=True, record=True):
         """
         在 position 处添加一个纹理为 texture 的方块
 
         :param: pssition 长度为3的元组, 要添加方块的位置
-        :param: texture 长度为3的列表, 纹理正方形的坐标, 使用 tex_coords() 创建
+        :param: block 方块
         :param: immediate 是否立即绘制方块
         :param: record 是否记录方块更改(在生成地形时不记录)
         """
@@ -109,12 +108,12 @@ class World(object):
         if 0 <= position[1] <= 256:
             # 建筑限制为基岩以上, 256格以下.
             if record == True:
-                self.change[pos2str(position)] = texture
-            if texture in block:
-                self.world[position] = texture
+                self.change[pos2str(position)] = block
+            if block in blocks:
+                self.world[position] = blocks[block]
             else:
                 # 将不存在的方块替换为 undefined
-                self.world[position] = 'undefined'
+                self.world[position] = blocks['missing']
             self.sectors.setdefault(sectorize(position), []).append(position)
             if immediate:
                 if self.exposed(position):
@@ -165,28 +164,27 @@ class World(object):
         :param: position 长度为3的元组, 要显示方块的位置
         :param: immediate 是否立即显示方块
         """
-        texture = block[self.world[position]]
-        self.shown[position] = texture
+        block = blocks[self.world[position].name]
+        self.shown[position] = block
         if immediate:
-            self._show_block(position, texture)
+            self._show_block(position, block)
         else:
-            self._enqueue(self._show_block, position, texture)
+            self._enqueue(self._show_block, position, block)
 
-    def _show_block(self, position, texture):
+    def _show_block(self, position, block):
         """
         show_block() 方法的私有实现
 
         :param: position 长度为3的元组, 要显示方块的位置
-        :param: texture 长度为3的列表, 纹理正方形的坐标, 使用 Minecraft.utils.utils.tex_coords() 创建
+        :param: block 方块
         """
-        x, y, z = position
-        vertex_data = cube_vertices(x, y, z, 0.5)
-        texture_data = list(texture)
-        # 创建向量列表
-        # FIXME 应该使用 add_indexed() 来代替
-        self._shown[position] = self.batch3d.add(24, GL_QUADS, self.group,
-            ('v3f/static', vertex_data),
-            ('t2f/static', texture_data))
+        vertex_data = list(block.get_vertices(*position))
+        texture_data = list(block.texture_data)
+        color_data = None
+        count = len(texture_data) // 2
+        self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
+                ('v3f/static', vertex_data),
+                ('t2f/static', texture_data))
 
     def hide_block(self, position, immediate=True):
         """
