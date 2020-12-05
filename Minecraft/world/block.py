@@ -177,24 +177,24 @@ class Block():
 
 
 class BlockColorizer:
-        def __init__(self, name):
-            self.color_data = image.load(join(path['texture'], 'colormap', name + '.png'))
-            if self.color_data is None:
-                return
-            self.color_data = self.color_data.get_data('RGB', self.color_data.width * 3)
+    def __init__(self, name):
+        self.color_data = image.load(join(path['texture'], 'colormap', name + '.png'))
+        if self.color_data is None:
+            return
+        self.color_data = self.color_data.get_data('RGB', self.color_data.width * 3)
 
-        def get_color(self, temperature, humidity):
-            temperature = 1 - temperature
-            if temperature + humidity > 1:
-                delta = (temperature + humidity - 1) / 2
-                temperature -= delta
-                humidity -= delta
-            if self.color_data is None:
-                return 1, 1, 1
-            pos = int(floor(humidity * 255) * 768 + 3 * floor((temperature) * 255))
-            return (float(self.color_data[pos]) / 255,
-                    float(self.color_data[pos + 1]) / 255,
-                    float(self.color_data[pos + 2]) / 255)
+    def get_color(self, temperature, humidity):
+        temperature = 1 - temperature
+        if temperature + humidity > 1:
+            delta = (temperature + humidity - 1) / 2
+            temperature -= delta
+            humidity -= delta
+        if self.color_data is None:
+            return 1, 1, 1
+        pos = int(floor(humidity * 255) * 768 + 3 * floor((temperature) * 255))
+        return (float(self.color_data[pos]) / 255,
+                float(self.color_data[pos + 1]) / 255,
+                float(self.color_data[pos + 2]) / 255)
 
 
 class Bedrock(Block):
@@ -219,6 +219,22 @@ class Dirt(Block):
 
 class Grass(Block):
     textures = 'grass_top',
+    colorizer = BlockColorizer('grass')
+
+    def get_color(self, temperature, humidity):
+        color = []
+        color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
+        return color
+
+
+class Leaf(Block):
+    textures = 'leaves_oak',
+    colorizer = BlockColorizer('foliage')
+
+    def get_color(self, temperature, humidity):
+        color = []
+        color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
+        return color
 
 
 class Log(Block):
@@ -227,6 +243,7 @@ class Log(Block):
 
 class Missing(Block):
     textures = 'missing',
+    hardness = -1
 
 
 class Plank(Block):
@@ -243,6 +260,7 @@ blocks['brick'] = Brick('brick')
 blocks['craft_table'] = CraftTable('craft_table')
 blocks['dirt'] = Dirt('dirt')
 blocks['grass'] = Grass('grass')
+blocks['leaf'] = Leaf('leaf')
 blocks['log'] = Log('log')
 blocks['missing'] = Missing('missing')
 blocks['plank'] = Plank('plank')

@@ -112,7 +112,7 @@ class World(object):
             if block in blocks:
                 self.world[position] = blocks[block]
             else:
-                # 将不存在的方块替换为 undefined
+                # 将不存在的方块替换为 missing
                 self.world[position] = blocks['missing']
             self.sectors.setdefault(sectorize(position), []).append(position)
             if immediate:
@@ -164,7 +164,7 @@ class World(object):
         :param: position 长度为3的元组, 要显示方块的位置
         :param: immediate 是否立即显示方块
         """
-        block = blocks[self.world[position].name]
+        block = self.world[position]
         self.shown[position] = block
         if immediate:
             self._show_block(position, block)
@@ -181,10 +181,18 @@ class World(object):
         vertex_data = list(block.get_vertices(*position))
         texture_data = list(block.texture_data)
         color_data = None
+        if hasattr(block, 'get_color'):
+            color_data = block.get_color(0.5, 0.5)
         count = len(texture_data) // 2
-        self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
-                ('v3f/static', vertex_data),
-                ('t2f/static', texture_data))
+        if color_data is None:
+            self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
+                    ('v3f/static', vertex_data),
+                    ('t2f/static', texture_data))
+        else:
+            self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
+                    ('v3f/static', vertex_data),
+                    ('t2f/static', texture_data),
+                    ('c3f/static', color_data))
 
     def hide_block(self, position, immediate=True):
         """
