@@ -2,8 +2,11 @@ import atexit
 import math
 import time
 
-from colorama import Fore, Style
+from colorama import Fore, Style, init
 import pyglet
+
+init()
+
 def cube_vertices(x, y, z, n):  
     # 返回在 x, y, z 坐标的方形顶点 
     return [
