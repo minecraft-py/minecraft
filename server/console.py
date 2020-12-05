@@ -1,6 +1,8 @@
 from getpass import getpass
 from hashlib import sha256
-import readline
+from sys import platform
+if not platform.startswith('win'):
+    import readline
 import socket
 
 from server.source import settings

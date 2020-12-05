@@ -2,7 +2,9 @@ from sys import platform
 import time
 from threading import get_native_id as get_id
 
-from colorama import Fore, Style
+from colorama import Fore, Style, init
+
+init()
 
 def log_err(text):
     # 打印错误信息

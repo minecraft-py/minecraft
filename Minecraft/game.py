@@ -496,18 +496,15 @@ class Game(pyglet.window.Window):
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
                 if not self.player['die'] and not self.player['in_hud']:
-                    if block.name == 'craft_table' and (not self.player['stealing']):
-                        self.set_exclusive_mouse(False)
+                    if hasattr(block, 'on_use') and (not self.player['stealing']):
+                        block.on_use(self)
                     elif previous and self.can_place(previous, self.player['position']):
                         self.world.add_block(previous, self.inventory[self.block])
             elif button == pyglet.window.mouse.LEFT and previous:
                 if block.hardness > 0 and not self.player['die'] and not self.player['in_hud']:
                     self.world.remove_block(now)
             elif button == pyglet.window.mouse.MIDDLE and block and previous:
-                for i in range(len(self.inventory)):
-                    if block.name == self.inventory[i]:
-                        self.block = i
-                        break
+                pass
         elif not self.player['die'] and not self.player['in_hud']:
             self.set_exclusive_mouse(True)
 
