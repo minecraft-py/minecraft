@@ -2,7 +2,6 @@ from math import floor
 from os.path import isfile, join
 
 from Minecraft.source import path
-from Minecraft.utils.cube import *
 from Minecraft.utils.utils import *
 
 from pyglet import image
@@ -219,7 +218,7 @@ class Dirt(Block):
 
 
 class Grass(Block):
-    textures = 'grass_top', 'dirt', 'grass_side'
+    textures = 'grass_top',
 
 
 class Log(Block):

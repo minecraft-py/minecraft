@@ -488,25 +488,26 @@ class Game(pyglet.window.Window):
         """
         if self.exclusive:
             vector = self.get_sight_vector()
-            block, previous = self.world.hit_test(self.player['position'], vector)
-            if block:
-                texture = self.world.world[block]
+            now, previous = self.world.hit_test(self.player['position'], vector)
+            if now:
+                block = self.world.world[now]
             else:
-                texture = None
-            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and block and previous:
+                return
+            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
                 if not self.player['die'] and not self.player['in_hud']:
-                    if texture == 'craft_table' and (not self.player['stealing']):
+                    if block.name == 'craft_table' and (not self.player['stealing']):
                         self.set_exclusive_mouse(False)
                     elif previous and self.can_place(previous, self.player['position']):
                         self.world.add_block(previous, self.inventory[self.block])
-                        self.run_js('onBuild', previous[0], previous[1], previous[2], self.inventory[self.block])
             elif button == pyglet.window.mouse.LEFT and previous:
-                if texture != 'bedrock' and not self.player['die'] and not self.player['in_hud']:
-                    self.run_js('onDestroy', previous[0], previous[1], previous[2], texture)
-                    self.world.remove_block(block)
+                if block.hardness > 0 and not self.player['die'] and not self.player['in_hud']:
+                    self.world.remove_block(now)
             elif button == pyglet.window.mouse.MIDDLE and block and previous:
-                self.block = texture
+                for i in range(len(self.inventory)):
+                    if block.name == self.inventory[i]:
+                        self.block = i
+                        break
         elif not self.player['die'] and not self.player['in_hud']:
             self.set_exclusive_mouse(True)
 
@@ -749,7 +750,7 @@ class Game(pyglet.window.Window):
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.5001)
+            vertex_data = cube_vertices(x, y, z, 0.51)
             glColor3f(0.0, 0.0, 0.0)
             glLineWidth(1.5)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
