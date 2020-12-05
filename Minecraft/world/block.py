@@ -210,8 +210,7 @@ class CraftTable(Block):
     textures = 'crafting_table_top', 'planks_oak', 'crafting_table_front', 'crafting_table_side'
 
     def on_use(self, game):
-        game.dialogue.add_dialogue('hello')
-
+        pass
 
 class Dirt(Block):
     textures = 'dirt',
