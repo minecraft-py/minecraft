@@ -152,9 +152,11 @@ class World(object):
                 continue
             if self.exposed(key):
                 if key not in self.shown:
+                    self.world[key].on_neighbor_change(self.world, key, position)
                     self.show_block(key)
             else:
                 if key in self.shown:
+                    self.world[key].on_neighbor_change(self.world, key, position)
                     self.hide_block(key)
 
     def show_block(self, position, immediate=True):

@@ -175,6 +175,14 @@ class Block():
             else:
                 self.texture_data = self.get_texture_data()
 
+    def on_neighbor_change(self, world, neighbor_pos, self_pos):
+        # 相邻方块发生变化时的回调函数
+        pass
+
+    def on_ticking(self, world, self_pos):
+        # 接受到随机刻时的回调函数
+        pass
+
 
 class BlockColorizer:
     def __init__(self, name):
