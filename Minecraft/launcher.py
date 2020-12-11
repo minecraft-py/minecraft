@@ -13,6 +13,7 @@ from Minecraft.game import *
 from Minecraft.archiver import load_window
 from Minecraft.repair import repair_archive
 from Minecraft.source import lang, path, settings
+from Minecraft.utils.utils import *
 
 import pyglet
 
@@ -203,5 +204,10 @@ class MinecraftLauncher(Tk):
         except:
             name = '%d.log' % int(time.time())
             log_err('catch error, saved in: log/%s' % name)
-            traceback.print_exc()#file=open(os.path.join(path['log'], name), 'w+'))
+            err_log = open(os.path.join(path['log'], name), 'a+')
+            log.write('Minecraft version: %s\n' % VERSION['str'])
+            log.write('time: %s\n' % time.time())
+            log.write('save: %s\n' % select)
+            log.write('\n' + '-' * 60 + '\n' * 2)
+            traceback.print_exc(file=log)
             exit(1)

@@ -96,7 +96,7 @@ class World(object):
 
     def add_block(self, position, block, immediate=True, record=True):
         """
-        在 position 处添加一个纹理为 texture 的方块
+        在 position 处添加一个方块
 
         :param: pssition 长度为3的元组, 要添加方块的位置
         :param: block 方块
@@ -132,7 +132,7 @@ class World(object):
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
             del self.world[position]
             if record:
-                self.change[' '.join([str(i) for i in position])] = 'air'
+                self.change[pos2str(position)] = 'air'
             self.sectors[sectorize(position)].remove(position)
             if immediate:
                 if position in self.shown:

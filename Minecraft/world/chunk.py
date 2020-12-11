@@ -1,4 +1,7 @@
-from Minecraft.world.block import block
+from collections import deque
+from hashlib import sha256
+
+from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
 from pyglet import graphics
@@ -6,43 +9,36 @@ from opensimplex import OpenSimplex as simplex
 
 class Chunk(object):
     
-    def __init__(self, x, z, seed):
-        self.batch = graphics.Batch()
+    def __init__(self, x, z, seed, world):
         self.position = (x, z)
-        self.noise = simplex(seed=seed)
-        # 每一个方块的坐标: tuple(x, y, z)
-        self.block = {}
-        # 显示的方块
+        self.seed = seed
+        self.world = world
+        self.blocks = {}
         self.shown = {}
-        # 改变的方块
-        self.change = {}
+        self._shown = {}
+        self.queue = deque()
 
-    def add_block(self, position, name, record=True):
+    def add_block(self, position, block, sync=True, record=True):
+        if position in self.blocks:
+            self.remove_block(position, sync, record=False)
         if 0 <= position[1] <= 256:
-            if name in block:
-                self.block[position] = name
-                self,shown[position] = block[name].show(self.batch)
-            else:
-                self.block[position] = name
-                self.shown[position] = block[name].show(self.batch)
             if record:
-                self.change[pos2str(position)] = name
+                self.change[pos2str(position)] = block
+            if block in blocks:
+                self.blocks[position] = blocks[block]
+            else:
+                self.blocks[position] = blocks['missing']
+        if sync:
+            if self.exposed(position):
+                self.show_block(position)
+            self.check_neighbors(position)
 
-    def destroy(self, position, i=0.01):
-        if position in self.block:
-            self.block[position].destroy(i)
-            if self.block[position].has_destroy:
-                self.remove_block(position)
-
-    def generate(self):
-        raise NotImplementedError('not implemented')
-
-    def remove_block(self, position, record=True):
-        if position in self.block:
-            del self.block[position]
-            self.shown.pop(position)
+    def remove_block(self, positioin, sync=True, record=True):
+        if position in self.blocks:
+            del self.blocks[position]
             if record:
                 self.change[pos2str(position)] = 'air'
-
-    def show_chunk(self):
-        self.batch.draw()
+            if sync:
+                if position in self.shown:
+                    self.hide_block(position)
+                self.check_neighbors(position)
