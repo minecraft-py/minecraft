@@ -403,7 +403,8 @@ class Game(pyglet.window.Window):
                 block = self.world.world[position]
                 if block.name == 'dirt' and random.randint(0, 10) == 10:
                     for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-                        if (pos := (position[0] + x, position[1], position[2] + z)) in self.world.world:
+                        pos = (position[0] + x, position[1], position[2] + z)
+                        if pos in self.world.world:
                             if self.world.world[pos].name == 'grass' and (pos[0], pos[1] + 1, pos[2]) not in self.world.world:
                                 self.world.add_block(position, 'grass')
                 elif block.name == 'grass':

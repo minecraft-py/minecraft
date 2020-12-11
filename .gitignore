@@ -19,3 +19,4 @@ notes.txt
 .*.so
 .*.a
 .*.pyd
+*.pyc
