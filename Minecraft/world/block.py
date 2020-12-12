@@ -175,11 +175,19 @@ class Block():
             else:
                 self.texture_data = self.get_texture_data()
 
-    def on_neighbor_change(self, world, neighbor_pos, self_pos):
+    def on_destroy(self, game, pos):
+        # 摧毁方块是的回调函数
+        pass
+
+    def on_neighbor_change(self, game, neighbor_pos, self_pos):
         # 相邻方块发生变化时的回调函数
         pass
 
-    def on_ticking(self, world, self_pos):
+    def on_build(self, game, pos):
+        # 放置方块时的回调函数
+        pass
+
+    def on_ticking(self, game, self_pos):
         # 接受到随机刻时的回调函数
         pass
 

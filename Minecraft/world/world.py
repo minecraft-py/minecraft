@@ -24,13 +24,15 @@ from pyglet import image
 
 class World(object):
 
-    def __init__(self, name):
+    def __init__(self, name, game):
         # Batch 是用于批处理渲染的顶点列表的集合
         self.batch3d = pyglet.graphics.Batch()
         # 为了分开绘制3D物体和2D的 HUD, 我们需要两个 Batch
         self.batch2d = pyglet.graphics.Batch()
         # 存档名
         self.name = name
+        # 父对象
+        self.game = game
         # 种子
         self.seed = archiver.load_info(name)['seed']
         # Simplex 噪声函数
@@ -111,6 +113,7 @@ class World(object):
                 self.change[pos2str(position)] = block
             if block in blocks:
                 self.world[position] = blocks[block]
+                self.world[position].on_build(self.game, position)
             else:
                 # 将不存在的方块替换为 missing
                 self.world[position] = blocks['missing']
@@ -130,6 +133,7 @@ class World(object):
         """
         if position in self.world:
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
+            self.world[position].on_destroy(self.game, position)
             del self.world[position]
             if record:
                 self.change[pos2str(position)] = 'air'

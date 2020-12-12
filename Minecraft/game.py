@@ -286,7 +286,7 @@ class Game(pyglet.window.Window):
     def set_name(self, name):
         # 设置游戏存档名
         self.name = name
-        self.world = World(name)
+        self.world = World(name, self)
         # self.world_gen_thread = Thread(target=self.world.init_world, name='WorldGen')
         # self.world_gen_thread.start()
         # 读取玩家位置和背包
