@@ -129,20 +129,6 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(change_sky_color, 7.5)
         log_info('welcome %s' % player['name'])
 
-    def __sizeof__(self):
-        # 返回游戏所用的内存(有出入)
-        if not self.is_init:
-            total = 0
-            for obj in dir(self.world):
-                total += sys.getsizeof(getattr(self.world, obj))
-            else:
-                for obj in dir(self):
-                    total += sys.getsizeof(getattr(self, obj))
-                else:
-                    return total
-        else:
-            return 0
-
     def can_place(self, block, position):
         """
         检测坐标是否能够放置方块
@@ -563,7 +549,7 @@ class Game(pyglet.window.Window):
         elif symbol == key.D:
             self.player['strafe'][1] += 1
         elif symbol == key.I:
-             if not self.ext['enable']:
+             if self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
         elif symbol == key.E:
@@ -779,7 +765,7 @@ class Game(pyglet.window.Window):
             elif self.ext['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.player['rotation']
-                mem = round(psutil.Process(os.getpid()).memory_full_info()[7] / 1048576, 2)
+                mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
                 self.label['top'].y = self.height - 60
                 self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
