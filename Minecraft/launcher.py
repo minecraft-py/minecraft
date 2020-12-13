@@ -210,7 +210,7 @@ class MinecraftLauncher(Tk):
             err_log.write('save: %s\n' % select)
             err_log.write('traceback:\n' + '=' * 34 + '\n')
             traceback.print_exc(file=err_log)
-            err_log.write('=' * 34)
+            err_log.write('=' * 34 + '\n')
             err_log.flush()
             err_log.close()
             exit(1)

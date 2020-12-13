@@ -1,3 +1,4 @@
+from ctypes import byref
 from math import floor
 from os.path import isfile, join
 
@@ -280,3 +281,65 @@ blocks['log'] = Log('log')
 blocks['missing'] = Missing('missing')
 blocks['plank'] = Plank('plank')
 blocks['sand'] = Sand('sand')
+
+_block_icon_fbo = None
+
+def get_block_icon(block, size):
+    # 3D 方块
+    global _block_icon_fbo
+    block_icon = block.group.texture.get_region(
+            int(block.texture_data[2 * 8] * 16) * size,
+            int(block.texture_data[2 * 8 + 1]) * size,
+            size, size)
+    if not isinstance(block, Block):
+        return block_icon
+    if _block_icon_fbo == None:
+        _block_icon_fbo = GLuint(0)
+        glGenFramebuffers(1, byref(_block_icon_fbo))
+    glBindFramebuffer(GL_FRAMEBUFFER, _block_icon_fbo)
+    icon_texture = pyglet.image.Texture.create(size, size, GL_RGBA)
+    glBindTexture(GL_TEXTURE_2D, icon_texture.id)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size, size, 0, GL_RGBA, GL_FLOAT, None)
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, icon_texture.id, 0)
+    viewport = (GLint * 4)()
+    glGetIntegerv(GL_VIEWPORT, viewport)
+    glViewport(0, 0, size, size)
+    glClearColor(1.0, 1.0, 1.0, 0.0)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glMatrixMode(GL_PROJECTION)
+    glPushMatrix()
+    glLoadIdentity()
+    glOrtho(-1.5, 1.5, -1.5, 1.5, -10, 10)
+    glMatrixMode(GL_MODELVIEW)
+    glPushMatrix()
+    glLoadIdentity()
+    glColor4f(1.0, 1.0, 1.0, 1.0)
+    glRotatef(-45.0, 0.0, 1.0, 0.0)
+    glRotatef(-30.0, -1.0, 0.0, 1.0)
+    glScalef(1.5, 1.5, 1.5)
+    glEnable(GL_DEPTH_TEST)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    vertex_data = block.get_vertices(0, 0, 0)
+    texture_data = block.texture_data
+    count = len(texture_data) // 2
+    batch = pyglet.graphics.Batch()
+    if hasattr(block, 'get_color'):
+        batch.add(count, GL_QUADS, block.group,
+                ('v3f/static', vertex_data),
+                ('t2f/static', texture_data),
+                ('c3f/static', block.get_color(0.5, 0.5)))
+    else:
+        batch.add(count, GL_QUADS, block.group,
+                  ('v3f/static', vertex_data),
+                  ('t2f/static', texture_data))
+    batch.draw()
+    glMatrixMode(GL_PROJECTION)
+    glPopMatrix()
+    glMatrixMode(GL_MODELVIEW)
+    glPopMatrix()
+    glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    glViewport(*viewport)
+    glClearColor(0.0, 0.0, 0.0, 1.0)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    return icon_texture.get_image_data()

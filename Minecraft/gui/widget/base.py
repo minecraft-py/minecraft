@@ -8,7 +8,8 @@ class Widget(EventDispatcher):
         self._y = y
         self._width = width
         self._height = height
-        self.push_handlers(self)
+        self._fg_group = None
+        self._bg_group = None
 
     @property
     def position(self):
@@ -33,21 +34,37 @@ class Widget(EventDispatcher):
     def _check_hit(self, x, y):
         return self._x < x < self._x + self._width and self._y < y < self._y + self._height
 
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        pass
-
-    def on_mouse_scroll(self, x, y, mouse, direction):
-        pass
-
     def on_mouse_press(self, x, y, buttons, modifiers):
         pass
 
     def on_mouse_release(self, x, y, buttons, modifiers):
         pass
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        pass
 
-Widget.register_event_type('on_mouse_drag')
-Widget.register_event_type('on_mouse_motion')
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        pass
+
+    def on_mouse_scroll(self, x, y, mouse, direction):
+        pass
+
+    def on_text(self, text):
+        pass
+
+    def on_text_motion(self, motion):
+        pass
+
+    def on_text_motion_select(self, motion):
+        pass
+
+
 Widget.register_event_type('on_mouse_press')
 Widget.register_event_type('on_mouse_release')
+Widget.register_event_type('on_mouse_motion')
+Widget.register_event_type('on_mouse_drag')
 Widget.register_event_type('on_mouse_scroll')
+Widget.register_event_type('on_text')
+Widget.register_event_type('on_text_motion')
+Widget.register_event_type('on_text_motion_select')
+

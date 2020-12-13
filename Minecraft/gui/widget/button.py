@@ -26,7 +26,6 @@ class Button(Widget):
         self._sprite.draw()
 
     def on_mouse_press(self, x, y, buttons, modifiers):
-        print('p')
         if self._check_hit(x, y):
             self._sprite.image = self._pressed_img
             self._pressed = True

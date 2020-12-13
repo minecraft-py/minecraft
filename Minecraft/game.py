@@ -91,7 +91,7 @@ class Game(pyglet.window.Window):
         # y 轴的加速度
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'stone', 'log', 'brick', 'leaf', 'plank', 'craft_table']
+        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table']
         # 玩家手持的方块
         self.block = 0
         # 数字键列表
@@ -191,6 +191,7 @@ class Game(pyglet.window.Window):
         # 工具栏
         self.hud['hotbar'] = HotBar()
         self.hud['hotbar'].set_index(self.block)
+        self.hud['hotbar'].set_all(self.inventory)
         # 经验条
         self.hud['xpbar'] = XPBar()
         
@@ -562,7 +563,7 @@ class Game(pyglet.window.Window):
         elif symbol == key.D:
             self.player['strafe'][1] += 1
         elif symbol == key.I:
-             if self.ext['enable']:
+             if not self.ext['enable']:
                 self.ext['debug'] = not self.ext['debug']
                 self.ext['position'] = False
         elif symbol == key.E:
@@ -706,7 +707,7 @@ class Game(pyglet.window.Window):
         glRotatef(x, 0, 1, 0)
         glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
         x, y, z = self.player['position']
-        glTranslatef(-x, -y, -z)
+        glTranslatef(-x, -y + (0.1 if self.player['stealing'] else 0), -z)
 
     def on_draw(self):
         # 当 pyglet 在画布上绘图时调用
