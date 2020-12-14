@@ -14,7 +14,7 @@ from Minecraft.gui.xpbar import XPBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
-from Minecraft.gui.widget.button import Button
+from Minecraft.menu import PauseMenu
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
 from Minecraft.world.world import World
@@ -127,6 +127,8 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 天空颜色变换
         pyglet.clock.schedule_interval(change_sky_color, 7.5)
+        # 设置图标
+        self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         log_info('welcome %s' % player['name'])
 
     def can_place(self, block, position):
@@ -180,6 +182,10 @@ class Game(pyglet.window.Window):
         self.hud['hotbar'].set_all(self.inventory)
         # 经验条
         self.hud['xpbar'] = XPBar()
+        # 菜单
+        self.menu = {}
+        self.menu['pause'] = PauseMenu(self)
+        self.menu['pause'].frame.enable(True)
         
     def save(self, dt):
         """
@@ -474,6 +480,8 @@ class Game(pyglet.window.Window):
         :param: button 哪个按键被按下: 1 = 左键, 4 = 右键
         :param: modifiers 表示单击鼠标按钮时按下的任何修改键的数字
         """
+        for menu in self.menu.values():
+            menu.frame.on_mouse_press(x, y, button, modifiers)
         if self.exclusive:
             vector = self.get_sight_vector()
             now, previous = self.world.hit_test(self.player['position'], vector)
@@ -495,6 +503,11 @@ class Game(pyglet.window.Window):
                 pass
         elif not self.player['die'] and not self.player['in_hud']:
             self.set_exclusive_mouse(True)
+            self.menu['pause'].frame.enable(False)
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        for menu in self.menu.values():
+            menu.frame.on_mouse_release(x, y, button, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
         """
@@ -503,6 +516,8 @@ class Game(pyglet.window.Window):
         :param: x, y 鼠标点击时的坐标, 如果被捕获的话它们总是在屏幕中央
         :param: dx, dy 鼠标移动的距离
         """
+        for menu in self.menu.values():
+            menu.frame.on_mouse_motion(x, y, dx, dy)
         if self.exclusive and not self.player['die']:
             m = 0.1
             x, y = self.player['rotation']
@@ -577,6 +592,7 @@ class Game(pyglet.window.Window):
         elif symbol == key.ESCAPE:
             self.save(0)
             self.set_exclusive_mouse(False)
+            self.menu['pause'].frame.enable()
             if self.player['die']:
                 self.close()
         elif symbol == key.TAB:
@@ -665,6 +681,8 @@ class Game(pyglet.window.Window):
             self.hud['hunger'].resize(self.width, self.height)
             self.hud['hotbar'].resize(self.width, self.height)
             self.hud['xpbar'].resize(self.width, self.height)
+            for menu in self.menu.values():
+                menu.frame.on_resize(width, height)
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -709,6 +727,11 @@ class Game(pyglet.window.Window):
                 self.hud['hotbar'].draw()
                 self.hud['xpbar'].draw()
                 self.draw_reticle()
+                if not self.player['in_hud'] and not self.exclusive:
+                    self.full_screen.color = (0, 0, 0)
+                    self.full_screen.opacity = 100
+                    self.full_screen.draw()
+                    self.menu['pause'].frame.draw()
                 if self.player['in_hud'] or not self.exclusive:
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
@@ -722,7 +745,6 @@ class Game(pyglet.window.Window):
         self.set_2d()
         if not self.player['hide_hud']:
             self.draw_label()
-
         if self.is_init:
             self.world.init_world()
             self.run_js('onInit')

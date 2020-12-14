@@ -14,6 +14,7 @@ from Minecraft.archiver import load_window
 from Minecraft.repair import repair_archive
 from Minecraft.source import lang, path, settings
 from Minecraft.utils.utils import *
+log_info('start launcher')
 
 import pyglet
 

@@ -8,8 +8,6 @@ class Widget(EventDispatcher):
         self._y = y
         self._width = width
         self._height = height
-        self._fg_group = None
-        self._bg_group = None
 
     @property
     def position(self):
@@ -47,6 +45,9 @@ class Widget(EventDispatcher):
         pass
 
     def on_mouse_scroll(self, x, y, mouse, direction):
+        pass
+
+    def on_resize(self, width, height):
         pass
 
     def on_text(self, text):

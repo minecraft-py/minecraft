@@ -12,7 +12,7 @@ class Button(Widget):
 
     def __init__(self, x, y, width, height, text):
         win_width, win_height = get_size()
-        super().__init__(x, y, width, 40)
+        super().__init__(x, win_height - y, width, 40)
         self._width = width
         self._heiglt = height
         self._depressed_img = image.load(join(path['texture.ui'], 'button.png'))
@@ -33,14 +33,20 @@ class Button(Widget):
 
     def on_mouse_release(self, x, y, buttons, modifiers):
         if self._pressed:
-            self._sprite = self._depressed_img
+            self._sprite.image = self._depressed_img
             self._pressed = False
             self.dispatch_event('on_release')
 
     def on_mouse_motion(self, x, y, dx, dy):
         if not self._pressed:
             if self._check_hit(x, y):
+                self._sprite.image = self._pressed_img
+            else:
                 self._sprite.image = self._depressed_img
+
+    def on_resize(self, width, height):
+        self._x = self._sprite.x = width - self._x
+        self._y = self._sprite.y = height - self._y
 
 
 Button.register_event_type('on_press')

@@ -72,3 +72,5 @@ class HotBar(GUI):
                 self._element[i].position = (width - 450) // 2 + 50 * i, 5
             else:
                 self._element[i].position = (width - 450) // 2 + 50 * i - 5, 3
+        for i in range(len(self._item)):
+            self._item[i].position = (width - 450) // 2 + 50 * i + 1, 8
