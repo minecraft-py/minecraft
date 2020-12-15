@@ -39,7 +39,7 @@ class TextEntry(Widget):
         self._caret.visible = value
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if not self._check_hit(x, y):
+        if not self.check_hit(x, y):
             self._set_focus(False)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
@@ -47,7 +47,7 @@ class TextEntry(Widget):
             self._caret.on_mouse_drag(x, y, dx, dy, buttons, modifiers)
 
     def on_mouse_press(self, x, y, buttons, modifiers):
-        if self._check_hit(x, y):
+        if self.check_hit(x, y):
             self._set_focus(True)
             self._caret.on_mouse_press(x, y, buttons, modifiers)
 

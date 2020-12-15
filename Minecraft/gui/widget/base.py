@@ -29,7 +29,7 @@ class Widget(EventDispatcher):
     def height(self):
         return self._height
 
-    def _check_hit(self, x, y):
+    def check_hit(self, x, y):
         return self._x < x < self._x + self._width and self._y < y < self._y + self._height
 
     def on_mouse_press(self, x, y, buttons, modifiers):

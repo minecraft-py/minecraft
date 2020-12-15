@@ -481,7 +481,8 @@ class Game(pyglet.window.Window):
         :param: modifiers 表示单击鼠标按钮时按下的任何修改键的数字
         """
         for menu in self.menu.values():
-            menu.frame.on_mouse_press(x, y, button, modifiers)
+            if menu.frame.on_mouse_press(x, y, button, modifiers):
+                return
         if self.exclusive:
             vector = self.get_sight_vector()
             now, previous = self.world.hit_test(self.player['position'], vector)
@@ -502,8 +503,7 @@ class Game(pyglet.window.Window):
             elif button == pyglet.window.mouse.MIDDLE and block and previous:
                 pass
         elif not self.player['die'] and not self.player['in_hud']:
-            self.set_exclusive_mouse(True)
-            self.menu['pause'].frame.enable(False)
+            pass
 
     def on_mouse_release(self, x, y, button, modifiers):
         for menu in self.menu.values():
