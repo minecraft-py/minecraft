@@ -504,7 +504,7 @@ class Game(pyglet.window.Window):
                 pass
         elif not self.player['die'] and not self.player['in_hud']:
             pass
-
+        
     def on_mouse_release(self, x, y, button, modifiers):
         for menu in self.menu.values():
             menu.frame.on_mouse_release(x, y, button, modifiers)

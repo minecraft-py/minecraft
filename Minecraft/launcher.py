@@ -202,6 +202,8 @@ class MinecraftLauncher(Tk):
             game.set_name(select)
             setup()
             pyglet.app.run()
+        except SystemExit:
+            pass
         except:
             name = '%d.log' % int(time.time())
             log_err('catch error, saved in: log/%s' % name)

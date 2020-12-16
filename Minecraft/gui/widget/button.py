@@ -49,7 +49,7 @@ class Button(Widget):
 
     def on_resize(self, width, height):
         self._x *= width / self._size[0]
-        self._y *= height / self._size[1]
+        self._y = (height / self._size[1]) * self._y
         self._size = width, height
         self._sprite.position = self._x, height - self._y
         self._label.x = self._x + self._width / 2
