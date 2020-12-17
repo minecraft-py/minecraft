@@ -1,5 +1,6 @@
 from Minecraft.gui.frame import DialogueFrame
 from Minecraft.gui.widget.button import Button
+from Minecraft.source import lang
 from Minecraft.utils.utils import *
 
 import pyglet
@@ -10,8 +11,8 @@ class PauseMenu():
     def __init__(self, window):
         self.window = window
         self.frame = DialogueFrame(self.window)
-        self._back_button = Button((self.window.width - 200) / 2, 100, 200, 40, 'Back to game')
-        self._exit_button = Button((self.window.width - 200) / 2, 150, 200, 40, 'Exit')
+        self._back_button = Button((self.window.width - 200) / 2, 100, 200, 40, lang['game.pause_menu.back_to_game'])
+        self._exit_button = Button((self.window.width - 200) / 2, 150, 200, 40, lang['game.pause_menu.exit'])
 
         def on_back_press():
             self.window.set_exclusive_mouse(True)

@@ -1,6 +1,8 @@
 {
 	"describe": "中文(繁體)",
-	"game.text.die": "你失敗了",
+	"game.pause_menu.back_to_game": "返回遊戲",
+	"game.pause_menu.exit": "退出",
+	"game.text.die": "你死了",
 	"game.text.die.fall_into_void": "%s 墜入了虛空",
 	"game.text.die.no_oxygen": "%s沒有氧氣可以呼吸了",
 	"game.text.loading": "初始化...",

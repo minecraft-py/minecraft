@@ -236,20 +236,32 @@ class Dirt(Block):
 class Grass(Block):
     textures = 'grass_top',
     colorizer = BlockColorizer('grass')
+    item_colorizer = BlockColorizer('evergreen')
 
     def get_color(self, temperature, humidity):
         color = []
         color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
+        return color
+    
+    def get_item_color(self, temperature, humidity):
+        color = []
+        color.extend(list(self.item_colorizer.get_color(temperature, humidity)) * 24)
         return color
 
 
 class Leaf(Block):
     textures = 'leaves_oak',
     colorizer = BlockColorizer('foliage')
+    item_colorizer = BlockColorizer('evergreen')
 
     def get_color(self, temperature, humidity):
         color = []
         color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
+        return color
+
+    def get_item_color(self, temperature, humidity):
+        color = []
+        color.extend(list(self.item_colorizer.get_color(temperature, humidity)) * 24)
         return color
 
 
@@ -324,11 +336,11 @@ def get_block_icon(block, size):
     texture_data = block.texture_data
     count = len(texture_data) // 2
     batch = pyglet.graphics.Batch()
-    if hasattr(block, 'get_color'):
+    if hasattr(block, 'get_item_color'):
         batch.add(count, GL_QUADS, block.group,
                 ('v3f/static', vertex_data),
                 ('t2f/static', texture_data),
-                ('c3f/static', block.get_color(0.5, 0.5)))
+                ('c3f/static', block.get_item_color(0, 0)))
     else:
         batch.add(count, GL_QUADS, block.group,
                   ('v3f/static', vertex_data),

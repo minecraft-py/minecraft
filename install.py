@@ -30,7 +30,7 @@ def copy():
 def install():
     # 下载依赖项
     print('[Install requirements]')
-    code = system('pip install -U -r requirements.txt')
+    code = system('pip3 install -U -r requirements.txt')
     if code != 0:
         print('pip raise error code: %d' % code)
         exit(1)

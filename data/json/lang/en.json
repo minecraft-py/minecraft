@@ -1,5 +1,7 @@
 {
 	"describe": "English",
+	"game.pause_menu.back_to_game": "Back to game",
+	"game.pause_menu.exit": "Exit",
 	"game.text.die": "You die",
 	"game.text.die.fall_into_void": "%s falling into the void",
 	"game.text.die.no_oxygen": "%s don't have oxygen to breath",
