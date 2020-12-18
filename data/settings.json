@@ -1,5 +1,6 @@
 {
 	"fov": 70,
 	"lang": "en",
+	"resource-pack": "default",
 	"use-theme": "arc"
 }

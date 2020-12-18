@@ -19,14 +19,14 @@ class HotBar(GUI):
         self._items = []
         self._item = []
         self.start = Sprite(image.load(join(path['texture.ui'], 'hotbar_start.png')),
-                x=(width - 450) // 2 - 2, y=5)
+                x=(width - 450) / 2 - 2, y=5)
         self.start.scale = 2.5
         self.end = Sprite(image.load(join(path['texture.ui'], 'hotbar_end.png')),
-                x=(width - 450) // 2 + 450, y=5)
+                x=(width - 450) / 2 + 450, y=5)
         self.end.scale = 2.5
         for i in range(9):
             self._element.append(Sprite(image.load(join(path['texture.ui'], 'hotbar_%d.png' % i)),
-                x=(width - 450) // 2 + 50 * i, y=5))
+                x=(width - 450) / 2 + 50 * i, y=5))
             self._element[i].scale = 2.5
         self.set_index(0)
 
@@ -47,7 +47,7 @@ class HotBar(GUI):
         for item in range(len(self._items)):
             if item <= len(self._element):
                 self._item.append(Sprite(get_block_icon(blocks[self._items[item]], 64),
-                    x =(width - 450) // 2 + 50 * item + 1, y=8))
+                    x =(width - 450) / 2 + 50 * item + 1, y=8))
                 self._item[item].scale = 0.75
             else:
                 return
@@ -56,21 +56,21 @@ class HotBar(GUI):
         width = get_size()[0]
         for i in range(len(self._element)):
             self._element[i] = Sprite(image.load(join(path['texture.ui'], 'hotbar_%d.png' % i)),
-                x=(width - 450) // 2 + 50 * i, y=5)
+                x=(width - 450) / 2 + 50 * i, y=5)
             self._element[i].scale = 2.5
         if 0 <= index < len(self._element):
             self._element[index] = Sprite(image.load(join(path['texture.ui'], 'hotbar_highlight.png')),
-                    x=(width - 450) // 2 + 50 * index - 5, y=3)
+                    x=(width - 450) / 2 + 50 * index - 5, y=3)
             self._element[index].scale = 2.5
             self.index = index
 
     def resize(self, width, height):
-        self.start.position = (width - 450) // 2 - 2, 5
-        self.end.position = (width - 450) // 2 + 450, 5
+        self.start.position = (width - 450) / 2 - 2, 5
+        self.end.position = (width - 450) / 2 + 450, 5
         for i in range(len(self._element)):
             if i != self.index:
-                self._element[i].position = (width - 450) // 2 + 50 * i, 5
+                self._element[i].position = (width - 450) / 2 + 50 * i, 5
             else:
-                self._element[i].position = (width - 450) // 2 + 50 * i - 5, 3
+                self._element[i].position = (width - 450) / 2 + 50 * i - 5, 3
         for i in range(len(self._item)):
-            self._item[i].position = (width - 450) // 2 + 50 * i + 1, 8
+            self._item[i].position = (width - 450) / 2 + 50 * i + 1, 8

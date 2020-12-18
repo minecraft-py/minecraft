@@ -10,13 +10,10 @@ from pyglet import resource
 path = {}
 
 path['mcpypath'] = search_mcpy()
-path['data'] = 'data'
-path['json'] = join(path['data'], 'json')
-path['json.lang'] = join(path['json'], 'lang')
 
 settings = json.load(open(join(path['mcpypath'], 'settings.json'), encoding='utf-8'))
 # 检查 settings.json 的正确性
-for key in ['fov', 'lang', 'use-theme']:
+for key in ['fov', 'lang', 'resource-pack', 'use-theme']:
     if key not in settings:
         log_err("settings.json: missing '%s' key" % key)
         exit(1)
@@ -25,8 +22,15 @@ if settings['fov'] < 50:
     settings['fov'] = 50
 elif settings['fov'] > 100:
     settings['fov'] = 100
+# resource-pack 设置
+if not isdir(join(path['mcpypath'], 'resource-pack', settings['resource-pack'])):
+    log_err("settings.json: resource package '%s' not found" % settings['resource-pack'])
+    exit(1)
+else:
+    path['pack'] = join(path['mcpypath'], 'resource-pack', settings['resource-pack'])
+    path['lang'] = join(path['pack'], 'lang')
 # lang 设置
-if not isfile(join(path['json.lang'], settings['lang'] + '.json')):
+if not isfile(join(path['lang'], settings['lang'] + '.json')):
     log_err("settings.json: language '%s' not found" % settings['lang'])
     exit(1)
 # theme 设置
@@ -44,11 +48,10 @@ else:
     exit(1)
 
 path['log'] = join(path['mcpypath'], 'log')
-path['texture'] = join(path['mcpypath'], 'texture', 'default')
+path['texture'] = join(path['pack'], 'texture')
 path['texture.hud'] = join(path['texture'], 'hud')
 path['texture.ui'] = join(path['texture'], 'ui')
-path['shaders'] = join(path['data'], 'shaders')
 path['save'] = join(path['mcpypath'], 'save')
 path['screenshot'] = join(path['mcpypath'], 'screenshot')
 
-lang = json.load(open(join(path['json.lang'], settings['lang'] + '.json'), encoding='utf-8'))
+lang = json.load(open(join(path['lang'], settings['lang'] + '.json'), encoding='utf-8'))

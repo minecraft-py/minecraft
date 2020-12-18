@@ -2,8 +2,7 @@
 
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-用 python 做开源的 Minecraft, [官网](https://minecraft-in-python.github.io), 
-[文档](https://minecraft-in-python.github.io/docs).
+用 python 做开源的 Minecraft, [官网](https://minecraft-in-python.github.io).
 
 ## 游玩
 要游玩 Minecraft, 请先在类 UNIX 的终端输入:
@@ -15,6 +14,7 @@ git clone https://gitee.com/Minecraft-in-python/Minecraft
 cd Minecraft
 ./install.py
 ```
+然后前往[Minecraft-in-python/resource-pack](https://github.com/Minecraft-in-python/resource-pack)下载资源包并安装.
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:

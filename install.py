@@ -4,7 +4,7 @@ from json import dump
 from os import environ, mkdir, path, system
 from re import match
 from shutil import copyfile, copytree, rmtree
-from sys import platform
+from sys import platform, argv
 import uuid
 
 def copy():
@@ -12,30 +12,33 @@ def copy():
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
     if not path.isfile(path.join(MCPYPATH, 'server.json')):
-        copyfile(path.join('data', 'json', 'server.json'), path.join(MCPYPATH, 'server.json'))
+        copyfile(path.join(get_dir('data'), 'server.json'), path.join(MCPYPATH, 'server.json'))
     if not path.isfile(path.join(MCPYPATH, 'settings.json')):
-        copyfile(path.join('data', 'json', 'settings.json'), path.join(MCPYPATH, 'settings.json'))
+        copyfile(path.join(get_dir('data'), 'settings.json'), path.join(MCPYPATH, 'settings.json'))
     if not path.isfile(path.join(MCPYPATH, 'window.json')):
-        copyfile(path.join('data', 'json', 'window.json'), path.join(MCPYPATH, 'window.json'))
+        copyfile(path.join(get_dir('data'), 'window.json'), path.join(MCPYPATH, 'window.json'))
     if not path.isdir(path.join(MCPYPATH, 'log')):
         mkdir(path.join(MCPYPATH, 'log'))
     if not path.isdir(path.join(MCPYPATH, 'save')):
         mkdir(path.join(MCPYPATH, 'save'))
     if not path.isdir(path.join(MCPYPATH, 'screenshot')):
         mkdir(path.join(MCPYPATH, 'screenshot'))
-    if path.isdir(path.join(MCPYPATH, 'texture', 'default')):
-        rmtree(path.join(MCPYPATH, 'texture', 'default'))
-    copytree(path.join('data', 'texture'), path.join(MCPYPATH, 'texture', 'default'))
+    if not path.isdir(path.join(MCPYPATH, 'resource-pack')):
+        mkdir(path.join(MCPYPATH, 'resource-pack'))
 
 def install():
     # 下载依赖项
-    print('[Install requirements]')
-    code = system('pip3 install -U -r requirements.txt')
-    if code != 0:
-        print('pip raise error code: %d' % code)
-        exit(1)
-    else:
-        print('install successfully')
+    if not '--no-install-requirements' in argv:
+        print('[Install requirements]')
+        if '--hide-output' in argv:
+            code = system('pip3 install -U -r requirements.txt >> %s' % path.devnull)
+        else:
+            code = system('pip3 install -U -r requirements.txt')
+        if code != 0:
+            print('pip raise error code: %d' % code)
+            exit(1)
+        else:
+            print('install successfully')
     # 注册玩家
     print('[Register]')
     register_user()
@@ -45,15 +48,8 @@ def install():
     # 完成!
     print('[Done]')
 
-def search_mcpy():
-    # 搜索文件存储位置
-    if 'MCPYPATH' in environ:
-        MCPYPATH = environ['MCPYPATH']
-    elif platform.startswith('win'):
-        MCPYPATH = path.join(path.expanduser('~'), 'mcpy')
-    else:
-        MCPYPATH = path.join(path.expanduser('~'), '.mcpy')
-    return MCPYPATH
+def get_dir(d):
+    return path.abspath(path.join(path.dirname(__file__), d))
 
 def register_user():
     # 注册
@@ -71,6 +67,16 @@ def register_user():
         print('Regsitered successfully, you can use your id to play multiplayer game!')
     else:
         print('You have regsitered!')
+
+def search_mcpy():
+    # 搜索文件存储位置
+    if 'MCPYPATH' in environ:
+        MCPYPATH = environ['MCPYPATH']
+    elif platform.startswith('win'):
+        MCPYPATH = path.join(path.expanduser('~'), 'mcpy')
+    else:
+        MCPYPATH = path.join(path.expanduser('~'), '.mcpy')
+    return MCPYPATH
 
 if __name__ == '__main__':
     install()
