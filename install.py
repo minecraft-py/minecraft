@@ -30,10 +30,14 @@ def install():
     # 下载依赖项
     if not '--no-install-requirements' in argv:
         print('[Install requirements]')
+        pip = 'pip'
+        for args in argv:
+            if args.startswith('--use-pip'):
+                pip = args[6:]
         if '--hide-output' in argv:
-            code = system('pip3 install -U -r requirements.txt >> %s' % path.devnull)
+            code = system('%s install -U -r requirements.txt >> %s' % (pip, path.devnull))
         else:
-            code = system('pip3 install -U -r requirements.txt')
+            code = system('%s install -U -r requirements.txt' % pip)
         if code != 0:
             print('pip raise error code: %d' % code)
             exit(1)
