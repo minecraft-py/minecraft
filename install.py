@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from json import dump
+from json import dump, load
 from os import environ, mkdir, path, system
 from re import match
 from shutil import copyfile, copytree, rmtree
@@ -11,12 +11,9 @@ def copy():
     MCPYPATH = search_mcpy()
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
-    if not path.isfile(path.join(MCPYPATH, 'server.json')):
-        copyfile(path.join(get_dir('data'), 'server.json'), path.join(MCPYPATH, 'server.json'))
-    if not path.isfile(path.join(MCPYPATH, 'settings.json')):
-        copyfile(path.join(get_dir('data'), 'settings.json'), path.join(MCPYPATH, 'settings.json'))
-    if not path.isfile(path.join(MCPYPATH, 'window.json')):
-        copyfile(path.join(get_dir('data'), 'window.json'), path.join(MCPYPATH, 'window.json'))
+    install_json('server.json')
+    install_json('settings.json')
+    install_json('window.json')
     if not path.isdir(path.join(MCPYPATH, 'log')):
         mkdir(path.join(MCPYPATH, 'log'))
     if not path.isdir(path.join(MCPYPATH, 'save')):
@@ -53,7 +50,21 @@ def install():
     print('[Done]')
 
 def get_dir(d):
+    # 返回文件目录下的目录名
     return path.abspath(path.join(path.dirname(__file__), d))
+
+def install_json(f):
+    MCPYPATH = search_mcpy()
+    source = load(open(path.join(get_dir('data'), f)))
+    target = {}
+    if path.isfile(path.join(MCPYPATH, f)):
+        target = load(open(path.join(MCPYPATH, f)))
+    else:
+        target = {}
+    for k, v in source.items():
+        if k not in target:
+            target[k] = v
+    dump(target, open(path.join(MCPYPATH, f), 'w+'), indent='\t')
 
 def register_user():
     # 注册
