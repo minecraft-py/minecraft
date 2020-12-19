@@ -22,7 +22,7 @@ class HotBar(GUI):
                 x=(width - 450) / 2 - 2, y=5)
         self.start.scale = 2.5
         self.end = Sprite(image.load(join(path['texture.ui'], 'hotbar_end.png')),
-                x=(width - 450) / 2 + 450, y=5)
+                x=(width - 450) / 2 + 448, y=5)
         self.end.scale = 2.5
         for i in range(9):
             self._element.append(Sprite(image.load(join(path['texture.ui'], 'hotbar_%d.png' % i)),
