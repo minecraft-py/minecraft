@@ -6,6 +6,7 @@ from re import match
 from shutil import copyfile, copytree, rmtree
 from sys import platform, argv
 import uuid
+from zipfile import ZipFile
 
 def copy():
     MCPYPATH = search_mcpy()
@@ -22,6 +23,9 @@ def copy():
         mkdir(path.join(MCPYPATH, 'screenshot'))
     if not path.isdir(path.join(MCPYPATH, 'resource-pack')):
         mkdir(path.join(MCPYPATH, 'resource-pack'))
+    if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default')):
+        rmtree(path.join(MCPYPATH, 'resource-pack', 'default'))
+    ZipFile(path.join(get_dir('data'), 'pack.zip')).extractall(path.join(MCPYPATH, 'resource-pack'))
 
 def install():
     # 下载依赖项
