@@ -89,9 +89,9 @@ FACES = [
 
 VERSION = {
         'major': 0,
-        'minor': 2,
+        'minor': 3,
         'patch': 0,
-        'str': '0.2'
+        'str': '0.3'
         }
 
 TICKS_PER_SEC = 60
