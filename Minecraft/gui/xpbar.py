@@ -13,7 +13,7 @@ class XPBar(GUI):
     def __init__(self):
         width, height = get_size()
         GUI.__init__(self, width, height)
-        self._xp_bar = Sprite(image.load(join(path['texture.ui'], 'xpbar_empty.png')), x=(width - 450) / 2 + 3, y=66)
+        self._xp_bar = Sprite(image.load(join(path['texture.ui'], 'xpbar_empty.png')), x=(width - 450) / 2, y=66)
         self._xp_bar.scale_y = 2
         self._xp_bar.scale_x = 450 / 182
 
@@ -21,4 +21,4 @@ class XPBar(GUI):
         self._xp_bar.draw()
 
     def resize(self, width, height):
-        self._xp_bar.position = (width - 450) / 2 + 3, 66
+        self._xp_bar.position = (width - 450) / 2, 66

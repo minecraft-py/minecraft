@@ -14,7 +14,6 @@ git clone https://gitee.com/Minecraft-in-python/Minecraft
 cd Minecraft
 ./install.py
 ```
-然后前往[Minecraft-in-python/resource-pack](https://github.com/Minecraft-in-python/resource-pack)下载资源包并安装.
 
 # 最终目标
 下面这个 TODO 列表是 Minecraft 要实现的功能:

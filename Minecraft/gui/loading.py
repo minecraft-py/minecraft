@@ -14,18 +14,20 @@ class Loading(GUI):
     def __init__(self):
         width, height = get_size()
         GUI.__init__(self, width, height)
-        self.loading = Sprite(image.load(join(path['texture'], 'loading.png')))
-        self.loading.x = 0
-        self.loading.y = 0
-        self.loading.scale_x = width / self.loading.width
-        self.loading.scale_y = height / self.loading.height
+        self._element = []
+        self._img = image.load(join(path['texture.ui'], 'bg32.png'))
+        for x in range(width // self._img.width + 1):
+            for y in range(height // self._img.height + 1):
+                sprite = Sprite(self._img, x=x * self._img.width, y = y * self._img.height)
+                self._element.append(sprite)
 
     def resize(self, width, height):
-        self.loading.x = 0
-        self.loading.y = 0
-        self.loading.scale_x = width / self.loading.width
-        self.loading.scale_y = height / self.loading.height
+        self._element = []
+        for x in range(width // self._img.width + 1):
+            for y in range(height // self._img.height + 1):
+                sprite = Sprite(self._img, x=x * self._img.width, y = y * self._img.height)
+                self._element.append(sprite)
 
     def draw(self):
-        self.loading.draw()
-
+        for i in self._element:
+            i.draw()

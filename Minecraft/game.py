@@ -155,17 +155,16 @@ class Game(pyglet.window.Window):
         """
         if not self.player['die']:
             if self.player['position'][1] < -64:
-                self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
-                log_info('%s die: %s' % (player['name'], self.player['die_reason']))
                 self.player['die'] = True
                 self.dialogue.add_dialogue(self.player['die_reason']) 
             elif self.player['position'][1] > 512:
-                self.set_exclusive_mouse(False)
                 self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
-                log_info('%s die: %s' % (player['name'], self.player['die_reason']))
                 self.player['die'] = True
+            if self.player['die']:
+                log_info('%s die: %s' % (player['name'], self.player['die_reason']))
                 self.dialogue.add_dialogue(self.player['die_reason'])
+                self.set_exclusive_mouse(False)
 
     def init_player(self):
         # 初始化玩家
