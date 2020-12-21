@@ -25,7 +25,7 @@ def copy():
         mkdir(path.join(MCPYPATH, 'resource-pack'))
     if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default')):
         rmtree(path.join(MCPYPATH, 'resource-pack', 'default'))
-    ZipFile(path.join(get_dir('data'), 'pack.zip')).extractall(path.join(MCPYPATH, 'resource-pack'))
+    ZipFile(path.join(get_file('data'), 'pack.zip')).extractall(path.join(MCPYPATH, 'resource-pack'))
 
 def install():
     # 下载依赖项
@@ -45,7 +45,6 @@ def install():
         else:
             print('install successfully')
     # 注册玩家
-    print('[Register]')
     register_user()
     # 复制运行所需的文件
     print('[Copy lib]')
@@ -53,13 +52,13 @@ def install():
     # 完成!
     print('[Done]')
 
-def get_dir(d):
-    # 返回文件目录下的目录名
-    return path.abspath(path.join(path.dirname(__file__), d))
+def get_file(f):
+    # 返回文件目录下的文件名
+    return path.abspath(path.join(path.dirname(__file__), f))
 
 def install_json(f):
     MCPYPATH = search_mcpy()
-    source = load(open(path.join(get_dir('data'), f)))
+    source = load(open(path.join(get_file('data'), f)))
     target = {}
     if path.isfile(path.join(MCPYPATH, f)):
         target = load(open(path.join(MCPYPATH, f)))
@@ -72,20 +71,21 @@ def install_json(f):
 
 def register_user():
     # 注册
-    if 'MCPYPATH' not in environ:
-        environ['MCPYPATH'] = search_mcpy()
-    if not path.isdir(environ['MCPYPATH']):
-        mkdir(environ['MCPYPATH'])
-    if not path.isfile(path.join(environ['MCPYPATH'], 'player.json')):
-        player_id = str(uuid.uuid4())
-        print('Your uuid is %s, do not change it' % player_id)
-        player_name = ''
-        while not match(r'^([a-z]|[A-Z]|_)\w+$', player_name):
-            player_name = input('Your name: ')
-        dump({'id': player_id, 'name': player_name}, open(path.join(environ['MCPYPATH'], 'player.json'), 'w+'), indent='\t')
-        print('Regsitered successfully, you can use your id to play multiplayer game!')
-    else:
-        print('You have regsitered!')
+    if '--skip-register' not in argv:
+        print('[Register]')
+        MCPYPATH = search_mcpy()
+        if not path.isdir(MCPYPATH):
+            mkdir(MCPYPATH)
+        if not path.isfile(path.join(MCPYPATH, 'player.json')):
+            player_id = str(uuid.uuid4())
+            print('Your uuid is %s, do not change it' % player_id)
+            player_name = ''
+            while not match(r'^([a-z]|[A-Z]|_)\w+$', player_name):
+                player_name = input('Your name: ')
+            dump({'id': player_id, 'name': player_name}, open(path.join(MCPYPATH, 'player.json'), 'w+'), indent='\t')
+            print('Regsitered successfully, you can use your id to play multiplayer game!')
+        else:
+            print('You have regsitered!')
 
 def search_mcpy():
     # 搜索文件存储位置
