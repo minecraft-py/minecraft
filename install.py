@@ -4,7 +4,7 @@ from json import dump, load
 from os import environ, mkdir, path, system
 from re import match
 from shutil import copyfile, copytree, rmtree
-from sys import platform, argv
+from sys import executable, platform, argv
 import uuid
 from zipfile import ZipFile
 
@@ -31,10 +31,7 @@ def install():
     # 下载依赖项
     if not '--no-install-requirements' in argv:
         print('[Install requirements]')
-        pip = 'pip'
-        for args in argv:
-            if args.startswith('--use-pip'):
-                pip = args[6:]
+        pip = executable + ' -m pip'
         if '--hide-output' in argv:
             code = system('%s install -U -r requirements.txt >> %s' % (pip, path.devnull))
         else:
