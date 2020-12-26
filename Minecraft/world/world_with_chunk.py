@@ -91,8 +91,9 @@ class World(object):
         self.chunk[chunk[0], chunk[2]].add_block(position, block, immediate, record)
 
     def add_chunk(self, position):
-        self.chunk[position] = Chunk(*position, 0, self)
+        self.chunk[position] = Chunk(position[0], position[1], 0, self)
         self.chunk[position].init_chunk()
+        self.chunk[position].show_blocks()
 
     def remove_block(self, position, immediate=True, record=True):
         """

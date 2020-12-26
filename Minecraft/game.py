@@ -85,7 +85,7 @@ class Game(pyglet.window.Window):
         # rotation = (水平角 x, 俯仰角 y)
         self.player['rotation'] = (0, 0)
         # 玩家所处的区域
-        self.sector = sectorize(self.player['position'])
+        self.sector = None
         # 这个十字在屏幕中央
         self.reticle = None
         # y 轴的加速度
@@ -153,6 +153,7 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
+        return
         if not self.player['die']:
             if self.player['position'][1] < -64:
                 self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
