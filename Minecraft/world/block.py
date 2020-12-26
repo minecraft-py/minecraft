@@ -99,6 +99,8 @@ class Block():
     front_texture = None
     # 四边贴图
     side_texture = ()
+    # 方块信息
+    info = None
     # 硬度
     hardness = 1
 
@@ -193,7 +195,7 @@ class Block():
         pass
 
 
-class BlockColorizer:
+class BlockColorizer():
     def __init__(self, name):
         self.color_data = image.load(join(path['texture'], 'colormap', name + '.png'))
         if self.color_data is None:
@@ -294,21 +296,21 @@ blocks['missing'] = Missing('missing')
 blocks['plank'] = Plank('plank')
 blocks['sand'] = Sand('sand')
 
-_block_icon_fbo = None
+_fbo = None
 
 def get_block_icon(block, size):
     # 3D 方块
-    global _block_icon_fbo
+    global _fbo
     block_icon = block.group.texture.get_region(
             int(block.texture_data[2 * 8] * 16) * size,
             int(block.texture_data[2 * 8 + 1]) * size,
             size, size)
     if not isinstance(block, Block):
         return block_icon
-    if _block_icon_fbo == None:
-        _block_icon_fbo = GLuint(0)
-        glGenFramebuffers(1, byref(_block_icon_fbo))
-    glBindFramebuffer(GL_FRAMEBUFFER, _block_icon_fbo)
+    if _fbo == None:
+        _fbo = GLuint(0)
+        glGenFramebuffers(1, byref(_fbo))
+    glBindFramebuffer(GL_FRAMEBUFFER, _fbo)
     icon_texture = pyglet.image.Texture.create(size, size, GL_RGBA)
     glBindTexture(GL_TEXTURE_2D, icon_texture.id)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size, size, 0, GL_RGBA, GL_FLOAT, None)
@@ -329,7 +331,6 @@ def get_block_icon(block, size):
     glRotatef(-45.0, 0.0, 1.0, 0.0)
     glRotatef(-30.0, -1.0, 0.0, 1.0)
     glScalef(1.5, 1.5, 1.5)
-    glEnable(GL_DEPTH_TEST)
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     vertex_data = block.get_vertices(0, 0, 0)

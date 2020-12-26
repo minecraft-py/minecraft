@@ -29,13 +29,13 @@ def copy():
 
 def install():
     # 下载依赖项
-    if not '--no-install-requirements' in argv:
+    if '--no-install-requirements' not in argv:
         print('[Install requirements]')
         pip = executable + ' -m pip'
         if '--hide-output' in argv:
-            code = system('%s install -U -r requirements.txt >> %s' % (pip, path.devnull))
+            code = system('%s install -U -r %s >> %s' % (pip, get_file('requirements.txt'), path.devnull))
         else:
-            code = system('%s install -U -r requirements.txt' % pip)
+            code = system('%s install -U -r %s' % (pip, get_file('requirements.txt')))
         if code != 0:
             print('pip raise error code: %d' % code)
             exit(1)

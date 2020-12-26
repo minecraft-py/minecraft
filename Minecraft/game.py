@@ -17,7 +17,7 @@ from Minecraft.gui.loading import Loading
 from Minecraft.menu import PauseMenu
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
-from Minecraft.world.world import World
+from Minecraft.world.world_with_chunk import World
 from Minecraft.utils.utils import *
 
 msg = "module '{0}' not found, run `pip install {0}` to install, exit"
@@ -85,7 +85,7 @@ class Game(pyglet.window.Window):
         # rotation = (水平角 x, 俯仰角 y)
         self.player['rotation'] = (0, 0)
         # 玩家所处的区域
-        self.sector = None
+        self.sector = sectorize(self.player['position'])
         # 这个十字在屏幕中央
         self.reticle = None
         # y 轴的加速度
@@ -192,7 +192,7 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
-        archiver.save_block(self.name, self.world.change)
+        # archiver.save_block(self.name, self.world.change)
         archiver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
         archiver.save_info(self.name, 0, get_time())
 
@@ -210,8 +210,8 @@ class Game(pyglet.window.Window):
 
     def _js_getBlock(self, x, y, z):
         # getBlock 的 javascript 函数定义
-        if (x, y, z) in self.world.world:
-            return self.world.world[(x, y, z)]
+        if self.world.get((x, y, z)) is not None:
+            return self.world.get((x, y, z))
         else:
             return 'air'
 
@@ -284,6 +284,7 @@ class Game(pyglet.window.Window):
         # 读取玩家位置和背包
         data = archiver.load_player(self.name)
         self.player['position'] = data['position']
+        self.sector = sectorize(self.player['position'])
         self.player['respawn_position'] = data['respawn']
         self.block = data['now_block']
         # 读取世界数据
@@ -372,13 +373,12 @@ class Game(pyglet.window.Window):
         self.dialogue.update()
         sector = sectorize(self.player['position'])
         if sector != self.sector:
-            self.world.change_sectors(self.sector, sector)
+            self.world.change_chunk(self.sector, sector)
             if self.sector is None:
                 self.world.process_entire_queue()
             self.sector = sector
         m = 8
         dt = min(dt, 0.2)
-        
         for _ in range(m):
             self._update(dt / m)
 
@@ -391,16 +391,16 @@ class Game(pyglet.window.Window):
                     # 以玩家为中心的 32*32*4 范围
                     area.append((x, y, z))
         else:
-            for position in [exist for exist in area if exist in self.world.world]:
-                block = self.world.world[position]
+            for position in [exist for exist in area if self.world.get(exist) is not None]:
+                block = self.world.get(position)
                 if block.name == 'dirt' and random.randint(0, 10) == 10:
                     for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                         pos = (position[0] + x, position[1], position[2] + z)
-                        if pos in self.world.world:
-                            if self.world.world[pos].name == 'grass' and (pos[0], pos[1] + 1, pos[2]) not in self.world.world:
+                        if self.world.get(pos) is not None:
+                            if self.world.get(pos).name == 'grass' and self.world.get((pos[0], pos[1] + 1, pos[2])) is None:
                                 self.world.add_block(position, 'grass')
                 elif block.name == 'grass':
-                    if (position[0], position[1] + 1, position[2]) in self.world.world:
+                    if self.world.get((position[0], position[1] + 1, position[2])) is not None:
                         self.world.add_block(position, 'dirt')
             
     def _update(self, dt):
@@ -457,7 +457,7 @@ class Game(pyglet.window.Window):
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    if tuple(op) not in self.world.world:
+                    if self.world.get(tuple(op)) is None:
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
@@ -486,7 +486,7 @@ class Game(pyglet.window.Window):
             vector = self.get_sight_vector()
             now, previous = self.world.hit_test(self.player['position'], vector)
             if now:
-                block = self.world.world[now]
+                block = self.world.get(now)
             else:
                 return
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
@@ -718,7 +718,7 @@ class Game(pyglet.window.Window):
         if not self.is_init:
             self.set_3d()
             glColor3d(1, 1, 1)
-            self.world.batch3d.draw()
+            self.world.draw()
             self.draw_focused_block()
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
@@ -745,7 +745,7 @@ class Game(pyglet.window.Window):
         if not self.player['hide_hud']:
             self.draw_label()
         if self.is_init:
-            self.world.init_world()
+            self.world.init_world(self.player['position'])
             self.run_js('onInit')
             self.init_player()
             self.is_init = False
