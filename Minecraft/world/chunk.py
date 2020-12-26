@@ -38,7 +38,7 @@ class Chunk(object):
     def exposed(self, position):
         x, y, z = position
         for dx, dy, dz in FACES:
-            if self.world.get((x + dx, y + dy, z + dz)) is not None:
+            if self.world.get((x + dx, y + dy, z + dz)) is None:
                 return True
         else:
             return False

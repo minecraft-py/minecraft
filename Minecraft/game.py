@@ -17,7 +17,7 @@ from Minecraft.gui.loading import Loading
 from Minecraft.menu import PauseMenu
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
-from Minecraft.world.world_with_chunk import World
+from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
 msg = "module '{0}' not found, run `pip install {0}` to install, exit"
@@ -719,7 +719,7 @@ class Game(pyglet.window.Window):
         if not self.is_init:
             self.set_3d()
             glColor3d(1, 1, 1)
-            self.world.draw()
+            self.world.batch3d.draw()
             self.draw_focused_block()
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
@@ -746,7 +746,7 @@ class Game(pyglet.window.Window):
         if not self.player['hide_hud']:
             self.draw_label()
         if self.is_init:
-            self.world.init_world(self.player['position'])
+            self.world.init_world()
             self.run_js('onInit')
             self.init_player()
             self.is_init = False

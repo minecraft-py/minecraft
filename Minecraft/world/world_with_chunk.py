@@ -25,7 +25,6 @@ from pyglet import image
 class World(object):
 
     def __init__(self, name, game):
-        # 为了分开绘制3D物体和2D的 HUD, 我们需要两个 Batch
         self.batch2d = pyglet.graphics.Batch()
         # 存档名
         self.name = name
@@ -37,15 +36,16 @@ class World(object):
         self.seed = archiver.load_info(name)['seed']
 
     def init_world(self, position):
-        position = normalize(position)
-        for x in range(position[0] - 4, position[0] + 3):
-            for z in range(position[2] - 4, position[2] + 3):
-                self.add_chunk((x, z))
+        position = sectorize(normalize(position))
+        for cx in range(position[0] - 2, position[0] + 1):
+            for cz in range(position[2] - 2, position[2] + 1):
+                self.add_chunk((cx, cz))
 
     def get(self, position):
         cx, _, cz = sectorize(position)
         if (cx, cz) in self.chunk:
             return self.chunk[cx, cz].blocks.get(position, None)
+        return None
 
     def hit_test(self, position, vector, max_distance=8):
         """
@@ -73,7 +73,7 @@ class World(object):
         # 如果 position 所有的六个面旁边都有方块, 返回 False. 否则返回 True
         x, y, z = position
         for dx, dy, dz in FACES:
-            if self.get((x + dx, y + dy, z + dz)) is not None:
+            if self.get((x + dx, y + dy, z + dz)) is None:
                 return True
         else:
             return False
@@ -93,7 +93,6 @@ class World(object):
     def add_chunk(self, position):
         self.chunk[position] = Chunk(position[0], position[1], 0, self)
         self.chunk[position].init_chunk()
-        self.chunk[position].show_blocks()
 
     def remove_block(self, position, immediate=True, record=True):
         """
@@ -116,16 +115,14 @@ class World(object):
         这意味着将隐藏不可见的方块, 并显示可见的方块.
         通常在添加或删除方块时使用.
         """
-        chunk = sectors(position)
+        chunk = sectorize(position)
         self.chunk[chunk[0], chunk[2]].check_neighbors(position)
 
     def show_chunk(self, chunk):
         # 确保该区域中的方块都会被绘制
-        if chunk in self.chunk:
-            self.chunk[chunk].show_blocks()
-        else:
+        if chunk not in self.chunk:
             self.add_chunk(chunk)
-            self.chunk[chunk].show_blocks()
+        self.chunk[chunk].show_blocks()
 
     def hide_chunk(self, chunk):
         # 隐藏区域

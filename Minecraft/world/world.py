@@ -142,6 +142,9 @@ class World(object):
                     self.hide_block(position)
                 self.check_neighbors(position)
 
+    def get(self, position):
+        return self.world.get(position, None)
+
     def check_neighbors(self, position):
         """
         检查 position 周围所有的方块, 确保它们的状态是最新的.
@@ -228,7 +231,7 @@ class World(object):
             if position in self.shown:
                 self.hide_block(position, False)
 
-    def change_sectors(self, before, after):
+    def change_chunk(self, before, after):
         """
         改变玩家所在区域
 
