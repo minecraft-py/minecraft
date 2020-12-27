@@ -93,9 +93,6 @@ class World(object):
             pos = (x + dx, y + dy, z + dz)
             if  pos not in self.world:
                 return True
-            if pos in self.world:
-                if self.world[pos].transparent == True:
-                    return True
         else:
             return False
 

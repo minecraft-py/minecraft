@@ -122,7 +122,7 @@ class Game(pyglet.window.Window):
         # 检测玩家是否应该死亡
         pyglet.clock.schedule_interval(self.check_die, 1.0 / TICKS_PER_SEC)
         # 每10秒更新一次方块数据
-        pyglet.clock.schedule_interval(self.update_status, 10.0)
+        pyglet.clock.schedule_interval(self.update_status, 0.1)
         # 每30秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 天空颜色变换
@@ -193,7 +193,7 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
-        # archiver.save_block(self.name, self.world.change)
+        archiver.save_block(self.name, self.world.change)
         archiver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
         archiver.save_info(self.name, 0, get_time())
 
@@ -267,11 +267,11 @@ class Game(pyglet.window.Window):
 
     def _js_testBlock(self, x, y, z, block):
         # testBlock 的 javascript 函数定义
-        if (x, y, z) not in self.world.world and block != 'air':
+        if self.world.get((x, y, z)) is None and block != 'air':
             return False
-        elif (x, y, z) not in self.world.world and block == 'air':
+        elif self.world.get((x, y, z)) is None and block == 'air':
             return True
-        elif self.world.world[(x, y, z)].name != block:
+        elif self.world.get((x, y, z)).name != block:
             return False
         else:
             return True
@@ -355,8 +355,8 @@ class Game(pyglet.window.Window):
                 dy = 0.0
                 dz = math.sin(x_angle)
             else:
-                dy = 0.0
                 dx = math.cos(x_angle)
+                dy = 0.0
                 dz = math.sin(x_angle)
         elif self.player['flying'] and not self.dy == 0:
             dx = 0.0
@@ -385,24 +385,11 @@ class Game(pyglet.window.Window):
 
     def update_status(self, dt):
         # 这个函数定时改变世界状态
-        area = []
-        for x in range(int(self.player['position'][0]) - 16, int(self.player['position'][0]) + 17):
-            for y in range(int(self.player['position'][1]) - 2, int(self.player['position'][1]) + 3):
-                for z in range(int(self.player['position'][2]) - 16, int(self.player['position'][2]) + 17):
-                    # 以玩家为中心的 32*32*4 范围
-                    area.append((x, y, z))
-        else:
-            for position in [exist for exist in area if self.world.get(exist) is not None]:
-                block = self.world.get(position)
-                if block.name == 'dirt' and random.randint(0, 10) == 10:
-                    for x, z in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-                        pos = (position[0] + x, position[1], position[2] + z)
-                        if self.world.get(pos) is not None:
-                            if self.world.get(pos).name == 'grass' and self.world.get((pos[0], pos[1] + 1, pos[2])) is None:
-                                self.world.add_block(position, 'grass')
-                elif block.name == 'grass':
-                    if self.world.get((position[0], position[1] + 1, position[2])) is not None:
-                        self.world.add_block(position, 'dirt')
+        for sector in self.world.sectors.values():
+            blocks = random.choices(sector, k=3)
+            for block in blocks:
+                log_info('ticking: ' + str(block))
+                self.world.get(block).on_ticking(self, block)
             
     def _update(self, dt):
         """
@@ -747,7 +734,6 @@ class Game(pyglet.window.Window):
             self.draw_label()
         if self.is_init:
             self.world.init_world()
-            self.run_js('onInit')
             self.init_player()
             self.is_init = False
 

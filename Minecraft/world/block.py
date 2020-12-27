@@ -236,6 +236,11 @@ class CraftTable(Block):
 class Dirt(Block):
     textures = 'dirt',
 
+    def on_ticking(self, game, pos):
+        block = game.world.get((pos[0], pos[1] + 1, pos[2]))
+        if block == None:
+            game.world.add_block(pos, 'grass')
+
 
 class Glass(Block):
     textures = 'glass',
@@ -251,11 +256,17 @@ class Grass(Block):
         color = []
         color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
         return color
-    
+
     def get_item_color(self, temperature, humidity):
         color = []
         color.extend(list(self.item_colorizer.get_color(temperature, humidity)) * 24)
         return color
+
+    def on_ticking(self, game, pos):
+        block = game.world.get((pos[0], pos[1] + 1, pos[2]))
+        if block != None:
+            if block.transparent != True:
+                game.world.add_block(pos, 'dirt')
 
 
 class Leaf(Block):
