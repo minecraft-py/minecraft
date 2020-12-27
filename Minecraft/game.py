@@ -91,7 +91,7 @@ class Game(pyglet.window.Window):
         # y 轴的加速度
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table']
+        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'glass', 'craft_table']
         # 玩家手持的方块
         self.block = 0
         # 数字键列表

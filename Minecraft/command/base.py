@@ -10,9 +10,10 @@ class CommandBase():
     command_format = []
     namespace = 'command.base'
     
-    def __init__(self, game, command):
+    def __init__(self, game, position, command):
         self.game = game
-        self.args = get_args((game.player['position']), command, self.command_format)
+        self.position = position
+        self.args = get_args(self.position, command, self.command_format)
         if not self.args:
             self.game.dialogue.add_dialogue(lang[namespace]['args-err'])
             raise ValueError
@@ -48,7 +49,7 @@ def get_args(pos, s, f):
         for item in range(len(f)):
             if f[item] == 'block':
                 if command[item] in blocks:
-                    l.append(blocks[command[item]])
+                    l.append(command[item])
                 else:
                     return False
             elif f[item] == 'bool':

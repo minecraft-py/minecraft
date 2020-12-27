@@ -90,8 +90,12 @@ class World(object):
         # 如果 position 所有的六个面旁边都有方块, 返回 False. 否则返回 True
         x, y, z = position
         for dx, dy, dz in FACES:
-            if (x + dx, y + dy, z + dz) not in self.world:
+            pos = (x + dx, y + dy, z + dz)
+            if  pos not in self.world:
                 return True
+            if pos in self.world:
+                if self.world[pos].transparent == True:
+                    return True
         else:
             return False
 

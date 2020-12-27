@@ -101,6 +101,8 @@ class Block():
     side_texture = ()
     # 方块信息
     info = None
+    # 透明
+    transparent = False
     # 硬度
     hardness = 1
 
@@ -235,6 +237,11 @@ class Dirt(Block):
     textures = 'dirt',
 
 
+class Glass(Block):
+    textures = 'glass',
+    transparent = True
+
+
 class Grass(Block):
     textures = 'grass_top',
     colorizer = BlockColorizer('grass')
@@ -289,6 +296,7 @@ blocks['bedrock'] = Bedrock('bedrock')
 blocks['brick'] = Brick('brick')
 blocks['craft_table'] = CraftTable('craft_table')
 blocks['dirt'] = Dirt('dirt')
+blocks['glass'] = Glass('glass')
 blocks['grass'] = Grass('grass')
 blocks['leaf'] = Leaf('leaf')
 blocks['log'] = Log('log')
