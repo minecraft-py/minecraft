@@ -1,12 +1,23 @@
 from shlex import split
 
+from Minecraft.source import lang
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
 
 class CommandBase():
+
+    command_format = []
+    namespace = 'command.base'
     
-    def __init__(self):
+    def __init__(self, game, command):
+        self.game = game
+        self.args = get_args((game.player['position']), command, self.command_format)
+        if not self.args:
+            self.game.dialogue.add_dialogue(lang[namespace]['args-err'])
+            raise ValueError
+
+    def run(self):
         pass
 
 
