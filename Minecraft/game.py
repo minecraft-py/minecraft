@@ -388,7 +388,6 @@ class Game(pyglet.window.Window):
         for sector in self.world.sectors.values():
             blocks = random.choices(sector, k=3)
             for block in blocks:
-                log_info('ticking: ' + str(block))
                 self.world.get(block).on_ticking(self, block)
             
     def _update(self, dt):
