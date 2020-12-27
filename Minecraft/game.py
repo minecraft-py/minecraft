@@ -742,15 +742,12 @@ class Game(pyglet.window.Window):
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.51)
-            glColor3f(0.0, 0.0, 0.0)
-            glLineWidth(1.5)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            vertex_data = cube_vertices(x, y, z, 0.501)
+            glColor4f(1.0, 1.0, 1.0, 0.2)
             glDisable(GL_CULL_FACE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
             glEnable(GL_CULL_FACE)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-            glLineWidth(1.0)
 
     def draw_label(self):
         if not self.is_init:
