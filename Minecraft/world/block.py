@@ -105,12 +105,12 @@ class Block():
     transparent = False
     # 硬度
     hardness = 1
+    mode = ''
 
-    def __init__(self, name, width=1.0, height=1.0, mode=''):
+    def __init__(self, name, width=1.0, height=1.0):
         self.name = name
         self.width = width
         self.height = height
-        self.mode = mode
         self.update_texture()
 
     def get_texture_data(self):
@@ -320,12 +320,15 @@ _fbo = None
 def get_block_icon(block, size):
     # 3D 方块
     global _fbo
+    if hasattr(block, 'img'):
+        if not isinstance(block, Block):
+            pass
+        else:
+            return image.load(join(path['texture'], 'block', block.name + '.png'))
     block_icon = block.group.texture.get_region(
             int(block.texture_data[2 * 8] * 16) * size,
             int(block.texture_data[2 * 8 + 1]) * size,
             size, size)
-    if not isinstance(block, Block):
-        return block_icon
     if _fbo == None:
         _fbo = GLuint(0)
         glGenFramebuffers(1, byref(_fbo))

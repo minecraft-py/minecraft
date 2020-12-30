@@ -48,7 +48,7 @@ class HotBar(GUI):
             if item <= len(self._element):
                 self._item.append(Sprite(get_block_icon(blocks[self._items[item]], 64),
                     x =(width - 450) / 2 + 50 * item + 1, y=8))
-                self._item[item].scale = 0.75
+                self._item[item].scale = 48 / self._item[item].image.width
             else:
                 return
 

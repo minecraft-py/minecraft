@@ -7,13 +7,19 @@ from Minecraft.utils.utils import *
 
 class CommandBase():
 
-    command_format = []
+    formats = []
     namespace = 'command.base'
     
     def __init__(self, game, position, command):
         self.game = game
         self.position = position
-        self.args = get_args(self.position, command, self.command_format)
+        self.command = command
+        self.args = None
+        for f in self.formats:
+            args = get_args(self.position, command, f)
+            if args is not None:
+                self.args = args
+                break
         if not self.args:
             self.game.dialogue.add_dialogue(lang[namespace]['args-err'])
             raise ValueError

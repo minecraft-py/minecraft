@@ -3,7 +3,7 @@ from Minecraft.gui.widget.base import Widget
 import pyglet
 from pyglet.event import EventDispatcher
 from pyglet.gl import *
-from pyglet.graphics import OrderedGroup
+from pyglet.graphics import Batch, vertex_list
 from pyglet.text.caret import Caret
 from pyglet.text.layout import IncrementalTextLayout
 
@@ -11,6 +11,7 @@ from pyglet.text.layout import IncrementalTextLayout
 class TextEntry(Widget):
 
     def __init__(self, text, color, x, y, widget):
+        self.batch = Batch()
         self._doc = pyglet.text.document.UnformattedDocument(text)
         self._doc.set_style(0, len(self._doc.text), dict(color=(0, 0, 0, 255)))
         font = self._doc.get_font()
@@ -20,10 +21,10 @@ class TextEntry(Widget):
         y1 = y - pad
         x2 = x + width + pad
         y2 = y + height + pad
-        self._outline = batch.add(4, pyglet.gl.GL_QUADS, bg_group,
+        self._outline = vertex_list(4,
                                   ('v2i', [x1, y1, x2, y1, x2, y2, x1, y2]),
                                   ('c4B', color * 4))
-        self._layout = IncrementalTextLayout(self._doc, width, height, multiline=False, batch=batch)
+        self._layout = IncrementalTextLayout(self._doc, width, height, multiline=False, batch=self.batch)
         self._caret = Caret(self._layout)
         self._caret.visible = False
         self._layout.x = x
@@ -31,8 +32,9 @@ class TextEntry(Widget):
         self._focus = False
         super().__init__(x, y, width, height)
 
-    def _check_hit(self, x, y):
-        return self._x < x < self._x + self._width and self._y < y < self._y + self._height
+    def draw(self):
+        self._outline.draw(GL_QUADS)
+        self.batch.draw()
 
     def _set_focus(self, value):
         self._focus = value

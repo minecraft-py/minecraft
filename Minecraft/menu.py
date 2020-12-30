@@ -1,9 +1,19 @@
 from Minecraft.gui.frame import DialogueFrame
 from Minecraft.gui.widget.button import Button
+from Minecraft.gui.widget.text import TextEntry
 from Minecraft.source import lang
 from Minecraft.utils.utils import *
 
 import pyglet
+
+
+class Chat():
+
+    def __init__(self, window):
+        self.window = window
+        self.frame = DialogueFrame(self.window)
+        self._entry = TextEntry('', (0.0, 0.0, 0.0, 0.4), 0, 20, 100)
+        self.frame.add_widget(self._entry)
 
 
 class PauseMenu():

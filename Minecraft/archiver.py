@@ -27,10 +27,13 @@ def load_info(name):
 def load_player(name):
     # 读取玩家数据
     data = json.load(open(join(path['save'], name, 'player.json')))
+    position = str2pos(data.get('position', (0, 0, 0)), True)
+    position = position[0], position[1] + 1, position[2]
     return {
-                'position': str2pos(data['position'], True),
-                'respawn': str2pos(data['respawn'], True),
-                'now_block': int(data['now_block'])
+                'position': position,
+                'respawn': str2pos(data.get('respawn', (0, 0, 0)), True),
+                'rotation': data.get('rotation', (0, 0)),
+                'now_block': int(data.get('now_block', 1))
             }
 
 def load_window():
@@ -64,11 +67,12 @@ def save_info(name, day, time):
     json.dump(data, open(join(path['save'], name, 'info.json'), 'w+'), indent='\t')
 
 
-def save_player(name, position, respawn, now_block):
+def save_player(name, position, respawn, rotation, now_block):
     # 将玩家数据存入文件
     data = {}
     data['position'] = pos2str(position)
     data['respawn'] = pos2str(respawn)
+    data['rotation'] = rotation
     data['now_block'] = now_block
     json.dump(data, open(join(path['save'], name, 'player.json'), 'w+'), indent='\t')
 

@@ -91,7 +91,7 @@ class Game(pyglet.window.Window):
         # y 轴的加速度
         self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'glass', 'craft_table']
+        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table', 'glass']
         # 玩家手持的方块
         self.block = 0
         # 数字键列表
@@ -194,7 +194,8 @@ class Game(pyglet.window.Window):
         :param: dt 距上次调用的时间
         """
         archiver.save_block(self.name, self.world.change)
-        archiver.save_player(self.name, self.player['position'], self.player['respawn_position'], self.block)
+        archiver.save_player(self.name, self.player['position'], self.player['respawn_position'],
+                normalize(self.player['rotation']), self.block)
         archiver.save_info(self.name, 0, get_time())
 
     def set_exclusive_mouse(self, exclusive):
@@ -287,6 +288,7 @@ class Game(pyglet.window.Window):
         self.player['position'] = data['position']
         self.sector = sectorize(self.player['position'])
         self.player['respawn_position'] = data['respawn']
+        self.player['rotation'] = tuple(data['rotation'])
         self.block = data['now_block']
         # 读取世界数据
         self.world_info = archiver.load_info(self.name)
@@ -510,7 +512,7 @@ class Game(pyglet.window.Window):
             x, y = x + dx * m, y + dy * m
             if x >= 180:
                 x = -180
-            elif x <= -180:
+            elif x<= -180:
                 x = 180
             y = max(-90, min(90, y))
             self.player['rotation'] = (x, y)
@@ -736,6 +738,18 @@ class Game(pyglet.window.Window):
             self.init_player()
             self.is_init = False
 
+    def on_text(self, text):
+        for menu in self.menu.values():
+            menu.frame.on_text(text)
+
+    def on_text_motion(self, motion):
+        for menu in self.menu.values():
+            menu.frame.on_text_motion(motion)
+
+    def on_text_motion_select(self, motion):
+        for menu in self.menu.values():
+            menu.frame.on_text_motion_select(motion)
+
     def draw_focused_block(self):
         # 在十字线选中的方块绘制黑边
         vector = self.get_sight_vector()
@@ -797,6 +811,7 @@ def setup():
     glEnable(GL_CULL_FACE)
     glEnable(GL_BLEND)
     glEnable(GL_LINE_SMOOTH)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     # 配置 OpenGL 的雾属性

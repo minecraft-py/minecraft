@@ -39,9 +39,11 @@ def log_warn(text):
     print('%s[WARN %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
 
 def normalize(position):
-    x, y, z = position
-    x, y, z = (int(round(x)), int(round(y)), int(round(z)))
-    return (x, y, z)
+    pos = []
+    for n in position:
+        pos.append(int(round(n)))
+    else:
+        return tuple(pos)
 
 @atexit.register
 def on_exit():

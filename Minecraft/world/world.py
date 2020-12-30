@@ -121,7 +121,8 @@ class World(object):
             if immediate:
                 if self.exposed(position):
                     self.show_block(position)
-                self.check_neighbors(position)
+                if not self.world[position].transparent:
+                    self.check_neighbors(position)
 
     def remove_block(self, position, immediate=True, record=True):
         """
