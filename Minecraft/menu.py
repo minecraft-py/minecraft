@@ -1,7 +1,7 @@
 from Minecraft.gui.frame import DialogueFrame
 from Minecraft.gui.widget.button import Button
 from Minecraft.gui.widget.text import TextEntry
-from Minecraft.source import lang
+from Minecraft.source import lang, player
 from Minecraft.utils.utils import *
 
 import pyglet
@@ -12,8 +12,18 @@ class Chat():
     def __init__(self, window):
         self.window = window
         self.frame = DialogueFrame(self.window)
-        self._entry = TextEntry('', (0.0, 0.0, 0.0, 0.4), 0, 20, 100)
+        self._entry = TextEntry('', [0, 0, 0, 100], 5, 10, 400)
         self.frame.add_widget(self._entry)
+
+        def on_commit(text):
+            if text != '':
+                self.window.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
+            self.window.player['in_chat'] = False
+            self._entry.text('')
+            self.window.menu['chat'].frame.enable(False)
+            self.window.set_exclusive_mouse(True)
+
+        setattr(self._entry, 'on_commit', on_commit)
 
 
 class PauseMenu():

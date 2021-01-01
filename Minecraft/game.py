@@ -14,7 +14,7 @@ from Minecraft.gui.xpbar import XPBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
-from Minecraft.menu import PauseMenu
+from Minecraft.menu import Chat, PauseMenu
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
 from Minecraft.world.world import World
@@ -65,6 +65,7 @@ class Game(pyglet.window.Window):
         self.player['running'] = False
         self.player['die'] = False
         self.player['in_hud'] = False
+        self.player['in_chat'] = False
         self.player['hide_hud'] = False
         self.player['show_bag'] = False
         # strafe = [z, x]
@@ -100,16 +101,18 @@ class Game(pyglet.window.Window):
             key._6, key._7, key._8, key._9, key._0]
         # 这个标签在画布的上方显示
         self.label = {}
-        self.label['top'] = pyglet.text.DocumentLabel(decode_attributed(''),
+        self.label['top'] = pyglet.text.Label('',
             x=0, y=self.height - 30,width=self.width // 2, multiline=True,
             anchor_x='left', anchor_y='center')
         self.is_init = True
+        # 设置图标
+        self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         # 这个标签在画布正中偏上显示
-        self.label['center'] = pyglet.text.DocumentLabel(decode_attributed(''),
+        self.label['center'] = pyglet.text.Label('',
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
             anchor_y='center')
         # 这个标签在画布正中偏下显示
-        self.label['actionbar'] = pyglet.text.DocumentLabel(decode_attributed(''),
+        self.label['actionbar'] = pyglet.text.Label('',
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
         # 加载窗口
         self.loading = Loading()
@@ -127,8 +130,6 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 天空颜色变换
         pyglet.clock.schedule_interval(change_sky_color, 7.5)
-        # 设置图标
-        self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         log_info('welcome %s' % player['name'])
 
     def can_place(self, block, position):
@@ -186,6 +187,7 @@ class Game(pyglet.window.Window):
         self.menu = {}
         self.menu['pause'] = PauseMenu(self)
         self.menu['pause'].frame.enable(True)
+        self.menu['chat'] = Chat(self)
         
     def save(self, dt):
         """
@@ -391,7 +393,7 @@ class Game(pyglet.window.Window):
             blocks = random.choices(sector, k=3)
             for block in blocks:
                 self.world.get(block).on_ticking(self, block)
-            
+ 
     def _update(self, dt):
         """
         update() 方法的私有实现, 刷新 
@@ -539,11 +541,22 @@ class Game(pyglet.window.Window):
         :param: symbol 按下的键
         :param: modifiers 同时按下的修饰键
         """
+        if self.player['in_chat']:
+            if symbol == key.ESCAPE:
+                self.menu['chat'].frame.enable(False)
+                self.player['in_hud'] = False
+                self.set_exclusive_mouse(True)
+            return
         if symbol == key.Q:
             self.player['die'] = True
             self.player['die_reason'] = 'killed by self'
             self.set_exclusive_mouse(False)
-        if symbol == key.W:
+        elif symbol == key.T:
+            if self.exclusive:
+                self.set_exclusive_mouse(False)
+                self.player['in_chat'] = not self.player['in_chat']
+                self.menu['chat'].frame.enable()
+        elif symbol == key.W:
             self.player['strafe'][0] -= 1
         elif symbol == key.S:
             self.player['strafe'][0] += 1
@@ -577,12 +590,12 @@ class Game(pyglet.window.Window):
                 self.player['die'] = False
                 self.player['position'] = self.player['respawn_position']
                 self.set_exclusive_mouse(True)
-        elif symbol == key.ESCAPE:
-            self.save(0)
-            self.set_exclusive_mouse(False)
-            self.menu['pause'].frame.enable()
-            if self.player['die']:
-                self.close()
+        elif symbol == key.ESCAPE: 
+                self.save(0)
+                self.set_exclusive_mouse(False)
+                self.menu['pause'].frame.enable()
+                if self.player['die']:
+                    self.close()
         elif symbol == key.TAB:
             self.player['flying'] = not self.player['flying']
         elif symbol == key.LSHIFT:
@@ -614,6 +627,8 @@ class Game(pyglet.window.Window):
         
         :param: symbol 释放的键
         """
+        if self.player['in_chat']:
+            return
         if symbol == key.W:
             self.player['strafe'][0] += 1
         elif symbol == key.S:
@@ -719,7 +734,10 @@ class Game(pyglet.window.Window):
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
                     self.full_screen.draw()
-                    self.menu['pause'].frame.draw()
+                    if not self.player['in_chat']:
+                        self.menu['pause'].frame.draw()
+                    else:
+                        self.menu['chat'].frame.draw()
                 if self.player['in_hud'] or not self.exclusive:
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
@@ -768,17 +786,14 @@ class Game(pyglet.window.Window):
             self.dialogue.draw()
             if self.player['die']:
                 # 玩家死亡
-                self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 30}' +
-                        lang['game.text.die'])
-                self.label['actionbar'].document = decode_attributed('{color (0, 0, 0, 255)}{font_size 15}' +
-                        self.player['die_reason'])
+                self.label['center'].text = lang['game.text.die']
+                self.label['actionbar'].text = self.player['die_reason']
                 self.label['center'].draw()
                 self.label['actionbar'].draw()
             elif self.ext['position'] and self.exclusive:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.player['position']
-                self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps()))
+                self.label['top'].text = lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps())
                 self.label['top'].draw()
             elif self.ext['debug'] and self.exclusive:
                 x, y, z = self.player['position']
@@ -786,14 +801,12 @@ class Game(pyglet.window.Window):
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
                 self.label['top'].y = self.height - 60
-                self.label['top'].document = decode_attributed('{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' +
-                        '\n\n'.join(lang['game.text.debug']) % (VERSION['str'], x, y, z, rx, ry, mem, fps))
+                self.label['top'].text = '\n'.join(lang['game.text.debug']) % (VERSION['str'], x, y, z, rx, ry, mem, fps)
                 self.label['top'].draw()
         else:
             # 初始化屏幕
             self.loading.draw()
-            self.label['center'].document = decode_attributed('{color (255, 255, 255, 255)}{font_size 15}' +
-                    lang['game.text.loading'])
+            self.label['center'].text = lang['game.text.loading']
             self.label['center'].draw()
 
     def draw_reticle(self):
@@ -811,9 +824,11 @@ def setup():
     glEnable(GL_CULL_FACE)
     glEnable(GL_BLEND)
     glEnable(GL_LINE_SMOOTH)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glBlendFunc(GL_ONE, GL_ONE)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
     # 配置 OpenGL 的雾属性
     glEnable(GL_FOG)
     glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))

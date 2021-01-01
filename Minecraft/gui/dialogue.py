@@ -1,5 +1,4 @@
 import pyglet
-from pyglet.text import decode_attributed
 
 import time
 
@@ -13,7 +12,7 @@ class Dialogue(GUI):
     def __init__(self):
         width, height = get_size()
         GUI.__init__(self, width, height)
-        self.dialogue_label = pyglet.text.DocumentLabel(decode_attributed(''),
+        self.dialogue_label = pyglet.text.Label('',
                 x=0, y=height - 75, width=width // 2, multiline=True)
         # 全部聊天内容
         self.dialogue = []
@@ -23,12 +22,6 @@ class Dialogue(GUI):
         self.last = time.time()
 
     def add_dialogue(self, text):
-        try:
-            decode_attributed(text)
-        except:
-            text = '{color (255, 0, 0, 255)}decode error'
-        else:
-            pass
         self.dialogue.append(text)
         self.last = time.time()
         if len(self.shown) < 10:
@@ -41,10 +34,9 @@ class Dialogue(GUI):
         # 两个换行符表示真正的换行
         shown = ''
         for text in self.shown:
-            shown += '{color (255, 255, 255, 255)}{background_color (0, 0, 0, 64)}' + text + '\n' * 2
+            shown += text + '\n'
         else:
-            text = decode_attributed(shown)
-            self.dialogue_label.document = text
+            self.dialogue_label.text = shown
             self.dialogue_label.draw()
         
     def resize(self, width, height):
@@ -54,6 +46,6 @@ class Dialogue(GUI):
 
     def update(self):
         if time.time() - self.last > 10.0:
-            if len(self.dialogue) > 8192:
+            if len(self.dialogue) > 4096:
                 self.dialogue.clear()
             self.shown.clear()

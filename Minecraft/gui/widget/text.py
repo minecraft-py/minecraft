@@ -1,4 +1,5 @@
 from Minecraft.gui.widget.base import Widget
+from Minecraft.utils.utils import *
 
 import pyglet
 from pyglet.event import EventDispatcher
@@ -10,10 +11,11 @@ from pyglet.text.layout import IncrementalTextLayout
 
 class TextEntry(Widget):
 
-    def __init__(self, text, color, x, y, widget):
+    def __init__(self, text, color, x, y, width):
+        win_width, win_height = get_size()
         self.batch = Batch()
         self._doc = pyglet.text.document.UnformattedDocument(text)
-        self._doc.set_style(0, len(self._doc.text), dict(color=(0, 0, 0, 255)))
+        self._doc.set_style(0, len(self._doc.text), dict(color=(255, 255, 255, 255)))
         font = self._doc.get_font()
         height = font.ascent - font.descent
         pad = 2
@@ -25,7 +27,7 @@ class TextEntry(Widget):
                                   ('v2i', [x1, y1, x2, y1, x2, y2, x1, y2]),
                                   ('c4B', color * 4))
         self._layout = IncrementalTextLayout(self._doc, width, height, multiline=False, batch=self.batch)
-        self._caret = Caret(self._layout)
+        self._caret = Caret(self._layout, color=(255, 255, 255))
         self._caret.visible = False
         self._layout.x = x
         self._layout.y = y
@@ -35,6 +37,9 @@ class TextEntry(Widget):
     def draw(self):
         self._outline.draw(GL_QUADS)
         self.batch.draw()
+
+    def text(self, text):
+        self._doc.text = text
 
     def _set_focus(self, value):
         self._focus = value

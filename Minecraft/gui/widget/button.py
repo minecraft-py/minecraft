@@ -2,7 +2,7 @@ from os.path import join
 
 from Minecraft.gui.widget.base import Widget
 from Minecraft.source import path
-from Minecraft.utils.utils import get_size
+from Minecraft.utils.utils import *
 
 from pyglet import image
 from pyglet.sprite import Sprite
