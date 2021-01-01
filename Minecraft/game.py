@@ -6,6 +6,7 @@ import time
 from threading import Thread
 
 import Minecraft.archiver as archiver
+from Minecraft.command.commands import commands
 from Minecraft.source import path, player, lang, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
@@ -318,6 +319,18 @@ class Game(pyglet.window.Window):
                 exit(1)
         else:
             self.has_script = False
+
+    def run_command(self, s):
+        command = s.split(' ')[0]
+        if command not in commands:
+            self.dialogue.add_dialogue('Command not found')
+        else:
+            try:
+                cmd = commands[command](self, self.player['position'], s)
+            except ValueError:
+                pass
+            else:
+                cmd.run()
 
     def run_js(self, function, *args):
         # NOTE: 实验性

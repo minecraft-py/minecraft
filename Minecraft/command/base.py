@@ -8,7 +8,6 @@ from Minecraft.utils.utils import *
 class CommandBase():
 
     formats = []
-    namespace = 'command.base'
     
     def __init__(self, game, position, command):
         self.game = game
@@ -21,7 +20,7 @@ class CommandBase():
                 self.args = args
                 break
         if not self.args:
-            self.game.dialogue.add_dialogue(lang[namespace]['args-err'])
+            self.game.dialogue.add_dialogue('Arguments error')
             raise ValueError
 
     def run(self):

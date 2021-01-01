@@ -17,7 +17,10 @@ class Chat():
 
         def on_commit(text):
             if text != '':
-                self.window.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
+                if text.startswith('/'):
+                    self.window.run_command(text[1:])
+                else:
+                    self.window.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
             self.window.player['in_chat'] = False
             self._entry.text('')
             self.window.menu['chat'].frame.enable(False)
