@@ -17,6 +17,15 @@ class SetBlock(CommandBase):
         self.game.world.add_block(tuple(self.args[:3]), self.args[3])
 
 
+class Teleport(CommandBase):
+
+    formats = [['px', 'py', 'pz']]
+
+    def run(self):
+        self.game.player['position'] = tuple(self.args)
+
+
 commands = {}
 commands['say'] = Say
 commands['setblock'] = SetBlock
+commands['tp'] = Teleport

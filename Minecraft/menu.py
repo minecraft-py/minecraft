@@ -12,7 +12,7 @@ class Chat():
     def __init__(self, window):
         self.window = window
         self.frame = DialogueFrame(self.window)
-        self._entry = TextEntry('', [0, 0, 0, 100], 5, 10, 400)
+        self._entry = TextEntry('', [0, 0, 0, 255], 5, 10, 400)
         self.frame.add_widget(self._entry)
 
         def on_commit(text):
@@ -27,6 +27,9 @@ class Chat():
             self.window.set_exclusive_mouse(True)
 
         setattr(self._entry, 'on_commit', on_commit)
+
+    def text(self, text=''):
+        self._entry.text(text)
 
 
 class PauseMenu():

@@ -34,7 +34,6 @@ try:
     from pyglet import image
     from pyglet.gl import *
     from pyglet.shapes import Rectangle
-    from pyglet.text import decode_attributed
     from pyglet.window import key, mouse
 except:
     log_err(msg.format('pyglet'))
@@ -112,6 +111,10 @@ class Game(pyglet.window.Window):
         self.label['center'] = pyglet.text.Label('',
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
             anchor_y='center')
+        # 死亡信息
+        self.die_info = pyglet.text.Label('', color=(0, 0, 0, 255),
+            x=self.width // 2, y=self.height // 2, anchor_x='center',
+            anchor_y='center', font_size=48, bold=True)
         # 这个标签在画布正中偏下显示
         self.label['actionbar'] = pyglet.text.Label('',
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
@@ -557,7 +560,8 @@ class Game(pyglet.window.Window):
         if self.player['in_chat']:
             if symbol == key.ESCAPE:
                 self.menu['chat'].frame.enable(False)
-                self.player['in_hud'] = False
+                self.menu['chat'].text()
+                self.player['in_chat'] = False
                 self.set_exclusive_mouse(True)
             return
         if symbol == key.Q:
@@ -568,6 +572,12 @@ class Game(pyglet.window.Window):
             if self.exclusive:
                 self.set_exclusive_mouse(False)
                 self.player['in_chat'] = not self.player['in_chat']
+                self.menu['chat'].frame.enable()
+        elif symbol == key.SLASH:
+            if self.exclusive:
+                self.set_exclusive_mouse(False)
+                self.player['in_chat'] = not self.player['in_chat']
+                self.menu['chat'].text('/')
                 self.menu['chat'].frame.enable()
         elif symbol == key.W:
             self.player['strafe'][0] -= 1
@@ -671,6 +681,8 @@ class Game(pyglet.window.Window):
         self.label['top'].width = self.width // 2
         self.label['center'].x = self.width // 2
         self.label['center'].y = self.height // 2 + 50
+        self.die_info.x = self.width // 2
+        self.die_info.y =self.height // 2
         self.label['actionbar'].x = self.width // 2
         self.label['actionbar'].y = self.height // 2 - 100
         # 加载窗口
@@ -799,9 +811,9 @@ class Game(pyglet.window.Window):
             self.dialogue.draw()
             if self.player['die']:
                 # 玩家死亡
-                self.label['center'].text = lang['game.text.die']
+                self.die_info.text = lang['game.text.die']
                 self.label['actionbar'].text = self.player['die_reason']
-                self.label['center'].draw()
+                self.die_info.draw()
                 self.label['actionbar'].draw()
             elif self.ext['position'] and self.exclusive:
                 # 在屏幕左上角绘制标签
