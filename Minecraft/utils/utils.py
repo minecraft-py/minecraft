@@ -26,6 +26,12 @@ def get_size():
     else:
         return 800, 600
 
+def get_game():
+    # 获取 Game 类
+    for w in pyglet.canvas.get_display().get_windows():
+        if w.caption == 'Minecraft' and str(w).startswith('Game'):
+            return w
+
 def log_err(text):
     # 打印错误信息
     print('%s[ERR  %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))

@@ -32,7 +32,7 @@ def get_pos(n, s):
         return int(s)
     except:
         if s == '~':
-            return n
+            return int(round(n))
         else:
             if s.startswith('~'):
                 try:
@@ -40,7 +40,7 @@ def get_pos(n, s):
                 except:
                     return False
                 else:
-                    return n + d
+                    return int(round(n + d))
             else:
                 return False
 
@@ -76,7 +76,7 @@ def get_args(pos, s, f):
                 else:
                     l.append(pos)
             elif f[item] == 'py':
-                pos = get_pos(py, command[item])
+                pos = get_pos(py, command[item]) - 1
                 if pos is False:
                     return False
                 else:

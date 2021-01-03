@@ -73,8 +73,8 @@ class Game(pyglet.window.Window):
         # x 代表左右运动
         self.player['strafe'] = [0, 0]
         # 玩家在世界中的位置 (x, y, z)
-        self.player['position'] = (0, 4, 0)
-        self.player['respawn_position'] = (0, 4, 0)
+        self.player['position'] = (0, 0, 0)
+        self.player['respawn_position'] = (0, 0, 0)
         # 玩家视角场
         self.player['fov'] = settings['fov']
         # 拓展功能
@@ -323,7 +323,16 @@ class Game(pyglet.window.Window):
         else:
             self.has_script = False
 
+    def set_cursor(self, cursor):
+        # 设置光标形状
+        if cursor is None:
+            self.set_mouse_cursor(None)
+        else:
+            type_ = self.get_system_mouse_cursor(cursor)
+            self.set_mouse_cursor(type_)
+
     def run_command(self, s):
+        # 运行命令
         command = s.split(' ')[0]
         if command not in commands:
             self.dialogue.add_dialogue('Command not found')

@@ -33,6 +33,7 @@ class TextEntry(Widget):
         self._layout.y = y
         self._focus = False
         super().__init__(x, y, width, height)
+        self.last_char = ''
 
     def draw(self):
         self._outline.draw(GL_QUADS)
@@ -46,8 +47,10 @@ class TextEntry(Widget):
         self._caret.visible = value
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if not self.check_hit(x, y):
-            self._set_focus(False)
+        if self.check_hit(x,y):
+            get_game().set_cursor('text')
+        else:
+            get_game().set_cursor(None)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self._focus:
@@ -59,6 +62,11 @@ class TextEntry(Widget):
             self._caret.on_mouse_press(x, y, buttons, modifiers)
 
     def on_text(self, text):
+        if text == self.last_char:
+            self.last_char = ''
+            return
+        else:
+            self.last_char = text
         if self._focus:
             if text in ('\r', '\n'):
                 self.dispatch_event('on_commit', self._layout.document.text)
