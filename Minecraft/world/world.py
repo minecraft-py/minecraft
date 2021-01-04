@@ -27,6 +27,8 @@ class World(object):
     def __init__(self, name, game):
         # Batch 是用于批处理渲染的顶点列表的集合
         self.batch3d = pyglet.graphics.Batch()
+        # 透明方块
+        self.batch3d_transparent = pyglet.graphics.Batch()
         # 为了分开绘制3D物体和2D的 HUD, 我们需要两个 Batch
         self.batch2d = pyglet.graphics.Batch()
         # 存档名
@@ -194,12 +196,15 @@ class World(object):
         if hasattr(block, 'get_color'):
             color_data = block.get_color(0.5, 0.5)
         count = len(texture_data) // 2
+        batch = self.batch3d
+        if block.transparent:
+            batch = self.batch3d_transparent
         if color_data is None:
-            self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
+            self._shown[position] = batch.add(count, GL_QUADS, block.group,
                     ('v3f/static', vertex_data),
                     ('t2f/static', texture_data))
         else:
-            self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
+            self._shown[position] = batch.add(count, GL_QUADS, block.group,
                     ('v3f/static', vertex_data),
                     ('t2f/static', texture_data),
                     ('c3f/static', color_data))

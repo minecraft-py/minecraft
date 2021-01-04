@@ -48,9 +48,9 @@ class TextEntry(Widget):
 
     def on_mouse_motion(self, x, y, dx, dy):
         if self.check_hit(x,y):
-            get_game().set_cursor('text')
+            self._set_focus(True)
         else:
-            get_game().set_cursor(None)
+            self._set_focus(False)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self._focus:

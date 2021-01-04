@@ -323,13 +323,12 @@ class Game(pyglet.window.Window):
         else:
             self.has_script = False
 
-    def set_cursor(self, cursor):
+    def set_cursor(self, cursor=None):
         # 设置光标形状
         if cursor is None:
             self.set_mouse_cursor(None)
         else:
-            type_ = self.get_system_mouse_cursor(cursor)
-            self.set_mouse_cursor(type_)
+            self.set_mouse_cursor(self.get_system_mouse_cursor(cursor))
 
     def run_command(self, s):
         # 运行命令
@@ -757,6 +756,7 @@ class Game(pyglet.window.Window):
             self.set_3d()
             glColor3d(1, 1, 1)
             self.world.batch3d.draw()
+            self.world.batch3d_transparent.draw()
             self.draw_focused_block()
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
@@ -858,7 +858,7 @@ def setup():
     glEnable(GL_CULL_FACE)
     glEnable(GL_BLEND)
     glEnable(GL_LINE_SMOOTH)
-    glBlendFunc(GL_ONE, GL_ONE)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
