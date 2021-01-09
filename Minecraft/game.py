@@ -5,6 +5,18 @@ import sys
 import time
 from threading import Thread
 
+msg = "module '{0}' not found, run `pip install {0}` to install, exit"
+
+try:
+    import pyglet
+    from pyglet import image
+    from pyglet.gl import *
+    from pyglet.shapes import Rectangle
+    from pyglet.window import key, mouse
+except:
+    log_err(msg.format('pyglet'))
+    exit(1)
+
 import Minecraft.archiver as archiver
 from Minecraft.command.commands import commands
 from Minecraft.source import path, player, lang, settings
@@ -20,24 +32,6 @@ from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
-
-msg = "module '{0}' not found, run `pip install {0}` to install, exit"
-
-try:
-    import js2py as js
-except ModuleNotFoundError:
-    log_err(msg.format('Js2Py'))
-    exit(1)
-
-try:
-    import pyglet
-    from pyglet import image
-    from pyglet.gl import *
-    from pyglet.shapes import Rectangle
-    from pyglet.window import key, mouse
-except:
-    log_err(msg.format('pyglet'))
-    exit(1)
 
 try:
     import psutil
@@ -208,81 +202,7 @@ class Game(pyglet.window.Window):
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
         super(Game, self).set_exclusive_mouse(exclusive)
-        self.exclusive = exclusive
-
-    def _js_addBlock(self, x, y, z, block):
-        # addBlock 的 javascript 函数定义
-        if block == 'air':
-            self.world.remove_block((x, y, z))
-        else:
-            self.world.add_block((x, y, z), block)
-
-    def _js_getBlock(self, x, y, z):
-        # getBlock 的 javascript 函数定义
-        if self.world.get((x, y, z)) is not None:
-            return self.world.get((x, y, z))
-        else:
-            return 'air'
-
-    def _js_getGLlib(self, s):
-        # getGLlib 的 javascript 函数定义
-        if hasattr(pyglet.gl, s):
-            return getattr(pyglet.gl, s)
-        else:
-            return None
-
-    def _js_getSettings(self, key):
-        # getSettings 的 javascript 函数定义
-        if key.find('.') == -1:
-            if key in settings:
-                return settings[key]
-            else:
-                return None
-        else:
-            key = key.split('.')
-            item = None
-            for i in key:
-                if i in settings:
-                    item = settings[i]
-                else:
-                    return None
-            else:
-                return None
-
-    def _js_loadGLlib(self, s):
-        # loadGLlib 的 javascript 函数定义
-        self.js.eval('%s = getGLlib("%s");' % (s, s))
-
-    def _js_logInfo(self, s):
-        # logInfo 的 javascript 函数定义
-        log_info(s)
-
-    def _js_logErr(self, s):
-        # logErr 的 javascript 函数定义
-        log_err(s)
-
-    def _js_logWarn(self, s):
-        # logWarn 的 javascript 函数定义
-        log_warn(s)
-
-    def _js_message(self, s):
-        # message 的 javascript 函数定义
-        self.dialogue.add_dialogue(s)
-    
-    def _js_removeBlock(self, x, y, z):
-        # removeBlock 的 javascript 函数定义
-        self.world.remove_block((x, y, z))
-
-    def _js_testBlock(self, x, y, z, block):
-        # testBlock 的 javascript 函数定义
-        if self.world.get((x, y, z)) is None and block != 'air':
-            return False
-        elif self.world.get((x, y, z)) is None and block == 'air':
-            return True
-        elif self.world.get((x, y, z)).name != block:
-            return False
-        else:
-            return True
+        self.exclusive = exclusive 
         
     def set_name(self, name):
         # 设置游戏存档名
@@ -300,29 +220,6 @@ class Game(pyglet.window.Window):
         # 读取世界数据
         self.world_info = archiver.load_info(self.name)
         set_time(self.world_info['time'])
-        # 读取 js 脚本
-        if os.path.isfile(os.path.join(path['mcpypath'], 'save', name, 'script.js')):
-            self.has_script = True
-            self.js = js.EvalJs({
-                    'addBlock': self._js_addBlock,
-                    'getBlock': self._js_getBlock,
-                    'getGLlib': self._js_getGLlib,
-                    'getSettings': self._js_getSettings,
-                    'loadGLlib': self._js_loadGLlib,
-                    'logInfo': self._js_logInfo,
-                    'logErr': self._js_logErr,
-                    'logWarn': self._js_logWarn,
-                    'message': self._js_message,
-                    'removeBlock': self._js_removeBlock,
-                    'testBlock': self._js_testBlock
-                }, enable_require=True)
-            try:
-                self.js.eval(open(os.path.join(path['mcpypath'], 'save', name, 'script.js')).read())
-            except Exception as err:
-                log_err('script.js: %s' % str(err))
-                exit(1)
-        else:
-            self.has_script = False
 
     def set_cursor(self, cursor=None):
         # 设置光标形状
@@ -343,17 +240,6 @@ class Game(pyglet.window.Window):
                 pass
             else:
                 cmd.run()
-
-    def run_js(self, function, *args):
-        # NOTE: 实验性
-        if self.has_script and hasattr(self, 'js'):
-            try:
-                if hasattr(self.js, function):
-                    # NOTE: Js2Py.EvalJs 对象的 hasattr 方法有漏洞!
-                    func = getattr(self.js, function)
-                    return func(*args)
-            except Exception as err:
-                log_err('javascript: %s: %s' % (function, str(err)))
 
     def get_sight_vector(self):
         # 返回玩家的视线方向
