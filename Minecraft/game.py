@@ -60,6 +60,7 @@ class Game(pyglet.window.Window):
         self.exclusive = False
         # 玩家状态: 是否潜行, 是否飞行...
         self.player = {}
+        self.player['gamemode'] = 0
         self.player['stealing'] = False
         self.player['flying'] = False
         self.player['running'] = False
@@ -102,8 +103,8 @@ class Game(pyglet.window.Window):
         # 这个标签在画布的上方显示
         self.label = {}
         self.label['top'] = pyglet.text.Label('',
-            x=0, y=self.height - 30,width=self.width // 2, multiline=True,
-            anchor_x='left', anchor_y='center')
+            x=0, y=self.height - 5, width=self.width // 2, multiline=True,
+            anchor_x='left', anchor_y='top')
         self.is_init = True
         # 设置图标
         self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
@@ -447,7 +448,10 @@ class Game(pyglet.window.Window):
             if not self.player['in_hud']:
                 # 碰撞检测
                 x, y, z = self.player['position']
-                x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+                if self.player['gamemode'] != 1:
+                    x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+                else:
+                    x, y, z = x + dx, y + dy, z + dz
                 self.player['position'] = (x, y, z)
 
     def collide(self, position, height):
@@ -498,6 +502,8 @@ class Game(pyglet.window.Window):
             if menu.frame.on_mouse_press(x, y, button, modifiers):
                 return
         if self.exclusive:
+            if self.player['gamemode'] == 1:
+                return
             vector = self.get_sight_vector()
             now, previous = self.world.hit_test(self.player['position'], vector)
             if now:
@@ -628,7 +634,8 @@ class Game(pyglet.window.Window):
                 if self.player['die']:
                     self.close()
         elif symbol == key.TAB:
-            self.player['flying'] = not self.player['flying']
+            if self.player['gamemode'] != 1:
+                self.player['flying'] = not self.player['flying']
         elif symbol == key.LSHIFT:
             if self.player['flying']:
                 self.dy = -0.1 * JUMP_SPEED
@@ -685,7 +692,7 @@ class Game(pyglet.window.Window):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
         self.label['top'].x = 0
-        self.label['top'].y = self.height - 10
+        self.label['top'].y = self.height - 5
         self.label['top'].width = self.width // 2
         self.label['center'].x = self.width // 2
         self.label['center'].y = self.height // 2 + 50
@@ -806,9 +813,9 @@ class Game(pyglet.window.Window):
         # 在十字线选中的方块绘制黑边
         vector = self.get_sight_vector()
         block = self.world.hit_test(self.player['position'], vector)[0]
-        if block:
+        if block and self.player['gamemode'] != 1:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.501)
+            vertex_data = cube_vertices(x, y, z, 0.5001)
             glColor4f(1.0, 1.0, 1.0, 0.2)
             glDisable(GL_CULL_FACE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
@@ -834,7 +841,6 @@ class Game(pyglet.window.Window):
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
-                self.label['top'].y = self.height - 60
                 self.label['top'].text = '\n'.join(lang['game.text.debug']) % (VERSION['str'], x, y, z, rx, ry, mem, fps)
                 self.label['top'].draw()
         else:

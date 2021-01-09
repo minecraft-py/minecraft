@@ -1,6 +1,18 @@
 from Minecraft.command.base import CommandBase
 
 
+class GameMode(CommandBase):
+
+    formats = [['num']]
+
+    def run(self):
+        if self.args[0] in [0, 1]:
+            self.game.player['gamemode'] = self.args[0]
+            if self.args[0] == 1:
+                self.game.player['flying'] = True
+            else:
+                self.game.player['flying'] = False
+
 class Say(CommandBase):
 
     formats = [['str']]
@@ -26,6 +38,7 @@ class Teleport(CommandBase):
 
 
 commands = {}
+commands['gamemode'] = GameMode
 commands['say'] = Say
 commands['setblock'] = SetBlock
 commands['tp'] = Teleport
