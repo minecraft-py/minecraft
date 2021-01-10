@@ -255,18 +255,18 @@ class Grass(Block):
     def get_color(self, temperature, humidity):
         color = []
         color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
-        return color
-
-    def get_item_color(self, temperature, humidity):
-        color = []
-        color.extend(list(self.item_colorizer.get_color(temperature, humidity)) * 24)
-        return color
+        return color 
 
     def on_ticking(self, game, pos):
         block = game.world.get((pos[0], pos[1] + 1, pos[2]))
         if block != None:
             if block.transparent != True:
                 game.world.add_block(pos, 'dirt')
+    
+    def get_item_color(self):
+        color = []
+        color.extend(list(self.item_colorizer.get_color(0, 0)) * 24)
+        return color
 
 
 class Leaf(Block):
@@ -279,9 +279,9 @@ class Leaf(Block):
         color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
         return color
 
-    def get_item_color(self, temperature, humidity):
+    def get_item_color(self):
         color = []
-        color.extend(list(self.item_colorizer.get_color(temperature, humidity)) * 24)
+        color.extend(list(self.item_colorizer.get_color(0, 0)) * 24)
         return color
 
 
@@ -318,7 +318,7 @@ blocks['sand'] = Sand('sand')
 _fbo = None
 
 def get_block_icon(block, size):
-    # 3D 方块
+    # 显示 3D 方块的缩略图
     global _fbo
     if hasattr(block, 'img'):
         if not isinstance(block, Block):

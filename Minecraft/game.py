@@ -747,10 +747,14 @@ class Game(pyglet.window.Window):
 def setup():
     # 基本的 OpenGL 设置
     glClearColor(0.5, 0.69, 1.0, 1)
+    glEnable(GL_ALPHA_TEST)
+    glEnable(GL_COLOR_MATERIAL)
     glEnable(GL_CULL_FACE)
     glEnable(GL_BLEND)
     glEnable(GL_LINE_SMOOTH)
+    glEnable(GL_POLYGON_SMOOTH)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
