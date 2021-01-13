@@ -28,6 +28,7 @@ from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
 from Minecraft.menu import Chat, PauseMenu
+from Minecraft.player import Player
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
 from Minecraft.world.world import World
@@ -52,26 +53,8 @@ class Game(pyglet.window.Window):
         super(Game, self).__init__(*args, **kwargs)
         # 窗口是否捕获鼠标
         self.exclusive = False
-        # 玩家状态: 是否潜行, 是否飞行...
-        self.player = {}
-        self.player['gamemode'] = 0
-        self.player['stealing'] = False
-        self.player['flying'] = False
-        self.player['running'] = False
-        self.player['die'] = False
-        self.player['in_hud'] = False
-        self.player['in_chat'] = False
-        self.player['hide_hud'] = False
-        self.player['show_bag'] = False
-        # strafe = [z, x]
-        # z 代表前后运动
-        # x 代表左右运动
-        self.player['strafe'] = [0, 0]
-        # 玩家在世界中的位置 (x, y, z)
-        self.player['position'] = (0, 0, 0)
-        self.player['respawn_position'] = (0, 0, 0)
-        # 玩家视角场
-        self.player['fov'] = settings['fov']
+        # 玩家
+        self.player = Player()
         # 拓展功能
         self.ext = {}
         self.ext['debug'] = False
@@ -84,12 +67,8 @@ class Game(pyglet.window.Window):
         self.sector = None
         # 这个十字在屏幕中央
         self.reticle = None
-        # y 轴的加速度
-        self.dy = 0
         # 玩家可以放置的方块, 使用数字键切换
         self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table', 'glass']
-        # 玩家手持的方块
-        self.block = 0
         # 数字键列表
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
@@ -196,7 +175,7 @@ class Game(pyglet.window.Window):
         """
         archiver.save_block(self.name, self.world.change)
         archiver.save_player(self.name, self.player['position'], self.player['respawn_position'],
-                normalize(self.player['rotation']), self.block)
+                normalize(self.player['rotation']), self.player['block'])
         archiver.save_info(self.name, 0, get_time())
 
     def set_exclusive_mouse(self, exclusive):
@@ -273,9 +252,9 @@ class Game(pyglet.window.Window):
                 dx = math.cos(x_angle)
                 dy = 0.0
                 dz = math.sin(x_angle)
-        elif self.player['flying'] and not self.dy == 0:
+        elif self.player['flying'] and not self.player['dy'] == 0:
             dx = 0.0
-            dy = self.dy
+            dy = self.player['dy']
             dz = 0.0
         return (dx, dy, dz)
 
@@ -328,9 +307,9 @@ class Game(pyglet.window.Window):
         # 重力
         if not self.player['die']:
             if not self.player['flying']:
-                self.dy -= dt * GRAVITY
-                self.dy = max(self.dy, -TERMINAL_VELOCITY)
-                dy += self.dy * dt
+                self.player['dy'] -= dt * GRAVITY
+                self.player['dy'] = max(self.player['dy'], -TERMINAL_VELOCITY)
+                dy += self.player['dy'] * dt
             if not self.player['in_hud']:
                 # 碰撞检测
                 x, y, z = self.player['position']
@@ -366,7 +345,7 @@ class Game(pyglet.window.Window):
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
-                        self.dy = 0
+                        self.player['dy'] = 0
                     break
         else:
             return tuple(p)
@@ -402,7 +381,7 @@ class Game(pyglet.window.Window):
                     if hasattr(block, 'on_use') and (not self.player['stealing']):
                         block.on_use(self)
                     elif previous and self.can_place(previous, self.player['position']):
-                        self.world.add_block(previous, self.inventory[self.block])
+                        self.world.add_block(previous, self.inventory[self.player['block']])
             elif button == pyglet.window.mouse.LEFT and previous:
                 if block.hardness > 0 and not self.player['die'] and not self.player['in_hud']:
                     self.world.remove_block(now)
@@ -457,93 +436,7 @@ class Game(pyglet.window.Window):
         :param: symbol 按下的键
         :param: modifiers 同时按下的修饰键
         """
-        if self.player['in_chat']:
-            if symbol == key.ESCAPE:
-                self.menu['chat'].frame.enable(False)
-                self.menu['chat'].text()
-                self.player['in_chat'] = False
-                self.set_exclusive_mouse(True)
-            return
-        if symbol == key.Q:
-            self.player['die'] = True
-            self.player['die_reason'] = 'killed by self'
-            self.set_exclusive_mouse(False)
-        elif symbol == key.T:
-            if self.exclusive:
-                self.set_exclusive_mouse(False)
-                self.player['in_chat'] = not self.player['in_chat']
-                self.menu['chat'].frame.enable()
-        elif symbol == key.SLASH:
-            if self.exclusive:
-                self.set_exclusive_mouse(False)
-                self.player['in_chat'] = not self.player['in_chat']
-                self.menu['chat'].text('/')
-                self.menu['chat'].frame.enable()
-        elif symbol == key.W:
-            self.player['strafe'][0] -= 1
-        elif symbol == key.S:
-            self.player['strafe'][0] += 1
-        elif symbol == key.A:
-            self.player['strafe'][1] -= 1
-        elif symbol == key.D:
-            self.player['strafe'][1] += 1
-        elif symbol == key.I:
-             if self.ext['enable']:
-                self.ext['debug'] = not self.ext['debug']
-                self.ext['position'] = False
-        elif symbol == key.E:
-            if not self.player['die']:
-                self.set_exclusive_mouse(self.player['show_bag'])
-                self.player['in_hud'] = not self.player['in_hud']
-                self.player['show_bag'] = not self.player['show_bag']
-        elif symbol == key.P:
-            if self.ext['enable']:
-                self.ext['position'] = not self.ext['position']
-                self.ext['debug'] = False
-        elif symbol == key.R:
-            if self.ext['enable']:
-                self.ext['running'] = not self.ext['running']
-        elif symbol == key.SPACE:
-            if self.player['flying']:
-                self.dy = 0.1 * JUMP_SPEED
-            elif self.dy == 0:
-                self.dy = JUMP_SPEED
-        elif symbol == key.ENTER:
-            if self.player['die']:
-                self.player['die'] = False
-                self.player['position'] = self.player['respawn_position']
-                self.set_exclusive_mouse(True)
-        elif symbol == key.ESCAPE: 
-                self.save(0)
-                self.set_exclusive_mouse(False)
-                self.menu['pause'].frame.enable()
-                if self.player['die']:
-                    self.close()
-        elif symbol == key.TAB:
-            if self.player['gamemode'] != 1:
-                self.player['flying'] = not self.player['flying']
-        elif symbol == key.LSHIFT:
-            if self.player['flying']:
-                self.dy = -0.1 * JUMP_SPEED
-            else:
-                self.player['stealing'] = True
-        elif symbol == key.LCTRL:
-            if not self.player['flying']:
-                self.player['running'] = True
-        elif symbol in self.num_keys:
-            self.block = (symbol - self.num_keys[0]) % len(self.inventory)
-            self.hud['hotbar'].set_index(self.block)
-        elif symbol == key.F1:
-            self.player['hide_hud'] = not self.player['hide_hud']
-        elif symbol == key.F2:
-            name = 'screenshot-%d.png' % int(time.time())
-            pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
-                path['screenshot'], name))
-            self.dialogue.add_dialogue('screenshot saved in: %s' % name)
-        elif symbol == key.F3:
-            self.ext['enable'] = True
-        elif symbol == key.F11:
-            self.set_fullscreen(not self.fullscreen)
+        self.player.on_key_press(symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
         """
@@ -551,28 +444,8 @@ class Game(pyglet.window.Window):
         
         :param: symbol 释放的键
         """
-        if self.player['in_chat']:
-            return
-        if symbol == key.W:
-            self.player['strafe'][0] += 1
-        elif symbol == key.S:
-            self.player['strafe'][0] -= 1
-        elif symbol == key.A:
-            self.player['strafe'][1] += 1
-        elif symbol == key.D:
-            self.player['strafe'][1] -= 1
-        elif symbol == key.SPACE:
-            if self.player['flying']:
-                self.dy = 0
-        elif symbol == key.LSHIFT:
-            if self.player['flying']:
-                self.dy = 0
-            else:
-                self.player['stealing'] = False
-        elif symbol == key.LCTRL:
-            self.player['running'] = False
-        elif symbol == key.F3:
-            self.ext['enable'] = False
+        self.player.on_key_release(symbol, modifiers)
+        
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
@@ -710,7 +583,8 @@ class Game(pyglet.window.Window):
 
     def draw_label(self):
         if not self.is_init:
-            self.dialogue.draw()
+            if self.exclusive:
+                self.dialogue.draw()
             if self.player['die']:
                 # 玩家死亡
                 self.die_info.text = lang['game.text.die']
@@ -732,8 +606,6 @@ class Game(pyglet.window.Window):
         else:
             # 初始化屏幕
             self.loading.draw()
-            self.label['center'].text = lang['game.text.loading']
-            self.label['center'].draw()
 
     def draw_reticle(self):
         # 在屏幕中央画十字线

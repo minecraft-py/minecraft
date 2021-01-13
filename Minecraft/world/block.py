@@ -255,14 +255,14 @@ class Grass(Block):
     def get_color(self, temperature, humidity):
         color = []
         color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
-        return color 
+        return color
 
     def on_ticking(self, game, pos):
         block = game.world.get((pos[0], pos[1] + 1, pos[2]))
         if block != None:
             if block.transparent != True:
                 game.world.add_block(pos, 'dirt')
-    
+
     def get_item_color(self):
         color = []
         color.extend(list(self.item_colorizer.get_color(0, 0)) * 24)
@@ -363,7 +363,7 @@ def get_block_icon(block, size):
         batch.add(count, GL_QUADS, block.group,
                 ('v3f/static', vertex_data),
                 ('t2f/static', texture_data),
-                ('c3f/static', block.get_item_color(0, 0)))
+                ('c3f/static', block.get_item_color()))
     else:
         batch.add(count, GL_QUADS, block.group,
                   ('v3f/static', vertex_data),
