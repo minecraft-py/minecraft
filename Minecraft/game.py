@@ -19,7 +19,7 @@ except:
 
 import Minecraft.archiver as archiver
 from Minecraft.command.commands import commands
-from Minecraft.source import path, player, lang, settings
+from Minecraft.source import get_lang, path, player, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar
@@ -135,11 +135,11 @@ class Game(pyglet.window.Window):
         return
         if not self.player['die']:
             if self.player['position'][1] < -64:
-                self.player['die_reason'] = lang['game.text.die.fall_into_void'] % player['name']
+                self.player['die_reason'] = get_lang('game.text.die.fall_into_void') % player['name']
                 self.player['die'] = True
                 self.dialogue.add_dialogue(self.player['die_reason']) 
             elif self.player['position'][1] > 512:
-                self.player['die_reason'] = lang['game.text.die.no_oxygen'] % player['name']
+                self.player['die_reason'] = get_lang('game.text.die.no_oxygen') % player['name']
                 self.player['die'] = True
             if self.player['die']:
                 log_info('%s die: %s' % (player['name'], self.player['die_reason']))
@@ -186,7 +186,7 @@ class Game(pyglet.window.Window):
     def set_name(self, name):
         # 设置游戏存档名
         self.name = name
-        self.world = World(name, self)
+        self.world = World(name)
         # self.world_gen_thread = Thread(target=self.world.init_world, name='WorldGen')
         # self.world_gen_thread.start()
         # 读取玩家位置和背包
@@ -366,29 +366,7 @@ class Game(pyglet.window.Window):
         for menu in self.menu.values():
             if menu.frame.on_mouse_press(x, y, button, modifiers):
                 return
-        if self.exclusive:
-            if self.player['gamemode'] == 1:
-                return
-            vector = self.get_sight_vector()
-            now, previous = self.world.hit_test(self.player['position'], vector)
-            if now:
-                block = self.world.get(now)
-            else:
-                return
-            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
-                # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if not self.player['die'] and not self.player['in_hud']:
-                    if hasattr(block, 'on_use') and (not self.player['stealing']):
-                        block.on_use(self)
-                    elif previous and self.can_place(previous, self.player['position']):
-                        self.world.add_block(previous, self.inventory[self.player['block']])
-            elif button == pyglet.window.mouse.LEFT and previous:
-                if block.hardness > 0 and not self.player['die'] and not self.player['in_hud']:
-                    self.world.remove_block(now)
-            elif button == pyglet.window.mouse.MIDDLE and block and previous:
-                pass
-        elif not self.player['die'] and not self.player['in_hud']:
-            pass
+        self.player.on_mouse_press(x, y, button, modifiers)
         
     def on_mouse_release(self, x, y, button, modifiers):
         for menu in self.menu.values():
@@ -403,16 +381,7 @@ class Game(pyglet.window.Window):
         """
         for menu in self.menu.values():
             menu.frame.on_mouse_motion(x, y, dx, dy)
-        if self.exclusive and not self.player['die']:
-            m = 0.1
-            x, y = self.player['rotation']
-            x, y = x + dx * m, y + dy * m
-            if x >= 180:
-                x = -180
-            elif x<= -180:
-                x = 180
-            y = max(-90, min(90, y))
-            self.player['rotation'] = (x, y)
+        self.player.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         """
@@ -420,14 +389,7 @@ class Game(pyglet.window.Window):
 
         :param: scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
         """
-        index = int(self.block + scroll_y)
-        if index > len(self.inventory) - 1:
-            self.block = index = 0
-        elif index < 0:
-            self.block = index = len(self.inventory) - 1
-        else:
-            self.block = index
-        self.hud['hotbar'].set_index(index)
+        self.player.on_mouse_scroll(x, y, scroll_x, scroll_y)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -587,21 +549,21 @@ class Game(pyglet.window.Window):
                 self.dialogue.draw()
             if self.player['die']:
                 # 玩家死亡
-                self.die_info.text = lang['game.text.die']
+                self.die_info.text = get_lang('game.text.die')
                 self.label['actionbar'].text = self.player['die_reason']
                 self.die_info.draw()
                 self.label['actionbar'].draw()
             elif self.ext['position'] and self.exclusive:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.player['position']
-                self.label['top'].text = lang['game.text.position'] % (x, y, z, pyglet.clock.get_fps())
+                self.label['top'].text = get_lang('game.text.position') % (x, y, z, pyglet.clock.get_fps())
                 self.label['top'].draw()
             elif self.ext['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
-                self.label['top'].text = '\n'.join(lang['game.text.debug']) % (VERSION['str'], x, y, z, rx, ry, mem, fps)
+                self.label['top'].text = '\n'.join(get_lang('game.text.debug')) % (VERSION['str'], x, y, z, rx, ry, mem, fps)
                 self.label['top'].draw()
         else:
             # 初始化屏幕

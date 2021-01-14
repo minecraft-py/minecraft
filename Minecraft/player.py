@@ -39,6 +39,53 @@ class Player():
         if item in self._data:
             self._data[item] = value
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        if get_game().exclusive and not self._data['die']:
+            m = 0.1
+            x, y = self._data['rotation']
+            x, y = x + dx * m, y + dy * m
+            if x >= 180:
+                x = -180
+            elif x<= -180:
+                x = 180
+            y = max(-90, min(90, y))
+            self._data['rotation'] = (x, y)
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        if get_game().exclusive:
+            if self._data['gamemode'] == 1:
+                return
+            vector = get_game().get_sight_vector()
+            now, previous = get_game().world.hit_test(self._data['position'], vector)
+            if now:
+                block = get_game().world.get(now)
+            else:
+                return
+            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
+                # 在 Mac OS X 中, Ctrl + 左键 = 右键
+                if not self._data['die'] and not self._data['in_hud']:
+                    if hasattr(block, 'on_use') and (not self._data['stealing']):
+                        block.on_use(self)
+                    elif previous and get_game().can_place(previous, self._data['position']):
+                        get_game().world.add_block(previous, get_game().inventory[self._data['block']])
+            elif button == pyglet.window.mouse.LEFT and previous:
+                if block.hardness > 0 and not self._data['die'] and not self._data['in_hud']:
+                    get_game().world.remove_block(now)
+            elif button == pyglet.window.mouse.MIDDLE and block and previous:
+                pass
+        elif not self._data['die'] and not self._data['in_hud']:
+            pass
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        index = int(self._data['block'] + scroll_y)
+        if index > len(get_game().inventory) - 1:
+            self._data['block'] = index = 0
+        elif index < 0:
+            self._data['block'] = index = len(get_game().inventory) - 1
+        else:
+            self._data['block'] = index
+        get_game().hud['hotbar'].set_index(index)
+
     def on_key_press(self, symbol, modifiers):
         if self._data['in_chat']:
             if symbol == key.ESCAPE:

@@ -5,7 +5,7 @@ import random
 import time
 
 import Minecraft.archiver as archiver
-from Minecraft.source import path, settings
+from Minecraft.source import get_lang, path, settings
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
@@ -24,7 +24,7 @@ from pyglet import image
 
 class World(object):
 
-    def __init__(self, name, game):
+    def __init__(self, name):
         # Batch 是用于批处理渲染的顶点列表的集合
         self.batch3d = pyglet.graphics.Batch()
         # 透明方块
@@ -33,8 +33,6 @@ class World(object):
         self.batch2d = pyglet.graphics.Batch()
         # 存档名
         self.name = name
-        # 父对象
-        self.game = game
         # 种子
         self.seed = archiver.load_info(name)['seed']
         # Simplex 噪声函数
@@ -115,7 +113,7 @@ class World(object):
                 self.change[pos2str(position)] = block
             if block in blocks:
                 self.world[position] = blocks[block]
-                self.world[position].on_build(self.game, position)
+                self.world[position].on_build(get_game(), position)
             else:
                 # 将不存在的方块替换为 missing
                 self.world[position] = blocks['missing']
@@ -125,6 +123,11 @@ class World(object):
                     self.show_block(position)
                 if not self.world[position].transparent:
                     self.check_neighbors(position)
+        else:
+            if position[1] >= 256:
+                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[0] % 256)
+            else:
+                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[1])
 
     def remove_block(self, position, immediate=True, record=True):
         """
@@ -136,7 +139,7 @@ class World(object):
         """
         if position in self.world:
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
-            self.world[position].on_destroy(self.game, position)
+            self.world[position].on_destroy(get_game(), position)
             del self.world[position]
             if record:
                 self.change[pos2str(position)] = 'air'
