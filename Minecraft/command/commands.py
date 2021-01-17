@@ -21,6 +21,14 @@ class Say(CommandBase):
         self.game.dialogue.add_dialogue(self.args[0])
 
 
+class Seed(CommandBase):
+
+    formats = [[]]
+
+    def run(self):
+        self.game.dialogue.add_dialogue('Seed: ' + str(self.game.world.seed))
+
+
 class SetBlock(CommandBase):
 
     formats = [['px', 'py', 'pz', 'block']]
@@ -40,5 +48,6 @@ class Teleport(CommandBase):
 commands = {}
 commands['gamemode'] = GameMode
 commands['say'] = Say
+commands['seed'] = Seed
 commands['setblock'] = SetBlock
 commands['tp'] = Teleport

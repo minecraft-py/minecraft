@@ -194,7 +194,10 @@ class Game(pyglet.window.Window):
         self.player['position'] = data['position']
         self.player['respawn_position'] = data['respawn']
         if len(self.player['position']) != 3:
-            self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 12, 0)
+            if archiver.load_info(self.name)['type'] == 'flat':
+                self.player['position'] = self.player['respawn_position'] = (0, 7, 0)
+            else:
+                self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
         self.sector = sectorize(self.player['position'])
         self.player['rotation'] = tuple(data['rotation'])
         self.block = data['now_block']

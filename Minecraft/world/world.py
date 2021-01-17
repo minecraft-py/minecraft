@@ -51,6 +51,28 @@ class World(object):
 
     def init_world(self):
         # 放置所有方块以初始化世界, 非常耗时
+        if archiver.load_info(self.name)['type'] == 'flat':
+            self.init_flat_world()
+        else:
+            self.init_random_world()
+        archiver.load_block(self.name, self.add_block, self.remove_block)
+        self.is_init = False
+
+    def init_flat_world(self):
+        # 生成平坦世界
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                self.add_block((x, 0, z), 'bedrock', record=False)
+        for x in range(-MAX_SIZE, MAX_SIZE + 1):
+            for y in range(1, 6):
+                for z in range(-MAX_SIZE, MAX_SIZE + 1):
+                    if y == 5:
+                        self.add_block((x, y, z), 'grass', record=False)
+                    else:
+                        self.add_block((x, y, z), 'dirt', record=False)
+
+    def init_random_world(self):
+        # 生成随机世界
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, 0, z), 'bedrock', record=False)
@@ -61,8 +83,6 @@ class World(object):
                     self.add_block((x, y, z), 'dirt', record=False)
                 else:
                     self.add_block((x, h, z), 'grass', record=False)
-        archiver.load_block(self.name, self.add_block, self.remove_block)
-        self.is_init = False
 
     def hit_test(self, position, vector, max_distance=8):
         """

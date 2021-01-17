@@ -19,7 +19,7 @@ class CommandBase():
             if args is not None:
                 self.args = args
                 break
-        if not self.args:
+        if self.args == None:
             self.game.dialogue.add_dialogue('Arguments error')
             raise ValueError
 
