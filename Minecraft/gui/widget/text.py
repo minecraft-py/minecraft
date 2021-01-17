@@ -4,7 +4,8 @@ from Minecraft.utils.utils import *
 import pyglet
 from pyglet.event import EventDispatcher
 from pyglet.gl import *
-from pyglet.graphics import Batch, vertex_list
+from pyglet.graphics import Batch
+from pyglet.shapes import Rectangle
 from pyglet.text.caret import Caret
 from pyglet.text.layout import IncrementalTextLayout
 
@@ -19,24 +20,20 @@ class TextEntry(Widget):
         font = self._doc.get_font()
         height = font.ascent - font.descent
         pad = 2
-        x1 = x - pad
-        y1 = y - pad
-        x2 = x + width + pad
-        y2 = y + height + pad
-        self._outline = vertex_list(4,
-                                  ('v2i', [x1, y1, x2, y1, x2, y2, x1, y2]),
-                                  ('c4B', color * 4))
+        self._outline = Rectangle(x - pad, y - pad, width + pad, height + pad, color=color[:3])
+        self._outline.opacity=color[-1]
         self._layout = IncrementalTextLayout(self._doc, width, height, multiline=False, batch=self.batch)
         self._caret = Caret(self._layout, color=(255, 255, 255))
         self._caret.visible = False
         self._layout.x = x
         self._layout.y = y
         self._focus = False
+        self._press = False
         super().__init__(x, y, width, height)
         self.last_char = ''
 
     def draw(self):
-        self._outline.draw(GL_QUADS)
+        self._outline.draw()
         self.batch.draw()
 
     def text(self, text):
@@ -46,20 +43,21 @@ class TextEntry(Widget):
         self._focus = value
         self._caret.visible = value
 
-    def on_mouse_motion(self, x, y, dx, dy):
-        if self.check_hit(x,y):
-            self._set_focus(True)
-        else:
-            self._set_focus(False)
-
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self._focus:
             self._caret.on_mouse_drag(x, y, dx, dy, buttons, modifiers)
 
     def on_mouse_press(self, x, y, buttons, modifiers):
         if self.check_hit(x, y):
+            self._press = True
             self._set_focus(True)
             self._caret.on_mouse_press(x, y, buttons, modifiers)
+        else:
+            self._set_focus(False)
+
+    def on_mouse_release(self, x, y, buttons, modifiers):
+        if self._press:
+            self._press = False
 
     def on_text(self, text):
         if text == self.last_char:

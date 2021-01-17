@@ -26,8 +26,8 @@ class DialogueFrame():
         if not self._enable:
             return
         for widget in self._widget:
+            widget.dispatch_event('on_mouse_press', x, y, buttons, modifiers)
             if widget.check_hit(x, y):
-                widget.dispatch_event('on_mouse_press', x, y, buttons, modifiers)
                 return True
 
     def on_mouse_release(self, x, y, buttons, modifiers):

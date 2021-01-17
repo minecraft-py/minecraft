@@ -12,7 +12,7 @@ class Chat():
     def __init__(self, window):
         self.window = window
         self.frame = DialogueFrame(self.window)
-        self._entry = TextEntry('', [0, 0, 0, 255], 5, 10, 400)
+        self._entry = TextEntry('', (0, 0, 0, 150), 5, 20, 400)
         self.frame.add_widget(self._entry)
 
         def on_commit(text):
