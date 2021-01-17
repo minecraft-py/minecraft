@@ -28,7 +28,8 @@ def load_player(name):
     # 读取玩家数据
     data = json.load(open(join(path['save'], name, 'player.json')))
     position = str2pos(data.get('position', (0, 0, 0)), True)
-    position = position[0], position[1] + 1, position[2]
+    if len(position) == 3:
+        position = position[0], position[1] + 1, position[2]
     return {
                 'position': position,
                 'respawn': str2pos(data.get('respawn', (0, 0, 0)), True),

@@ -142,7 +142,7 @@ class Player():
             if self._data['die']:
                 self._data['die'] = False
                 self._data['position'] = self._data['respawn_position']
-                self.set_exclusive_mouse(True)
+                get_game().set_exclusive_mouse(True)
         elif symbol == key.ESCAPE: 
                 get_game().save(0)
                 get_game().set_exclusive_mouse(False)

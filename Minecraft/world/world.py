@@ -55,12 +55,12 @@ class World(object):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, 0, z), 'bedrock', record=False)
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for y in range(1, 3):
-                for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                    self.add_block((x, y, z), 'dirt', record=False)
-        for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                self.add_block((x, y, z), 'grass', record=False)
+                h = int(self.simplex.noise2d(x=x / 20, y=z / 20) * 5 + 10)
+                for y in range(1, h):
+                    self.add_block((x, y, z), 'dirt', record=False)
+                else:
+                    self.add_block((x, h, z), 'grass', record=False)
         archiver.load_block(self.name, self.add_block, self.remove_block)
         self.is_init = False
 

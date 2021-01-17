@@ -192,8 +192,10 @@ class Game(pyglet.window.Window):
         # 读取玩家位置和背包
         data = archiver.load_player(self.name)
         self.player['position'] = data['position']
-        self.sector = sectorize(self.player['position'])
         self.player['respawn_position'] = data['respawn']
+        if len(self.player['position']) != 3:
+            self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 12, 0)
+        self.sector = sectorize(self.player['position'])
         self.player['rotation'] = tuple(data['rotation'])
         self.block = data['now_block']
         # 读取世界数据
