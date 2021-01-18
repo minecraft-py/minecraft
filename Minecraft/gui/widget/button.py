@@ -7,6 +7,7 @@ from Minecraft.utils.utils import *
 from pyglet import image
 from pyglet.sprite import Sprite
 from pyglet.text import Label
+from pyglet.window import key
 
 
 class Button(Widget):
@@ -71,3 +72,28 @@ class Button(Widget):
 
 Button.register_event_type('on_press')
 Button.register_event_type('on_release')
+
+
+class ChoseButton(Button):
+
+    def __init__(self, x, y, width, height, prefix, values):
+        super().__init__(x, y, width, height, text='%s: %s' % (prefix, values[0]))
+        self._prefix = prefix
+        self._values = values
+        self._point = 0
+
+    def on_mouse_press(self, x, y, buttons, modifiers):
+        super().on_mouse_press(x, y, buttons, modifiers)
+        if self.check_hit(x, y):
+            if modifiers == key.MOD_SHIFT:
+                self._point -= 1
+            else:
+                self._point += 1
+            if self._point > len(self._values) - 1:
+                self._point = 0
+            elif self._point < 0:
+                self._point = len(self._values) - 1
+            self.text('%s: %s' %(self._prefix, self._values[self._point]))
+
+    def value(self):
+        return self._values[self._point]

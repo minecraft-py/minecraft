@@ -1,5 +1,5 @@
 from Minecraft.gui.frame import DialogueFrame
-from Minecraft.gui.widget.button import Button
+from Minecraft.gui.widget.button import Button, ChoseButton
 from Minecraft.gui.widget.text import TextEntry
 from Minecraft.source import lang, player
 from Minecraft.utils.utils import *
