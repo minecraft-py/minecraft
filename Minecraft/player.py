@@ -118,8 +118,8 @@ class Player():
         elif symbol == key.D:
             self._data['strafe'][1] += 1
         elif symbol == key.I:
-             if get_game().ext['enable']:
-                get_game().ext['debug'] = not self.ext['debug']
+             if not get_game().ext['enable']:
+                get_game().ext['debug'] = not get_game().ext['debug']
                 get_game().ext['position'] = False
         elif symbol == key.E:
             if not self._data['die']:

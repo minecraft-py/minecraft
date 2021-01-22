@@ -50,7 +50,7 @@ except:
 class Game(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
-        super(Game, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # 窗口是否捕获鼠标
         self.exclusive = False
         # 玩家
@@ -76,22 +76,22 @@ class Game(pyglet.window.Window):
         # 这个标签在画布的上方显示
         self.label = {}
         self.label['top'] = pyglet.text.Label('',
-            x=0, y=self.height - 5, width=self.width // 2, multiline=True,
-            anchor_x='left', anchor_y='top')
+            x=2, y=self.height - 5, width=self.width // 2, multiline=True,
+            anchor_x='left', anchor_y='top', font_name='minecraftia')
         self.is_init = True
         # 设置图标
         self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         # 这个标签在画布正中偏上显示
         self.label['center'] = pyglet.text.Label('',
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
-            anchor_y='center')
+            anchor_y='center', font_name='minecraftia')
         # 死亡信息
-        self.die_info = pyglet.text.Label('', color=(0, 0, 0, 255),
+        self.die_info = pyglet.text.Label('', color=(255, 255, 255, 255),
             x=self.width // 2, y=self.height // 2, anchor_x='center',
-            anchor_y='center', font_size=48, bold=True)
+            anchor_y='center', font_size=24, font_name='minecraftia')
         # 这个标签在画布正中偏下显示
         self.label['actionbar'] = pyglet.text.Label('',
-                x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
+                x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center', font_name='minecraftia')
         # 加载窗口
         self.loading = Loading()
         # 覆盖屏幕的矩形
@@ -195,7 +195,7 @@ class Game(pyglet.window.Window):
         self.player['respawn_position'] = data['respawn']
         if len(self.player['position']) != 3:
             if archiver.load_info(self.name)['type'] == 'flat':
-                self.player['position'] = self.player['respawn_position'] = (0, 7, 0)
+                self.player['position'] = self.player['respawn_position'] = (0, 8, 0)
             else:
                 self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
         self.sector = sectorize(self.player['position'])
@@ -417,7 +417,7 @@ class Game(pyglet.window.Window):
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
         # 标签
-        self.label['top'].x = 0
+        self.label['top'].x = 2
         self.label['top'].y = self.height - 5
         self.label['top'].width = self.width // 2
         self.label['center'].x = self.width // 2
@@ -568,7 +568,8 @@ class Game(pyglet.window.Window):
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
-                self.label['top'].text = '\n'.join(get_lang('game.text.debug')) % (VERSION['str'], x, y, z, rx, ry, mem, fps)
+                self.label['top'].text = '\n'.join(get_lang('game.text.debug')) % (VERSION['str'],
+                        'pyglet' + pyglet.version, x, y, z, rx, ry, mem, fps)
                 self.label['top'].draw()
         else:
             # 初始化屏幕

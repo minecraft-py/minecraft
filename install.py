@@ -30,7 +30,7 @@ def copy():
 def install():
     # 下载依赖项
     if '--no-install-requirements' not in argv:
-        print('[Install requirements]')
+        print('[(1/3) Install requirements]')
         pip = executable + ' -m pip'
         if '--hide-output' in argv:
             code = system('%s install -U -r %s >> %s' % (pip, get_file('requirements.txt'), path.devnull))
@@ -41,10 +41,12 @@ def install():
             exit(1)
         else:
             print('install successfully')
+    else:
+        print('[(1/3) Skip install requirements]')
     # 注册玩家
     register_user()
     # 复制运行所需的文件
-    print('[Copy lib]')
+    print('[(3/3) Copy lib]')
     copy()
     # 完成!
     print('[Done]')
@@ -64,12 +66,12 @@ def install_json(f):
     for k, v in source.items():
         if k not in target:
             target[k] = v
-    dump(target, open(path.join(MCPYPATH, f), 'w+'), indent='\t')
+    dump(target, open(path.join(MCPYPATH, f), 'w+'))
 
 def register_user():
     # 注册
     if '--skip-register' not in argv:
-        print('[Register]')
+        print('[(2/3) Register]')
         MCPYPATH = search_mcpy()
         if not path.isdir(MCPYPATH):
             mkdir(MCPYPATH)
@@ -83,6 +85,8 @@ def register_user():
             print('Regsitered successfully, you can use your id to play multiplayer game!')
         else:
             print('You have regsitered!')
+    else:
+        print('[(2/3) Skip regsiter]')
 
 def search_mcpy():
     # 搜索文件存储位置

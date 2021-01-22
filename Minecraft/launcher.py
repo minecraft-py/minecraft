@@ -95,6 +95,9 @@ class MinecraftLauncher(Tk):
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
         self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=get_lang('launcher.dialog.text.seed'))
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
+        self.new_dialog_label_type = ttk.Label(self.new_dialog, text='Type:')
+        self.new_dialog_combobox_type = ttk.Combobox(self.new_dialog, values = ('flat', 'random'), width=8)
+        self.new_dialog_combobox_type.state(['readonly'])
         self.new_dialog_button_ok = ttk.Button(self.new_dialog,
                 text=get_lang('launcher.dialog.text.ok'), command=self.new_world
                                                )
@@ -104,7 +107,9 @@ class MinecraftLauncher(Tk):
         self.new_dialog_label_seed.grid(column=0, row=1, padx=5, pady=5)
         self.new_dialog_entry_seed.grid(column=1, row=1, columnspan=2, padx=5,
                                         pady=5)
-        self.new_dialog_button_ok.grid(column=2, row=2, padx=5, pady=5)
+        self.new_dialog_label_type.grid(column=0, row=2, padx=5, pady=5)
+        self.new_dialog_combobox_type.grid(column=1, row=2, pady=5)
+        self.new_dialog_button_ok.grid(column=2, row=3, padx=5, pady=5)
         self.new_dialog.resizable(False, False)
         self.new_dialog.geometry('+%d+%d' % (self.winfo_x() + 50,
                                  self.winfo_y() + 50))
@@ -132,10 +137,10 @@ class MinecraftLauncher(Tk):
                 world = open(os.path.join(path['save'], name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
-                info = {'seed': seed, 'type': 'flat', 'day': 0, 'time': 4}
-                json.dump(info, open(os.path.join(path['save'], name, 'info.json'), 'w+'), indent='\t')
+                info = {'seed': seed, 'type': self.new_dialog_combobox_type.get(), 'day': 0, 'time': 4}
+                json.dump(info, open(os.path.join(path['save'], name, 'info.json'), 'w+'))
                 player = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
-                json.dump(player, open(os.path.join(path['save'], name, 'player.json'), 'w+'), indent='\t')
+                json.dump(player, open(os.path.join(path['save'], name, 'player.json'), 'w+'))
                 self.new_dialog.destroy()
                 log_info('create world successfully')
         self.refresh()

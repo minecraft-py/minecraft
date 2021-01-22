@@ -17,9 +17,9 @@ class Heart(HUD):
         self._status = []
         for i in range(10):
             self._status.append(Sprite(image.load(join(path['texture.hud'], 'heart.png')),
-                x=(width - 450) / 2 + i * 20, y=80, batch=batch))
+                x=(width - 450) / 2 + i * 20, y=75, batch=batch))
 
     def resize(self, width, height):
         for i in range(10):
-            self._status[i].position = (width - 450) / 2 + i * 20, 80
+            self._status[i].position = (width - 450) / 2 + i * 20, 75
 

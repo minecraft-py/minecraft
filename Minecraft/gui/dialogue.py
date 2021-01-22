@@ -13,7 +13,7 @@ class Dialogue(GUI):
         width, height = get_size()
         GUI.__init__(self, width, height)
         self.dialogue_label = pyglet.text.Label('',
-                x=0, y=height - 75, width=width // 2, multiline=True)
+                x=2, y=height - 75, width=width // 2, font_name='minecraftia', multiline=True)
         # 全部聊天内容
         self.dialogue = []
         # 实际显示的聊天内容
@@ -40,7 +40,7 @@ class Dialogue(GUI):
             self.dialogue_label.draw()
         
     def resize(self, width, height):
-        self.dialogue_label.x = 0
+        self.dialogue_label.x = 2
         self.dialogue_label.y = height - 75
         self.dialogue_label.width = width // 2
 

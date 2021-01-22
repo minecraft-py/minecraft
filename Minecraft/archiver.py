@@ -58,14 +58,14 @@ def save_block(name, change, full=True):
             data[position] = block
     else:
         data = change
-    json.dump(data, open(join(path['save'], name, 'world.json'), 'w+'), indent='\t')
+    json.dump(data, open(join(path['save'], name, 'world.json'), 'w+'))
 
 def save_info(name, day, time):
     # 将世界信息存入文件
     data = json.load(open(join(path['save'], name, 'info.json')))
     data['day'] = day
     data['time'] = time
-    json.dump(data, open(join(path['save'], name, 'info.json'), 'w+'), indent='\t')
+    json.dump(data, open(join(path['save'], name, 'info.json'), 'w+'))
 
 
 def save_player(name, position, respawn, rotation, now_block):
@@ -75,11 +75,11 @@ def save_player(name, position, respawn, rotation, now_block):
     data['respawn'] = pos2str(respawn)
     data['rotation'] = rotation
     data['now_block'] = now_block
-    json.dump(data, open(join(path['save'], name, 'player.json'), 'w+'), indent='\t')
+    json.dump(data, open(join(path['save'], name, 'player.json'), 'w+'))
 
 def save_window(width, height):
     data = {
                 'width': width,
                 'height': height
             }
-    json.dump(data, open(join(path['mcpypath'], 'window.json'), 'w+'), indent='\t')
+    json.dump(data, open(join(path['mcpypath'], 'window.json'), 'w+'))
