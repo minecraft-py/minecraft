@@ -77,7 +77,7 @@ class Game(pyglet.window.Window):
         self.label = {}
         self.label['top'] = pyglet.text.Label('',
             x=2, y=self.height - 5, width=self.width // 2, multiline=True,
-            anchor_x='left', anchor_y='top', font_name='minecraftia')
+            anchor_x='left', anchor_y='top', font_size=12, font_name='minecraftia')
         self.is_init = True
         # 设置图标
         self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))

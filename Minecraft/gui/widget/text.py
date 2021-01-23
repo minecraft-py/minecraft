@@ -16,7 +16,7 @@ class TextEntry(Widget):
         win_width, win_height = get_size()
         self.batch = Batch()
         self._doc = pyglet.text.document.UnformattedDocument(text)
-        self._doc.set_style(0, len(self._doc.text), dict(color=(255, 255, 255, 255)))
+        self._doc.set_style(0, len(self._doc.text), dict(color=(255, 255, 255, 255), font_name='minecraftia'))
         font = self._doc.get_font()
         height = font.ascent - font.descent
         pad = 2
