@@ -217,7 +217,7 @@ class World(object):
         texture_data = list(block.texture_data)
         color_data = None
         if hasattr(block, 'get_color'):
-            color_data = block.get_color(0.5, 0.5)
+            color_data = block.get_color(0, 1)
         count = len(texture_data) // 2
         batch = self.batch3d
         if block.transparent:

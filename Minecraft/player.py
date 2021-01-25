@@ -1,3 +1,4 @@
+import math
 import os
 import time
 
@@ -31,6 +32,7 @@ class Player():
         self._data['fov'] = settings['fov']
         self._data['rotation'] = (0, 0)
         self._data['dy'] = 0
+        self._data['height'] = 2
 
     def __getitem__(self, item):
         return self._data.get(item, None)
@@ -38,6 +40,69 @@ class Player():
     def __setitem__(self, item, value):
         if item in self._data:
             self._data[item] = value
+
+    def collide(self, position):
+        """
+        碰撞检测
+
+        :param: position, 玩家位置
+        :return: position 碰撞检测之后的位置
+        """
+        pad = 0.25
+        p = list(position)
+        np = normalize(position)
+        for face in FACES:
+            for i in range(3):
+                if not face[i]:
+                    continue
+                d = (p[i] - np[i]) * face[i]
+                if d < pad:
+                    continue
+                for dy in range(self._data['height']):
+                    op = list(np)
+                    op[1] -= dy
+                    op[i] += face[i]
+                    if get_game().world.get(tuple(op)) is None:
+                        continue
+                    p[i] -= (d - pad) * face[i]
+                    if face == (0, -1, 0) or face == (0, 1, 0):
+                        self._data['dy'] = 0
+                    break
+        else:
+            return tuple(p)
+
+    def get_sight_vector(self):
+        # 返回玩家的视线方向
+        x, y = self._data['rotation']
+        # y 的范围为 -90 到 90, 或 -pi/2 到 pi/2.
+        # 所以 m 的范围为 0 到 1
+        m = math.cos(math.radians(y))
+        # dy 的范围为 -1 到 1. 玩家向下看为 -1, 向上看为 1
+        dy = math.sin(math.radians(y))
+        dx = math.cos(math.radians(x - 90)) * m
+        dz = math.sin(math.radians(x - 90)) * m
+        return (dx, dy, dz)
+
+    def get_motion_vector(self):
+        dy = dx = dz = 0.0
+        x, y = self._data['rotation']
+        strafe = math.degrees(math.atan2(*self._data['strafe']))
+        y_angle = math.radians(y)
+        x_angle = math.radians(x + strafe)
+        if any(self._data['strafe']):
+            if self._data['flying']:
+                dx = math.cos(x_angle)
+                dy = 0.0
+                dz = math.sin(x_angle)
+            else:
+                dx = math.cos(x_angle)
+                dy = 0.0
+                dz = math.sin(x_angle)
+        elif self._data['flying'] and not self._data['dy'] == 0:
+            dx = 0.0
+            dy = self._data['dy']
+            dz = 0.0
+        return (dx, dy, dz)
 
     def on_mouse_motion(self, x, y, dx, dy):
         if get_game().exclusive and not self._data['die']:
@@ -55,7 +120,7 @@ class Player():
         if get_game().exclusive:
             if self._data['gamemode'] == 1:
                 return
-            vector = get_game().get_sight_vector()
+            vector = self.get_sight_vector()
             now, previous = get_game().world.hit_test(self._data['position'], vector)
             if now:
                 block = get_game().world.get(now)

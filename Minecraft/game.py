@@ -223,45 +223,7 @@ class Game(pyglet.window.Window):
             except ValueError:
                 pass
             else:
-                cmd.run()
-
-    def get_sight_vector(self):
-        # 返回玩家的视线方向
-        x, y = self.player['rotation']
-        # y 的范围为 -90 到 90, 或 -pi/2 到 pi/2.
-        # 所以 m 的范围为 0 到 1
-        m = math.cos(math.radians(y))
-        # dy 的范围为 -1 到 1. 玩家向下看为 -1, 向上看为 1
-        dy = math.sin(math.radians(y))
-        dx = math.cos(math.radians(x - 90)) * m
-        dz = math.sin(math.radians(x - 90)) * m
-        return (dx, dy, dz)
-
-    def get_motion_vector(self):
-        """
-        计算运动时3个轴的位移增量
-
-        :return: 长度为3的元组, 包含 x, y, z 轴上的速度增量
-        """
-        dy = dx = dz = 0.0
-        x, y = self.player['rotation']
-        strafe = math.degrees(math.atan2(*self.player['strafe']))
-        y_angle = math.radians(y)
-        x_angle = math.radians(x + strafe)
-        if any(self.player['strafe']):
-            if self.player['flying']:
-                dx = math.cos(x_angle)
-                dy = 0.0
-                dz = math.sin(x_angle)
-            else:
-                dx = math.cos(x_angle)
-                dy = 0.0
-                dz = math.sin(x_angle)
-        elif self.player['flying'] and not self.player['dy'] == 0:
-            dx = 0.0
-            dy = self.player['dy']
-            dz = 0.0
-        return (dx, dy, dz)
+                cmd.run() 
 
     def update(self, dt):
         """
@@ -306,7 +268,7 @@ class Game(pyglet.window.Window):
             speed = WALKING_SPEED
         # 一个游戏刻玩家经过的距离
         d = dt * speed
-        dx, dy, dz = self.get_motion_vector()
+        dx, dy, dz = self.player.get_motion_vector()
         # 玩家新的位置
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
@@ -319,41 +281,10 @@ class Game(pyglet.window.Window):
                 # 碰撞检测
                 x, y, z = self.player['position']
                 if self.player['gamemode'] != 1:
-                    x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+                    x, y, z = self.player.collide((x + dx, y + dy, z + dz))
                 else:
                     x, y, z = x + dx, y + dy, z + dz
-                self.player['position'] = (x, y, z)
-
-    def collide(self, position, height):
-        """
-        碰撞检测
-
-        :param: position, 玩家位置
-        :param: height 玩家的高度
-        :return: position 碰撞检测之后的位置
-        """
-        pad = 0.25
-        p = list(position)
-        np = normalize(position)
-        for face in FACES:
-            for i in range(3):
-                if not face[i]:
-                    continue
-                d = (p[i] - np[i]) * face[i]
-                if d < pad:
-                    continue
-                for dy in range(height):
-                    op = list(np)
-                    op[1] -= dy
-                    op[i] += face[i]
-                    if self.world.get(tuple(op)) is None:
-                        continue
-                    p[i] -= (d - pad) * face[i]
-                    if face == (0, -1, 0) or face == (0, 1, 0):
-                        self.player['dy'] = 0
-                    break
-        else:
-            return tuple(p)
+                self.player['position'] = (x, y, z) 
 
     def on_close(self):
         # 当玩家关闭窗口时调用
@@ -491,6 +422,11 @@ class Game(pyglet.window.Window):
             self.world.batch3d.draw()
             self.world.batch3d_transparent.draw()
             self.draw_focused_block()
+            glLineWidth(5)
+            pyglet.graphics.draw(2, GL_LINES,
+                    ('v3f/static', (0.5, 10, 0.5, 0.5, 11, 0.5)),
+                    ('c4B', (255, 0, 0, 255) * 2))
+            glLineWidth(1)
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
                 self.world.batch2d.draw()
@@ -537,7 +473,7 @@ class Game(pyglet.window.Window):
 
     def draw_focused_block(self):
         # 在十字线选中的方块绘制黑边
-        vector = self.get_sight_vector()
+        vector = self.player.get_sight_vector()
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block and self.player['gamemode'] != 1:
             x, y, z = block
