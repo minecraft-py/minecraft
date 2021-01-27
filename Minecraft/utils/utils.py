@@ -7,7 +7,7 @@ import pyglet
 
 init()
 
-def cube_vertices(x, y, z, n):  
+def cube_vertices(x, y, z, n):
     # 返回在 x, y, z 坐标的方形顶点 
     return [
             x-n,y+n,z-n, x-n,y+n,z+n, x+n,y+n,z+n, x+n,y+n,z-n,  # 顶部

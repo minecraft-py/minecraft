@@ -31,6 +31,7 @@ from Minecraft.menu import Chat, PauseMenu
 from Minecraft.player import Player
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
+from Minecraft.world.weather import weather
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
@@ -56,11 +57,11 @@ class Game(pyglet.window.Window):
         # 玩家
         self.player = Player()
         # 拓展功能
-        self.ext = {}
-        self.ext['debug'] = False
-        self.ext['enable'] = False
-        self.ext['position'] = False
-        self.ext['running'] = False
+        self.debug = {}
+        self.debug['debug'] = False
+        self.debug['enable'] = False
+        self.debug['position'] = False
+        self.debug['running'] = False
         # rotation = (水平角 x, 俯仰角 y)
         self.player['rotation'] = (0, 0)
         # 玩家所处的区域
@@ -242,7 +243,7 @@ class Game(pyglet.window.Window):
         m = 8
         dt = min(dt, 0.2)
         for _ in range(m):
-            self._update(dt / m)
+            self._update(dt / m) 
 
     def update_status(self, dt):
         # 这个函数定时改变世界状态
@@ -260,7 +261,7 @@ class Game(pyglet.window.Window):
         # 移动速度
         if self.player['flying']:
             speed = FLYING_SPEED
-        elif self.player['running'] or self.ext['running']:
+        elif self.player['running'] or self.debug['running']:
             speed = RUNNING_SPEED
         elif self.player['stealing']:
             speed = STEALING_SPEED
@@ -419,14 +420,8 @@ class Game(pyglet.window.Window):
         if not self.is_init:
             self.set_3d()
             glColor3d(1, 1, 1)
-            self.world.batch3d.draw()
-            self.world.batch3d_transparent.draw()
+            self.world.draw()
             self.draw_focused_block()
-            glLineWidth(5)
-            pyglet.graphics.draw(2, GL_LINES,
-                    ('v3f/static', (0.5, 10, 0.5, 0.5, 11, 0.5)),
-                    ('c4B', (255, 0, 0, 255) * 2))
-            glLineWidth(1)
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
                 self.world.batch2d.draw()
@@ -494,18 +489,21 @@ class Game(pyglet.window.Window):
                 self.label['actionbar'].text = self.player['die_reason']
                 self.die_info.draw()
                 self.label['actionbar'].draw()
-            elif self.ext['position'] and self.exclusive:
+            elif self.debug['position'] and self.exclusive:
                 # 在屏幕左上角绘制标签
                 x, y, z = self.player['position']
                 self.label['top'].text = get_lang('game.text.position') % (x, y, z, pyglet.clock.get_fps())
                 self.label['top'].draw()
-            elif self.ext['debug'] and self.exclusive:
+            elif self.debug['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
+                info_ext = []
+                info_ext.append('python' + '.'.join([str(i) for i in sys.version_info[:3]]))
+                info_ext.append('pyglet' + pyglet.version)
                 self.label['top'].text = '\n'.join(get_lang('game.text.debug')) % (VERSION['str'],
-                        'pyglet' + pyglet.version, x, y, z, rx, ry, mem, fps)
+                        ', '.join(info_ext), x, y, z, rx, ry, mem, fps)
                 self.label['top'].draw()
         else:
             # 初始化屏幕
@@ -540,6 +538,6 @@ def setup():
     glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
     glHint(GL_FOG_HINT, GL_DONT_CARE)
     glFogi(GL_FOG_MODE, GL_LINEAR)
-    glFogf(GL_FOG_START, 30.0)
+    glFogf(GL_FOG_START, 50.0)
     glFogf(GL_FOG_END, 80.0)
 

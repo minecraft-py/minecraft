@@ -5,7 +5,7 @@ import random
 import time
 
 import Minecraft.archiver as archiver
-from Minecraft.source import get_lang, path, settings
+from Minecraft.source import get_lang
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
@@ -19,8 +19,6 @@ except ModuleNotFoundError:
 
 import pyglet
 from pyglet.gl import *
-from pyglet.graphics import TextureGroup
-from pyglet import image
 
 class World(object):
 
@@ -217,7 +215,13 @@ class World(object):
         texture_data = list(block.texture_data)
         color_data = None
         if hasattr(block, 'get_color'):
-            color_data = block.get_color(0, 1)
+            _, y, _ = position
+            if y <= 10:
+                t = 0.8
+            else:
+                t = 0.8 - (y - 0.8) * 1/600
+            h = 0.35
+            color_data = block.get_color(t, h)
         count = len(texture_data) // 2
         batch = self.batch3d
         if block.transparent:
@@ -309,3 +313,7 @@ class World(object):
         # 处理所有事件
         while self.queue:
             self._dequeue()
+
+    def draw(self):
+        self.batch3d.draw()
+        self.batch3d_transparent.draw()

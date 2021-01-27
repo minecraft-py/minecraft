@@ -254,7 +254,8 @@ class Grass(Block):
 
     def get_color(self, temperature, humidity):
         color = []
-        color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
+        color.extend(list(self.colorizer.get_color(temperature, humidity)) * 4)
+        color.extend([1] * 60)
         return color
 
     def on_ticking(self, game, pos):
@@ -265,7 +266,8 @@ class Grass(Block):
 
     def get_item_color(self):
         color = []
-        color.extend(list(self.item_colorizer.get_color(0, 0)) * 24)
+        color.extend(list(self.item_colorizer.get_color(0.5, 0.5)) * 4)
+        color.extend([1] * 60)
         return color
 
 

@@ -183,21 +183,21 @@ class Player():
         elif symbol == key.D:
             self._data['strafe'][1] += 1
         elif symbol == key.I:
-             if get_game().ext['enable']:
-                get_game().ext['debug'] = not get_game().ext['debug']
-                get_game().ext['position'] = False
+             if not get_game().debug['enable']:
+                get_game().debug['debug'] = not get_game().debug['debug']
+                get_game().debug['position'] = False
         elif symbol == key.E:
             if not self._data['die']:
                 get_game().set_exclusive_mouse(self._data['show_bag'])
                 self._data['in_hud'] = not self._data['in_hud']
                 self._data['show_bag'] = not self._data['show_bag']
         elif symbol == key.P:
-            if get_game().ext['enable']:
-                get_game().ext['position'] = not self.ext['position']
-                get_game().ext['debug'] = False
+            if get_game().debug['enable']:
+                get_game().debug['position'] = not self.debug['position']
+                get_game().debug['debug'] = False
         elif symbol == key.R:
-            if get_game().ext['enable']:
-                get_game().ext['running'] = not self.ext['running']
+            if get_game().debug['enable']:
+                get_game().debug['running'] = not self.debug['running']
         elif symbol == key.SPACE:
             if self._data['flying']:
                 self._data['dy'] = 0.1 * JUMP_SPEED
@@ -236,7 +236,7 @@ class Player():
                 path['screenshot'], name))
             self.dialogue.add_dialogue('screenshot saved in: %s' % name)
         elif symbol == key.F3:
-            get_game().ext['enable'] = True
+            get_game().debug['enable'] = True
         elif symbol == key.F11:
             get_game().set_fullscreen(not get_game().fullscreen)
 
@@ -262,4 +262,4 @@ class Player():
         elif symbol == key.LCTRL:
             self._data['running'] = False
         elif symbol == key.F3:
-            get_game().ext['enable'] = False
+            get_game().debug['enable'] = False
