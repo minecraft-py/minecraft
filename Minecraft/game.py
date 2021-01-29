@@ -67,6 +67,9 @@ class Game(pyglet.window.Window):
         self.sector = None
         # 这个十字在屏幕中央
         self.reticle = None
+        # 显示在 debug 区域的 info
+        self._info_ext = []
+        self._info_ext.append('pyglet' + pyglet.version)
         # 玩家可以放置的方块, 使用数字键切换
         self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table', 'glass']
         # 数字键列表
@@ -128,6 +131,9 @@ class Game(pyglet.window.Window):
                 return False
         else:
             return False
+
+    def add_info_ext(self, s):
+        self._info_ext.append(s)
 
     def check_die(self, dt):
         """
@@ -497,10 +503,8 @@ class Game(pyglet.window.Window):
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
                 info_ext = []
-                info_ext.append('python' + '.'.join([str(i) for i in sys.version_info[:3]]))
-                info_ext.append('pyglet' + pyglet.version)
                 self.label['top'].text = '\n'.join(get_lang('game.text.debug')) % (VERSION['str'],
-                        ', '.join(info_ext), x, y, z, rx, ry, mem, fps)
+                        ', '.join(self._info_ext), x, y, z, rx, ry, mem, fps)
                 self.label['top'].draw()
         else:
             # 初始化屏幕
