@@ -11,7 +11,8 @@ from pyglet import resource
 path = {}
 
 path['mcpypath'] = search_mcpy()
-sys.path.insert(0, join(path['mcpypath'], 'lib'))
+sys.path.insert(0, join(path['mcpypath'], 'lib', VERSION['str']))
+lib_path = sys.path[0]
 
 settings = json.load(open(join(path['mcpypath'], 'settings.json'), encoding='utf-8'))
 # 检查 settings.json 的正确性
@@ -62,3 +63,15 @@ get_lang = lambda s: lang[s] if s in lang else s
 resource.path = [join(path['pack'])]
 resource.reindex()
 resource.add_font('minecraft.ttf')
+
+args_o = False
+libs = []
+for args in sys.argv:
+    if args == '-o':
+        args_o = True
+    if args_o and args != '-o':
+        if isdir(join(lib_path, args)) or isfile(join(lib_path, args + '.py')):
+            log_info('load lib: %s' % args)
+            libs.append(__import__(args))
+        else:
+            log_warn("No lib '%s' found, pass" % args)

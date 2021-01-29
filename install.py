@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from json import dump, load
-from os import environ, mkdir, path, system
+from os import environ, mkdir, makedirs, path, system
 from re import match
 from shutil import copyfile, copytree, rmtree
 from sys import executable, platform, argv
@@ -13,8 +13,8 @@ def copy():
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
     install_json('settings.json')
-    if not path.isdir(path.join(MCPYPATH, 'lib')):
-        mkdir(path.join(MCPYPATH, 'lib'))
+    if not path.isdir(path.join(MCPYPATH, 'lib', '0.3.1')):
+        makedirs(path.join(MCPYPATH, 'lib', '0.3.1'))
     if not path.isdir(path.join(MCPYPATH, 'log')):
         mkdir(path.join(MCPYPATH, 'log'))
     if not path.isdir(path.join(MCPYPATH, 'save')):

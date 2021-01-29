@@ -19,7 +19,7 @@ except:
 
 import Minecraft.archiver as archiver
 from Minecraft.command.commands import commands
-from Minecraft.source import get_lang, path, player, settings
+from Minecraft.source import get_lang, libs, path, player, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar
@@ -110,6 +110,9 @@ class Game(pyglet.window.Window):
         # 天空颜色变换
         pyglet.clock.schedule_interval(change_sky_color, 7.5)
         log_info('welcome %s' % player['name'])
+        for lib in libs:
+            if hasattr(lib, 'init'):
+                lib.init()
 
     def can_place(self, block, position):
         """
