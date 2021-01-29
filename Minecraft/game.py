@@ -60,7 +60,6 @@ class Game(pyglet.window.Window):
         self.debug = {}
         self.debug['debug'] = False
         self.debug['enable'] = False
-        self.debug['position'] = False
         self.debug['running'] = False
         # rotation = (水平角 x, 俯仰角 y)
         self.player['rotation'] = (0, 0)
@@ -492,11 +491,6 @@ class Game(pyglet.window.Window):
                 self.label['actionbar'].text = self.player['die_reason']
                 self.die_info.draw()
                 self.label['actionbar'].draw()
-            elif self.debug['position'] and self.exclusive:
-                # 在屏幕左上角绘制标签
-                x, y, z = self.player['position']
-                self.label['top'].text = get_lang('game.text.position') % (x, y, z, pyglet.clock.get_fps())
-                self.label['top'].draw()
             elif self.debug['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.player['rotation']

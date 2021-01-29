@@ -183,7 +183,7 @@ class Player():
         elif symbol == key.D:
             self._data['strafe'][1] += 1
         elif symbol == key.I:
-             if not get_game().debug['enable']:
+             if get_game().debug['enable']:
                 get_game().debug['debug'] = not get_game().debug['debug']
                 get_game().debug['position'] = False
         elif symbol == key.E:
@@ -191,10 +191,6 @@ class Player():
                 get_game().set_exclusive_mouse(self._data['show_bag'])
                 self._data['in_hud'] = not self._data['in_hud']
                 self._data['show_bag'] = not self._data['show_bag']
-        elif symbol == key.P:
-            if get_game().debug['enable']:
-                get_game().debug['position'] = not self.debug['position']
-                get_game().debug['debug'] = False
         elif symbol == key.R:
             if get_game().debug['enable']:
                 get_game().debug['running'] = not self.debug['running']
