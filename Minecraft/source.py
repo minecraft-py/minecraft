@@ -2,6 +2,7 @@ import json
 from os import environ
 from os.path import abspath, dirname, isdir, isfile, join
 import re
+import sys
 
 from Minecraft.utils.utils import *
 
@@ -10,6 +11,7 @@ from pyglet import resource
 path = {}
 
 path['mcpypath'] = search_mcpy()
+sys.path.insert(0, join(path['mcpypath'], 'lib'))
 
 settings = json.load(open(join(path['mcpypath'], 'settings.json'), encoding='utf-8'))
 # 检查 settings.json 的正确性

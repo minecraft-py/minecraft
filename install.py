@@ -12,9 +12,9 @@ def copy():
     MCPYPATH = search_mcpy()
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
-    install_json('server.json')
     install_json('settings.json')
-    install_json('window.json')
+    if not path.isdir(path.join(MCPYPATH, 'lib')):
+        mkdir(path.join(MCPYPATH, 'lib'))
     if not path.isdir(path.join(MCPYPATH, 'log')):
         mkdir(path.join(MCPYPATH, 'log'))
     if not path.isdir(path.join(MCPYPATH, 'save')):

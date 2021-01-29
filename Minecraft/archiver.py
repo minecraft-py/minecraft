@@ -39,7 +39,7 @@ def load_player(name):
 
 def load_window():
     # 读取游戏窗口信息
-    data = json.load(open(join(path['mcpypath'], 'window.json')))
+    data = json.load(open(join(path['mcpypath'], 'settings.json')))['viewport']
     return {
                 'width': data['width'],
                 'height': data['height']
@@ -78,7 +78,8 @@ def save_player(name, position, respawn, rotation, now_block):
     json.dump(data, open(join(path['save'], name, 'player.json'), 'w+'))
 
 def save_window(width, height):
-    data = {
+    data = json.load(open(join(path['mcpypath'], 'settings.json')))
+    data['viewport'] = {
                 'width': width,
                 'height': height
             }
