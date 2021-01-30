@@ -83,4 +83,4 @@ def save_window(width, height):
                 'width': width,
                 'height': height
             }
-    json.dump(data, open(join(path['mcpypath'], 'window.json'), 'w+'))
+    json.dump(data, open(join(path['mcpypath'], 'settings.json'), 'w+'))
