@@ -71,7 +71,8 @@ for args in sys.argv:
         args_o = True
     if args_o and args != '-o':
         if isdir(join(lib_path, args)) or isfile(join(lib_path, args + '.py')):
-            log_info('load lib: %s' % args)
+            log_info('loading lib: %s' % args)
             libs.append(__import__(args))
         else:
-            log_warn("No lib '%s' found, pass" % args)
+            log_warn("No lib '%s' found, exit" % args)
+            exit(1)
