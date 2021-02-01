@@ -8,6 +8,7 @@ from Minecraft.utils.utils import *
 class CommandBase():
 
     formats = []
+    description = ['description.short', 'description.long']
     
     def __init__(self, game, position, command):
         self.game = game
@@ -19,7 +20,7 @@ class CommandBase():
             if args is not None:
                 self.args = args
                 break
-        if self.args == None:
+        if not isinstance(self.args, list):
             self.game.dialogue.add_dialogue('Arguments error')
             raise ValueError
 
@@ -89,6 +90,5 @@ def get_args(pos, s, f):
                     l.append(pos)
             elif f[item] == 'str':
                 l.append(command[item])
-
         else:
             return l

@@ -45,7 +45,9 @@ class Dialogue(GUI):
         self.dialogue_label.width = width // 2
 
     def update(self):
-        if time.time() - self.last > 10.0:
+        if time.time() - self.last > 5.0:
             if len(self.dialogue) > 4096:
                 self.dialogue.clear()
-            self.shown.clear()
+            if len(self.shown) > 0:
+                self.shown.pop(0)
+                self.last = time.time()
