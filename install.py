@@ -13,16 +13,11 @@ def copy():
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
     install_json('settings.json')
+    for name in ['log', 'save', 'screenshot', 'resource-pack']:
+        if not path.isdir(path.join(MCPYPATH, name)):
+            mkdir(path.join(MCPYPATH, name))
     if not path.isdir(path.join(MCPYPATH, 'lib', '0.3.1')):
         makedirs(path.join(MCPYPATH, 'lib', '0.3.1'))
-    if not path.isdir(path.join(MCPYPATH, 'log')):
-        mkdir(path.join(MCPYPATH, 'log'))
-    if not path.isdir(path.join(MCPYPATH, 'save')):
-        mkdir(path.join(MCPYPATH, 'save'))
-    if not path.isdir(path.join(MCPYPATH, 'screenshot')):
-        mkdir(path.join(MCPYPATH, 'screenshot'))
-    if not path.isdir(path.join(MCPYPATH, 'resource-pack')):
-        mkdir(path.join(MCPYPATH, 'resource-pack'))
     if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default')):
         rmtree(path.join(MCPYPATH, 'resource-pack', 'default'))
     ZipFile(path.join(get_file('data'), 'pack.zip')).extractall(path.join(MCPYPATH, 'resource-pack'))
