@@ -2,7 +2,7 @@ import math
 import os
 import time
 
-from Minecraft.source import settings
+from Minecraft.source import path, settings
 from Minecraft.utils.utils import *
 
 import pyglet
@@ -33,6 +33,9 @@ class Player():
         self._data['rotation'] = (0, 0)
         self._data['dy'] = 0
         self._data['height'] = 2
+        self._data['key_press'] = {}
+        self._data['key_press']['w'] = {'count': 0, 'last': time.time()}
+        self._data['key_press']['space'] = {'count': 0, 'last': time.time()}
 
     def __getitem__(self, item):
         return self._data.get(item, None)
@@ -175,6 +178,13 @@ class Player():
                 get_game().menu['chat'].text('/')
                 get_game().menu['chat'].frame.enable()
         elif symbol == key.W:
+            if self._data['key_press']['w']['count'] == 1:
+                if time.time() - self._data['key_press']['w']['last'] <= 0.1:
+                    self._data['key_press']['w']['count'] = 2
+                    self._data['running'] = True
+                else:
+                    self._data['key_press']['w']['count'] = 0
+            self._data['key_press']['w']['last'] = time.time()
             self._data['strafe'][0] -= 1
         elif symbol == key.S:
             self._data['strafe'][0] += 1
@@ -195,6 +205,14 @@ class Player():
             if get_game().debug['enable']:
                 get_game().debug['running'] = not self.debug['running']
         elif symbol == key.SPACE:
+            if self._data['key_press']['space']['count'] == 1:
+                if time.time() - self._data['key_press']['space']['last'] <= 0.1:
+                    self._data['key_press']['space']['count'] = 2
+                    if self._data['gamemode'] != 1:
+                        self._data['flying'] = not self._data['flying']
+                else:
+                    self._data['key_press']['space']['count'] = 0
+            self._data['key_press']['space']['last'] = time.time()
             if self._data['flying']:
                 self._data['dy'] = 0.1 * JUMP_SPEED
             elif self._data['dy'] == 0:
@@ -210,27 +228,21 @@ class Player():
                 get_game().menu['pause'].frame.enable()
                 if self._data['die']:
                     get_game().close()
-        elif symbol == key.TAB:
-            if self._data['gamemode'] != 1:
-                self._data['flying'] = not self._data['flying']
         elif symbol == key.LSHIFT:
             if self._data['flying']:
                 self._data['dy'] = -0.1 * JUMP_SPEED
             else:
                 self._data['stealing'] = True
-        elif symbol == key.LCTRL:
-            if not self._data['flying']:
-                self._data['running'] = True
         elif symbol in get_game().num_keys:
             self._data['block'] = (symbol - get_game().num_keys[0]) % len(get_game().inventory)
             get_game().hud['hotbar'].set_index(self._data['block'])
         elif symbol == key.F1:
             self._data['hide_hud'] = not self._data['hide_hud']
         elif symbol == key.F2:
-            name = 'screenshot-%d.png' % int(time.time())
+            name = time.strftime('%Y-%m-%d_%H.%M.%S.png')
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], name))
-            self.dialogue.add_dialogue('screenshot saved in: %s' % name)
+            get_game().dialogue.add_dialogue('Screenshot saved in: %s' % name)
         elif symbol == key.F3:
             get_game().debug['enable'] = True
         elif symbol == key.F11:
@@ -240,6 +252,12 @@ class Player():
         if self._data['in_chat']:
             return
         if symbol == key.W:
+            if self._data['key_press']['w']['count'] == 0:
+                self._data['key_press']['w']['count'] = 1
+            elif self._data['key_press']['w']['count'] == 2:
+                self._data['key_press']['w']['count'] = 0
+                self._data['running'] = False
+            self._data['key_press']['w']['last'] = time.time()
             self._data['strafe'][0] += 1
         elif symbol == key.S:
             self._data['strafe'][0] -= 1
@@ -248,6 +266,11 @@ class Player():
         elif symbol == key.D:
             self._data['strafe'][1] -= 1
         elif symbol == key.SPACE:
+            if self._data['key_press']['space']['count'] == 0:
+                self._data['key_press']['space']['count'] = 1
+            elif self._data['key_press']['space']['count'] == 2:
+                self._data['key_press']['space']['count'] = 0
+            self._data['key_press']['space']['last'] = time.time()
             if self._data['flying']:
                 self._data['dy'] = 0
         elif symbol == key.LSHIFT:
@@ -255,7 +278,5 @@ class Player():
                 self._data['dy'] = 0
             else:
                 self._data['stealing'] = False
-        elif symbol == key.LCTRL:
-            self._data['running'] = False
         elif symbol == key.F3:
             get_game().debug['enable'] = False
