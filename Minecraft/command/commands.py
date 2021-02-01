@@ -75,7 +75,7 @@ class Help(CommandBase):
         if len(self.args) == 0:
             cmds = ''
             for key, value in commands.items():
-                cmds += ' /' + key + '- ' + value.description[0] + '\n'
+                cmds += ' /' + key + ' - ' + value.description[0] + '\n'
             self.game.dialogue.add_dialogue(cmds)
         else:
             if self.args[0] in commands:

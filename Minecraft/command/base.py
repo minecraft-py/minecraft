@@ -17,7 +17,7 @@ class CommandBase():
         self.args = None
         for f in self.formats:
             args = get_args(self.position, command, f)
-            if args is not None:
+            if args != False:
                 self.args = args
                 break
         if not isinstance(self.args, list):
