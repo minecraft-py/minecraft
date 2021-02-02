@@ -34,9 +34,8 @@ class RainDrop():
             glLineWidth(1)
 
     def update(self, dt):
-        log_info(self._data)
-        self._data['dy'] -= dt * 10
-        self._data['position'] = self._data['position'][0], self._data['position'][1] + self._data['dy'], self._data['position'][2]
+        self._data['dy'] = dt * 3
+        self._data['position'] = self._data['position'][0], self._data['position'][1] - self._data['dy'], self._data['position'][2]
 
 
 class Weather():

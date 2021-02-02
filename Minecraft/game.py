@@ -242,6 +242,7 @@ class Game(pyglet.window.Window):
         """
         self.world.process_queue()
         self.dialogue.update()
+        weather['rainy'].update(dt)
         sector = sectorize(self.player['position'])
         if sector != self.sector:
             self.world.change_chunk(self.sector, sector)
@@ -430,6 +431,7 @@ class Game(pyglet.window.Window):
             glColor3d(1, 1, 1)
             self.world.draw()
             self.draw_focused_block()
+            weather['rainy'].draw()
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
                 self.world.batch2d.draw()
