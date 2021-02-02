@@ -31,7 +31,7 @@ from Minecraft.menu import Chat, PauseMenu
 from Minecraft.player import Player
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color, get_time, set_time
-from Minecraft.world.weather import weather
+from Minecraft.world.weather import weather, choice_weather
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
 
@@ -61,6 +61,8 @@ class Game(pyglet.window.Window):
         self.debug['debug'] = False
         self.debug['enable'] = False
         self.debug['running'] = False
+        # 天气(现在天气, 持续时间)
+        self.weather = {'now': 'clear', 'duration': 1}
         # rotation = (水平角 x, 俯仰角 y)
         self.player['rotation'] = (0, 0)
         # 玩家所处的区域
@@ -185,7 +187,7 @@ class Game(pyglet.window.Window):
         archiver.save_block(self.name, self.world.change)
         archiver.save_player(self.name, self.player['position'], self.player['respawn_position'],
                 normalize(self.player['rotation']), self.player['block'])
-        archiver.save_info(self.name, 0, get_time())
+        archiver.save_info(self.name, 0, get_time(), self.weather)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -213,6 +215,8 @@ class Game(pyglet.window.Window):
         # 读取世界数据
         self.world_info = archiver.load_info(self.name)
         set_time(self.world_info['time'])
+        self.weather = self.world_info['weather']
+        weather[self.weather['now']].change()
 
     def set_cursor(self, cursor=None):
         # 设置光标形状
@@ -242,8 +246,16 @@ class Game(pyglet.window.Window):
         """
         self.world.process_queue()
         self.dialogue.update()
-        weather['rainy'].update(dt)
         sector = sectorize(self.player['position'])
+        self.weather['duration'] -= dt
+        if self.weather['duration'] <= 0:
+            weather[self.weather['now']].leave()
+            self.weather['now'] = choice_weather()
+            weather[self.weather['now']].change()
+            self.weather['duration'] = random.randint(*weather[self.weather['now']].duration)
+            weather[self.weather['now']].update(dt)
+        else:
+            weather[self.weather['now']].update(dt)
         if sector != self.sector:
             self.world.change_chunk(self.sector, sector)
             if self.sector is None:
@@ -431,7 +443,7 @@ class Game(pyglet.window.Window):
             glColor3d(1, 1, 1)
             self.world.draw()
             self.draw_focused_block()
-            weather['rainy'].draw()
+            weather[self.weather['now']].draw()
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
                 self.world.batch2d.draw()

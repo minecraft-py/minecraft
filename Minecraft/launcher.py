@@ -137,7 +137,8 @@ class MinecraftLauncher(Tk):
                 world = open(os.path.join(path['save'], name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
-                info = {'seed': seed, 'type': self.new_dialog_combobox_type.get(), 'day': 0, 'time': 4}
+                info = {'seed': seed, 'type': self.new_dialog_combobox_type.get(), 'day': 0, 'time': 4, 'weather':
+                        {'weather': 'clear', 'duration': 600}}
                 json.dump(info, open(os.path.join(path['save'], name, 'info.json'), 'w+'))
                 player = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
                 json.dump(player, open(os.path.join(path['save'], name, 'player.json'), 'w+'))

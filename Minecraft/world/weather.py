@@ -12,7 +12,7 @@ class RainDrop():
     def __init__(self, position):
         self._data = {}
         self._data['color'] = (0, 0, random.randint(128, 255), 128)
-        self._data['position'] = (position[0], 128, position[1])
+        self._data['position'] = (position[0], min(128, get_game().player['position'][1] + 20), position[1])
         self._data['shown'] = True
         self._data['dy'] = 0
 
@@ -25,8 +25,8 @@ class RainDrop():
 
     def draw(self):
         if self._data['shown']:
-            p1 = self._data['position'][0], self._data['position'][1] + 0.1, self._data['position'][2]
-            p2 = self._data['position'][0], self._data['position'][1] - 0.1, self._data['position'][2]
+            p1 = self._data['position'][0], self._data['position'][1] + 0.3, self._data['position'][2]
+            p2 = self._data['position'][0], self._data['position'][1] - 0.3, self._data['position'][2]
             glLineWidth(3)
             pyglet.graphics.draw(2, GL_LINES,
                     ('v3f/static', p1 + p2),
@@ -41,7 +41,10 @@ class RainDrop():
 class Weather():
 
     def __init__(self):
-        pass
+        # 持续时间(最短, 最长)
+        self.duration = (0, 0)
+        # 天气被选中的权重
+        self.weight = 0
 
     def change(self):
         pass
@@ -53,13 +56,26 @@ class Weather():
         pass
 
     def draw(self):
-        paas
+        pass
 
 
-class RainyDay(Weather):
+class Clear(Weather):
 
     def __init__(self):
         super().__init__()
+        self.duration = (600, 1200)
+        self.weight = 70
+
+    def change(self):
+        glFogf(GL_FOG_START, 50.0)
+
+
+class Rain(Weather):
+
+    def __init__(self):
+        super().__init__()
+        self.duration = (300, 1200)
+        self.weight = 30
         self._drops = []
 
     def change(self):
@@ -70,7 +86,7 @@ class RainyDay(Weather):
 
     def update(self, dt):
         for i in range(16):
-            if len(self._drops) < 128:
+            if len(self._drops) < 1024:
                 px, _, py = get_game().player['position']
                 self._drops.append(RainDrop((px + random.randint(-5, 5) + random.random(),
                     py + random.randint(-5, 5) + random.random())))
@@ -86,17 +102,16 @@ class RainyDay(Weather):
             drop.draw()
 
 
-class SunnyDay(Weather):
-
-    def __init__(self):
-        super().__init__()
-
-    def change(self):
-        glFogf(GL_FOG_START, 50.0)
-
-
 weather = {
-        'rainy': RainyDay(),
-        'sunny': SunnyDay(),
-        'now': 'sunny'
+        'clear': Clear(),
+        'rain': Rain()
     }
+
+def choice_weather():
+    global weather
+    weathers, weight = [], []
+    for k, v in weather.items():
+        weathers.append(k)
+        weight.append(v.weight)
+    else:
+        return random.choices(weathers, weight)
