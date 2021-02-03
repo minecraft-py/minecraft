@@ -86,10 +86,10 @@ class Rain(Weather):
 
     def update(self, dt):
         for i in range(16):
-            if len(self._drops) < 1024:
+            if len(self._drops) < 128:
                 px, _, py = get_game().player['position']
-                self._drops.append(RainDrop((px + random.randint(-5, 5) + random.random(),
-                    py + random.randint(-5, 5) + random.random())))
+                self._drops.append(RainDrop((px + random.randint(-10, 10) + random.random(),
+                    py + random.randint(-10, 10) + random.random())))
         for drop in self._drops:
             if get_game().world.get(normalize(drop['position'])) is not None or drop['position'][2] < 0:
                 drop['shown'] = False

@@ -1,4 +1,7 @@
+import random
+
 from Minecraft.command.base import CommandBase
+from Minecraft.world.weather import weather
 
 
 class GameMode(CommandBase):
@@ -48,12 +51,34 @@ class SetBlock(CommandBase):
 class Teleport(CommandBase):
 
     formats = [['px', 'py', 'pz']]
-
     description = ['Teleport',
             '/tp <position>']
 
     def run(self):
         self.game.player['position'] = tuple(self.args)
+
+
+class Weather(CommandBase):
+
+    formats = [['str'], ['str', 'int']]
+    description = ['Change weather',
+            '/weather <string:type> [int:duration]']
+
+    def run(self):
+        self.weather = {'now': '', 'duration': 0}
+        if self.args[0] in weather:
+            self.weather['now'] = self.args[0]
+        else:
+            self.game.dialogue.add_dialogue("Weather '%s' not exist")
+            return
+        if len(self.args) == 2:
+            duration = weather[self.args[0]].duration
+            self.weather['duration'] = min(max(duration[0], self.args[1]), duration[1])
+        else:
+            self.weather['duration'] = random.randint(*weather[self.args[0]].duration)
+        weather[self.game.weather['now']].leave()
+        self.game.weather = self.weather
+        weather[self.game.weather['now']].change()
 
 
 commands = {}
@@ -62,6 +87,7 @@ commands['say'] = Say
 commands['seed'] = Seed
 commands['setblock'] = SetBlock
 commands['tp'] = Teleport
+commands['weather'] = Weather
 
 class Help(CommandBase):
 
