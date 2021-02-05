@@ -58,6 +58,19 @@ class Teleport(CommandBase):
         self.game.player['position'] = tuple(self.args)
 
 
+class Time(CommandBase):
+    formats = [[], ['str', 'int']]
+    description = ['Get or set the time',
+            '/time',
+            '/time set <int:time>']
+
+    def run(self):
+        if len(self.args) == 0:
+            self.game.dialogue.add_dialogue(str(int(self.game.time)))
+        else:
+            pass
+
+
 class Weather(CommandBase):
 
     formats = [['str'], ['str', 'int']]
@@ -87,6 +100,7 @@ commands['say'] = Say
 commands['seed'] = Seed
 commands['setblock'] = SetBlock
 commands['tp'] = Teleport
+commands['time'] = Time
 commands['weather'] = Weather
 
 class Help(CommandBase):

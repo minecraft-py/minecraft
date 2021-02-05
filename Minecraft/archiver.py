@@ -60,11 +60,10 @@ def save_block(name, change, full=True):
         data = change
     json.dump(data, open(join(path['save'], name, 'world.json'), 'w+'))
 
-def save_info(name, day, time, weather):
+def save_info(name, time, weather):
     # 将世界信息存入文件
     data = json.load(open(join(path['save'], name, 'info.json')))
-    data['day'] = day
-    data['time'] = time
+    data['time'] = int(time)
     data['weather'] = {'now': weather['now'], 'duration': int(weather['duration'])}
     json.dump(data, open(join(path['save'], name, 'info.json'), 'w+'))
 

@@ -30,7 +30,7 @@ from Minecraft.gui.loading import Loading
 from Minecraft.menu import Chat, PauseMenu
 from Minecraft.player import Player
 from Minecraft.world.block import blocks
-from Minecraft.world.sky import change_sky_color, get_time, set_time
+from Minecraft.world.sky import change_sky_color
 from Minecraft.world.weather import weather, choice_weather
 from Minecraft.world.world import World
 from Minecraft.utils.utils import *
@@ -62,7 +62,9 @@ class Game(pyglet.window.Window):
         self.debug['enable'] = False
         self.debug['running'] = False
         # 天气(现在天气, 持续时间)
-        self.weather = {'now': 'clear', 'duration': 1}
+        self.weather = {'now': 'clear', 'duration': 0}
+        # 游戏世界(秒)
+        self.time = 0
         # rotation = (水平角 x, 俯仰角 y)
         self.player['rotation'] = (0, 0)
         # 玩家所处的区域
@@ -187,7 +189,7 @@ class Game(pyglet.window.Window):
         archiver.save_block(self.name, self.world.change)
         archiver.save_player(self.name, self.player['position'], self.player['respawn_position'],
                 normalize(self.player['rotation']), self.player['block'])
-        archiver.save_info(self.name, 0, get_time(), self.weather)
+        archiver.save_info(self.name, self.time, self.weather)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -214,7 +216,7 @@ class Game(pyglet.window.Window):
         self.block = data['now_block']
         # 读取世界数据
         self.world_info = archiver.load_info(self.name)
-        set_time(self.world_info['time'])
+        self.time = self.world_info['time']
         self.weather = self.world_info['weather']
         weather[self.weather['now']].change()
 
@@ -236,7 +238,7 @@ class Game(pyglet.window.Window):
             except ValueError:
                 pass
             else:
-                cmd.run() 
+                cmd.run()
 
     def update(self, dt):
         """
@@ -247,6 +249,7 @@ class Game(pyglet.window.Window):
         self.world.process_queue()
         self.dialogue.update()
         sector = sectorize(self.player['position'])
+        self.time += dt
         self.weather['duration'] -= dt
         if self.weather['duration'] <= 0:
             weather[self.weather['now']].leave()
