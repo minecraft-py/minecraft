@@ -85,8 +85,8 @@ class Rain(Weather):
         self._drops = []
 
     def update(self, dt):
-        for i in range(16):
-            if len(self._drops) < 128:
+        for i in range(8):
+            if len(self._drops) < 256:
                 px, _, py = get_game().player['position']
                 self._drops.append(RainDrop((px + random.randint(-10, 10) + random.random(),
                     py + random.randint(-10, 10) + random.random())))

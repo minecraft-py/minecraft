@@ -65,7 +65,7 @@ def get_args(pos, s, f):
                     l.append(False)
                 else:
                     return False
-            elif f[item] == 'num':
+            elif f[item] == 'int':
                 try:
                     l.append(int(command[item]))
                 except:
