@@ -27,6 +27,7 @@ from Minecraft.gui.xpbar import XPBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
+from Minecraft.gui.widget.label import ColorLabel
 from Minecraft.menu import Chat, PauseMenu
 from Minecraft.player import Player
 from Minecraft.world.block import blocks
@@ -82,22 +83,22 @@ class Game(pyglet.window.Window):
             key._6, key._7, key._8, key._9, key._0]
         # 这个标签在画布的上方显示
         self.label = {}
-        self.label['top'] = pyglet.text.Label('',
+        self.label['top'] = ColorLabel('',
             x=2, y=self.height - 5, width=self.width // 2, multiline=True,
             anchor_x='left', anchor_y='top', font_size=12, font_name='minecraftia')
         self.is_init = True
         # 设置图标
         self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         # 这个标签在画布正中偏上显示
-        self.label['center'] = pyglet.text.Label('',
+        self.label['center'] = ColorLabel('',
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
             anchor_y='center', font_name='minecraftia')
         # 死亡信息
-        self.die_info = pyglet.text.Label('', color=(255, 255, 255, 255),
+        self.die_info = ColorLabel('', color='white',
             x=self.width // 2, y=self.height // 2, anchor_x='center',
             anchor_y='center', font_size=24, font_name='minecraftia')
         # 这个标签在画布正中偏下显示
-        self.label['actionbar'] = pyglet.text.Label('',
+        self.label['actionbar'] = ColorLabel('',
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center', font_name='minecraftia')
         # 加载窗口
         self.loading = Loading()

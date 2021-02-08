@@ -1,6 +1,7 @@
 from os.path import join
 
 from Minecraft.gui.widget.base import Widget
+from Minecraft.gui.widget.label import ColorLabel
 from Minecraft.source import path
 from Minecraft.utils.utils import *
 
@@ -20,7 +21,7 @@ class Button(Widget):
         self._pressed_img = image.load(join(path['texture.ui'], 'button_over.png'))
         self._sprite = Sprite(self._depressed_img, x, win_height - y)
         self._text = text
-        self._label = Label(self._text, align='center', anchor_x='center', anchor_y='center',
+        self._label = ColorLabel(self._text, color='white', align='center', anchor_x='center', anchor_y='center',
                 x=x + width / 2, y=win_height - y + height / 2 - 2, font_name='minecraftia')
         self._pressed = False
         self._enable = True
@@ -34,9 +35,9 @@ class Button(Widget):
     def enable(self, status):
         self._enable = bool(status)
         if self._enable:
-            self._label.color = (255, ) * 4
+            self._label.color = 'white'
         else:
-            self._label.color = (255, ) * 3 + (100, )
+            self._label.color = 'gray'
 
     def text(self, text):
         self._text = text
@@ -58,8 +59,10 @@ class Button(Widget):
         if not self._pressed:
             if self.check_hit(x, y) and self._enable:
                 self._sprite.image = self._pressed_img
+                self._label.color = 'yellow'
             else:
                 self._sprite.image = self._depressed_img
+                self._label.color = 'white' if self._enable else 'gray'
 
     def on_resize(self, width, height):
         self._x *= width / self._size[0]
