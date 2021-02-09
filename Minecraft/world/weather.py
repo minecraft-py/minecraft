@@ -114,4 +114,4 @@ def choice_weather():
         weathers.append(k)
         weight.append(v.weight)
     else:
-        return random.choices(weathers, weight)
+        return random.choices(weathers, weight)[0]

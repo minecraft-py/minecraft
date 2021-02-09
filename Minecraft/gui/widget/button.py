@@ -17,8 +17,9 @@ class Button(Widget):
         self._size = win_width, win_height = get_size()
         super().__init__(x, win_height - y, width, height)
         self._width = width
-        self._depressed_img = image.load(join(path['texture.ui'], 'button.png'))
-        self._pressed_img = image.load(join(path['texture.ui'], 'button_over.png'))
+        self._depressed_img = image.load(join(path['texture.ui'], 'widgets.png')).get_region(0, 170, 200, 20)
+        self._pressed_img = image.load(join(path['texture.ui'], 'widgets.png')).get_region(0, 150, 200, 20)
+        self._unable_img = image.load(join(path['texture.ui'], 'widgets.png')).get_region(0, 190, 200, 20)
         self._sprite = Sprite(self._depressed_img, x, win_height - y)
         self._text = text
         self._label = ColorLabel(self._text, color='white', align='center', anchor_x='center', anchor_y='center',
@@ -61,7 +62,7 @@ class Button(Widget):
                 self._sprite.image = self._pressed_img
                 self._label.color = 'yellow'
             else:
-                self._sprite.image = self._depressed_img
+                self._sprite.image = self._depressed_img if self._enable else self._unable_img
                 self._label.color = 'white' if self._enable else 'gray'
 
     def on_resize(self, width, height):
