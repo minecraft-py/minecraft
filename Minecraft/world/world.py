@@ -49,6 +49,7 @@ class World(object):
 
     def init_world(self):
         # 放置所有方块以初始化世界, 非常耗时
+        get_game().loading.draw()
         if archiver.load_info(self.name)['type'] == 'flat':
             self.init_flat_world()
         else:
@@ -125,8 +126,8 @@ class World(object):
         """
         if position in self.world:
             self.remove_block(position, immediate, record=False)
-        if 0 <= position[1] <= 256:
-            # 建筑限制为基岩以上, 256格以下.
+        if -64 <= position[1] <= 320:
+            # 建筑限制为-64格以上, 256格以下(21w06a).
             if record == True:
                 self.change[pos2str(position)] = block
             if block in blocks:
@@ -136,14 +137,13 @@ class World(object):
                 # 将不存在的方块替换为 missing
                 self.world[position] = blocks['missing']
             self.sectors.setdefault(sectorize(position), []).append(position)
-            if immediate:
-                if self.exposed(position):
-                    self.show_block(position)
-                if not self.world[position].transparent:
-                    self.check_neighbors(position)
+            if self.exposed(position):
+                self.show_block(position)
+            if not self.world[position].transparent:
+                self.check_neighbors(position)
         else:
             if position[1] >= 256:
-                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[0] % 256)
+                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[0] % 320)
             else:
                 get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[1])
 
@@ -162,10 +162,9 @@ class World(object):
             if record:
                 self.change[pos2str(position)] = 'air'
             self.sectors[sectorize(position)].remove(position)
-            if immediate:
-                if position in self.shown:
-                    self.hide_block(position)
-                self.check_neighbors(position)
+            if position in self.shown:
+                self.hide_block(position)
+            self.check_neighbors(position)
 
     def get(self, position):
         return self.world.get(position, None)
@@ -305,9 +304,10 @@ class World(object):
 
     def process_queue(self):
         # 处理事件
-        start = time.perf_counter()
-        while self.queue and time.perf_counter() - start < 1.0 / TICKS_PER_SEC:
-            self._dequeue()
+        if not self.is_init:
+            start = time.perf_counter()
+            while self.queue and time.perf_counter() - start < 1.0 / TICKS_PER_SEC:
+                self._dequeue()
 
     def process_entire_queue(self):
         # 处理所有事件
