@@ -273,7 +273,10 @@ class Game(pyglet.window.Window):
     def update_status(self, dt):
         # 这个函数定时改变世界状态
         for sector in self.world.sectors.values():
-            blocks = random.choices(sector, k=3)
+            if sector:
+                blocks = random.choices(sector, k=3)
+            else:
+                pass
             for block in blocks:
                 self.world.get(block).on_ticking(self, block)
  
