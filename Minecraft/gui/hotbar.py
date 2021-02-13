@@ -39,16 +39,20 @@ class HotBar(GUI):
         else:
             self._element[self.index].draw()
             for i in range(len(self._item)):
-                self._item[i].draw()
+                if self._item[i]:
+                    self._item[i].draw()
 
     def set_all(self, items):
         width = get_size()[0]
         self._items = items
         for item in range(len(self._items)):
             if item <= len(self._element):
-                self._item.append(Sprite(get_block_icon(blocks[self._items[item]], 64),
-                    x =(width - 450) / 2 + 50 * item + 1, y=3))
-                self._item[item].scale = 48 / self._item[item].image.width
+                if self._items[item]:
+                    self._item.append(Sprite(get_block_icon(blocks[self._items[item]], 64),
+                        x =(width - 450) / 2 + 50 * item + 1, y=3))
+                    self._item[item].scale = 48 / self._item[item].image.width
+                else:
+                    self._item.append(None)
             else:
                 return
 
@@ -73,4 +77,5 @@ class HotBar(GUI):
             else:
                 self._element[i].position = (width - 450) / 2 + 50 * i - 5, -3
         for i in range(len(self._item)):
-            self._item[i].position = (width - 450) / 2 + 50 * i + 1, 3
+            if self._item[i]:
+                self._item[i].position = (width - 450) / 2 + 50 * i + 1, 3

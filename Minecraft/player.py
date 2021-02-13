@@ -134,7 +134,7 @@ class Player():
                 if not self._data['die'] and not self._data['in_hud']:
                     if hasattr(block, 'on_use') and (not self._data['stealing']):
                         block.on_use(self)
-                    elif previous and get_game().can_place(previous, self._data['position']):
+                    elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['block']]:
                         get_game().world.add_block(previous, get_game().inventory[self._data['block']])
             elif button == pyglet.window.mouse.LEFT and previous:
                 if block.hardness > 0 and not self._data['die'] and not self._data['in_hud']:
@@ -145,11 +145,11 @@ class Player():
             pass
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        index = int(self._data['block'] + scroll_y)
-        if index > len(get_game().inventory) - 1:
+        index = int(self._data['block'] - scroll_y)
+        if index > 8:
             self._data['block'] = index = 0
         elif index < 0:
-            self._data['block'] = index = len(get_game().inventory) - 1
+            self._data['block'] = index = 8
         else:
             self._data['block'] = index
         get_game().hud['hotbar'].set_index(index)

@@ -77,6 +77,7 @@ class Game(pyglet.window.Window):
         self._info_ext.append('pyglet' + pyglet.version)
         # 玩家可以放置的方块, 使用数字键切换
         self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table', 'glass']
+        self.inventory += [None] * (9 - len(self.inventory))
         # 数字键列表
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
@@ -214,7 +215,7 @@ class Game(pyglet.window.Window):
                 self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
         self.sector = sectorize(self.player['position'])
         self.player['rotation'] = tuple(data['rotation'])
-        self.block = data['now_block']
+        self.player['block'] = data['now_block']
         # 读取世界数据
         self.world_info = archiver.load_info(self.name)
         self.time = self.world_info['time']
@@ -273,9 +274,10 @@ class Game(pyglet.window.Window):
     def update_status(self, dt):
         # 这个函数定时改变世界状态
         for sector in self.world.sectors.values():
-            blocks = random.choices(sector, k=3)
-            for block in blocks:
-                self.world.get(block).on_ticking(self, block)
+            if sector:
+                blocks = random.choices(sector, k=3)
+                for block in blocks:
+                    self.world.get(block).on_ticking(self, block)
  
     def _update(self, dt):
         """
