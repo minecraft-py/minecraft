@@ -181,6 +181,7 @@ class Player():
             pass
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        scroll_y = -scroll_y
         index = int(self._data['block'] + scroll_y)
         if index > len(self.game.inventory) - 1:
             self._data['block'] = index = 0
