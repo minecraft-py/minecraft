@@ -56,7 +56,7 @@ class Game(pyglet.window.Window):
         # 窗口是否捕获鼠标
         self.exclusive = False
         # 玩家
-        self.player = Player()
+        self.player = Player(self)
         # 拓展功能
         self.debug = {}
         self.debug['debug'] = False
@@ -344,6 +344,9 @@ class Game(pyglet.window.Window):
         for menu in self.menu.values():
             menu.frame.on_mouse_motion(x, y, dx, dy)
         self.player.on_mouse_motion(x, y, dx, dy)
+
+    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
+        self.player.on_mouse_drag(x, y, dx, dy, button, modifiers)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         """

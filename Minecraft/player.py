@@ -13,7 +13,8 @@ from pyglet.window import key, mouse
 
 class Player():
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self._data = {}
         self._data['gamemode'] = 0
         self._data['block'] = 0
@@ -65,7 +66,7 @@ class Player():
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    if get_game().world.get(tuple(op)) is None:
+                    if self.game.world.get(tuple(op)) is None:
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
@@ -108,7 +109,7 @@ class Player():
         return (dx, dy, dz)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if get_game().exclusive and not self._data['die']:
+        if self.game.exclusive and not self._data['die']:
             m = 0.1
             x, y = self._data['rotation']
             x, y = x + dx * m, y + dy * m
@@ -120,13 +121,13 @@ class Player():
             self._data['rotation'] = (x, y)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if get_game().exclusive:
+        if self.game.exclusive:
             if self._data['gamemode'] == 1:
                 return
             vector = self.get_sight_vector()
-            now, previous = get_game().world.hit_test(self._data['position'], vector)
+            now, previous = self.game.world.hit_test(self._data['position'], vector)
             if now:
-                block = get_game().world.get(now)
+                block = self.game.world.get(now)
             else:
                 return
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
@@ -134,11 +135,46 @@ class Player():
                 if not self._data['die'] and not self._data['in_hud']:
                     if hasattr(block, 'on_use') and (not self._data['stealing']):
                         block.on_use(self)
-                    elif previous and get_game().can_place(previous, self._data['position']):
-                        get_game().world.add_block(previous, get_game().inventory[self._data['block']])
+                    elif previous and self.game.can_place(previous, self._data['position']):
+                        self.game.world.add_block(previous, self.game.inventory[self._data['block']])
             elif button == pyglet.window.mouse.LEFT and previous:
                 if block.hardness > 0 and not self._data['die'] and not self._data['in_hud']:
-                    get_game().world.remove_block(now)
+                    self.game.world.remove_block(now)
+            elif button == pyglet.window.mouse.MIDDLE and block and previous:
+                pass
+        elif not self._data['die'] and not self._data['in_hud']:
+            pass
+
+    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
+        if self.game.exclusive:
+            m = 0.1
+            x, y = self._data['rotation']
+            x, y = x + dx * m, y + dy * m
+            if x >= 180:
+                x = -180
+            elif x<= -180:
+                x = 180
+            y = max(-90, min(90, y))
+            self._data['rotation'] = (x, y)
+            
+            if self._data['gamemode'] == 1:
+                return
+            vector = self.get_sight_vector()
+            now, previous = self.game.world.hit_test(self._data['position'], vector)
+            if now:
+                block = self.game.world.get(now)
+            else:
+                return
+            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
+                # 在 Mac OS X 中, Ctrl + 左键 = 右键
+                if not self._data['die'] and not self._data['in_hud']:
+                    if hasattr(block, 'on_use') and (not self._data['stealing']):
+                        block.on_use(self)
+                    elif previous and self.game.can_place(previous, self._data['position']):
+                        self.game.world.add_block(previous, self.game.inventory[self._data['block']])
+            elif button == pyglet.window.mouse.LEFT and previous:
+                if block.hardness > 0 and not self._data['die'] and not self._data['in_hud']:
+                    self.game.world.remove_block(now)
             elif button == pyglet.window.mouse.MIDDLE and block and previous:
                 pass
         elif not self._data['die'] and not self._data['in_hud']:
@@ -146,37 +182,37 @@ class Player():
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         index = int(self._data['block'] + scroll_y)
-        if index > len(get_game().inventory) - 1:
+        if index > len(self.game.inventory) - 1:
             self._data['block'] = index = 0
         elif index < 0:
-            self._data['block'] = index = len(get_game().inventory) - 1
+            self._data['block'] = index = len(self.game.inventory) - 1
         else:
             self._data['block'] = index
-        get_game().hud['hotbar'].set_index(index)
+        self.game.hud['hotbar'].set_index(index)
 
     def on_key_press(self, symbol, modifiers):
         if self._data['in_chat']:
             if symbol == key.ESCAPE:
-                get_game().menu['chat'].frame.enable(False)
-                get_game().menu['chat'].text()
+                self.game.menu['chat'].frame.enable(False)
+                self.game.menu['chat'].text()
                 self._data['in_chat'] = False
-                get_game().set_exclusive_mouse(True)
+                self.game.set_exclusive_mouse(True)
             return
         if symbol == key.Q:
             self._data['die'] = True
             self._data['die_reason'] = 'killed by self'
-            get_game().set_exclusive_mouse(False)
+            self.game.set_exclusive_mouse(False)
         elif symbol == key.T:
-            if get_game().exclusive:
-                get_game().set_exclusive_mouse(False)
+            if self.game.exclusive:
+                self.game.set_exclusive_mouse(False)
                 self._data['in_chat'] = not self._data['in_chat']
-                get_game().menu['chat'].frame.enable()
+                self.game.menu['chat'].frame.enable()
         elif symbol == key.SLASH:
-            if get_game().exclusive:
-                get_game().set_exclusive_mouse(False)
+            if self.game.exclusive:
+                self.game.set_exclusive_mouse(False)
                 self._data['in_chat'] = not self._data['in_chat']
-                get_game().menu['chat'].text('/')
-                get_game().menu['chat'].frame.enable()
+                self.game.menu['chat'].text('/')
+                self.game.menu['chat'].frame.enable()
         elif symbol == key.W:
             if self._data['key_press']['w']['count'] == 1:
                 if time.time() - self._data['key_press']['w']['last'] <= 0.1:
@@ -193,17 +229,17 @@ class Player():
         elif symbol == key.D:
             self._data['strafe'][1] += 1
         elif symbol == key.I:
-             if get_game().debug['enable']:
-                get_game().debug['debug'] = not get_game().debug['debug']
-                get_game().debug['position'] = False
+             if self.game.debug['enable']:
+                self.game.debug['debug'] = not self.game.debug['debug']
+                self.game.debug['position'] = False
         elif symbol == key.E:
             if not self._data['die']:
-                get_game().set_exclusive_mouse(self._data['show_bag'])
+                self.game.set_exclusive_mouse(self._data['show_bag'])
                 self._data['in_hud'] = not self._data['in_hud']
                 self._data['show_bag'] = not self._data['show_bag']
         elif symbol == key.R:
-            if get_game().debug['enable']:
-                get_game().debug['running'] = not self.debug['running']
+            if self.game.debug['enable']:
+                self.game.debug['running'] = not self.debug['running']
         elif symbol == key.SPACE:
             if self._data['key_press']['space']['count'] == 1:
                 if time.time() - self._data['key_press']['space']['last'] <= 0.1:
@@ -221,32 +257,32 @@ class Player():
             if self._data['die']:
                 self._data['die'] = False
                 self._data['position'] = self._data['respawn_position']
-                get_game().set_exclusive_mouse(True)
+                self.game.set_exclusive_mouse(True)
         elif symbol == key.ESCAPE: 
-                get_game().save(0)
-                get_game().set_exclusive_mouse(False)
-                get_game().menu['pause'].frame.enable()
+                self.game.save(0)
+                self.game.set_exclusive_mouse(False)
+                self.game.menu['pause'].frame.enable()
                 if self._data['die']:
-                    get_game().close()
+                    self.game.close()
         elif symbol == key.LSHIFT:
             if self._data['flying']:
                 self._data['dy'] = -0.1 * JUMP_SPEED
             else:
                 self._data['stealing'] = True
-        elif symbol in get_game().num_keys:
-            self._data['block'] = (symbol - get_game().num_keys[0]) % len(get_game().inventory)
-            get_game().hud['hotbar'].set_index(self._data['block'])
+        elif symbol in self.game.num_keys:
+            self._data['block'] = (symbol - self.game.num_keys[0]) % len(self.game.inventory)
+            self.game.hud['hotbar'].set_index(self._data['block'])
         elif symbol == key.F1:
             self._data['hide_hud'] = not self._data['hide_hud']
         elif symbol == key.F2:
             name = time.strftime('%Y-%m-%d_%H.%M.%S.png')
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
                 path['screenshot'], name))
-            get_game().dialogue.add_dialogue('Screenshot saved in: %s' % name)
+            self.game.dialogue.add_dialogue('Screenshot saved in: %s' % name)
         elif symbol == key.F3:
-            get_game().debug['enable'] = True
+            self.game.debug['enable'] = True
         elif symbol == key.F11:
-            get_game().set_fullscreen(not get_game().fullscreen)
+            self.game.set_fullscreen(not self.game.fullscreen)
 
     def on_key_release(self, symbol, modifiers):
         if self._data['in_chat']:
@@ -279,4 +315,4 @@ class Player():
             else:
                 self._data['stealing'] = False
         elif symbol == key.F3:
-            get_game().debug['enable'] = False
+            self.game.debug['enable'] = False
