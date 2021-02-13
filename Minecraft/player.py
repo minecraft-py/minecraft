@@ -242,11 +242,6 @@ class Player():
         elif symbol == key.R:
             if self.game.debug['enable']:
                 self.game.debug['running'] = not self.debug['running']
-        elif symbol == key.K:
-            for sector in self.game.world.sectors.values():
-                print('sector:', sector)
-                blocks = random.choices(sector, k=3)
-                print('blocks:', blocks)
         elif symbol == key.SPACE:
             if self._data['key_press']['space']['count'] == 1:
                 if time.time() - self._data['key_press']['space']['last'] <= 0.1:
