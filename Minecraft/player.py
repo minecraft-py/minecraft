@@ -16,7 +16,7 @@ class Player():
     def __init__(self):
         self._data = {}
         self._data['gamemode'] = 0
-        self._data['block'] = 0
+        self._data['now_block'] = 0
         self._data['stealing'] = False
         self._data['flying'] = False
         self._data['running'] = False
@@ -145,13 +145,13 @@ class Player():
             pass
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        index = int(self._data['block'] - scroll_y)
+        index = int(self._data['now_block'] - scroll_y)
         if index > 8:
-            self._data['block'] = index = 0
+            self._data['now_block'] = index = 0
         elif index < 0:
-            self._data['block'] = index = 8
+            self._data['now_block'] = index = 8
         else:
-            self._data['block'] = index
+            self._data['now_block'] = index
         get_game().hud['hotbar'].set_index(index)
 
     def on_key_press(self, symbol, modifiers):

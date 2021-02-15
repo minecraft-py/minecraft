@@ -172,7 +172,7 @@ class Game(pyglet.window.Window):
         self.hud['hunger'] = Hunger(batch=self.world.batch2d)
         # 工具栏
         self.hud['hotbar'] = HotBar()
-        self.hud['hotbar'].set_index(self.block)
+        self.hud['hotbar'].set_index(self.player['now_block'])
         self.hud['hotbar'].set_all(self.inventory)
         # 经验条
         self.hud['xpbar'] = XPBar()
@@ -215,7 +215,7 @@ class Game(pyglet.window.Window):
                 self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
         self.sector = sectorize(self.player['position'])
         self.player['rotation'] = tuple(data['rotation'])
-        self.player['block'] = data['now_block']
+        self.player['now_block'] = data['now_block']
         # 读取世界数据
         self.world_info = archiver.load_info(self.name)
         self.time = self.world_info['time']
