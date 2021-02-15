@@ -127,7 +127,7 @@ class World(object):
         if position in self.world:
             self.remove_block(position, immediate, record=False)
         if -64 <= position[1] <= 320:
-            # 建筑限制为-64格以上, 256格以下(21w06a).
+            # 建筑限制为-64格以上, 320格以下(21w06a)
             if record == True:
                 self.change[pos2str(position)] = block
             if block in blocks:

@@ -34,7 +34,7 @@ def load_player(name):
                 'position': position,
                 'respawn': str2pos(data.get('respawn', (0, 0, 0)), True),
                 'rotation': data.get('rotation', (0, 0)),
-                'now_block': int(data.get('now_block', 1))
+                'now_block': int(data.get('now_block', 0))
             }
 
 def load_window():

@@ -2,6 +2,7 @@ from ctypes import byref
 from math import floor
 from os.path import isfile, join
 
+from Minecraft.nbt import NBT
 from Minecraft.source import path
 from Minecraft.utils.utils import *
 
@@ -99,18 +100,20 @@ class Block():
     front_texture = None
     # 四边贴图
     side_texture = ()
+    # 大小
+    width, height = 1.0, 1.0
+    # 名称
+    name = ''
     # 方块信息
-    info = None
+    _nbt = NBT()
     # 透明
     transparent = False
     # 硬度
     hardness = 1
     mode = ''
 
-    def __init__(self, name, width=1.0, height=1.0):
-        self.name = name
-        self.width = width
-        self.height = height
+    def __init__(self):
+        self._nbt.set_value('name', self.name)
         self.update_texture()
 
     def get_texture_data(self):
@@ -303,17 +306,17 @@ class Sand(Block):
 
 
 blocks = {}
-blocks['bedrock'] = Bedrock('bedrock')
-blocks['brick'] = Brick('brick')
-blocks['craft_table'] = CraftTable('craft_table')
-blocks['dirt'] = Dirt('dirt')
-blocks['glass'] = Glass('glass')
-blocks['grass'] = Grass('grass')
-blocks['leaf'] = Leaf('leaf')
-blocks['log'] = Log('log')
-blocks['missing'] = Missing('missing')
-blocks['plank'] = Plank('plank')
-blocks['sand'] = Sand('sand')
+blocks['bedrock'] = Bedrock()
+blocks['brick'] = Brick()
+blocks['craft_table'] = CraftTable()
+blocks['dirt'] = Dirt()
+blocks['glass'] = Glass()
+blocks['grass'] = Grass()
+blocks['leaf'] = Leaf()
+blocks['log'] = Log()
+blocks['missing'] = Missing()
+blocks['plank'] = Plank()
+blocks['sand'] = Sand()
 
 _fbo = None
 

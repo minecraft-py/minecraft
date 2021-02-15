@@ -190,7 +190,7 @@ class Game(pyglet.window.Window):
         """
         archiver.save_block(self.name, self.world.change)
         archiver.save_player(self.name, self.player['position'], self.player['respawn_position'],
-                normalize(self.player['rotation']), self.player['block'])
+                normalize(self.player['rotation']), self.player['now_block'])
         archiver.save_info(self.name, self.time, self.weather)
 
     def set_exclusive_mouse(self, exclusive):
