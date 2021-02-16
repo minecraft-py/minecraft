@@ -23,7 +23,7 @@ class Button(Widget):
         self._sprite = Sprite(self._depressed_img, x, win_height - y)
         self._text = text
         self._label = ColorLabel(self._text, color='white', align='center', anchor_x='center', anchor_y='center',
-                x=x + width / 2, y=win_height - y + height / 2 - 2, font_name='minecraftia')
+                x=x + width / 2, y=win_height - y + height / 2, font_size=16)
         self._pressed = False
         self._enable = True
 

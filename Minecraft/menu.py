@@ -1,6 +1,6 @@
 from Minecraft.gui.frame import DialogueFrame
 from Minecraft.gui.widget.button import Button, ChoseButton
-from Minecraft.gui.widget.text import TextEntry
+from Minecraft.gui.widget.text import DialogueEntry
 from Minecraft.source import lang, player
 from Minecraft.utils.utils import *
 
@@ -12,7 +12,7 @@ class Chat():
     def __init__(self, window):
         self.window = window
         self.frame = DialogueFrame(self.window)
-        self._entry = TextEntry('', (0, 0, 0, 150), 5, 20, 400)
+        self._entry = DialogueEntry()
         self.frame.add_widget(self._entry)
 
         def on_commit(text):

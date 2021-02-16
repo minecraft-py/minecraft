@@ -86,21 +86,24 @@ class Game(pyglet.window.Window):
         self.label = {}
         self.label['top'] = ColorLabel('',
             x=2, y=self.height - 5, width=self.width // 2, multiline=True,
-            anchor_x='left', anchor_y='top', font_size=12, font_name='minecraftia')
+            anchor_x='left', anchor_y='top', font_size=16)
         self.is_init = True
         # 设置图标
         self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         # 这个标签在画布正中偏上显示
-        self.label['center'] = ColorLabel('',
+        self.label['title'] = ColorLabel('',
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
-            anchor_y='center', font_name='minecraftia')
+            anchor_y='center') 
+        # 这个标签在画布正中偏下显示
+        self.label['subtitle'] = ColorLabel('',
+                x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
+        # 这个标签在画布正中再偏下一点显示
+        self.label['actionbar'] = ColorLabel('',
+                x=self.width // 2, y=self.height // 2 - 150, anchor_x='center', anchor_y='center')
         # 死亡信息
         self.die_info = ColorLabel('', color='white',
             x=self.width // 2, y=self.height // 2, anchor_x='center',
-            anchor_y='center', font_size=24, font_name='minecraftia')
-        # 这个标签在画布正中偏下显示
-        self.label['actionbar'] = ColorLabel('',
-                x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center', font_name='minecraftia')
+            anchor_y='center', font_size=24)
         # 加载窗口
         self.loading = Loading()
         # 覆盖屏幕的矩形
@@ -379,12 +382,14 @@ class Game(pyglet.window.Window):
         self.label['top'].x = 2
         self.label['top'].y = self.height - 5
         self.label['top'].width = self.width // 2
-        self.label['center'].x = self.width // 2
-        self.label['center'].y = self.height // 2 + 50
-        self.die_info.x = self.width // 2
-        self.die_info.y =self.height // 2
+        self.label['title'].x = self.width // 2
+        self.label['title'].y = self.height // 2 + 50
+        self.label['subtitle'].x = self.width // 2
+        self.label['subtitle'].y = self.height // 2 - 100
         self.label['actionbar'].x = self.width // 2
-        self.label['actionbar'].y = self.height // 2 - 100
+        self.label['actionbar'].y = self.height // 2 - 150
+        self.die_info.x = self.width // 2
+        self.die_info.y = self.height // 2
         # 加载窗口
         self.loading.resize(self.width, self.height)
         # 窗口中央的十字线

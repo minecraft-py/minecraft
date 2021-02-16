@@ -60,9 +60,9 @@ path['screenshot'] = join(path['mcpypath'], 'screenshot')
 lang = json.load(open(join(path['lang'], settings['lang'] + '.json'), encoding='utf-8'))
 get_lang = lambda s: lang[s] if s in lang else s
 
-resource.path = [join(path['pack'])]
-resource.reindex()
-resource.add_font('minecraft.ttf')
+# resource.path = [join(path['pack'])]
+# resource.reindex()
+# resource.add_font('minecraft.ttf')
 
 args_o = False
 libs = []

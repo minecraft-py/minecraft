@@ -10,26 +10,28 @@ from pyglet.text.caret import Caret
 from pyglet.text.layout import IncrementalTextLayout
 
 
-class TextEntry(Widget):
+class DialogueEntry(Widget):
 
-    def __init__(self, text, color, x, y, width):
+    def __init__(self):
         win_width, win_height = get_size()
         self.batch = Batch()
-        self._doc = pyglet.text.document.UnformattedDocument(text)
-        self._doc.set_style(0, len(self._doc.text), dict(color=(255, 255, 255, 255), font_name='minecraftia'))
+        self._doc = pyglet.text.document.UnformattedDocument('')
+        self._doc.set_style(0, len(self._doc.text), dict(color=(255, 255, 255, 255)))
         font = self._doc.get_font()
-        height = font.ascent - font.descent
-        pad = 2
-        self._outline = Rectangle(x - pad, y - pad, width + pad, height + pad, color=color[:3])
-        self._outline.opacity=color[-1]
-        self._layout = IncrementalTextLayout(self._doc, width, height, multiline=False, batch=self.batch)
+        self.text_height = font.ascent - font.descent
+        self.pad = 2
+        self._outline = Rectangle(5 - self.pad, 20 - self.pad,
+                get_size()[0] + self.pad - 5, self.text_height + self.pad, color=(0, 0, 0))
+        self._outline.opacity = 150
+        self._layout = IncrementalTextLayout(self._doc, get_size()[0] + self.pad - 5, self.text_height,
+                multiline=False, batch=self.batch)
         self._caret = Caret(self._layout, color=(255, 255, 255))
         self._caret.visible = False
-        self._layout.x = x
-        self._layout.y = y
+        self._layout.x = 5
+        self._layout.y = 20
         self._focus = False
         self._press = False
-        super().__init__(x, y, width, height)
+        super().__init__(5, 20, get_size()[0] + self.pad - 5, self.text_height)
         self.last_char = ''
 
     def draw(self):
@@ -47,6 +49,12 @@ class TextEntry(Widget):
         if self._focus:
             self._caret.on_mouse_drag(x, y, dx, dy, buttons, modifiers)
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        if self.check_hit(x, y):
+            get_game().set_cursor('text')
+        else:
+            get_game().set_cursor()
+
     def on_mouse_press(self, x, y, buttons, modifiers):
         if self.check_hit(x, y):
             self._press = True
@@ -58,6 +66,11 @@ class TextEntry(Widget):
     def on_mouse_release(self, x, y, buttons, modifiers):
         if self._press:
             self._press = False
+
+    def on_resize(self, width, height):
+        self.width = width - self.pad - 5
+        self._outline.width = width - self.pad - 5
+        self._layout.width = width - self.pad - 5
 
     def on_text(self, text):
         if text == self.last_char:
@@ -84,4 +97,4 @@ class TextEntry(Widget):
         pass
 
 
-TextEntry.register_event_type('on_commit')
+DialogueEntry.register_event_type('on_commit')
