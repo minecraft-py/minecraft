@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-用 python 做开源的 Minecraft, [官网](https://minecraft-in-python.github.io).
+用 python 做开源的 Minecraft, [访问官网](https://minecraft-in-python.github.io).
 
 ## 游玩
 要游玩 Minecraft, 请先在类 UNIX 的终端输入:
