@@ -5,7 +5,7 @@ import pyglet
 from pyglet.event import EventDispatcher
 from pyglet.gl import *
 from pyglet.graphics import Batch
-from pyglet.shapes import Rectangle
+from pyglet.shapes import BorderedRectangle, Rectangle
 from pyglet.text.caret import Caret
 from pyglet.text.layout import IncrementalTextLayout
 
@@ -110,8 +110,8 @@ class TextEntry(Widget):
         font = self._doc.get_font()
         self.text_height = font.ascent - font.descent
         self.pad = pad
-        self._outline = Rectangle(x - self.pad, win_height - y - self.pad,
-                width + self.pad, self.text_height + self.pad, color=color[:3])
+        self._outline = BorderedRectangle(x - self.pad, win_height - y - self.pad,
+                width + self.pad, self.text_height + self.pad, color=color[:3], border_color=(100, 100, 100))
         self._outline.opacity = color[-1]
         self._layout = IncrementalTextLayout(width, self.text_height,
                 multiline=False, batch=self.batch)

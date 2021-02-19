@@ -134,8 +134,8 @@ class Player():
                 if not self._data['die'] and not self._data['in_hud']:
                     if hasattr(block, 'on_use') and (not self._data['stealing']):
                         block.on_use(self)
-                    elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['block']]:
-                        get_game().world.add_block(previous, get_game().inventory[self._data['block']])
+                    elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:
+                        get_game().world.add_block(previous, get_game().inventory[self._data['now_block']])
             elif button == pyglet.window.mouse.LEFT and previous:
                 if block.hardness > 0 and not self._data['die'] and not self._data['in_hud']:
                     get_game().world.remove_block(now)

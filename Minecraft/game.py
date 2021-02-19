@@ -175,7 +175,6 @@ class Game(pyglet.window.Window):
         self.hud['hunger'] = Hunger(batch=self.world.batch2d)
         # 工具栏
         self.hud['hotbar'] = HotBar()
-        self.hud['hotbar'].set_index(self.player['now_block'])
         self.hud['hotbar'].set_all(self.inventory)
         # 经验条
         self.hud['xpbar'] = XPBar()
@@ -547,8 +546,6 @@ class Game(pyglet.window.Window):
 def setup():
     # 基本的 OpenGL 设置
     glClearColor(0.5, 0.69, 1.0, 1)
-    glEnable(GL_ALPHA_TEST)
-    glEnable(GL_COLOR_MATERIAL)
     glEnable(GL_CULL_FACE)
     glEnable(GL_BLEND)
     glEnable(GL_LINE_SMOOTH)
@@ -557,8 +554,6 @@ def setup():
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
     # 配置 OpenGL 的雾属性
     glEnable(GL_FOG)
     glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
