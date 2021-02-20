@@ -234,8 +234,8 @@ class Player():
             else:
                 self._data['stealing'] = True
         elif symbol in get_game().num_keys:
-            self._data['block'] = (symbol - get_game().num_keys[0]) % len(get_game().inventory)
-            get_game().hud['hotbar'].set_index(self._data['block'])
+            self._data['now_block'] = (symbol - get_game().num_keys[0]) % len(get_game().inventory)
+            get_game().hud['hotbar'].set_index(self._data['now_block'])
         elif symbol == key.F1:
             self._data['hide_hud'] = not self._data['hide_hud']
         elif symbol == key.F2:
