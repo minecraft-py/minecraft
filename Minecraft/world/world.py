@@ -77,7 +77,7 @@ class World(object):
                 self.add_block((x, 0, z), 'bedrock', record=False)
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                h = int(self.simplex.noise2d(x=x / 20, y=z / 20) * 5 + 10)
+                h = int(self.simplex.noise2d(x=x / 20, y=z / 20) * 5 + SEA_LEVEL)
                 for y in range(1, h):
                     self.add_block((x, y, z), 'dirt', record=False)
                 else:
@@ -126,8 +126,8 @@ class World(object):
         """
         if position in self.world:
             self.remove_block(position, immediate, record=False)
-        if -64 <= position[1] <= 320:
-            # 建筑限制为-64格以上, 320格以下(21w06a)
+        if -64 <= position[1] < 512:
+            # 建筑限制为-64格以上, 512格以下
             if record == True:
                 self.change[pos2str(position)] = block
             if block in blocks:
@@ -143,7 +143,7 @@ class World(object):
                 self.check_neighbors(position)
         else:
             if position[1] >= 256:
-                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[0] % 320)
+                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[0] % 512)
             else:
                 get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[1])
 

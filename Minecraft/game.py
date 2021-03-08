@@ -198,7 +198,9 @@ class Game(pyglet.window.Window):
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
         super(Game, self).set_exclusive_mouse(exclusive)
-        self.exclusive = exclusive 
+        self.exclusive = exclusive
+        if not exclusive:
+            self.set_cursor()
         
     def set_name(self, name):
         # 设置游戏存档名
@@ -227,7 +229,7 @@ class Game(pyglet.window.Window):
     def set_cursor(self, cursor=None):
         # 设置光标形状
         if cursor is None:
-            self.set_mouse_cursor(None)
+            self.set_mouse_cursor(self.get_system_mouse_cursor(None))
         else:
             self.set_mouse_cursor(self.get_system_mouse_cursor(cursor))
 
