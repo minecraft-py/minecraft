@@ -53,7 +53,7 @@ def normalize(position):
 
 @atexit.register
 def on_exit():
-    log_info('exit')
+    log_info('Exit')
 
 def pos2str(position):
     # 将坐标转换为字符串

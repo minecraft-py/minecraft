@@ -19,7 +19,6 @@ except:
 
 import Minecraft.archiver as archiver
 from Minecraft.command.commands import commands
-from Minecraft.source import get_lang, libs, path, player, settings
 from Minecraft.gui.bag import Bag
 from Minecraft.gui.dialogue import Dialogue
 from Minecraft.gui.hotbar import HotBar
@@ -27,9 +26,10 @@ from Minecraft.gui.xpbar import XPBar
 from Minecraft.gui.hud.heart import Heart
 from Minecraft.gui.hud.hunger import Hunger
 from Minecraft.gui.loading import Loading
+from Minecraft.gui.menu import Chat, PauseMenu
 from Minecraft.gui.widget.label import ColorLabel
-from Minecraft.menu import Chat, PauseMenu
 from Minecraft.player import Player
+from Minecraft.source import get_lang, libs, path, player, settings
 from Minecraft.world.block import blocks
 from Minecraft.world.sky import change_sky_color
 from Minecraft.world.weather import weather, choice_weather
@@ -120,7 +120,7 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 天空颜色变换
         pyglet.clock.schedule_interval(change_sky_color, 7.5)
-        log_info('welcome %s' % player['name'])
+        log_info('Welcome %s' % player['name'])
         for lib in libs:
             if hasattr(lib, 'init'):
                 lib.init()
@@ -240,6 +240,7 @@ class Game(pyglet.window.Window):
             self.dialogue.add_dialogue('Command not found')
         else:
             try:
+                log_info('Run command: %s' % s[1:])
                 cmd = commands[command](self, self.player['position'], s)
             except ValueError:
                 pass

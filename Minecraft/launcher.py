@@ -1,20 +1,19 @@
-import os
 import json
+import os
 import shutil
 from string import punctuation
 import time
-import traceback
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
+import traceback
 
 from Minecraft.utils.utils import *
-log_info('loading game lib')
+log_info('Loading game lib')
 from Minecraft.game import *
 from Minecraft.archiver import load_window
-from Minecraft.repair import repair_archive
 from Minecraft.source import get_lang, path, settings
-from Minecraft.utils.utils import *
-log_info('start launcher')
+from Minecraft.utils.repair import repair_archive
+log_info('Start launcher')
 
 import pyglet
 
@@ -211,16 +210,16 @@ class MinecraftLauncher(Tk):
         except SystemExit:
             pass
         except:
-            name = '%d.log' % int(time.time())
+            name = time.strftime('%Y-%m-%d_%H.%M.%S.log')
             log_err('catch error, saved in: log/%s' % name)
-            # err_log = open(os.path.join(path['log'], name), 'a+')
-            # err_log.write('Minecraft version: %s\n' % VERSION['str'])
-            # err_log.write('time: %s\n' % time.ctime())
-            # err_log.write('save: %s\n' % select)
-            # err_log.write('traceback:\n' + '=' * 34 + '\n')
-            traceback.print_exc()
-            # err_log.write('=' * 34 + '\n')
-            # err_log.flush()
-            # err_log.close()
+            err_log = open(os.path.join(path['log'], name), 'a+')
+            err_log.write('Minecraft version: %s\n' % VERSION['str'])
+            err_log.write('time: %s\n' % time.ctime())
+            err_log.write('save: %s\n' % select)
+            err_log.write('traceback:\n' + '=' * 34 + '\n')
+            traceback.print_exc(file=err_log)
+            err_log.write('=' * 34 + '\n')
+            err_log.flush()
+            err_log.close()
             exit(1)
 

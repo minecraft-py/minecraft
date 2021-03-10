@@ -2,8 +2,8 @@ from ctypes import byref
 from math import floor
 from os.path import isfile, join
 
-from Minecraft.nbt import NBT
 from Minecraft.source import path
+from Minecraft.utils.nbt import NBT
 from Minecraft.utils.utils import *
 
 from pyglet import image

@@ -2,9 +2,9 @@ import pyglet
 
 import time
 
-from Minecraft.utils.utils import *
 from Minecraft.gui.base import GUI
 from Minecraft.gui.widget.label import ColorLabel
+from Minecraft.utils.utils import *
 
 
 class Dialogue(GUI):
@@ -23,6 +23,7 @@ class Dialogue(GUI):
         self.last = time.time()
 
     def add_dialogue(self, text):
+        log_info('New dialogue: %s' % text)
         self.dialogue.append(text)
         self.last = time.time()
         if len(self.shown) < 10:
