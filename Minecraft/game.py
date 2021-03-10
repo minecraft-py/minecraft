@@ -4,6 +4,7 @@ import random
 import sys
 import time
 from threading import Thread
+from Minecraft.utils.utils import *
 
 msg = "module '{0}' not found, run `pip install {0}` to install, exit"
 
@@ -13,39 +14,30 @@ try:
     from pyglet.gl import *
     from pyglet.shapes import Rectangle
     from pyglet.window import key, mouse
-except:
-    log_err(msg.format('pyglet'))
-    exit(1)
 
-import Minecraft.archiver as archiver
-from Minecraft.command.commands import commands
-from Minecraft.gui.bag import Bag
-from Minecraft.gui.dialogue import Dialogue
-from Minecraft.gui.hotbar import HotBar
-from Minecraft.gui.xpbar import XPBar
-from Minecraft.gui.hud.heart import Heart
-from Minecraft.gui.hud.hunger import Hunger
-from Minecraft.gui.loading import Loading
-from Minecraft.gui.menu import Chat, PauseMenu
-from Minecraft.gui.widget.label import ColorLabel
-from Minecraft.player import Player
-from Minecraft.source import get_lang, libs, path, player, settings
-from Minecraft.world.block import blocks
-from Minecraft.world.sky import change_sky_color
-from Minecraft.world.weather import weather, choice_weather
-from Minecraft.world.world import World
-from Minecraft.utils.utils import *
+    import Minecraft.archiver as archiver
+    from Minecraft.command.commands import commands
+    from Minecraft.gui.bag import Bag
+    from Minecraft.gui.dialogue import Dialogue
+    from Minecraft.gui.hotbar import HotBar
+    from Minecraft.gui.xpbar import XPBar
+    from Minecraft.gui.hud.heart import Heart
+    from Minecraft.gui.hud.hunger import Hunger
+    from Minecraft.gui.loading import Loading
+    from Minecraft.gui.menu import Chat, PauseMenu
+    from Minecraft.gui.widget.label import ColorLabel
+    from Minecraft.player import Player
+    from Minecraft.source import get_lang, libs, path, player, settings
+    from Minecraft.world.block import blocks
+    from Minecraft.world.sky import change_sky_color
+    from Minecraft.world.weather import weather, choice_weather
+    from Minecraft.world.world import World
 
-try:
     import psutil
-except:
-    log_err(msg.format('psutil'))
-    exit(1)
-
-try:
     import pyshaders
-except:
-    log_err(msg.format('pyshaders'))
+
+except (ModuleNotFoundError, ImportError) as e:
+    log_err(msg.format(e.name))
     exit(1)
 
 
@@ -93,7 +85,7 @@ class Game(pyglet.window.Window):
         # 这个标签在画布正中偏上显示
         self.label['title'] = ColorLabel('',
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
-            anchor_y='center') 
+            anchor_y='center')
         # 这个标签在画布正中偏下显示
         self.label['subtitle'] = ColorLabel('',
                 x=self.width // 2, y=self.height // 2 - 100, anchor_x='center', anchor_y='center')
@@ -155,7 +147,7 @@ class Game(pyglet.window.Window):
             if self.player['position'][1] < -64:
                 self.player['die_reason'] = get_lang('game.text.die.fall_into_void') % player['name']
                 self.player['die'] = True
-                self.dialogue.add_dialogue(self.player['die_reason']) 
+                self.dialogue.add_dialogue(self.player['die_reason'])
             elif self.player['position'][1] > 512:
                 self.player['die_reason'] = get_lang('game.text.die.no_oxygen') % player['name']
                 self.player['die'] = True
@@ -183,7 +175,7 @@ class Game(pyglet.window.Window):
         self.menu['pause'] = PauseMenu(self)
         self.menu['pause'].frame.enable(True)
         self.menu['chat'] = Chat(self)
-        
+
     def save(self, dt):
         """
         这个函数被 pyglet 计时器反复调用
@@ -201,7 +193,7 @@ class Game(pyglet.window.Window):
         self.exclusive = exclusive
         if not exclusive:
             self.set_cursor()
-        
+
     def set_name(self, name):
         # 设置游戏存档名
         self.name = name
@@ -274,7 +266,7 @@ class Game(pyglet.window.Window):
         m = 8
         dt = min(dt, 0.2)
         for _ in range(m):
-            self._update(dt / m) 
+            self._update(dt / m)
 
     def update_status(self, dt):
         # 这个函数定时改变世界状态
@@ -283,11 +275,11 @@ class Game(pyglet.window.Window):
                 blocks = random.choices(sector, k=3)
                 for block in blocks:
                     self.world.get(block).on_ticking(self, block)
- 
+
     def _update(self, dt):
         """
-        update() 方法的私有实现, 刷新 
-        
+        update() 方法的私有实现, 刷新
+
         :param: dt 距上次调要用的时间
         """
         # 移动速度
@@ -317,7 +309,7 @@ class Game(pyglet.window.Window):
                     x, y, z = self.player.collide((x + dx, y + dy, z + dz))
                 else:
                     x, y, z = x + dx, y + dy, z + dz
-                self.player['position'] = (x, y, z) 
+                self.player['position'] = (x, y, z)
 
     def on_close(self):
         # 当玩家关闭窗口时调用
@@ -327,7 +319,7 @@ class Game(pyglet.window.Window):
     def on_mouse_press(self, x, y, button, modifiers):
         """
         当玩家按下鼠标按键时调用
-  
+
         :param: x, y 鼠标点击时的坐标, 如果被捕获的话总是在屏幕中央
         :param: button 哪个按键被按下: 1 = 左键, 4 = 右键
         :param: modifiers 表示单击鼠标按钮时按下的任何修改键的数字
@@ -336,7 +328,7 @@ class Game(pyglet.window.Window):
             if menu.frame.on_mouse_press(x, y, button, modifiers):
                 return
         self.player.on_mouse_press(x, y, button, modifiers)
-        
+
     def on_mouse_release(self, x, y, button, modifiers):
         for menu in self.menu.values():
             menu.frame.on_mouse_release(x, y, button, modifiers)
@@ -372,11 +364,11 @@ class Game(pyglet.window.Window):
     def on_key_release(self, symbol, modifiers):
         """
         当玩家释放一个按键时调用
-        
+
         :param: symbol 释放的键
         """
         self.player.on_key_release(symbol, modifiers)
-        
+
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
