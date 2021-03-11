@@ -1,6 +1,4 @@
 # Minecraft
-![icon](resources/icon.png)
-
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Making open source Minecraft in python.
@@ -28,29 +26,23 @@ python3 -m Minecraft
 ```
 
 # Short-term objectives
-The following to-do list, is a list of features to be implemented
-in Minecraft:
+The following to-do list, is a list of features to be implemented in Minecraft:
 
 - [x] Control the character
-- [x] More squares
-- [x] Interact with cubes
+- [x] More blocks
+- [x] Interact with blocks
 - [x] World generation
 - [x] Random world generation
 - [x] A rudimentary file selector
 - [x] i18n (some languages)
 - [x] Saving user changes to worlds
 - [ ] More terrain
-- [ ] Block system
-- [ ] Use the `E` key to open the item bar
+- [ ] Chunk system
+- [ ] Use the `E` key to open the bag
 - [ ] ...
 
 Of course, it doesn't end there, these points will evolve and change over time.
+
 Making Minecraft more and more a high quality video game.
 
-Are you ready to play?. Are you ready to support?
-
-## Do you dare?
-
-![icon](resources/Do_you_dare.png)
-
-
+Are you ready to play? Are you ready to support?
