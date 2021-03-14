@@ -4,7 +4,6 @@ import random
 import sys
 import time
 from threading import Thread
-from Minecraft.utils.utils import *
 
 msg = "module '{0}' not found, run `pip install {0}` to install, exit"
 
@@ -32,12 +31,13 @@ try:
     from Minecraft.world.sky import change_sky_color
     from Minecraft.world.weather import weather, choice_weather
     from Minecraft.world.world import World
+    from Minecraft.utils.utils import *
 
     import psutil
     import pyshaders
 
-except (ModuleNotFoundError, ImportError) as e:
-    log_err(msg.format(e.name))
+except (Exception, ImportError, ModuleNotFoundError) as err:
+    log_err(msg.format(err.name))
     exit(1)
 
 
@@ -168,6 +168,7 @@ class Game(pyglet.window.Window):
         # 工具栏
         self.hud['hotbar'] = HotBar()
         self.hud['hotbar'].set_all(self.inventory)
+        self.hud['hotbar'].set_index(self.player['now_block'])
         # 经验条
         self.hud['xpbar'] = XPBar()
         # 菜单
@@ -220,10 +221,7 @@ class Game(pyglet.window.Window):
 
     def set_cursor(self, cursor=None):
         # 设置光标形状
-        if cursor is None:
-            self.set_mouse_cursor(self.get_system_mouse_cursor(None))
-        else:
-            self.set_mouse_cursor(self.get_system_mouse_cursor(cursor))
+        self.set_mouse_cursor(self.get_system_mouse_cursor(cursor))
 
     def run_command(self, s):
         # 运行命令
@@ -326,7 +324,7 @@ class Game(pyglet.window.Window):
         """
         for menu in self.menu.values():
             if menu.frame.on_mouse_press(x, y, button, modifiers):
-                return
+                break
         self.player.on_mouse_press(x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):

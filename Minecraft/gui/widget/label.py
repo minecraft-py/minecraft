@@ -28,7 +28,7 @@ class ColorLabel():
         colors['bg'] = _color_tabel.get(color, _color_tabel['white'])[1] + (255,)
         self._label = []
         self._label.append(Label(text=text, x=x, y=y, color=colors['fg'], **kwargs))
-        self._label.append(Label(text=text, x=x + 3, y=y - 3, color=colors['bg'], **kwargs))
+        self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors['bg'], **kwargs))
 
     @property
     def color(self):
@@ -68,7 +68,7 @@ class ColorLabel():
     @x.setter
     def x(self, value):
         self._label[0].x = value
-        self._label[1].x = value + 3
+        self._label[1].x = value + 2
     
     @property
     def y(self):
@@ -77,7 +77,7 @@ class ColorLabel():
     @y.setter
     def y(self, value):
         self._label[0].y = value
-        self._label[1].y = value - 3
+        self._label[1].y = value - 2
 
     def draw(self):
         self._label[1].draw()
