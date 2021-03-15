@@ -26,6 +26,8 @@ if settings['fov'] < 50:
 elif settings['fov'] > 100:
     settings['fov'] = 100
 # resource-pack 设置
+if settings['resource-pack'].startswith('default'):
+    settings['resource-pack'] += '-' + VERSION['str']
 if not isdir(join(path['mcpypath'], 'resource-pack', settings['resource-pack'])):
     log_err("settings.json: resource package '%s' not found" % settings['resource-pack'])
     exit(1)

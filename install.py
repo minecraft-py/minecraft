@@ -8,6 +8,8 @@ from sys import executable, platform, argv
 import uuid
 from zipfile import ZipFile
 
+VERSION = '0.3.1'
+
 def copy():
     MCPYPATH = search_mcpy()
     if not path.isdir(MCPYPATH):
@@ -16,11 +18,13 @@ def copy():
     for name in ['log', 'save', 'screenshot', 'resource-pack']:
         if not path.isdir(path.join(MCPYPATH, name)):
             mkdir(path.join(MCPYPATH, name))
-    if not path.isdir(path.join(MCPYPATH, 'lib', '0.3.1')):
-        makedirs(path.join(MCPYPATH, 'lib', '0.3.1'))
-    if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default')):
-        rmtree(path.join(MCPYPATH, 'resource-pack', 'default'))
-    ZipFile(path.join(get_file('data'), 'pack.zip')).extractall(path.join(MCPYPATH, 'resource-pack'))
+    if not path.isdir(path.join(MCPYPATH, 'lib', VERSION)):
+        makedirs(path.join(MCPYPATH, 'lib', VERSION))
+    if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION)):
+        rmtree(path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION))
+    ZipFile(path.join(get_file('data'), 'pack.zip')).extractall(path.dirname(__file__))
+    copytree(get_file('default'), path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION))
+    rmtree(get_file('default'))
 
 def install():
     # 下载依赖项
