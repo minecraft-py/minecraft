@@ -1,5 +1,6 @@
 import json
 import socket
+import time
 import threading
 
 from Minecraft.source import player
@@ -8,10 +9,10 @@ from Minecraft.utils.utils import *
 
 class Client():
 
-    def __init__(self, ip):
+    def __init__(self, ip, addr):
         # 创建&连接套接字
         self.socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.socket.connect((ip, 16384))
+        self.socket.connect((ip, addr))
         self.socket.send('client'.encode())
         data = self.socket.recv(1024).decode()
         # 互换版本号
@@ -33,3 +34,13 @@ class Client():
                     elif data == 'welcome ' + player['name']:
                         # 验证成功
                         self.connected = True
+
+def get_info(ip, addr):
+    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s.connect((ip, addr))
+    now = time.time()
+    s.send('get_info'.encode())
+    data = json.loads(s.recv(1024).decode())
+    data['delay'] = (data['time'] - now) * 1000
+    del data['time']
+    return data
