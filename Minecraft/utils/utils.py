@@ -2,10 +2,16 @@ import atexit
 import math
 import time
 
-from colorama import Fore, Style, init
-import pyglet
+_have_color = None
+try:
+    from colorama import Fore, Style, init
+    init()
+except ModuleNotFoundError:
+    _have_color = False
+else:
+    _have_color = True
 
-init()
+import pyglet
 
 def cube_vertices(x, y, z, n):
     # 返回在 x, y, z 坐标的方形顶点 
@@ -34,15 +40,24 @@ def get_game():
 
 def log_err(text):
     # 打印错误信息
-    print('%s[ERR  %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+    if _have_color:
+        print('%s[ERR %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+    else:
+        print('[ERR %s] %s' % (time.strftime('%H:%M:%S'), text))
 
 def log_info(text):
     # 打印信息
-    print('%s[INFO %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+    if _have_color:
+        print('%s[INFO %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+    else:
+        print('[INFO %s] %s' % (time.strftime('%H:%M:%S'), text))
 
 def log_warn(text):
     # 打印警告信息
-    print('%s[WARN %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+    if _have_color:
+        print('%s[WARN %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+    else:
+        print('[WARN %s] %s' % (time.strftime('%H:%M:%S'), text))
 
 def normalize(position):
     pos = []
