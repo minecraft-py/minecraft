@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 from string import punctuation
+import sys
 import time
 from tkinter import Listbox, Tk, Toplevel, messagebox
 import tkinter.ttk as ttk
@@ -203,6 +204,7 @@ class MinecraftLauncher(Tk):
         self.destroy()
         try:
             data = load_window()
+            a
             game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
             game.set_name(select)
             setup()
@@ -214,6 +216,7 @@ class MinecraftLauncher(Tk):
             log_err('catch error, saved in: log/%s' % name)
             err_log = open(os.path.join(path['log'], name), 'a+')
             err_log.write('Minecraft version: %s\n' % VERSION['str'])
+            err_log.write('python version: %s for %s\n' % ('.'.join([str(s) for s in sys.version_info[:3]]), sys.platform))
             err_log.write('time: %s\n' % time.ctime())
             err_log.write('save: %s\n' % select)
             err_log.write('traceback:\n' + '=' * 34 + '\n')

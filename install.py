@@ -91,6 +91,8 @@ def search_mcpy():
     # 搜索文件存储位置
     if 'MCPYPATH' in environ:
         MCPYPATH = environ['MCPYPATH']
+    elif platform == 'darwin':
+        MCPYPATH = path.join(path.expanduser('~'), 'Library', 'Application Support', 'mcpy')
     elif platform.startswith('win'):
         MCPYPATH = path.join(path.expanduser('~'), 'mcpy')
     else:
