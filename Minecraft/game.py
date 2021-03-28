@@ -5,8 +5,6 @@ import sys
 import time
 from threading import Thread
 
-msg = "module '{0}' not found, run `pip install {0}` to install, exit"
-
 try:
     import pyglet
     from pyglet import image
@@ -37,7 +35,7 @@ try:
     import pyshaders
 
 except (Exception, ImportError, ModuleNotFoundError) as err:
-    log_err(msg.format(err.name))
+    print('[ERR  %s] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
     exit(1)
 
 
@@ -230,7 +228,7 @@ class Game(pyglet.window.Window):
             self.dialogue.add_dialogue('Command not found')
         else:
             try:
-                log_info('Run command: %s' % s[1:])
+                log_info('Run command: %s' % s)
                 cmd = commands[command](self, self.player['position'], s)
             except ValueError:
                 pass
