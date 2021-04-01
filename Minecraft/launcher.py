@@ -50,7 +50,7 @@ class MinecraftLauncher(Tk):
             log_err('no display, exit')
             exit(1)
         self.title(get_lang('launcher.title'))
-        if settings['use-theme'] != 'ttk':
+        if settings['use-theme'] != 'ttk' and not sys.platform.startswith('win'):
             theme_path = os.path.dirname(os.path.abspath(__file__)) + '/theme/' + settings['use-theme']
             self.tk.eval('lappend auto_path {%s}' % theme_path)
             ttk.Style().theme_use(settings['use-theme'])
@@ -201,14 +201,16 @@ class MinecraftLauncher(Tk):
             log_warn('no world selected')
             return
         select = self.game_item_list.get(select[0])
-        self.destroy()
         try:
             data = load_window()
-            a
-            game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
-            game.set_name(select)
-            setup()
-            pyglet.app.run()
+            if not messagebox.askyesno(title='Mojang', message='It\'s April Fools\' Day!'):
+                self.destroy()
+                game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
+                game.set_name(select)
+                setup()
+                pyglet.app.run()
+            else:
+                raise
         except SystemExit:
             pass
         except:

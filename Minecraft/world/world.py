@@ -9,14 +9,7 @@ from Minecraft.source import get_lang
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
-msg = "module '{0}' not found, run `pip install {0}` to install, exit"
-
-try:
-    from opensimplex import OpenSimplex
-except ModuleNotFoundError:
-    log_err(msg.format('opensimplex'))
-    exit(1)
-
+from opensimplex import OpenSimplex
 import pyglet
 from pyglet.gl import *
 
@@ -50,10 +43,13 @@ class World(object):
     def init_world(self):
         # 放置所有方块以初始化世界, 非常耗时
         get_game().loading.draw()
+        log_info('Generate terrain')
+        now = time.time()
         if archiver.load_info(self.name)['type'] == 'flat':
             self.init_flat_world()
         else:
             self.init_random_world()
+        log_info('Generate done, takes %s seconds' % round(time.time() - now, 2))
         archiver.load_block(self.name, self.add_block, self.remove_block)
         self.is_init = False
 

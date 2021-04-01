@@ -33,6 +33,7 @@ try:
 
     import psutil
     import pyshaders
+    import opensimplex
 
 except (Exception, ImportError, ModuleNotFoundError) as err:
     print('[ERR  %s] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
