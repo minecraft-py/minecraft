@@ -201,16 +201,13 @@ class MinecraftLauncher(Tk):
             log_warn('no world selected')
             return
         select = self.game_item_list.get(select[0])
+        self.destroy()
         try:
             data = load_window()
-            if not messagebox.askyesno(title='Mojang', message='It\'s April Fools\' Day!'):
-                self.destroy()
-                game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
-                game.set_name(select)
-                setup()
-                pyglet.app.run()
-            else:
-                raise
+            game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
+            game.set_name(select)
+            setup()
+            pyglet.app.run()
         except SystemExit:
             pass
         except:

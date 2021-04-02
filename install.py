@@ -28,9 +28,6 @@ def copy():
 
 def install():
     # 下载依赖项
-    print('Hello April Fools\' Day!')
-    if '--hello-4-1' not in argv:
-        exit(1)
     if '--no-install-requirements' not in argv:
         print('[(1/3) Install requirements]')
         pip = executable + ' -m pip'
