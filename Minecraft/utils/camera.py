@@ -25,13 +25,13 @@ class Camera3D:
 
     def transform(self):
         glRotatef(self.rx, 0, 1, 0)
-        rx= radians(self.rx)
+        rx = radians(self.rx)
         glRotatef(-self.ry, cos(rx), 0, sin(rx))
         glTranslatef(-self.x, -self.y, -self.z)
 
     def look(self):
         glRotatef(self.rx, 0, 1, 0)
-        rx= radians(self.rx)
+        rx = radians(self.rx)
         glRotatef(-self.ry, cos(rx), 0, sin(rx))
         glTranslatef(0, -40.0, 0)
         glRotatef(-90.0, 1, 0, 0)

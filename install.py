@@ -8,7 +8,7 @@ from sys import executable, platform, argv
 import uuid
 from zipfile import ZipFile
 
-VERSION = '0.3.1'
+VERSION = '0.3.2'
 
 def copy():
     MCPYPATH = search_mcpy()

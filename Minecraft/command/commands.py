@@ -87,6 +87,7 @@ class Time(CommandBase):
     formats = [[], ['str', 'int'], ['str', 'str']]
     description = ['Get or set the time',
             '/time',
+            '/time add <int:second>',
             '/time set <int:time>',
             '/time set <str:day|noon|night>']
 
@@ -94,7 +95,12 @@ class Time(CommandBase):
         if len(self.args) == 0:
             self.game.dialogue.add_dialogue(str(int(self.game.time)))
         else:
-            if self.args[0] == 'set':
+            if self.args[0] == 'add':
+                if isinstance(self.args[1], int):
+                    self.game.time += max(0, self.args[1])
+                else:
+                    self.game.dialogue.add_dialogue("'%s' not a number" % self.args[1])
+            elif self.args[0] == 'set':
                 if isinstance(self.args[1], int):
                     self.game.time = max(0, self.args[1])
                 elif isinstance(self.args[1], str):

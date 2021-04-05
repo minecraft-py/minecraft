@@ -57,8 +57,6 @@ class Game(pyglet.window.Window):
         self.weather = {'now': 'clear', 'duration': 0}
         # 游戏世界(秒)
         self.time = 0
-        # rotation = (水平角 x, 俯仰角 y)
-        self.player['rotation'] = (0, 0)
         # 玩家所处的区域
         self.sector = None
         # 这个十字在屏幕中央
