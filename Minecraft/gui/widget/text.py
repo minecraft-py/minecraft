@@ -8,6 +8,7 @@ from pyglet.graphics import Batch
 from pyglet.shapes import BorderedRectangle, Rectangle
 from pyglet.text.caret import Caret
 from pyglet.text.layout import IncrementalTextLayout
+from pyglet.window import key
 
 
 class DialogueEntry(Widget):
@@ -32,6 +33,7 @@ class DialogueEntry(Widget):
         self._focus = False
         self._press = False
         self.last_char = ''
+        self.last_press = [0, 0]
         super().__init__(5, 20, get_size()[0] + self.pad - 5, self.text_height)
 
     def draw(self):
@@ -44,6 +46,30 @@ class DialogueEntry(Widget):
     def _set_focus(self, value):
         self._focus = value
         self._caret.visible = value
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.PAGEUP:
+            if self.last_press[0] == 1:
+                self.last_press[0] = 0
+                return
+            else:
+                self.last_press[0] = 1
+                self.text('')
+                self.text(get_game().dialogue.history[get_game().dialogue.pointer])
+                if get_game().dialogue.pointer != 0:
+                    get_game().dialogue.pointer -= 1
+        elif symbol == key.PAGEDOWN:
+            if self.last_press[1] == 1:
+                self.last_press[1] = 0
+                return
+            else:
+                self.last_press[1] = 1
+                if get_game().dialogue.pointer != len(get_game().dialogue.history) - 1:
+                    get_game().dialogue.pointer += 1
+                    self.text('')
+                    self.text(get_game().dialogue.history[get_game().dialogue.pointer])
+                else:
+                    self.text('')
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if self._focus:

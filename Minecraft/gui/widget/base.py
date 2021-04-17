@@ -44,6 +44,12 @@ class Widget(EventDispatcher):
     def check_hit(self, x, y):
         return self._x < x < self._x + self._width and self._y < y < self._y + self._height
 
+    def on_key_press(self, symbol, modifiers):
+        pass
+
+    def on_key_release(self, symbol, modifiers):
+        pass
+
     def on_mouse_press(self, x, y, buttons, modifiers):
         pass
 
@@ -72,6 +78,8 @@ class Widget(EventDispatcher):
         pass
 
 
+Widget.register_event_type('on_key_press')
+Widget.register_event_type('on_key_release')
 Widget.register_event_type('on_mouse_press')
 Widget.register_event_type('on_mouse_release')
 Widget.register_event_type('on_mouse_motion')

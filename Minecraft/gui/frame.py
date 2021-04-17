@@ -22,6 +22,18 @@ class DialogueFrame():
     def enable(self, status=True):
         self._enable = bool(status)
 
+    def on_key_press(self, symbol, modifiers):
+        if not self._enable:
+            return
+        for widget in self._widget:
+            widget.dispatch_event('on_key_press', symbol, modifiers)
+
+    def on_key_release(self, symbol, modifiers):
+        if not self._enable:
+            return
+        for widget in self._widget:
+            widget.dispatch_event('on_key_release', symbol, modifiers)
+
     def on_mouse_press(self, x, y, buttons, modifiers):
         if not self._enable:
             return

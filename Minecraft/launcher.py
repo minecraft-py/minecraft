@@ -211,8 +211,8 @@ class MinecraftLauncher(Tk):
         except SystemExit:
             pass
         except:
-            name = time.strftime('%Y-%m-%d_%H.%M.%S.log')
-            log_err('catch error, saved in: log/%s' % name)
+            name = time.strftime('error-%Y-%m-%d_%H.%M.%S.log')
+            log_err('Catch error, saved in: log/%s' % name)
             err_log = open(os.path.join(path['log'], name), 'a+')
             err_log.write('Minecraft version: %s\n' % VERSION['str'])
             err_log.write('python version: %s for %s\n' % ('.'.join([str(s) for s in sys.version_info[:3]]), sys.platform))

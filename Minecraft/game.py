@@ -354,6 +354,8 @@ class Game(pyglet.window.Window):
         :param: symbol 按下的键
         :param: modifiers 同时按下的修饰键
         """
+        for menu in self.menu.values():
+            menu.frame.on_key_press(symbol, modifiers)
         self.player.on_key_press(symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
@@ -362,6 +364,8 @@ class Game(pyglet.window.Window):
 
         :param: symbol 释放的键
         """
+        for menu in self.menu.values():
+            menu.frame.on_key_release(symbol, modifiers)
         self.player.on_key_release(symbol, modifiers)
 
 

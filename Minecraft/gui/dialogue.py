@@ -17,6 +17,9 @@ class Dialogue(GUI):
                 x=2, y=height - 75, width=width // 2, multiline=True)
         # 全部聊天内容
         self.dialogue = []
+        self.history = []
+        # 当前位置
+        self.pointer = 0
         # 实际显示的聊天内容
         self.shown = []
         # 最后一条聊天发送的时间
@@ -25,6 +28,7 @@ class Dialogue(GUI):
     def add_dialogue(self, text):
         log_info('New dialogue: %s' % text)
         self.dialogue.append(text)
+        self.pointer = len(self.dialogue) - 1
         self.last = time.time()
         if len(self.shown) < 10:
             self.shown.append(text)

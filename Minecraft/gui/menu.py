@@ -17,6 +17,7 @@ class Chat():
 
         def on_commit(text):
             if text != '':
+                self.window.dialogue.history.append(text)
                 if text.startswith('/'):
                     self.window.run_command(text[1:])
                 else:
