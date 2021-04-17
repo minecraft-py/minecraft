@@ -28,7 +28,7 @@ def copy():
 
 def install():
     # 下载依赖项
-    if '--no-install-requirements' not in argv:
+    if '--skip-install-requirements' not in argv:
         print('[(1/3) Install requirements]')
         pip = executable + ' -m pip'
         if '--hide-output' in argv:
