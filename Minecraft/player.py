@@ -145,14 +145,15 @@ class Player():
             pass
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        index = int(self._data['now_block'] - scroll_y)
-        if index > 8:
-            self._data['now_block'] = index = 0
-        elif index < 0:
-            self._data['now_block'] = index = 8
-        else:
-            self._data['now_block'] = index
-        get_game().hud['hotbar'].set_index(index)
+        if get_game().exclusive:
+            index = int(self._data['now_block'] - scroll_y)
+            if index > 8:
+                self._data['now_block'] = index = 0
+            elif index < 0:
+                self._data['now_block'] = index = 8
+            else:
+                self._data['now_block'] = index
+            get_game().hud['hotbar'].set_index(index)
 
     def on_key_press(self, symbol, modifiers):
         if self._data['in_chat']:

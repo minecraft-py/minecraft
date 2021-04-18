@@ -55,7 +55,7 @@ else:
 path['log'] = join(path['mcpypath'], 'log')
 path['texture'] = join(path['pack'], 'texture')
 path['texture.hud'] = join(path['texture'], 'hud')
-path['texture.ui'] = join(path['texture'], 'ui')
+path['texture.gui'] = join(path['texture'], 'gui')
 path['save'] = join(path['mcpypath'], 'save')
 path['screenshot'] = join(path['mcpypath'], 'screenshot')
 
