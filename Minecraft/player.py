@@ -129,17 +129,17 @@ class Player():
                 block = get_game().world.get(now)
             else:
                 return
-            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and now and previous:
+            if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and previous:
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if not self._data['die'] and not self._data['in_hud']:
+                if (not self._data['die']) and (not self._data['in_hud']):
                     if hasattr(block, 'on_use') and (not self._data['stealing']):
                         block.on_use(self)
                     elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:
                         get_game().world.add_block(previous, get_game().inventory[self._data['now_block']])
-            elif button == pyglet.window.mouse.LEFT and previous:
-                if block.hardness > 0 and not self._data['die'] and not self._data['in_hud']:
+            elif (button == pyglet.window.mouse.LEFT):
+                if block.hardness > 0 and (not self._data['die']) and (not self._data['in_hud']):
                     get_game().world.remove_block(now)
-            elif button == pyglet.window.mouse.MIDDLE and block and previous:
+            elif (button == pyglet.window.mouse.MIDDLE) and previous:
                 pass
         elif not self._data['die'] and not self._data['in_hud']:
             pass

@@ -16,11 +16,11 @@ class Bag(GUI):
         GUI.__init__(self, width, height)
         self._element = {}
         self._element['panel'] = Sprite(image.load(join(path['texture.gui'], 'containers', 'inventory.png')).get_region(0, 90, 176, 166),
-                x=(width - 352) / 2, y=(height - 332) / 2)
-        self._element['panel'].scale = 2
+                x=(width - 264) / 2, y=(height - 249) / 2)
+        self._element['panel'].scale = 1.5
         
     def draw(self):
         self._element['panel'].draw()
 
     def resize(self, width, height):
-        self._element['panel'].position = (width - 352) / 2, (height - 332) / 2
+        self._element['panel'].position = (width - 264) / 2, (height - 249) / 2
