@@ -1,5 +1,6 @@
-from os import getpid
-#from register import search_mcpy
+from os import getpid, environ
+from sys import platform
+
 from Minecraft.launcher import *
 from Minecraft.utils import *
 
@@ -18,4 +19,7 @@ if __name__ == '__main__':
     except ModuleNotFoundError:
         pass
     finally:
-        MinecraftLauncher().mainloop()
+        if (environ.get('DISPLAY') is not None) and (platform == 'linux'):
+            MinecraftLauncher().mainloop()
+        else:
+            log_err('$DISPLAY not found')

@@ -1,6 +1,6 @@
 from Minecraft.gui.frame import DialogueFrame
 from Minecraft.gui.widget.button import Button, ChoseButton
-from Minecraft.gui.widget.text import DialogueEntry
+from Minecraft.gui.widget.entry import DialogueEntry
 from Minecraft.source import lang, player
 from Minecraft.utils.utils import *
 
@@ -24,7 +24,7 @@ class Chat():
                     self.window.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
             self.window.player['in_chat'] = False
             self._entry.text('')
-            self.window.menu['chat'].frame.enable(False)
+            self.window.guis['chat'].frame.enable(False)
             self.window.set_exclusive_mouse(True)
 
         setattr(self._entry, 'on_commit', on_commit)

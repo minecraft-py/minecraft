@@ -21,7 +21,7 @@ try:
     from Minecraft.gui.hud.heart import Heart
     from Minecraft.gui.hud.hunger import Hunger
     from Minecraft.gui.loading import Loading
-    from Minecraft.gui.menu import Chat, PauseMenu
+    from Minecraft.gui.guis import Chat, PauseMenu
     from Minecraft.gui.widget.label import ColorLabel
     from Minecraft.player import Player
     from Minecraft.source import get_lang, libs, path, player, settings
@@ -34,7 +34,6 @@ try:
     import psutil
     import pyshaders
     import opensimplex
-
 except (Exception, ImportError, ModuleNotFoundError) as err:
     print('[ERR  %s] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
     exit(1)
@@ -44,39 +43,39 @@ class Game(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # 是否初始化
+        self.is_init = True
         # 窗口是否捕获鼠标
         self.exclusive = False
-        # 玩家
-        self.player = Player()
-        # 拓展功能
-        self.debug = {}
-        self.debug['debug'] = False
-        self.debug['enable'] = False
-        self.debug['running'] = False
-        # 天气(现在天气, 持续时间)
-        self.weather = {'now': 'clear', 'duration': 0}
-        # 游戏世界(秒)
-        self.time = 0
         # 玩家所处的区域
         self.sector = None
         # 这个十字在屏幕中央
         self.reticle = None
+        # 游戏世界(秒)
+        self.time = 0
+        # 玩家
+        self.player = Player()
         # 显示在 debug 区域的 info
-        self._info_ext = []
+        self._info_ext = list()
         self._info_ext.append('pyglet' + pyglet.version)
+        # 拓展功能
+        self.debug = dict(debug=False, enable=False, running=False)
+        # 天气(现在天气, 持续时间)
+        self.weather = {'now': 'clear', 'duration': 0}
         # 玩家可以放置的方块, 使用数字键切换
         self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table', 'glass']
         self.inventory += [None] * (9 - len(self.inventory))
         # 数字键列表
-        self.num_keys = [
-            key._1, key._2, key._3, key._4, key._5,
-            key._6, key._7, key._8, key._9, key._0]
+        self.num_keys = [key._1, key._2, key._3, key._4, key._5, key._6, key._7, key._8, key._9, key._0]
+        # 加载窗口
+        self.loading = Loading()
+        # 聊天区
+        self.dialogue = Dialogue()
         # 这个标签在画布的上方显示
-        self.label = {}
+        self.label = dict()
         self.label['top'] = ColorLabel('',
             x=2, y=self.height - 5, width=self.width // 2, multiline=True,
             anchor_x='left', anchor_y='top', font_size=16)
-        self.is_init = True
         # 设置图标
         self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         # 这个标签在画布正中偏上显示
@@ -92,13 +91,9 @@ class Game(pyglet.window.Window):
         # 死亡信息
         self.die_info = ColorLabel('', color='white',
             x=self.width // 2, y=self.height // 2, anchor_x='center',
-            anchor_y='center', font_size=24)
-        # 加载窗口
-        self.loading = Loading()
+            anchor_y='center', font_size=24) 
         # 覆盖屏幕的矩形
         self.full_screen = Rectangle(0, 0, self.width, self.height)
-        # 聊天区
-        self.dialogue = Dialogue()
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
         # 检测玩家是否应该死亡
@@ -111,8 +106,8 @@ class Game(pyglet.window.Window):
         pyglet.clock.schedule_interval(change_sky_color, 7.5)
         log_info('Welcome %s' % player['name'])
         for lib in libs:
-            if hasattr(lib, 'init'):
-                lib.init()
+            if hasattr(lib, 'main'):
+                lib.main()
 
     def can_place(self, block, position):
         """
@@ -155,7 +150,7 @@ class Game(pyglet.window.Window):
 
     def init_player(self):
         # 初始化玩家
-        self.hud = {}
+        self.hud = dict()
         # E 键打开的背包
         self.hud['bag'] = Bag()
         # 生命值
@@ -169,10 +164,10 @@ class Game(pyglet.window.Window):
         # 经验条
         self.hud['xpbar'] = XPBar()
         # 菜单
-        self.menu = {}
-        self.menu['pause'] = PauseMenu(self)
-        self.menu['pause'].frame.enable(True)
-        self.menu['chat'] = Chat(self)
+        self.guis = dict()
+        self.guis['pause'] = PauseMenu(self)
+        self.guis['pause'].frame.enable(True)
+        self.guis['chat'] = Chat(self)
 
     def save(self, dt):
         """
@@ -319,14 +314,14 @@ class Game(pyglet.window.Window):
         :param: button 哪个按键被按下: 1 = 左键, 4 = 右键
         :param: modifiers 表示单击鼠标按钮时按下的任何修改键的数字
         """
-        for menu in self.menu.values():
-            if menu.frame.on_mouse_press(x, y, button, modifiers):
+        for gui in self.guis.values():
+            if gui.frame.on_mouse_press(x, y, button, modifiers):
                 break
         self.player.on_mouse_press(x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
-        for menu in self.menu.values():
-            menu.frame.on_mouse_release(x, y, button, modifiers)
+        for gui in self.guis.values():
+            gui.frame.on_mouse_release(x, y, button, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
         """
@@ -335,8 +330,8 @@ class Game(pyglet.window.Window):
         :param: x, y 鼠标点击时的坐标, 如果被捕获的话它们总是在屏幕中央
         :param: dx, dy 鼠标移动的距离
         """
-        for menu in self.menu.values():
-            menu.frame.on_mouse_motion(x, y, dx, dy)
+        for gui in self.guis.values():
+            gui.frame.on_mouse_motion(x, y, dx, dy)
         self.player.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
@@ -345,6 +340,8 @@ class Game(pyglet.window.Window):
 
         :param: scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
         """
+        for gui in self.guis.values():
+            gui.frame.on_mouse_scroll(x, y, scroll_x, scroll_y)
         self.player.on_mouse_scroll(x, y, scroll_x, scroll_y)
 
     def on_key_press(self, symbol, modifiers):
@@ -354,8 +351,8 @@ class Game(pyglet.window.Window):
         :param: symbol 按下的键
         :param: modifiers 同时按下的修饰键
         """
-        for menu in self.menu.values():
-            menu.frame.on_key_press(symbol, modifiers)
+        for gui in self.guis.values():
+            gui.frame.on_key_press(symbol, modifiers)
         self.player.on_key_press(symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
@@ -364,10 +361,9 @@ class Game(pyglet.window.Window):
 
         :param: symbol 释放的键
         """
-        for menu in self.menu.values():
-            menu.frame.on_key_release(symbol, modifiers)
+        for gui in self.guis.values():
+            gui.frame.on_key_release(symbol, modifiers)
         self.player.on_key_release(symbol, modifiers)
-
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用
@@ -407,8 +403,8 @@ class Game(pyglet.window.Window):
             self.hud['hunger'].resize(self.width, self.height)
             self.hud['hotbar'].resize(self.width, self.height)
             self.hud['xpbar'].resize(self.width, self.height)
-            for menu in self.menu.values():
-                menu.frame.on_resize(width, height)
+            for gui in self.guis.values():
+                gui.frame.on_resize(width, height)
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -459,9 +455,9 @@ class Game(pyglet.window.Window):
                     self.full_screen.opacity = 100
                     self.full_screen.draw()
                     if not self.player['in_chat']:
-                        self.menu['pause'].frame.draw()
+                        self.guis['pause'].frame.draw()
                     else:
-                        self.menu['chat'].frame.draw()
+                        self.guis['chat'].frame.draw()
                 if self.player['in_hud'] or not self.exclusive:
                     self.full_screen.color = (0, 0, 0)
                     self.full_screen.opacity = 100
@@ -481,16 +477,16 @@ class Game(pyglet.window.Window):
             self.is_init = False
 
     def on_text(self, text):
-        for menu in self.menu.values():
-            menu.frame.on_text(text)
+        for gui in self.guis.values():
+            gui.frame.on_text(text)
 
     def on_text_motion(self, motion):
-        for menu in self.menu.values():
-            menu.frame.on_text_motion(motion)
+        for gui in self.guis.values():
+            gui.frame.on_text_motion(motion)
 
     def on_text_motion_select(self, motion):
-        for menu in self.menu.values():
-            menu.frame.on_text_motion_select(motion)
+        for gui in self.guis.values():
+            gui.frame.on_text_motion_select(motion)
 
     def draw_focused_block(self):
         # 在十字线选中的方块绘制黑边
@@ -520,9 +516,11 @@ class Game(pyglet.window.Window):
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
-                info_ext = []
-                self.label['top'].text = '\n'.join(get_lang('game.text.debug')) % (VERSION['str'],
-                        ', '.join(self._info_ext), x, y, z, rx, ry, mem, fps)
+                text = '\n'.join(get_lang('game.text.debug'))
+                text = text.replace('%(version)', VERSION['str']).replace('%(info)', ', '.join(self._info_ext))
+                text = text.replace('%(xyz)', '%.1f, %.1f, %.1f' % (x, y, z)).replace('%(rot)', '%.2f, %.2f' % (rx, ry))
+                text = text.replace('%(mem)', '%.2f' % mem).replace('%(fps)', '%d' % fps)
+                self.label['top'].text = text
                 self.label['top'].draw()
         else:
             # 初始化屏幕

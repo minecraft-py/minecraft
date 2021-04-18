@@ -14,7 +14,7 @@ from pyglet.window import key, mouse
 class Player():
 
     def __init__(self):
-        self._data = {}
+        self._data = dict()
         self._data['gamemode'] = 0
         self._data['now_block'] = 0
         self._data['stealing'] = False
@@ -157,8 +157,8 @@ class Player():
     def on_key_press(self, symbol, modifiers):
         if self._data['in_chat']:
             if symbol == key.ESCAPE:
-                get_game().menu['chat'].frame.enable(False)
-                get_game().menu['chat'].text()
+                get_game().guis['chat'].frame.enable(False)
+                get_game().guis['chat'].text()
                 self._data['in_chat'] = False
                 get_game().set_exclusive_mouse(True)
             return
@@ -175,8 +175,8 @@ class Player():
             if get_game().exclusive:
                 get_game().set_exclusive_mouse(False)
                 self._data['in_chat'] = not self._data['in_chat']
-                get_game().menu['chat'].text('/')
-                get_game().menu['chat'].frame.enable()
+                get_game().guis['chat'].text('/')
+                get_game().guis['chat'].frame.enable()
         elif symbol == key.W:
             if self._data['key_press']['w']['count'] == 1:
                 if time.time() - self._data['key_press']['w']['last'] <= 0.1:
@@ -225,7 +225,7 @@ class Player():
         elif symbol == key.ESCAPE: 
                 get_game().save(0)
                 get_game().set_exclusive_mouse(False)
-                get_game().menu['pause'].frame.enable()
+                get_game().guis['pause'].frame.enable()
                 if self._data['die']:
                     get_game().close()
         elif symbol == key.LSHIFT:
