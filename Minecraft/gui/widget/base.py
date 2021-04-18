@@ -16,30 +16,46 @@ class Widget(EventDispatcher):
     @position.setter
     def position(self, x, y):
         self._x, self._y = x, y
+        self._update()
 
     @property
     def x(self):
         return self._x
 
+    @x.setter
+    def x(self, x):
+        self._x = x
+        self._update()
+
     @property
     def y(self):
         return self._y
+
+    @y.setter
+    def y(self, y):
+        self._y = y
+        self._update()
 
     @property
     def width(self):
         return self._width
 
     @width.setter
-    def width(self, value):
-        self._width = value
+    def width(self, width):
+        self._width = width
+        self._update()
 
     @property
     def height(self):
         return self._height
 
     @height.setter
-    def height(self, value):
-        self._height = value
+    def height(self, height):
+        self._height = height
+        self._update()
+
+    def _update(self):
+        pass
 
     def check_hit(self, x, y):
         return self._x < x < self._x + self._width and self._y < y < self._y + self._height

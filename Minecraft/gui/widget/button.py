@@ -27,6 +27,12 @@ class Button(Widget):
         self._pressed = False
         self._enable = True
 
+    def _update(self):
+        width, height = get_size()
+        self._sprite.position = self._x, height - self._y
+        self._label.x = self._x + self._width / 2
+        self._label.y = height - self._y + self._height / 2
+
     def draw(self):
         self._sprite.scale_x = self._width / 200
         self._sprite.scale_y = self._height / 20
@@ -64,14 +70,6 @@ class Button(Widget):
             else:
                 self._sprite.image = self._depressed_img if self._enable else self._unable_img
                 self._label.color = 'white' if self._enable else 'gray'
-
-    def on_resize(self, width, height):
-        self._x *= width / self._size[0]
-        self._y = (height / self._size[1]) * self._y
-        self._size = width, height
-        self._sprite.position = self._x, self._y
-        self._label.x = self._x + self._width / 2
-        self._label.y = self._y + self._height / 2
 
 
 Button.register_event_type('on_press')

@@ -50,7 +50,14 @@ class PauseMenu():
             self.window.on_close()
             exit(0)
 
+        def on_resize(width, height):
+            self._back_button.x = (self.window.width - 200) / 2
+            self._back_button.y = 100
+            self._exit_button.x = (self.window.width - 200) / 2
+            self._exit_button.y = 150
+
         setattr(self._back_button, 'on_press', on_back_press)
         setattr(self._exit_button, 'on_press', on_exit_press)
+        self.frame.on_resize = on_resize
         self.frame.add_widget(self._back_button)
         self.frame.add_widget(self._exit_button)

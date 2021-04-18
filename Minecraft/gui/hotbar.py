@@ -54,5 +54,6 @@ class HotBar(GUI):
     def resize(self, width, height):
        self._hotbar.position = (width - 455) / 2, 1
        self._select.position = (width - 455) / 2 + 50 * self._index - 2, -2
-       for i in range(len(self._items)):
-           self._items[i].position = (width - 455) / 2 + 50 * i + 3, 4
+       for i in range(len(self._item)):
+           if self._item[i]:
+               self._item[i].position = (width - 455) / 2 + 50 * i + 3, 4

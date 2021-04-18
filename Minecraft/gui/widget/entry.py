@@ -150,6 +150,13 @@ class TextEntry(Widget):
         self.last_char = ''
         super().__init__(x, win_height - y, width, height)
 
+    def _update(self):
+        self._outline.position = self._x - self.pad, get_size()[1] - self._y - self.pad
+        self._outline.width = self._width + self.pad
+        self._outline.height = self.text_height + self.pad
+        self._layout.x = self._x
+        self._layout.y = get_size()[1] - self._y
+
     def draw(self):
         self._outline.draw()
         self.batch.draw()
