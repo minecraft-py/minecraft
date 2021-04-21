@@ -1,4 +1,4 @@
-from Minecraft.gui.frame import DialogueFrame
+from Minecraft.gui.frame import Frame
 from Minecraft.gui.widget.button import Button, ChoseButton
 from Minecraft.gui.widget.entry import DialogueEntry
 from Minecraft.source import lang, player
@@ -11,7 +11,7 @@ class Chat():
 
     def __init__(self, window):
         self.window = window
-        self.frame = DialogueFrame(self.window)
+        self.frame = Frame(self.window, True)
         self._entry = DialogueEntry()
         self.frame.add_widget(self._entry)
 
@@ -37,7 +37,7 @@ class PauseMenu():
 
     def __init__(self, window):
         self.window = window
-        self.frame = DialogueFrame(self.window)
+        self.frame = Frame(self.window, True)
         self._back_button = Button((self.window.width - 200) / 2, 100, 200, 40, lang['game.pause_menu.back_to_game'])
         self._exit_button = Button((self.window.width - 200) / 2, 150, 200, 40, lang['game.pause_menu.exit'])
 

@@ -1,13 +1,16 @@
 import pyglet
 
+from Minecraft.utils.utils import *
 
-class DialogueFrame():
 
-    def __init__(self, window):
+class Frame():
+
+    def __init__(self, window, draw_full_screen=False):
         window.push_handlers(self)
         self._count = -1
         self._widget = []
         self._enable = False
+        self._draw_full_screen = draw_full_screen
 
     def add_widget(self, width):
         self._count += 1
@@ -85,6 +88,10 @@ class DialogueFrame():
     def draw(self):
         if not self._enable:
             return
+        if self._draw_full_screen:
+            get_game().full_screen.color = (0, 0, 0)
+            get_game().full_screen.opacity = 100
+            get_game().full_screen.draw()
         for widget in self._widget:
             widget.draw()
 

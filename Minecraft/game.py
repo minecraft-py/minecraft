@@ -1,3 +1,4 @@
+from difflib import get_close_matches
 import math
 import os
 import random
@@ -59,7 +60,7 @@ class Game(pyglet.window.Window):
         self._info_ext = list()
         self._info_ext.append('pyglet' + pyglet.version)
         # 拓展功能
-        self.debug = dict(debug=False, enable=False, running=False)
+        self.debug = dict(debug=False, enable=False)
         # 天气(现在天气, 持续时间)
         self.weather = {'now': 'clear', 'duration': 0}
         # 玩家可以放置的方块, 使用数字键切换
@@ -154,9 +155,9 @@ class Game(pyglet.window.Window):
         # E 键打开的背包
         self.hud['bag'] = Bag()
         # 生命值
-        self.hud['heart'] = Heart(batch=self.world.batch2d)
+        self.hud['heart'] = Heart()
         # 饥饿值
-        self.hud['hunger'] = Hunger(batch=self.world.batch2d)
+        self.hud['hunger'] = Hunger()
         # 工具栏
         self.hud['hotbar'] = HotBar()
         self.hud['hotbar'].set_all(self.inventory)
@@ -219,7 +220,11 @@ class Game(pyglet.window.Window):
         # 运行命令
         command = s.split(' ')[0]
         if command not in commands:
-            self.dialogue.add_dialogue('Command not found')
+            match = get_close_matches(s, list(commands.keys()), n=1)
+            if len(match) == 1:
+                self.dialogue.add_dialogue('Command "%s" not found, do you mean "%s"?' % (command, match[0]))
+            else:
+                self.dialogue.add_dialogue('Command "%s" not found' % command)
         else:
             try:
                 log_info('Run command: %s' % s)
@@ -275,7 +280,7 @@ class Game(pyglet.window.Window):
         # 移动速度
         if self.player['flying']:
             speed = FLYING_SPEED
-        elif self.player['running'] or self.debug['running']:
+        elif self.player['running']:
             speed = RUNNING_SPEED
         elif self.player['stealing']:
             speed = STEALING_SPEED
@@ -446,22 +451,15 @@ class Game(pyglet.window.Window):
             weather[self.weather['now']].draw()
             self.set_2d()
             if not self.player['die'] and not self.player['hide_hud']:
-                self.world.batch2d.draw()
-                self.hud['hotbar'].draw()
-                self.hud['xpbar'].draw()
+                if self.player['gamemode'] != 1:
+                    self.hud['hotbar'].draw()
                 self.draw_reticle()
                 if not self.player['in_hud'] and not self.exclusive:
-                    self.full_screen.color = (0, 0, 0)
-                    self.full_screen.opacity = 100
-                    self.full_screen.draw()
                     if not self.player['in_chat']:
                         self.guis['pause'].frame.draw()
                     else:
                         self.guis['chat'].frame.draw()
                 if self.player['in_hud'] or not self.exclusive:
-                    self.full_screen.color = (0, 0, 0)
-                    self.full_screen.opacity = 100
-                    self.full_screen.draw()
                     if self.player['show_bag']:
                         self.hud['bag'].draw()
             elif self.player['die']:

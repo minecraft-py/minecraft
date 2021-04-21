@@ -20,6 +20,9 @@ class Bag(GUI):
         self._element['panel'].scale = 1.5
         
     def draw(self):
+        get_game().full_screen.color = (0, 0, 0)
+        get_game().full_screen.opacity = 100
+        get_game().full_screen.draw()
         self._element['panel'].draw()
 
     def resize(self, width, height):

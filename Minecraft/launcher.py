@@ -13,7 +13,6 @@ log_info('Loading game lib')
 from Minecraft.game import *
 from Minecraft.archiver import load_window
 from Minecraft.source import get_lang, path, settings
-from Minecraft.utils.repair import repair_archive
 log_info('Start launcher')
 
 import pyglet
@@ -61,7 +60,7 @@ class MinecraftLauncher(Tk):
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
-        self.repair_button = ttk.Button(self, text=get_lang('launcher.repair'), command=self.repair)
+        self.repair_button = ttk.Button(self, text=get_lang('launcher.multiplayer'))
         self.del_button = ttk.Button(self, text=get_lang('launcher.delete'), command=self.delete)
         self.rename_button = ttk.Button(self, text=get_lang('launcher.rename'), command=self.rename)
         # 显示
@@ -127,9 +126,7 @@ class MinecraftLauncher(Tk):
             seed = hash(time.ctime())
         else:
             seed = hash(seed)
-        if name == '':
-            log_err('invalid world name')
-        elif s == '_server' and not ([s for s in list(punctuation) if s in name] == []):
+        if (len(name) == 0) and ([s for s in list(punctuation) if s in name] == []):
             log_err('invalid world name')
         else:
             if not os.path.isdir(os.path.join(path['save'], name)):
@@ -185,14 +182,6 @@ class MinecraftLauncher(Tk):
         shutil.move(os.path.join(path['save'], name), os.path.join(path['save'], self.rename_dialog_entry.get()))
         self.rename_dialog.destroy()
         self.refresh()
-
-    def repair(self, event=None):
-        select =self.game_item_list.curselection()
-        if select == ():
-            log_warn('no world selected')
-            return
-        select = self.game_item_list.get(select[0])
-        repair_archive(select)
 
     def start_game(self, event=None):
         # 启动游戏

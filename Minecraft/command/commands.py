@@ -9,7 +9,7 @@ commands = {}
 
 class GameMode(CommandBase):
 
-    formats = [['num']]
+    formats = [['int']]
     description = ['Change game mode',
             '/gamemode <number:mode>']
 

@@ -11,13 +11,18 @@ from pyglet.sprite import Sprite
 
 class Hunger(HUD):
 
-    def __init__(self, batch=None):
+    def __init__(self):
         width, height = get_size()
-        HUD.__init__(self, width, height, batch)
+        HUD.__init__(self, width, height)
         self._status = []
         for i in range(9, -1, -1):
-            self._status.append(Sprite(image.load(join(path['texture.hud'], 'hunger.png')),
-                x=(width - 450) / 2 + 450 - (i + 1) * 20, y=75, batch=batch))
+            sprite = Sprite(image.load(join(path['texture.hud'], 'hunger.png')),
+                x=(width - 450) / 2 + 450 - (i + 1) * 20, y=75)
+            self._status.append(sprite)
+
+    def draw(self):
+        for item in self._status:
+            item.draw()
 
     def resize(self, width, height):
         for i in range(9, -1, -1):

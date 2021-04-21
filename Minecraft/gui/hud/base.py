@@ -1,6 +1,6 @@
 class HUD(object):
 
-    def __init__(self, width, height, batch=None):
+    def __init__(self, width, height):
         pass
 
     def resize(self, width, height):

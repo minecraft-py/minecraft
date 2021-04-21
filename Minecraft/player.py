@@ -202,9 +202,6 @@ class Player():
                 get_game().set_exclusive_mouse(self._data['show_bag'])
                 self._data['in_hud'] = not self._data['in_hud']
                 self._data['show_bag'] = not self._data['show_bag']
-        elif symbol == key.R:
-            if get_game().debug['enable']:
-                get_game().debug['running'] = not self.debug['running']
         elif symbol == key.SPACE:
             if self._data['key_press']['space']['count'] == 1:
                 if time.time() - self._data['key_press']['space']['last'] <= 0.1:
