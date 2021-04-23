@@ -13,13 +13,13 @@ class XPBar(GUI):
     def __init__(self):
         width, height = get_size()
         GUI.__init__(self, width, height)
-        self._xp_bar = Sprite(image.load(join(path['texture.gui'], 'icons.png')).get_region(0, 187, 182, 5),
-                x=(width - 455) / 2, y=61)
-        self._xp_bar.scale_y = 2
-        self._xp_bar.scale_x = 455 / 182
+        self._xpbar = Sprite(image.load(join(path['texture.gui'], 'icons.png')).get_region(0, 187, 182, 5),
+                x=(width - 364) / 2, y=48)
+        self._xpbar.scale_x = 2
+        self._xpbar.scale_y = 1.5
 
     def draw(self):
-        self._xp_bar.draw()
+        self._xpbar.draw()
 
     def resize(self, width, height):
-        self._xp_bar.position = (width - 455) / 2, 61
+        self._xpbar.position = (width - 364) / 2, 48

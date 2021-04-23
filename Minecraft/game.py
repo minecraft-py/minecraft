@@ -149,8 +149,8 @@ class Game(pyglet.window.Window):
                 self.dialogue.add_dialogue(self.player['die_reason'])
                 self.set_exclusive_mouse(False)
 
-    def init_player(self):
-        # 初始化玩家
+    def init_gui(self):
+        # 初始化 GUI
         self.hud = dict()
         # E 键打开的背包
         self.hud['bag'] = Bag()
@@ -164,7 +164,7 @@ class Game(pyglet.window.Window):
         self.hud['hotbar'].set_index(self.player['now_block'])
         # 经验条
         self.hud['xpbar'] = XPBar()
-        # 菜单
+        # GUI
         self.guis = dict()
         self.guis['pause'] = PauseMenu(self)
         self.guis['pause'].frame.enable(True)
@@ -471,7 +471,7 @@ class Game(pyglet.window.Window):
             self.draw_label()
         if self.is_init:
             self.world.init_world()
-            self.init_player()
+            self.init_gui()
             self.is_init = False
 
     def on_text(self, text):
@@ -542,8 +542,8 @@ def setup():
     glEnable(GL_POLYGON_SMOOTH)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     # 配置 OpenGL 的雾属性
     glEnable(GL_FOG)
     glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))

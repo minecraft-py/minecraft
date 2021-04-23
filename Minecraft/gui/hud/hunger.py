@@ -16,8 +16,9 @@ class Hunger(HUD):
         HUD.__init__(self, width, height)
         self._status = []
         for i in range(9, -1, -1):
-            sprite = Sprite(image.load(join(path['texture.hud'], 'hunger.png')),
-                x=(width - 450) / 2 + 450 - (i + 1) * 20, y=75)
+            sprite = Sprite(image.load(join(path['texture.gui'], 'icons.png')).get_region(16, 220, 9, 9),
+                x=(width - 364) / 2 + 364 - (i + 1) * 13.5, y=56)
+            sprite.scale = 2
             self._status.append(sprite)
 
     def draw(self):
@@ -26,4 +27,4 @@ class Hunger(HUD):
 
     def resize(self, width, height):
         for i in range(9, -1, -1):
-            self._status[i].position = (width - 450) / 2 + 450 - (i + 1) * 20, 75
+            self._status[i].position = (width - 364) / 2 + 364 - (i + 1) * 13.5, 56

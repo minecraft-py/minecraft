@@ -16,8 +16,9 @@ class Heart(HUD):
         HUD.__init__(self, width, height)
         self._status = []
         for i in range(10):
-            sprite = Sprite(image.load(join(path['texture.hud'], 'heart.png')),
-                    x=(width - 450) / 2 + i * 20, y=75)
+            sprite = Sprite(image.load(join(path['texture.gui'], 'icons.png')).get_region(16, 247, 9, 9),
+                    x=(width - 364) / 2 + i * 13.5, y=56)
+            sprite.scale = 1.5
             self._status.append(sprite)
 
     def draw(self):
@@ -26,5 +27,4 @@ class Heart(HUD):
 
     def resize(self, width, height):
         for i in range(10):
-            self._status[i].position = (width - 450) / 2 + i * 20, 75
-
+            self._status[i].position = (width - 364) / 2 + i * 13.5, 56

@@ -220,7 +220,12 @@ class Player():
                 self._data['die'] = False
                 self._data['position'] = self._data['respawn_position']
                 get_game().set_exclusive_mouse(True)
-        elif symbol == key.ESCAPE: 
+        elif symbol == key.ESCAPE:
+            if self._data['show_bag']:
+                get_game().set_exclusive_mouse(self._data['show_bag'])
+                self._data['in_hud'] = not self._data['in_hud']
+                self._data['show_bag'] = not self._data['show_bag']
+            else:
                 get_game().save(0)
                 get_game().set_exclusive_mouse(False)
                 get_game().guis['pause'].frame.enable()
