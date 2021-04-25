@@ -1,5 +1,4 @@
 from os import getpid, environ
-from sys import platform
 
 from Minecraft.launcher import *
 from Minecraft.utils import *
@@ -19,7 +18,4 @@ if __name__ == '__main__':
     except ModuleNotFoundError:
         pass
     finally:
-        if (environ.get('DISPLAY') is not None) and (platform == 'linux'):
-            MinecraftLauncher().mainloop()
-        else:
-            log_err('$DISPLAY not found')
+        MinecraftLauncher().mainloop()

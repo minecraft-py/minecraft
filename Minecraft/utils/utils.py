@@ -38,26 +38,26 @@ def get_game():
         if str(w).startswith('Game'):
             return w
 
-def log_err(text):
+def log_err(text, name='client'):
     # 打印错误信息
     if _have_color:
-        print('%s[ERR  %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+        print('%s[ERR  %s %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
     else:
-        print('[ERR  %s] %s' % (time.strftime('%H:%M:%S'), text))
+        print('[ERR  %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
 
-def log_info(text):
+def log_info(text, name='client'):
     # 打印信息
     if _have_color:
-        print('%s[INFO %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+        print('%s[INFO %s %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
     else:
-        print('[INFO %s] %s' % (time.strftime('%H:%M:%S'), text))
+        print('[INFO %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
 
-def log_warn(text):
+def log_warn(text, name='client'):
     # 打印警告信息
     if _have_color:
-        print('%s[WARN %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), Style.RESET_ALL, text))
+        print('%s[WARN %s %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
     else:
-        print('[WARN %s] %s' % (time.strftime('%H:%M:%S'), text))
+        print('[WARN %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
 
 def normalize(position):
     pos = []
@@ -116,7 +116,8 @@ VERSION = {
         'major': 0,
         'minor': 3,
         'patch': 2,
-        'str': '0.3.2'
+        'str': '0.3.2',
+        'data': 1
         }
 
 TICKS_PER_SEC = 60

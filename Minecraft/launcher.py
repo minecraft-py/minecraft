@@ -12,7 +12,7 @@ from Minecraft.utils.utils import *
 log_info('Loading game lib')
 from Minecraft.game import *
 from Minecraft.archiver import load_window
-from Minecraft.source import get_lang, path, settings
+from Minecraft.source import get_lang, path, player, settings
 log_info('Start launcher')
 
 import pyglet
@@ -28,7 +28,7 @@ def is_game_restore(name):
     if os.path.isdir(os.path.join(path['save'], name)):
         if 'world.json' in os.listdir(os.path.join(path['save'], name)):
             if 'info.json' in os.listdir(os.path.join(path['save'], name)):
-                if 'player.json' in os.listdir(os.path.join(path['save'], name)):
+                if 'players' in os.listdir(os.path.join(path['save'], name)):
                     return True
                 else:
                     return False
@@ -134,11 +134,12 @@ class MinecraftLauncher(Tk):
                 world = open(os.path.join(path['save'], name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
-                info = {'seed': seed, 'type': self.new_dialog_combobox_type.get(), 'time': 400, 'weather':
-                        {'now': 'clear', 'duration': 600}}
-                json.dump(info, open(os.path.join(path['save'], name, 'info.json'), 'w+'))
-                player = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
-                json.dump(player, open(os.path.join(path['save'], name, 'player.json'), 'w+'))
+                world_info = {'data_version': VERSION['data'], 'seed': seed, 'type': self.new_dialog_combobox_type.get(),
+                        'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
+                json.dump(world_info, open(os.path.join(path['save'], name, 'info.json'), 'w+'))
+                os.mkdir(os.path.join(path['save'], name, 'players'))
+                player_info = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
+                json.dump(player_info, open(os.path.join(path['save'], name, 'players', '%s.json' % player['id']), 'w+'))
                 self.new_dialog.destroy()
                 log_info('create world successfully')
         self.refresh()

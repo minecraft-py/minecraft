@@ -1,7 +1,7 @@
 import json
 from os.path import join
 
-from Minecraft.source import path
+from Minecraft.source import path, player
 from Minecraft.utils.utils import *
 
 def load_block(name, add_block, remove_block):
@@ -26,7 +26,7 @@ def load_info(name):
 
 def load_player(name):
     # 读取玩家数据
-    data = json.load(open(join(path['save'], name, 'player.json')))
+    data = json.load(open(join(path['save'], name, 'players', '%s.json' % player['id'])))
     position = str2pos(data.get('position', (0, 0, 0)), True)
     if len(position) == 3:
         position = position[0], position[1] + 1, position[2]
@@ -75,7 +75,7 @@ def save_player(name, position, respawn, rotation, now_block):
     data['respawn'] = pos2str(respawn)
     data['rotation'] = rotation
     data['now_block'] = now_block
-    json.dump(data, open(join(path['save'], name, 'player.json'), 'w+'))
+    json.dump(data, open(join(path['save'], name, 'players', '%s.json' % player['id']), 'w+'))
 
 def save_window(width, height):
     data = json.load(open(join(path['mcpypath'], 'settings.json')))
