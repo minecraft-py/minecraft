@@ -171,7 +171,7 @@ class Player():
             if get_game().exclusive:
                 get_game().set_exclusive_mouse(False)
                 self._data['in_chat'] = not self._data['in_chat']
-                get_game().menu['chat'].frame.enable()
+                get_game().guis['chat'].frame.enable()
         elif symbol == key.SLASH:
             if get_game().exclusive:
                 get_game().set_exclusive_mouse(False)

@@ -25,6 +25,9 @@ class Frame():
     def enable(self, status=True):
         self._enable = bool(status)
 
+    def register_event(self, event, func):
+        setattr(self, 'on_%s' % event, func)
+
     def on_key_press(self, symbol, modifiers):
         if not self._enable:
             return

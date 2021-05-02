@@ -57,6 +57,9 @@ class Widget(EventDispatcher):
     def _update(self):
         pass
 
+    def register_event(self, event, func):
+        setattr(self, 'on_%s' % event, func)
+
     def check_hit(self, x, y):
         return self._x < x < self._x + self._width and self._y < y < self._y + self._height
 
