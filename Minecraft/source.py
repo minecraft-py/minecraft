@@ -56,7 +56,7 @@ path['log'] = join(path['mcpypath'], 'log')
 path['texture'] = join(path['pack'], 'textures')
 path['texture.hud'] = join(path['texture'], 'hud')
 path['texture.gui'] = join(path['texture'], 'gui')
-path['save'] = join(path['mcpypath'], 'save')
+path['saves'] = join(path['mcpypath'], 'saves')
 path['screenshot'] = join(path['mcpypath'], 'screenshot')
 
 lang = json.load(open(join(path['lang'], settings['lang'] + '.json'), encoding='utf-8'))

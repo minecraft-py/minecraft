@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import shutil
 from string import punctuation
 import sys
@@ -11,7 +12,7 @@ import traceback
 from Minecraft.utils.utils import *
 from Minecraft.utils.opengl import setup_opengl
 from Minecraft.game import *
-from Minecraft.archiver import load_window
+from Minecraft.saves import load_window
 from Minecraft.source import get_lang, path, player, settings
 log_info('Start launcher')
 
@@ -25,10 +26,10 @@ def is_game_restore(name):
     """
     if name == '_server':
         return False
-    if os.path.isdir(os.path.join(path['save'], name)):
-        if 'world.json' in os.listdir(os.path.join(path['save'], name)):
-            if 'info.json' in os.listdir(os.path.join(path['save'], name)):
-                if 'players' in os.listdir(os.path.join(path['save'], name)):
+    if os.path.isdir(os.path.join(path['saves'], name)):
+        if 'world.json' in os.listdir(os.path.join(path['saves'], name)):
+            if 'info.json' in os.listdir(os.path.join(path['saves'], name)):
+                if 'players' in os.listdir(os.path.join(path['saves'], name)):
                     return True
                 else:
                     return False
@@ -83,7 +84,7 @@ class MinecraftLauncher(Tk):
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
         if messagebox.askyesno(message=get_lang('launcher.dialog.text.delete') % select,
                 title=get_lang('launcher.dialog.title.delete')):
-            shutil.rmtree(os.path.join(path['save'], select))
+            shutil.rmtree(os.path.join(path['saves'], select))
         self.refresh()
 
     def new(self, event=None):
@@ -126,28 +127,30 @@ class MinecraftLauncher(Tk):
             seed = hash(time.ctime())
         else:
             seed = hash(seed)
-        if (len(name) == 0) and ([s for s in list(punctuation) if s in name] == []):
+        if re.match(r'^[a-zA-Z_]\w*$', name) is None:
             log_err('invalid world name')
         else:
-            if not os.path.isdir(os.path.join(path['save'], name)):
-                os.mkdir(os.path.join(path['save'], name))
-                world = open(os.path.join(path['save'], name, 'world.json'), 'w+')
+            if not os.path.isdir(os.path.join(path['saves'], name)):
+                os.mkdir(os.path.join(path['saves'], name))
+                world = open(os.path.join(path['saves'], name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
                 world_info = {'data_version': VERSION['data'], 'seed': seed, 'type': self.new_dialog_combobox_type.get(),
                         'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
-                json.dump(world_info, open(os.path.join(path['save'], name, 'info.json'), 'w+'))
-                os.mkdir(os.path.join(path['save'], name, 'players'))
+                json.dump(world_info, open(os.path.join(path['saves'], name, 'info.json'), 'w+'))
+                os.mkdir(os.path.join(path['saves'], name, 'players'))
                 player_info = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
-                json.dump(player_info, open(os.path.join(path['save'], name, 'players', '%s.json' % player['id']), 'w+'))
+                json.dump(player_info, open(os.path.join(path['saves'], name, 'players', '%s.json' % player['id']), 'w+'))
                 self.new_dialog.destroy()
                 log_info('create world successfully')
+            else:
+                log_warn('Save existed')
         self.refresh()
 
     def refresh(self):
         # 刷新
         self.game_item_list.delete(0, 'end')
-        for item in [i for i in os.listdir(path['save']) if is_game_restore(i)]:
+        for item in [i for i in os.listdir(path['saves']) if is_game_restore(i)]:
             self.game_item_list.insert('end', item)
 
     def rename(self):
@@ -164,7 +167,7 @@ class MinecraftLauncher(Tk):
         def send_name():
             self.rename_world(name)
 
-        self.old = os.path.join(path['save'], self.rename_dialog_entry.get())
+        self.old = os.path.join(path['saves'], self.rename_dialog_entry.get())
         self.rename_dialog_button = ttk.Button(self.rename_dialog,
                 text=get_lang('launcher.dialog.text.ok'), command=send_name)
         self.rename_dialog_label.grid(column=0, row=0, padx=5, pady=5)
@@ -180,7 +183,7 @@ class MinecraftLauncher(Tk):
 
     def rename_world(self, name):
         # 重命名世界
-        shutil.move(os.path.join(path['save'], name), os.path.join(path['save'], self.rename_dialog_entry.get()))
+        shutil.move(os.path.join(path['saves'], name), os.path.join(path['saves'], self.rename_dialog_entry.get()))
         self.rename_dialog.destroy()
         self.refresh()
 
@@ -203,7 +206,7 @@ class MinecraftLauncher(Tk):
             pass
         except:
             name = time.strftime('error-%Y-%m-%d_%H.%M.%S.log')
-            log_err('Catch error, saved in: log/%s' % name)
+            log_err('Catch error, savesd in: log/%s' % name)
             err_log = open(os.path.join(path['log'], name), 'a+')
             err_log.write('Minecraft version: %s\n' % VERSION['str'])
             err_log.write('python version: %s for %s\n' % ('.'.join([str(s) for s in sys.version_info[:3]]), sys.platform))

@@ -4,7 +4,7 @@ import os
 import random
 import time
 
-import Minecraft.archiver as archiver
+import Minecraft.saves as saves
 from Minecraft.source import get_lang
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
@@ -25,7 +25,7 @@ class World(object):
         # 存档名
         self.name = name
         # 种子
-        self.seed = archiver.load_info(name)['seed']
+        self.seed = saves.load_info(name)['seed']
         # Simplex 噪声函数
         self.simplex = OpenSimplex(seed=self.seed)
         # world 存储着世界上所有的方块
@@ -45,12 +45,12 @@ class World(object):
         get_game().loading.draw()
         log_info('Generate terrain')
         now = time.time()
-        if archiver.load_info(self.name)['type'] == 'flat':
+        if saves.load_info(self.name)['type'] == 'flat':
             self.init_flat_world()
         else:
             self.init_random_world()
         log_info('Generate done, takes %s seconds' % round(time.time() - now, 2))
-        archiver.load_block(self.name, self.add_block, self.remove_block)
+        saves.load_block(self.name, self.add_block, self.remove_block)
         self.is_init = False
 
     def init_flat_world(self):

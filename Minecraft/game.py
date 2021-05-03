@@ -13,7 +13,6 @@ try:
     from pyglet.shapes import Rectangle
     from pyglet.window import key, mouse
 
-    import Minecraft.archiver as archiver
     from Minecraft.command.commands import commands
     from Minecraft.gui.bag import Bag
     from Minecraft.gui.dialogue import Dialogue
@@ -25,6 +24,7 @@ try:
     from Minecraft.gui.guis import Chat, PauseMenu
     from Minecraft.gui.widget.label import ColorLabel
     from Minecraft.player import Player
+    import Minecraft.saves as saves
     from Minecraft.source import get_lang, libs, path, player, settings
     from Minecraft.world.block import blocks
     from Minecraft.world.sky import change_sky_color
@@ -178,10 +178,10 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
-        archiver.save_block(self.name, self.world.change)
-        archiver.save_player(self.name, self.player['position'], self.player['respawn_position'],
+        saves.save_block(self.name, self.world.change)
+        saves.save_player(self.name, self.player['position'], self.player['respawn_position'],
                 normalize(self.player['rotation']), self.player['now_block'])
-        archiver.save_info(self.name, self.time, self.weather)
+        saves.save_info(self.name, self.time, self.weather)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -195,11 +195,11 @@ class Game(pyglet.window.Window):
         self.name = name
         self.world = World(name)
         # 读取玩家位置和背包
-        data = archiver.load_player(self.name)
+        data = saves.load_player(self.name)
         self.player['position'] = data['position']
         self.player['respawn_position'] = data['respawn']
         if len(self.player['position']) != 3:
-            if archiver.load_info(self.name)['type'] == 'flat':
+            if saves.load_info(self.name)['type'] == 'flat':
                 self.player['position'] = self.player['respawn_position'] = (0, 8, 0)
             else:
                 self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
@@ -207,7 +207,7 @@ class Game(pyglet.window.Window):
         self.player['rotation'] = tuple(data['rotation'])
         self.player['now_block'] = data['now_block']
         # 读取世界数据
-        self.world_info = archiver.load_info(self.name)
+        self.world_info = saves.load_info(self.name)
         self.time = self.world_info['time']
         self.weather = self.world_info['weather']
         weather[self.weather['now']].change()
@@ -308,7 +308,7 @@ class Game(pyglet.window.Window):
 
     def on_close(self):
         # 当玩家关闭窗口时调用
-        archiver.save_window(self.width, self.height)
+        saves.save_window(self.width, self.height)
         pyglet.app.exit()
 
     def on_mouse_press(self, x, y, button, modifiers):

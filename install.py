@@ -15,7 +15,7 @@ def copy():
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
     install_json('settings.json')
-    for name in ['log', 'save', 'screenshot', 'resource-pack']:
+    for name in ['log', 'saves', 'screenshot', 'resource-pack']:
         if not path.isdir(path.join(MCPYPATH, name)):
             mkdir(path.join(MCPYPATH, name))
     if not path.isdir(path.join(MCPYPATH, 'lib', VERSION)):

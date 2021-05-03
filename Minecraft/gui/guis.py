@@ -9,23 +9,25 @@ import pyglet
 
 class Chat():
 
-    def __init__(self, window):
-        self.window = window
-        self.frame = Frame(self.window, True)
+    def __init__(self, game):
+        self.game = game
+        self.frame = Frame(self.game, True)
         self._entry = DialogueEntry()
         self.frame.add_widget(self._entry)
 
         def on_commit(text):
             if text != '':
-                self.window.dialogue.history.append(text)
+                self.game.dialogue.history.append(text)
                 if text.startswith('/'):
-                    self.window.run_command(text[1:])
+                    self.game.run_command(text[1:])
                 else:
-                    self.window.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
-            self.window.player['in_chat'] = False
+                    text = text.replace('(position)', ' '.join([str(int(pos)) for pos in self.game.player['position']]))
+                    text = text.replace('(chunk)', ' '.join([str(int(pos)) for pos in self.game.sector]))
+                    self.game.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
+            self.game.player['in_chat'] = False
             self._entry.text('')
-            self.window.guis['chat'].frame.enable(False)
-            self.window.set_exclusive_mouse(True)
+            self.game.guis['chat'].frame.enable(False)
+            self.game.set_exclusive_mouse(True)
         
         self._entry.register_event('commit', on_commit)
 
@@ -35,25 +37,25 @@ class Chat():
 
 class PauseMenu():
 
-    def __init__(self, window):
-        self.window = window
-        self.frame = Frame(self.window, True)
-        self._back_button = Button((self.window.width - 200) / 2, 100, 200, 40, lang['game.pause_menu.back_to_game'])
-        self._exit_button = Button((self.window.width - 200) / 2, 150, 200, 40, lang['game.pause_menu.exit'])
+    def __init__(self, game):
+        self.game = game
+        self.frame = Frame(self.game, True)
+        self._back_button = Button((self.game.width - 200) / 2, 100, 200, 40, lang['game.pause_menu.back_to_game'])
+        self._exit_button = Button((self.game.width - 200) / 2, 150, 200, 40, lang['game.pause_menu.exit'])
 
         def on_back_press():
-            self.window.set_exclusive_mouse(True)
+            self.game.set_exclusive_mouse(True)
             self.frame.enable(False)
 
         def on_exit_press():
-            self.window.save(0)
-            self.window.on_close()
+            self.game.save(0)
+            self.game.on_close()
             exit(0)
 
         def on_resize(width, height):
-            self._back_button.x = (self.window.width - 200) / 2
+            self._back_button.x = (self.game.width - 200) / 2
             self._back_button.y = 100
-            self._exit_button.x = (self.window.width - 200) / 2
+            self._exit_button.x = (self.game.width - 200) / 2
             self._exit_button.y = 150
 
         self._back_button.register_event('press', on_back_press)
