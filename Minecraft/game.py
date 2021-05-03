@@ -11,6 +11,7 @@ try:
     from pyglet import image
     from pyglet.gl import *
     from pyglet.shapes import Rectangle
+    from pyglet.sprite import Sprite
     from pyglet.window import key, mouse
 
     from Minecraft.command.commands import commands
@@ -50,8 +51,6 @@ class Game(pyglet.window.Window):
         self.exclusive = False
         # 玩家所处的区域
         self.sector = None
-        # 这个十字在屏幕中央
-        self.reticle = None
         # 游戏世界(秒)
         self.time = 0
         # 玩家
@@ -76,6 +75,11 @@ class Game(pyglet.window.Window):
         self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         # 窗口最小为 800x600
         self.set_minimum_size(800, 600)
+        # 这个十字在屏幕中央
+        self.reticle = Sprite(image.load(os.path.join(path['texture.gui'], 'icons.png')).get_region(0, 240, 16, 16))
+        self.reticle.image.anchor_x = 8
+        self.reticle.image.anchor_y = 8
+        self.reticle.scale = 2
         self.label = dict()
         # 这个标签在画布的上方显示
         self.label['top'] = ColorLabel('',
@@ -99,9 +103,7 @@ class Game(pyglet.window.Window):
         self.full_screen = Rectangle(0, 0, self.width, self.height)
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
-        # 检测玩家是否应该死亡
-        pyglet.clock.schedule_interval(self.check_die, 1.0 / TICKS_PER_SEC)
-        # 每10秒更新一次方块数据
+        # 每1/10秒更新一次方块数据
         pyglet.clock.schedule_interval(self.update_status, 0.1)
         # 每30秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
@@ -137,7 +139,6 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
-        return
         if not self.player['die']:
             if self.player['position'][1] < -64:
                 self.player['die_reason'] = get_lang('game.text.die.fall_into_void') % player['name']
@@ -297,7 +298,7 @@ class Game(pyglet.window.Window):
                 self.player['dy'] -= dt * GRAVITY
                 self.player['dy'] = max(self.player['dy'], -TERMINAL_VELOCITY)
                 dy += self.player['dy'] * dt
-            if not self.player['in_hud']:
+            if not self.player['in_gui']:
                 # 碰撞检测
                 x, y, z = self.player['position']
                 if self.player['gamemode'] != 1:
@@ -375,25 +376,19 @@ class Game(pyglet.window.Window):
         # 标签
         self.label['top'].x = 2
         self.label['top'].y = self.height - 5
-        self.label['top'].width = self.width // 2
-        self.label['title'].x = self.width // 2
-        self.label['title'].y = self.height // 2 + 50
-        self.label['subtitle'].x = self.width // 2
-        self.label['subtitle'].y = self.height // 2 - 100
-        self.label['actionbar'].x = self.width // 2
-        self.label['actionbar'].y = self.height // 2 - 150
-        self.die_info.x = self.width // 2
-        self.die_info.y = self.height // 2
+        self.label['top'].width = self.width / 2
+        self.label['title'].x = self.width / 2
+        self.label['title'].y = self.height / 2 + 50
+        self.label['subtitle'].x = self.width / 2
+        self.label['subtitle'].y = self.height / 2 - 100
+        self.label['actionbar'].x = self.width / 2
+        self.label['actionbar'].y = self.height / 2 - 150
+        self.die_info.x = self.width / 2
+        self.die_info.y = self.height / 2
         # 加载窗口
         self.loading.resize(self.width, self.height)
         # 窗口中央的十字线
-        if self.reticle:
-            self.reticle.delete()
-        x, y = self.width // 2, self.height // 2
-        n = 12
-        self.reticle = pyglet.graphics.vertex_list(4,
-            ('v2i', (x - n, y, x + n, y, x, y - n, x, y + n))
-        )
+        self.reticle.position = (self.width / 2, self.height / 2)
         # 覆盖屏幕的矩形
         self.full_screen.position = (0, 0)
         self.full_screen.width = self.width
@@ -401,7 +396,7 @@ class Game(pyglet.window.Window):
         # 聊天区
         self.dialogue.resize(self.width, self.height)
         # HUD
-        # 在第一次调用该函数时, 所有存储 HUD 的变量都没有定义
+        # 在第一次调用该函数时, 所有存储 GUI 的变量都没有定义
         if not self.is_init:
             self.hud['bag'].resize(self.width, self.height)
             self.hud['heart'].resize(self.width, self.height)
@@ -453,13 +448,14 @@ class Game(pyglet.window.Window):
             if not self.player['die'] and not self.player['hide_hud']:
                 if self.player['gamemode'] != 1:
                     self.hud['hotbar'].draw()
-                self.draw_reticle()
-                if not self.player['in_hud'] and not self.exclusive:
-                    if not self.player['in_chat']:
+                if not self.is_init and not self.player['in_gui'] and self.exclusive:
+                    self.reticle.draw()
+                if not self.player['in_gui'] and not self.exclusive:
+                    if self.player['pause']:
                         self.guis['pause'].frame.draw()
-                    else:
+                    if self.player['in_chat']:
                         self.guis['chat'].frame.draw()
-                if self.player['in_hud'] or not self.exclusive:
+                if self.player['in_gui'] or not self.exclusive:
                     if self.player['show_bag']:
                         self.hud['bag'].draw()
             elif self.player['die']:
@@ -492,11 +488,14 @@ class Game(pyglet.window.Window):
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block and self.player['gamemode'] != 1:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.5001)
-            glColor4f(1.0, 1.0, 1.0, 0.2)
+            vertex_data = cube_vertices(x, y, z, 0.501)
+            glColor3f(0.0, 0.0, 0.0)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            glLineWidth(1.5)
             glDisable(GL_CULL_FACE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
             glEnable(GL_CULL_FACE)
+            glLineWidth(1.0)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
     def draw_label(self):
@@ -523,12 +522,4 @@ class Game(pyglet.window.Window):
         else:
             # 初始化屏幕
             self.loading.draw()
-
-    def draw_reticle(self):
-        # 在屏幕中央画十字线
-        if not self.is_init and not self.player['in_hud'] and self.exclusive:
-            glColor3f(1.0, 1.0, 1.0)
-            glLineWidth(3.0)
-            self.reticle.draw(GL_LINES)
-            glLineWidth(1.0)
 

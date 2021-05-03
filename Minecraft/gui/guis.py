@@ -45,6 +45,7 @@ class PauseMenu():
 
         def on_back_press():
             self.game.set_exclusive_mouse(True)
+            self.game.player['pause'] = False
             self.frame.enable(False)
 
         def on_exit_press():

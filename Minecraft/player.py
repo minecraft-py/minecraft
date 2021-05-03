@@ -22,8 +22,9 @@ class Player():
         self._data['running'] = False
         self._data['die'] = False
         self._data['die_reason'] = ''
-        self._data['in_hud'] = False
+        self._data['in_gui'] = False
         self._data['in_chat'] = False
+        self._data['pause'] = True
         self._data['hide_hud'] = False
         self._data['show_bag'] = False
         self._data['strafe'] = [0, 0]
@@ -33,7 +34,7 @@ class Player():
         self._data['rotation'] = (0, 0)
         self._data['dy'] = 0
         self._data['height'] = 2
-        self._data['key_press'] = {}
+        self._data['key_press'] = dict()
         self._data['key_press']['w'] = {'count': 0, 'last': time.time()}
         self._data['key_press']['space'] = {'count': 0, 'last': time.time()}
 
@@ -87,7 +88,7 @@ class Player():
         return (dx, dy, dz)
 
     def get_motion_vector(self):
-        dy = dx = dz = 0.0
+        dy = dx = dz = 0
         x, y = self._data['rotation']
         strafe = math.degrees(math.atan2(*self._data['strafe']))
         y_angle = math.radians(y)
@@ -95,16 +96,16 @@ class Player():
         if any(self._data['strafe']):
             if self._data['flying']:
                 dx = math.cos(x_angle)
-                dy = 0.0
+                dy = 0
                 dz = math.sin(x_angle)
             else:
                 dx = math.cos(x_angle)
-                dy = 0.0
+                dy = 0
                 dz = math.sin(x_angle)
         elif self._data['flying'] and not self._data['dy'] == 0:
-            dx = 0.0
+            dx = 0
             dy = self._data['dy']
-            dz = 0.0
+            dz = 0
         return (dx, dy, dz)
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -131,17 +132,17 @@ class Player():
                 return
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and previous:
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if (not self._data['die']) and (not self._data['in_hud']):
+                if (not self._data['die']) and (not self._data['in_gui']) and (not self._data['pause']):
                     if hasattr(block, 'on_use') and (not self._data['stealing']):
                         block.on_use(self)
                     elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:
                         get_game().world.add_block(previous, get_game().inventory[self._data['now_block']])
             elif (button == pyglet.window.mouse.LEFT):
-                if block.hardness > 0 and (not self._data['die']) and (not self._data['in_hud']):
+                if block.hardness > 0 and (not self._data['die']) and (not self._data['in_gui']):
                     get_game().world.remove_block(now)
             elif (button == pyglet.window.mouse.MIDDLE) and previous:
                 pass
-        elif not self._data['die'] and not self._data['in_hud']:
+        elif not self._data['die'] and not self._data['in_gui']:
             pass
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
@@ -160,6 +161,7 @@ class Player():
             if symbol == key.ESCAPE:
                 get_game().guis['chat'].frame.enable(False)
                 get_game().guis['chat'].text()
+                self._data['in_gui'] = False
                 self._data['in_chat'] = False
                 get_game().set_exclusive_mouse(True)
             return
@@ -170,12 +172,14 @@ class Player():
         elif symbol == key.T:
             if get_game().exclusive:
                 get_game().set_exclusive_mouse(False)
-                self._data['in_chat'] = not self._data['in_chat']
+                self._data['in_gui'] = True
+                self._data['in_chat'] = True
                 get_game().guis['chat'].frame.enable()
         elif symbol == key.SLASH:
             if get_game().exclusive:
                 get_game().set_exclusive_mouse(False)
-                self._data['in_chat'] = not self._data['in_chat']
+                self._data['in_gui'] = True
+                self._data['in_chat'] = True
                 get_game().guis['chat'].text('/')
                 get_game().guis['chat'].frame.enable()
         elif symbol == key.W:
@@ -200,7 +204,7 @@ class Player():
         elif symbol == key.E:
             if not self._data['die']:
                 get_game().set_exclusive_mouse(self._data['show_bag'])
-                self._data['in_hud'] = not self._data['in_hud']
+                self._data['in_gui'] = not self._data['in_gui']
                 self._data['show_bag'] = not self._data['show_bag']
         elif symbol == key.SPACE:
             if self._data['key_press']['space']['count'] == 1:
@@ -221,13 +225,15 @@ class Player():
                 self._data['position'] = self._data['respawn_position']
                 get_game().set_exclusive_mouse(True)
         elif symbol == key.ESCAPE:
-            if self._data['show_bag']:
-                get_game().set_exclusive_mouse(self._data['show_bag'])
-                self._data['in_hud'] = not self._data['in_hud']
-                self._data['show_bag'] = not self._data['show_bag']
+            if self._data['in_gui']:
+                get_game().set_exclusive_mouse(True)
+                self._data['in_gui'] = not self._data['in_gui']
+                if self._data['show_bag']:
+                    self._data['show_bag'] = not self._data['show_bag']
             else:
                 get_game().save(0)
                 get_game().set_exclusive_mouse(False)
+                self._data['pause'] = True
                 get_game().guis['pause'].frame.enable()
                 if self._data['die']:
                     get_game().close()
