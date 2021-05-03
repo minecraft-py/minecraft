@@ -36,7 +36,7 @@ try:
     import pyshaders
     import opensimplex
 except (Exception, ImportError, ModuleNotFoundError) as err:
-    print('[ERR  %s] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
+    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
     exit(1)
 
 
@@ -72,13 +72,15 @@ class Game(pyglet.window.Window):
         self.loading = Loading()
         # 聊天区
         self.dialogue = Dialogue()
-        # 这个标签在画布的上方显示
+        # 设置图标
+        self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
+        # 窗口最小为 800x600
+        self.set_minimum_size(800, 600)
         self.label = dict()
+        # 这个标签在画布的上方显示
         self.label['top'] = ColorLabel('',
             x=2, y=self.height - 5, width=self.width // 2, multiline=True,
             anchor_x='left', anchor_y='top', font_size=16)
-        # 设置图标
-        self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
         # 这个标签在画布正中偏上显示
         self.label['title'] = ColorLabel('',
             x=self.width // 2, y=self.height // 2 + 50, anchor_x='center',
@@ -226,11 +228,11 @@ class Game(pyglet.window.Window):
         else:
             try:
                 log_info('Run command: %s' % s)
-                cmd = commands[command](self, self.player['position'], s)
-            except ValueError:
+                cmd = commands[command](self, s)
+            except TypeError:
                 pass
             else:
-                cmd.run()
+                cmd.execute()
 
     def update(self, dt):
         """
@@ -529,24 +531,4 @@ class Game(pyglet.window.Window):
             glLineWidth(3.0)
             self.reticle.draw(GL_LINES)
             glLineWidth(1.0)
-
-
-def setup():
-    # 基本的 OpenGL 设置
-    glClearColor(0.5, 0.69, 1.0, 1)
-    glEnable(GL_CULL_FACE)
-    glEnable(GL_BLEND)
-    glEnable(GL_LINE_SMOOTH)
-    glEnable(GL_POLYGON_SMOOTH)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    # 配置 OpenGL 的雾属性
-    glEnable(GL_FOG)
-    glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
-    glHint(GL_FOG_HINT, GL_DONT_CARE)
-    glFogi(GL_FOG_MODE, GL_LINEAR)
-    glFogf(GL_FOG_START, 50.0)
-    glFogf(GL_FOG_END, 80.0)
 

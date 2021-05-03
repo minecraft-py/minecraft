@@ -10,85 +10,19 @@ class CommandBase():
     formats = []
     description = ['description.short', 'description.long']
     
-    def __init__(self, game, position, command):
+    def __init__(self, game, command):
         self.game = game
-        self.position = position
         self.command = command
         self.args = None
-        for f in self.formats:
-            args = get_args(self.position, command, f)
+        for item in self.formats:
+            args = item.valid(command)
             if args != False:
                 self.args = args
                 break
-        if not isinstance(self.args, list):
+        if not isinstance(self.args, dict):
             self.game.dialogue.add_dialogue('Arguments error')
-            raise ValueError
+            raise TypeError()
 
-    def run(self):
+    def execute(self):
         pass
 
-
-def get_pos(n, s):
-    try:
-        return int(s)
-    except:
-        if s == '~':
-            return int(round(n))
-        else:
-            if s.startswith('~'):
-                try:
-                    d = int(s[1:])
-                except:
-                    return False
-                else:
-                    return int(round(n + d))
-            else:
-                return False
-
-def get_args(pos, s, f):
-    l = []
-    px, py, pz = pos
-    command = split(s)[1:]
-    if len(command) != len(f):
-        return False
-    else:
-        for item in range(len(f)):
-            if f[item] == 'block':
-                if command[item] in blocks:
-                    l.append(command[item])
-                else:
-                    return False
-            elif f[item] == 'bool':
-                if command[item] == 'true':
-                    l.append(True)
-                elif command[item] == 'false':
-                    l.append(False)
-                else:
-                    return False
-            elif f[item] == 'int':
-                try:
-                    l.append(int(command[item]))
-                except:
-                    return False
-            elif f[item] == 'px':
-                pos = get_pos(px, command[item])
-                if pos is False:
-                    return False
-                else:
-                    l.append(pos)
-            elif f[item] == 'py':
-                pos = get_pos(py, command[item]) - 1
-                if pos is False:
-                    return False
-                else:
-                    l.append(pos)
-            elif f[item] == 'pz':
-                pos = get_pos(pz, command[item])
-                if pos is False:
-                    return False
-                else:
-                    l.append(pos)
-            elif f[item] == 'str':
-                l.append(command[item])
-        else:
-            return l

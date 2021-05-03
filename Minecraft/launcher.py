@@ -9,7 +9,7 @@ import tkinter.ttk as ttk
 import traceback
 
 from Minecraft.utils.utils import *
-log_info('Loading game lib')
+from Minecraft.utils.opengl import setup_opengl
 from Minecraft.game import *
 from Minecraft.archiver import load_window
 from Minecraft.source import get_lang, path, player, settings
@@ -194,9 +194,10 @@ class MinecraftLauncher(Tk):
         self.destroy()
         try:
             data = load_window()
-            game = Game(width=data['width'], height=data['height'], caption='Minecraft', resizable=True)
+            game = Game(width=max(data['width'], 800), height=max(data['height'], 600),
+                    caption='Minecraft %s' % VERSION['str'], resizable=True)
             game.set_name(select)
-            setup()
+            setup_opengl()
             pyglet.app.run()
         except SystemExit:
             pass
