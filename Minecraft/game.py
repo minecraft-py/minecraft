@@ -27,7 +27,7 @@ try:
     from Minecraft.player import Player
     import Minecraft.saves as saves
     from Minecraft.source import get_lang, libs, path, player, settings
-    from Minecraft.world.block import blocks
+    from Minecraft.world.block import blocks, get_block_icon
     from Minecraft.world.sky import change_sky_color
     from Minecraft.world.weather import weather, choice_weather
     from Minecraft.world.world import World
@@ -72,7 +72,7 @@ class Game(pyglet.window.Window):
         # 聊天区
         self.dialogue = Dialogue()
         # 设置图标
-        self.set_icon(image.load(os.path.join(path['texture'], 'icon.png')))
+        self.set_icon(get_block_icon(blocks['craft_table'], 128))
         # 窗口最小为 800x600
         self.set_minimum_size(800, 600)
         # 这个十字在屏幕中央
@@ -182,7 +182,7 @@ class Game(pyglet.window.Window):
         saves.save_block(self.name, self.world.change)
         saves.save_player(self.name, self.player['position'], self.player['respawn_position'],
                 normalize(self.player['rotation']), self.player['now_block'])
-        saves.save_info(self.name, self.time, self.weather)
+        saves.save_level(self.name, self.time, self.weather)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -200,7 +200,7 @@ class Game(pyglet.window.Window):
         self.player['position'] = data['position']
         self.player['respawn_position'] = data['respawn']
         if len(self.player['position']) != 3:
-            if saves.load_info(self.name)['type'] == 'flat':
+            if saves.load_level(self.name)['type'] == 'flat':
                 self.player['position'] = self.player['respawn_position'] = (0, 8, 0)
             else:
                 self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
@@ -208,9 +208,9 @@ class Game(pyglet.window.Window):
         self.player['rotation'] = tuple(data['rotation'])
         self.player['now_block'] = data['now_block']
         # 读取世界数据
-        self.world_info = saves.load_info(self.name)
-        self.time = self.world_info['time']
-        self.weather = self.world_info['weather']
+        self.world_level = saves.load_level(self.name)
+        self.time = self.world_level['time']
+        self.weather = self.world_level['weather']
         weather[self.weather['now']].change()
 
     def set_cursor(self, cursor=None):
@@ -293,12 +293,12 @@ class Game(pyglet.window.Window):
         # 玩家新的位置
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
-        if not self.player['die']:
+        if (not self.player['die']) or (self.player['dy'] != 0):
             if not self.player['flying']:
                 self.player['dy'] -= dt * GRAVITY
                 self.player['dy'] = max(self.player['dy'], -TERMINAL_VELOCITY)
                 dy += self.player['dy'] * dt
-            if not self.player['in_gui']:
+            if (not self.player['in_gui']):
                 # 碰撞检测
                 x, y, z = self.player['position']
                 if self.player['gamemode'] != 1:
@@ -508,7 +508,7 @@ class Game(pyglet.window.Window):
                 self.label['actionbar'].text = self.player['die_reason']
                 self.die_info.draw()
                 self.label['actionbar'].draw()
-            elif self.debug['debug'] and self.exclusive:
+            elif self.debug['debug']:
                 x, y, z = self.player['position']
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)

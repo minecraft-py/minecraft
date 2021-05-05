@@ -1,0 +1,35 @@
+{
+    "description": "中文(简体)",
+    "game.pause_menu.back_to_game": "返回游戏",
+    "game.pause_menu.exit": "退出",
+    "game.text.build_out_of_world": [
+	    "最高建筑限制是%d个方块",
+	    "你不能在世界外放置方块"
+    ],
+    "game.text.die": "你死了",
+    "game.text.die.fall_into_void": "%s 坠入了虚空",
+    "game.text.loading": "初始化...",
+    "game.text.position": "位置: (%.1f, %.1f, %.1f) %-4d fps",
+    "game.text.debug": [
+        "Minecraft %(version) (%(info))",
+        "XYZ: %(xyz)",
+        "ROT: %(rot)",
+        "MEM: %(mem)MB",
+        "FPS: %(fps)"
+    ],
+    "launcher.delete": "删除",
+    "launcher.dialog.text.delete": "这将删除 %s 存档(很长时间)?",
+    "launcher.dialog.text.name": "存档名:",
+    "launcher.dialog.text.ok": "确认",
+    "launcher.dialog.text.rename": "重命名:",
+    "launcher.dialog.text.seed": "种子:",
+    "launcher.dialog.title.delete": "删除存档",
+    "launcher.dialog.title.new": "新建存档",
+    "launcher.dialog.title.rename": "重命名存档",
+    "launcher.exit": "退出",
+    "launcher.new": "新的世界",
+    "launcher.rename": "重命名",
+    "launcher.repair": "修复存档",
+    "launcher.start": "开始游戏",
+    "launcher.title": "Minecraft 启动器"
+}

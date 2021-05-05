@@ -20,9 +20,9 @@ def load_block(name, add_block, remove_block):
         else:
             add_block(position, block)
 
-def load_info(name):
+def load_level(name):
     # 读取世界信息
-    return json.load(open(join(path['saves'], name, 'info.json')))
+    return json.load(open(join(path['saves'], name, 'level.json')))
 
 def load_player(name):
     # 读取玩家数据
@@ -60,12 +60,12 @@ def save_block(name, change, full=True):
         data = change
     json.dump(data, open(join(path['saves'], name, 'world.json'), 'w+'))
 
-def save_info(name, time, weather):
+def save_level(name, time, weather):
     # 将世界信息存入文件
-    data = json.load(open(join(path['saves'], name, 'info.json')))
+    data = json.load(open(join(path['saves'], name, 'level.json')))
     data['time'] = int(time)
     data['weather'] = {'now': weather['now'], 'duration': int(weather['duration'])}
-    json.dump(data, open(join(path['saves'], name, 'info.json'), 'w+'))
+    json.dump(data, open(join(path['saves'], name, 'level.json'), 'w+'))
 
 
 def save_player(name, position, respawn, rotation, now_block):

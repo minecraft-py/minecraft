@@ -102,14 +102,14 @@ class Player():
                 dx = math.cos(x_angle)
                 dy = 0
                 dz = math.sin(x_angle)
-        elif self._data['flying'] and not self._data['dy'] == 0:
+        elif self._data['flying'] and (self._data['dy'] != 0):
             dx = 0
             dy = self._data['dy']
             dz = 0
         return (dx, dy, dz)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if get_game().exclusive and not self._data['die']:
+        if get_game().exclusive and (not self._data['die']):
             m = 0.1
             x, y = self._data['rotation']
             x, y = x + dx * m, y + dy * m
@@ -198,7 +198,7 @@ class Player():
         elif symbol == key.D:
             self._data['strafe'][1] += 1
         elif symbol == key.I:
-             if get_game().debug['enable']:
+             if not get_game().debug['enable']:
                 get_game().debug['debug'] = not get_game().debug['debug']
                 get_game().debug['position'] = False
         elif symbol == key.E:

@@ -10,11 +10,12 @@ import tkinter.ttk as ttk
 import traceback
 
 from Minecraft.utils.utils import *
+import Minecraft.utils.tests
 from Minecraft.utils.opengl import setup_opengl
 from Minecraft.game import *
 from Minecraft.saves import load_window
 from Minecraft.source import get_lang, path, player, settings
-log_info('Start launcher')
+log_info('Start game')
 
 import pyglet
 
@@ -28,7 +29,7 @@ def is_game_restore(name):
         return False
     if os.path.isdir(os.path.join(path['saves'], name)):
         if 'world.json' in os.listdir(os.path.join(path['saves'], name)):
-            if 'info.json' in os.listdir(os.path.join(path['saves'], name)):
+            if 'level.json' in os.listdir(os.path.join(path['saves'], name)):
                 if 'players' in os.listdir(os.path.join(path['saves'], name)):
                     return True
                 else:
@@ -135,9 +136,9 @@ class MinecraftLauncher(Tk):
                 world = open(os.path.join(path['saves'], name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
-                world_info = {'data_version': VERSION['data'], 'seed': seed, 'type': self.new_dialog_combobox_type.get(),
+                world_level = {'data_version': VERSION['data'], 'seed': seed, 'type': self.new_dialog_combobox_type.get(),
                         'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
-                json.dump(world_info, open(os.path.join(path['saves'], name, 'info.json'), 'w+'))
+                json.dump(world_info, open(os.path.join(path['saves'], name, 'level.json'), 'w+'))
                 os.mkdir(os.path.join(path['saves'], name, 'players'))
                 player_info = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
                 json.dump(player_info, open(os.path.join(path['saves'], name, 'players', '%s.json' % player['id']), 'w+'))

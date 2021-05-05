@@ -22,7 +22,7 @@ def copy():
         makedirs(path.join(MCPYPATH, 'lib', VERSION))
     if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION)):
         rmtree(path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION))
-    ZipFile(path.join(get_file('data'), 'pack.zip')).extractall(path.dirname(__file__))
+    ZipFile(path.join(get_file('data'), 'default.zip')).extractall(path.dirname(__file__))
     copytree(get_file('default'), path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION))
     rmtree(get_file('default'))
 

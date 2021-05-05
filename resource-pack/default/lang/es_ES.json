@@ -1,0 +1,35 @@
+{
+    "description": "Español (España)",
+    "game.pause_menu.back_to_game": "Volver al juego",
+    "game.pause_menu.exit": "Salir",
+    "game.text.build_out_of_world": [
+	    "El límite máximo de generación es de %d bloques",
+	    "No puedes construir fuera del mundo"
+    ],
+    "game.text.die": "As muerto",
+    "game.text.die.fall_into_void": "%s a caído en el vacío",
+    "game.text.loading": "Cargando...",
+    "game.text.position": "Posición: (%.1f, %.1f, %.1f) %-4d fps",
+    "game.text.debug": [
+        "Minecraft %(version) (%(info))",
+        "XYZ: %(xyz)",
+        "ROT: %(rot)",
+        "MEM: %(mem)MB",
+        "FPS: %(fps)"
+    ],
+    "launcher.delete": "Eliminar",
+    "launcher.dialog.text.delete": "¿Desea eliminar: %s, permanentemente?",
+    "launcher.dialog.text.name": "Nombre:",
+    "launcher.dialog.text.ok": "Aceptar",
+    "launcher.dialog.text.rename": "Renombrar:",
+    "launcher.dialog.text.seed": "Semilla:",
+    "launcher.dialog.title.delete": "Eliminar",
+    "launcher.dialog.title.new": "Nuevo",
+    "launcher.dialog.title.rename": "Cambiar Nombre",
+    "launcher.exit": "Salir",
+    "launcher.new": "Nuevo",
+    "launcher.rename": "Renombrar",
+    "launcher.repair": "Reparar",
+    "launcher.start": "Iniciar",
+    "launcher.title": "Minecraft Lanzador"
+}

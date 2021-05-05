@@ -1,0 +1,34 @@
+{
+    "description": "English",
+    "game.pause_menu.back_to_game": "Back to game",
+    "game.pause_menu.exit": "Exit",
+    "game.text.build_out_of_world": [
+	    "Max build limit are %d blocks",
+	    "You can't build out of world"
+    ],
+    "game.text.die": "You die",
+    "game.text.die.fall_into_void": "%s falling into the void",
+    "game.text.loading": "Loading...",
+    "game.text.debug": [
+        "Minecraft %(version) (%(info))",
+        "XYZ: %(xyz)",
+        "ROT: %(rot)",
+        "MEM: %(mem)MB",
+        "FPS: %(fps)"
+    ],
+    "launcher.delete": "Delete",
+    "launcher.dialog.text.delete": "It will delete %s for a long time?",
+    "launcher.dialog.text.name": "Name:",
+    "launcher.dialog.text.ok": "OK",
+    "launcher.dialog.text.rename": "Rename:",
+    "launcher.dialog.text.seed": "Seed:",
+    "launcher.dialog.title.delete": "Delete",
+    "launcher.dialog.title.new": "New",
+    "launcher.dialog.title.rename": "Rename",
+    "launcher.exit": "Exit",
+    "launcher.new": "New",
+    "launcher.rename": "Rename",
+    "launcher.repair": "Repair",
+    "launcher.start": "Start",
+    "launcher.title": "Minecraft Launcher"
+}

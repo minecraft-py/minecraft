@@ -66,12 +66,12 @@ get_lang = lambda s: lang[s] if s in lang else s
 # resource.reindex()
 # resource.add_font('minecraft.ttf')
 
-args_o = False
+args_l = False
 libs = []
 for args in sys.argv:
-    if args == '-o':
-        args_o = True
-    if args_o and args != '-o':
+    if args == '-L':
+        args_l = True
+    if args_l and args != '-L':
         if isdir(join(lib_path, args)) or isfile(join(lib_path, args + '.py')):
             log_info('loading lib: %s' % args)
             libs.append(__import__(args))

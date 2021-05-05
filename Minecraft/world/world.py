@@ -25,7 +25,7 @@ class World(object):
         # 存档名
         self.name = name
         # 种子
-        self.seed = saves.load_info(name)['seed']
+        self.seed = saves.load_level(name)['seed']
         # Simplex 噪声函数
         self.simplex = OpenSimplex(seed=self.seed)
         # world 存储着世界上所有的方块
@@ -45,7 +45,7 @@ class World(object):
         get_game().loading.draw()
         log_info('Generate terrain')
         now = time.time()
-        if saves.load_info(self.name)['type'] == 'flat':
+        if saves.load_level(self.name)['type'] == 'flat':
             self.init_flat_world()
         else:
             self.init_random_world()
