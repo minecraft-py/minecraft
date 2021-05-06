@@ -134,7 +134,7 @@ class Player():
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
                 if (not self._data['die']) and (not self._data['in_gui']) and (not self._data['pause']):
                     if hasattr(block, 'on_use') and (not self._data['stealing']):
-                        block.on_use(self)
+                        block.on_use()
                     elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:
                         get_game().world.add_block(previous, get_game().inventory[self._data['now_block']])
             elif (button == pyglet.window.mouse.LEFT):

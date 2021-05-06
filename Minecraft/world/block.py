@@ -238,8 +238,9 @@ class Brick(Block):
 class CraftTable(Block):
     textures = 'crafting_table_top', 'planks_oak', 'crafting_table_front', 'crafting_table_side'
 
-    def on_use(self, game):
-        pass
+    def on_use(self):
+        get_game().set_exclusive_mouse(False)
+        get_game().player['in_gui'] = get_game().player['show_bag'] = True
 
 class Dirt(Block):
     textures = 'dirt',
