@@ -128,7 +128,7 @@ class World(object):
                 self.change[pos2str(position)] = block
             if block in blocks:
                 self.world[position] = blocks[block]
-                self.world[position].on_build(get_game(), position)
+                self.world[position].on_build(position)
             else:
                 # 将不存在的方块替换为 missing
                 self.world[position] = blocks['missing']
@@ -153,7 +153,7 @@ class World(object):
         """
         if position in self.world:
             # 不加这个坐标是否存在于世界中的判断有极大概率会抛出异常
-            self.world[position].on_destroy(get_game(), position)
+            self.world[position].on_destroy(position)
             del self.world[position]
             if record:
                 self.change[pos2str(position)] = 'air'
@@ -178,11 +178,11 @@ class World(object):
                 continue
             if self.exposed(key):
                 if key not in self.shown:
-                    self.world[key].on_neighbor_change(self.world, key, position)
+                    self.world[key].on_neighbor_change(key, position)
                     self.show_block(key)
             else:
                 if key in self.shown:
-                    self.world[key].on_neighbor_change(self.world, key, position)
+                    self.world[key].on_neighbor_change(key, position)
                     self.hide_block(key)
 
     def show_block(self, position, immediate=True):

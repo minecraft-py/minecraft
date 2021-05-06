@@ -2,6 +2,7 @@ import re
 from shlex import split
 
 from Minecraft.world.block import blocks
+from Minecraft.utils.utils import *
 
 
 class BaseArgument:
@@ -25,7 +26,7 @@ class StringArgument(BaseArgument):
             if re.match(self.re_expr, value):
                 return {self.name: value}
             else:
-                raise TypeError()
+                raise TypeError("string '%s' is not available" % value)
         else:
             return {self.name: value}
 
@@ -42,7 +43,7 @@ class NumberArgument(BaseArgument):
         try:
             value = self.type(value)
         except:
-            raise TypeError()
+            raise TypeError("'%s' not a number" % value)
         else:
             if (self.range[0] is not None) and (self.range[1] is not None):
                 if self.range[0] <= value <= self.range[1]:
@@ -51,12 +52,19 @@ class NumberArgument(BaseArgument):
                 if self.range[0] <= value:
                     return {self.name: value}
             elif self.range[1] is not None:
-                if self.range[1] is not None:
-                    if self.range[1] >= value:
-                        return {self.name: value}
+                if self.range[1] >= value:
+                    return {self.name: value}
             else:
                 return {self.name: value}
-            raise TypeError()
+            # 都没有匹配后运行到这里生成错误信息
+            if (self.range[0] is not None) and (self.range[1] is not None):
+                raise TypeError('number must between %s and %s' % (self.range[0], self.range[1]))
+            elif self.range[0] is not None:
+                raise TypeError('number %s is smaller than %s' % (value, self.range[0]))
+            elif self.range[1] is not None:
+                raise TypeError('number %s is bigger than %s' % (value, self.range[1]))
+            else:
+                raise TypeError('wrong number: %s' % value)
 
 
 class BlockArgument(BaseArgument):
@@ -69,7 +77,7 @@ class BlockArgument(BaseArgument):
         if value in blocks:
             return {self.name: value}
         else:
-            raise TypeError()
+            raise TypeError("not a block: '%s'" % value)
 
 class BooleanArgument(BaseArgument):
 
@@ -83,7 +91,7 @@ class BooleanArgument(BaseArgument):
         elif value == 'false':
             return {self.name: False}
         else:
-            raise TypeError()
+            raise TypeError("cannot parse '%s' to boolean" % value)
 
 
 class PositionArgument(BaseArgument):
@@ -98,13 +106,33 @@ class PositionArgument(BaseArgument):
             return {self.name: int(value) - (1 if self.axis == 'y' else 0)}
         except:
             if value.startswith('~'):
+                if value == '~':
+                    return {self.name: int(round(get_game().player['position'][ord(self.axis) - 120])) -
+                            (1 if self.axis == 'y' else 0)}
                 try:
                     delta = int(value[1:]) - (1 if self.axis == 'y' else 0)
                 except:
-                    raise TypeError()
+                    raise TypeError("cannot parse '%s' to a position" % value)
                 else:
-                    return {self.name: int(round(get_game.player['position'][ord(self.axis) - 120] + delta)) -
+                    return {self.name: int(round(get_game().player['position'][ord(self.axis) - 120] + delta)) -
                             (1 if self.axis == 'y' else 0)}
+            else:
+                raise TypeError("not a number: '%s'" % value)
+
+
+class DictArgument(BaseArgument):
+
+    def __init__(self, name, argument):
+        super().__init__()
+        self.name = str(name)
+        if isinstance(arg, DictArgument):
+            # 禁止套娃
+            raise RecursionError()
+        else:
+            self.argument = argument
+
+    def valid(self, value):
+        pass
 
 
 class ArgumentCollection():

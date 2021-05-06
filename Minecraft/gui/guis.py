@@ -24,6 +24,7 @@ class Chat():
                     text = text.replace('(position)', ' '.join([str(int(pos)) for pos in self.game.player['position']]))
                     text = text.replace('(chunk)', ' '.join([str(int(pos)) for pos in self.game.sector]))
                     self.game.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
+            self.game.player['in_gui'] = False
             self.game.player['in_chat'] = False
             self._entry.text('')
             self.game.guis['chat'].frame.enable(False)
@@ -45,6 +46,7 @@ class PauseMenu():
 
         def on_back_press():
             self.game.set_exclusive_mouse(True)
+            self.game.player['in_gui'] = False
             self.game.player['pause'] = False
             self.frame.enable(False)
 

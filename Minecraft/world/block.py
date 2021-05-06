@@ -183,21 +183,26 @@ class Block():
             else:
                 self.texture_data = self.get_texture_data()
 
-    def on_destroy(self, game, pos):
+    def on_destroy(self, pos):
         # 摧毁方块是的回调函数
         pass
 
-    def on_neighbor_change(self, game, neighbor_pos, self_pos):
+    def on_neighbor_change(self, neighbor_pos, self_pos):
         # 相邻方块发生变化时的回调函数
         pass
 
-    def on_build(self, game, pos):
+    def on_build(self, pos):
         # 放置方块时的回调函数
         pass
 
-    def on_ticking(self, game, self_pos):
+    def on_ticking(self, self_pos):
         # 接受到随机刻时的回调函数
         pass
+
+    def on_player_land(self, self_pos):
+        # 玩家着陆到方块时的回调函数
+        # :return: 玩家的 dy
+        return 0
 
 
 class BlockColorizer():
@@ -239,10 +244,10 @@ class CraftTable(Block):
 class Dirt(Block):
     textures = 'dirt',
 
-    def on_ticking(self, game, pos):
-        block = game.world.get((pos[0], pos[1] + 1, pos[2]))
+    def on_ticking(self, pos):
+        block = get_game().world.get((pos[0], pos[1] + 1, pos[2]))
         if block == None:
-            game.world.add_block(pos, 'grass')
+            get_game().world.add_block(pos, 'grass')
 
 
 class Glass(Block):
@@ -260,16 +265,16 @@ class Grass(Block):
         color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
         return color
 
-    def on_ticking(self, game, pos):
-        block = game.world.get((pos[0], pos[1] + 1, pos[2]))
-        if block != None:
-            if block.transparent != True:
-                game.world.add_block(pos, 'dirt')
-
     def get_item_color(self):
         color = []
         color.extend(list(self.item_colorizer.get_color(0.5, 0.5)) * 24)
         return color
+
+    def on_ticking(self, pos):
+        block = get_game().world.get((pos[0], pos[1] + 1, pos[2]))
+        if block != None:
+            if block.transparent != True:
+                get_game().world.add_block(pos, 'dirt')
 
 
 class Leaf(Block):
@@ -356,11 +361,12 @@ def get_block_icon(block, size):
     glRotatef(-45.0, 0.0, 1.0, 0.0)
     glRotatef(-30.0, -1.0, 0.0, 1.0)
     glScalef(1.5, 1.5, 1.5)
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     vertex_data = block.get_vertices(0, 0, 0)
     texture_data = block.texture_data
     count = len(texture_data) // 2
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glEnable(GL_DEPTH_TEST)
     batch = pyglet.graphics.Batch()
     if hasattr(block, 'get_item_color'):
         batch.add(count, GL_QUADS, block.group,
@@ -380,4 +386,5 @@ def get_block_icon(block, size):
     glViewport(*viewport)
     glClearColor(0.0, 0.0, 0.0, 1.0)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glDisable(GL_DEPTH_TEST)
     return icon_texture.get_image_data()

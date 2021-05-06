@@ -72,7 +72,7 @@ class Game(pyglet.window.Window):
         # 聊天区
         self.dialogue = Dialogue()
         # 设置图标
-        self.set_icon(get_block_icon(blocks['craft_table'], 128))
+        self.set_icon(get_block_icon(blocks['craft_table'], 64))
         # 窗口最小为 800x600
         self.set_minimum_size(800, 600)
         # 这个十字在屏幕中央
@@ -230,8 +230,8 @@ class Game(pyglet.window.Window):
             try:
                 log_info('Run command: %s' % s)
                 cmd = commands[command](self, s)
-            except TypeError:
-                pass
+            except TypeError as error:
+                self.dialogue.add_dialogue('Arguments error: %s' % error.args[0])
             else:
                 cmd.execute()
 
@@ -259,10 +259,11 @@ class Game(pyglet.window.Window):
             if self.sector is None:
                 self.world.process_entire_queue()
             self.sector = sector
-        m = 8
-        dt = min(dt, 0.2)
-        for _ in range(m):
-            self._update(dt / m)
+        if (not self.player['in_gui']) or (self.player['dy'] !=0):
+            m = 16
+            dt = min(dt, 0.2)
+            for _ in range(m):
+                self._update(dt / m)
 
     def update_status(self, dt):
         # 这个函数定时改变世界状态
@@ -270,7 +271,7 @@ class Game(pyglet.window.Window):
             if sector:
                 blocks = random.choices(sector, k=3)
                 for block in blocks:
-                    self.world.get(block).on_ticking(self, block)
+                    self.world.get(block).on_ticking(block)
 
     def _update(self, dt):
         """
@@ -293,19 +294,17 @@ class Game(pyglet.window.Window):
         # 玩家新的位置
         dx, dy, dz = dx * d, dy * d, dz * d
         # 重力
+        if (not self.player['flying']):
+            self.player['dy'] -= dt * GRAVITY
+            self.player['dy'] = max(self.player['dy'], -TERMINAL_VELOCITY)
+            dy += self.player['dy'] * dt
         if (not self.player['die']) or (self.player['dy'] != 0):
-            if not self.player['flying']:
-                self.player['dy'] -= dt * GRAVITY
-                self.player['dy'] = max(self.player['dy'], -TERMINAL_VELOCITY)
-                dy += self.player['dy'] * dt
-            if (not self.player['in_gui']):
-                # 碰撞检测
-                x, y, z = self.player['position']
-                if self.player['gamemode'] != 1:
-                    x, y, z = self.player.collide((x + dx, y + dy, z + dz))
-                else:
-                    x, y, z = x + dx, y + dy, z + dz
-                self.player['position'] = (x, y, z)
+            x, y, z = self.player['position']
+            if self.player['gamemode'] != 1:
+                x, y, z = self.player.collide((x + dx, y + dy, z + dz))
+            else:
+                x, y, z = x + dx, y + dy, z + dz
+            self.player['position'] = (x, y, z)
 
     def on_close(self):
         # 当玩家关闭窗口时调用
@@ -448,9 +447,9 @@ class Game(pyglet.window.Window):
             if not self.player['die'] and not self.player['hide_hud']:
                 if self.player['gamemode'] != 1:
                     self.hud['hotbar'].draw()
-                if not self.is_init and not self.player['in_gui'] and self.exclusive:
+                if not self.player['in_gui']:
                     self.reticle.draw()
-                if not self.player['in_gui'] and not self.exclusive:
+                if self.player['in_gui']:
                     if self.player['pause']:
                         self.guis['pause'].frame.draw()
                     if self.player['in_chat']:

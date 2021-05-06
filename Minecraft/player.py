@@ -22,7 +22,7 @@ class Player():
         self._data['running'] = False
         self._data['die'] = False
         self._data['die_reason'] = ''
-        self._data['in_gui'] = False
+        self._data['in_gui'] = True
         self._data['in_chat'] = False
         self._data['pause'] = True
         self._data['hide_hud'] = False
@@ -70,7 +70,7 @@ class Player():
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
-                        self._data['dy'] = 0
+                        self._data['dy'] = 0 #get_game().world.get(tuple(op)).on_player_land(tuple(op))
                     break
         else:
             return tuple(p)
@@ -161,8 +161,7 @@ class Player():
             if symbol == key.ESCAPE:
                 get_game().guis['chat'].frame.enable(False)
                 get_game().guis['chat'].text()
-                self._data['in_gui'] = False
-                self._data['in_chat'] = False
+                self._data['in_gui'] = self._data['in_chat'] = False
                 get_game().set_exclusive_mouse(True)
             return
         if symbol == key.Q:
@@ -172,14 +171,12 @@ class Player():
         elif symbol == key.T:
             if get_game().exclusive:
                 get_game().set_exclusive_mouse(False)
-                self._data['in_gui'] = True
-                self._data['in_chat'] = True
+                self._data['in_gui'] = self._data['in_chat'] = True
                 get_game().guis['chat'].frame.enable()
         elif symbol == key.SLASH:
             if get_game().exclusive:
                 get_game().set_exclusive_mouse(False)
-                self._data['in_gui'] = True
-                self._data['in_chat'] = True
+                self._data['in_gui'] = self._data['in_chat'] = True
                 get_game().guis['chat'].text('/')
                 get_game().guis['chat'].frame.enable()
         elif symbol == key.W:
@@ -202,10 +199,12 @@ class Player():
                 get_game().debug['debug'] = not get_game().debug['debug']
                 get_game().debug['position'] = False
         elif symbol == key.E:
-            if not self._data['die']:
-                get_game().set_exclusive_mouse(self._data['show_bag'])
-                self._data['in_gui'] = not self._data['in_gui']
-                self._data['show_bag'] = not self._data['show_bag']
+            if (not self._data['die']) and (not self._data['in_gui']):
+                self._data['in_gui'] = self._data['show_bag'] = True
+                get_game().set_exclusive_mouse(not self._data['show_bag'])
+            elif self._data['show_bag']:
+                self._data['in_gui'] = self._data['show_bag'] = False
+                get_game().set_exclusive_mouse(not self._data['show_bag'])
         elif symbol == key.SPACE:
             if self._data['key_press']['space']['count'] == 1:
                 if time.time() - self._data['key_press']['space']['last'] <= 0.1:
@@ -233,7 +232,7 @@ class Player():
             else:
                 get_game().save(0)
                 get_game().set_exclusive_mouse(False)
-                self._data['pause'] = True
+                self._data['in_gui'] = self._data['pause'] = True
                 get_game().guis['pause'].frame.enable()
                 if self._data['die']:
                     get_game().close()
