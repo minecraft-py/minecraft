@@ -24,11 +24,8 @@ class Chat():
                     text = text.replace('(position)', ' '.join([str(int(pos)) for pos in self.game.player['position']]))
                     text = text.replace('(chunk)', ' '.join([str(int(pos)) for pos in self.game.sector]))
                     self.game.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
-            self.game.player['in_gui'] = False
-            self.game.player['in_chat'] = False
             self._entry.text('')
-            self.game.guis['chat'].frame.enable(False)
-            self.game.set_exclusive_mouse(True)
+            self.game.toggle_gui()
         
         self._entry.register_event('commit', on_commit)
 
@@ -45,10 +42,7 @@ class PauseMenu():
         self._exit_button = Button((self.game.width - 200) / 2, 150, 200, 40, lang['game.pause_menu.exit'])
 
         def on_back_press():
-            self.game.set_exclusive_mouse(True)
-            self.game.player['in_gui'] = False
-            self.game.player['pause'] = False
-            self.frame.enable(False)
+            self.game.toggle_gui()
 
         def on_exit_press():
             self.game.save(0)

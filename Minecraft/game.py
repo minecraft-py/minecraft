@@ -6,39 +6,39 @@ import sys
 import time
 from threading import Thread
 
-try:
-    import pyglet
-    from pyglet import image
-    from pyglet.gl import *
-    from pyglet.shapes import Rectangle
-    from pyglet.sprite import Sprite
-    from pyglet.window import key, mouse
+#try:
+import pyglet
+from pyglet import image
+from pyglet.gl import *
+from pyglet.shapes import Rectangle
+from pyglet.sprite import Sprite
+from pyglet.window import key, mouse
 
-    from Minecraft.command.commands import commands
-    from Minecraft.gui.bag import Bag
-    from Minecraft.gui.dialogue import Dialogue
-    from Minecraft.gui.hotbar import HotBar
-    from Minecraft.gui.xpbar import XPBar
-    from Minecraft.gui.hud.heart import Heart
-    from Minecraft.gui.hud.hunger import Hunger
-    from Minecraft.gui.loading import Loading
-    from Minecraft.gui.guis import Chat, PauseMenu
-    from Minecraft.gui.widget.label import ColorLabel
-    from Minecraft.player import Player
-    import Minecraft.saves as saves
-    from Minecraft.source import get_lang, libs, path, player, settings
-    from Minecraft.world.block import blocks, get_block_icon
-    from Minecraft.world.sky import change_sky_color
-    from Minecraft.world.weather import weather, choice_weather
-    from Minecraft.world.world import World
-    from Minecraft.utils.utils import *
+from Minecraft.command.commands import commands
+from Minecraft.gui.bag import Bag
+from Minecraft.gui.dialogue import Dialogue
+from Minecraft.gui.hotbar import HotBar
+from Minecraft.gui.xpbar import XPBar
+from Minecraft.gui.hud.heart import Heart
+from Minecraft.gui.hud.hunger import Hunger
+from Minecraft.gui.loading import Loading
+from Minecraft.gui.guis import Chat, PauseMenu
+from Minecraft.gui.widget.label import ColorLabel
+from Minecraft.player import Player
+import Minecraft.saves as saves
+from Minecraft.source import get_lang, libs, path, player, settings
+from Minecraft.world.block import blocks, get_block_icon
+from Minecraft.world.sky import change_sky_color
+from Minecraft.world.weather import weather, choice_weather
+from Minecraft.world.world import World
+from Minecraft.utils.utils import *
 
-    import psutil
-    import pyshaders
-    import opensimplex
-except (Exception, ImportError, ModuleNotFoundError) as err:
-    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
-    exit(1)
+import psutil
+import pyshaders
+import opensimplex
+#except (Exception, ImportError, ModuleNotFoundError) as err:
+#    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
+#    exit(1)
 
 
 class Game(pyglet.window.Window):
@@ -155,8 +155,6 @@ class Game(pyglet.window.Window):
     def init_gui(self):
         # 初始化 GUI
         self.hud = dict()
-        # E 键打开的背包
-        self.hud['bag'] = Bag()
         # 生命值
         self.hud['heart'] = Heart()
         # 饥饿值
@@ -169,9 +167,24 @@ class Game(pyglet.window.Window):
         self.hud['xpbar'] = XPBar()
         # GUI
         self.guis = dict()
-        self.guis['pause'] = PauseMenu(self)
-        self.guis['pause'].frame.enable(True)
+        self.active_gui = None
+        self.guis['bag'] = Bag(self)
         self.guis['chat'] = Chat(self)
+        self.guis['pause'] = PauseMenu(self)
+        self.toggle_gui('pause')
+
+    def toggle_gui(self, name=''):
+        if (name == '') or (self.player['active_gui'] == name):
+            self.set_exclusive_mouse(True)
+            self.player['in_gui'] = False
+            self.player['active_gui'] = ''
+            self.active_gui.frame.enable(False)
+        else:
+            self.set_exclusive_mouse(False)
+            self.player['in_gui'] = True
+            self.player['active_gui'] = name
+            self.active_gui = self.guis[name]
+            self.active_gui.frame.enable(True)
 
     def save(self, dt):
         """
@@ -260,7 +273,7 @@ class Game(pyglet.window.Window):
                 self.world.process_entire_queue()
             self.sector = sector
         if (not self.player['in_gui']) or (self.player['dy'] !=0):
-            m = 16
+            m = 24
             dt = min(dt, 0.2)
             for _ in range(m):
                 self._update(dt / m)
@@ -319,14 +332,11 @@ class Game(pyglet.window.Window):
         :param: button 哪个按键被按下: 1 = 左键, 4 = 右键
         :param: modifiers 表示单击鼠标按钮时按下的任何修改键的数字
         """
-        for gui in self.guis.values():
-            if gui.frame.on_mouse_press(x, y, button, modifiers):
-                break
+        self.active_gui.frame.on_mouse_press(x, y, button, modifiers)
         self.player.on_mouse_press(x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
-        for gui in self.guis.values():
-            gui.frame.on_mouse_release(x, y, button, modifiers)
+        self.active_gui.frame.on_mouse_release(x, y, button, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
         """
@@ -335,8 +345,7 @@ class Game(pyglet.window.Window):
         :param: x, y 鼠标点击时的坐标, 如果被捕获的话它们总是在屏幕中央
         :param: dx, dy 鼠标移动的距离
         """
-        for gui in self.guis.values():
-            gui.frame.on_mouse_motion(x, y, dx, dy)
+        self.active_gui.frame.on_mouse_motion(x, y, dx, dy)
         self.player.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
@@ -345,8 +354,7 @@ class Game(pyglet.window.Window):
 
         :param: scroll_x, scroll_y 鼠标滚轮滚动(scroll_y 为1时向上, 为-1时向下)
         """
-        for gui in self.guis.values():
-            gui.frame.on_mouse_scroll(x, y, scroll_x, scroll_y)
+        self.active_gui.frame.on_mouse_scroll(x, y, scroll_x, scroll_y)
         self.player.on_mouse_scroll(x, y, scroll_x, scroll_y)
 
     def on_key_press(self, symbol, modifiers):
@@ -356,8 +364,7 @@ class Game(pyglet.window.Window):
         :param: symbol 按下的键
         :param: modifiers 同时按下的修饰键
         """
-        for gui in self.guis.values():
-            gui.frame.on_key_press(symbol, modifiers)
+        self.active_gui.frame.on_key_press(symbol, modifiers)
         self.player.on_key_press(symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
@@ -366,8 +373,7 @@ class Game(pyglet.window.Window):
 
         :param: symbol 释放的键
         """
-        for gui in self.guis.values():
-            gui.frame.on_key_release(symbol, modifiers)
+        self.active_gui.frame.on_key_release(symbol, modifiers)
         self.player.on_key_release(symbol, modifiers)
 
     def on_resize(self, width, height):
@@ -397,13 +403,11 @@ class Game(pyglet.window.Window):
         # HUD
         # 在第一次调用该函数时, 所有存储 GUI 的变量都没有定义
         if not self.is_init:
-            self.hud['bag'].resize(self.width, self.height)
             self.hud['heart'].resize(self.width, self.height)
             self.hud['hunger'].resize(self.width, self.height)
             self.hud['hotbar'].resize(self.width, self.height)
             self.hud['xpbar'].resize(self.width, self.height)
-            for gui in self.guis.values():
-                gui.frame.on_resize(width, height)
+            self.active_gui.frame.on_resize(width, height)
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -450,13 +454,7 @@ class Game(pyglet.window.Window):
                 if not self.player['in_gui']:
                     self.reticle.draw()
                 if self.player['in_gui']:
-                    if self.player['pause']:
-                        self.guis['pause'].frame.draw()
-                    if self.player['in_chat']:
-                        self.guis['chat'].frame.draw()
-                if self.player['in_gui'] or not self.exclusive:
-                    if self.player['show_bag']:
-                        self.hud['bag'].draw()
+                    self.active_gui.frame.draw()
             elif self.player['die']:
                 self.full_screen.color = (200, 0, 0)
                 self.full_screen.opacity = 100
@@ -470,19 +468,16 @@ class Game(pyglet.window.Window):
             self.is_init = False
 
     def on_text(self, text):
-        for gui in self.guis.values():
-            gui.frame.on_text(text)
+        self.active_gui.frame.on_text(text)
 
     def on_text_motion(self, motion):
-        for gui in self.guis.values():
-            gui.frame.on_text_motion(motion)
+        self.active_gui.frame.on_text_motion(motion)
 
     def on_text_motion_select(self, motion):
-        for gui in self.guis.values():
-            gui.frame.on_text_motion_select(motion)
+        self.active_gui.frame.on_text_motion_select(motion)
 
     def draw_focused_block(self):
-        # 在十字线选中的方块绘制黑边
+        # 在十字线选中的方块绘制黑框
         vector = self.player.get_sight_vector()
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block and self.player['gamemode'] != 1:
