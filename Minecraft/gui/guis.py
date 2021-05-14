@@ -1,7 +1,7 @@
 from Minecraft.gui.frame import Frame
 from Minecraft.gui.widget.button import Button, ChoseButton
 from Minecraft.gui.widget.entry import DialogueEntry
-from Minecraft.source import lang, player
+from Minecraft.source import resource_pack, player
 from Minecraft.utils.utils import *
 
 import pyglet
@@ -38,8 +38,8 @@ class PauseMenu():
     def __init__(self, game):
         self.game = game
         self.frame = Frame(self.game, True)
-        self._back_button = Button((self.game.width - 200) / 2, 100, 200, 40, lang['game.pause_menu.back_to_game'])
-        self._exit_button = Button((self.game.width - 200) / 2, 150, 200, 40, lang['game.pause_menu.exit'])
+        self._back_button = Button((self.game.width - 200) / 2, 100, 200, 40, resource_pack.get_translation('game.pause_menu.back_to_game'))
+        self._exit_button = Button((self.game.width - 200) / 2, 150, 200, 40, resource_pack.get_translation('game.pause_menu.exit'))
 
         def on_back_press():
             self.game.toggle_gui()

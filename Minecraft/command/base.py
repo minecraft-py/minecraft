@@ -1,6 +1,5 @@
 from shlex import split
 
-from Minecraft.source import lang
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 

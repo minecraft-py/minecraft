@@ -5,7 +5,7 @@ import random
 import time
 
 import Minecraft.saves as saves
-from Minecraft.source import get_lang
+from Minecraft.source import resource_pack
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
@@ -139,9 +139,9 @@ class World(object):
                 self.check_neighbors(position)
         else:
             if position[1] >= 256:
-                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[0] % 512)
+                get_game().dialogue.add_dialogue(resource_pack.get_translation('game.text.build_out_of_world')[0] % 512)
             else:
-                get_game().dialogue.add_dialogue(get_lang('game.text.build_out_of_world')[1])
+                get_game().dialogue.add_dialogue(resource_pack.get_translation('game.text.build_out_of_world')[1])
 
     def remove_block(self, position, immediate=True, record=True):
         """
@@ -214,8 +214,8 @@ class World(object):
             if y <= 10:
                 t = 0.8
             else:
-                t = 0.8 - (y - 0.8) * 1/600
-            h = 0.35
+                t = 0.8 - (y - 0.8) / 600
+            h = 0.4
             color_data = block.get_color(t, h)
         count = len(texture_data) // 2
         batch = self.batch3d

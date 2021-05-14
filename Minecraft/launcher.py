@@ -14,7 +14,7 @@ import Minecraft.utils.tests
 from Minecraft.utils.opengl import setup_opengl
 from Minecraft.game import *
 from Minecraft.saves import load_window
-from Minecraft.source import get_lang, path, player, settings
+from Minecraft.source import saves_path, player, settings
 log_info('Start game')
 
 import pyglet
@@ -27,10 +27,10 @@ def is_game_restore(name):
     """
     if name == '_server':
         return False
-    if os.path.isdir(os.path.join(path['saves'], name)):
-        if 'world.json' in os.listdir(os.path.join(path['saves'], name)):
-            if 'level.json' in os.listdir(os.path.join(path['saves'], name)):
-                if 'players' in os.listdir(os.path.join(path['saves'], name)):
+    if os.path.isdir(os.path.join(saves_path, name)):
+        if 'world.json' in os.listdir(os.path.join(saves_path, name)):
+            if 'level.json' in os.listdir(os.path.join(saves_path, name)):
+                if 'players' in os.listdir(os.path.join(saves_path, name)):
                     return True
                 else:
                     return False
@@ -50,21 +50,21 @@ class MinecraftLauncher(Tk):
         except:
             log_err('no display, exit')
             exit(1)
-        self.title(get_lang('launcher.title'))
+        self.title(resource_pack.get_translation('launcher.title'))
         if settings['use-theme'] != 'ttk' and not sys.platform.startswith('win'):
             theme_path = os.path.dirname(os.path.abspath(__file__)) + '/theme/' + settings['use-theme']
             self.tk.eval('lappend auto_path {%s}' % theme_path)
             ttk.Style().theme_use(settings['use-theme'])
         # 小部件
-        self.new_button = ttk.Button(self, text=get_lang('launcher.new'), command=self.new)
-        self.start_button = ttk.Button(self, text=get_lang('launcher.start'), command=self.start_game)
-        self.exit_button = ttk.Button(self, text=get_lang('launcher.exit'),  command=lambda: exit())
+        self.new_button = ttk.Button(self, text=resource_pack.get_translation('launcher.new'), command=self.new)
+        self.start_button = ttk.Button(self, text=resource_pack.get_translation('launcher.start'), command=self.start_game)
+        self.exit_button = ttk.Button(self, text=resource_pack.get_translation('launcher.exit'),  command=lambda: exit())
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
-        self.repair_button = ttk.Button(self, text=get_lang('launcher.multiplayer'))
-        self.del_button = ttk.Button(self, text=get_lang('launcher.delete'), command=self.delete)
-        self.rename_button = ttk.Button(self, text=get_lang('launcher.rename'), command=self.rename)
+        self.repair_button = ttk.Button(self, text=resource_pack.get_translation('launcher.multiplayer'))
+        self.del_button = ttk.Button(self, text=resource_pack.get_translation('launcher.delete'), command=self.delete)
+        self.rename_button = ttk.Button(self, text=resource_pack.get_translation('launcher.rename'), command=self.rename)
         # 显示
         self.new_button.grid(column=0, row=0, padx=5, pady=5)
         self.start_button.grid(column=1, row=0, padx=5, pady=5)
@@ -83,24 +83,24 @@ class MinecraftLauncher(Tk):
             select = self.game_item_list.get(0)
         else:
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
-        if messagebox.askyesno(message=get_lang('launcher.dialog.text.delete') % select,
-                title=get_lang('launcher.dialog.title.delete')):
-            shutil.rmtree(os.path.join(path['saves'], select))
+        if messagebox.askyesno(message=resource_pack.get_translation('launcher.dialog.text.delete') % select,
+                title=resource_pack.get_translation('launcher.dialog.title.delete')):
+            shutil.rmtree(os.path.join(saves_path, select))
         self.refresh()
 
     def new(self, event=None):
         # 新的世界对话框
         self.new_dialog = Toplevel(self)
-        self.new_dialog.title(get_lang('launcher.dialog.title.new'))
-        self.new_dialog_label_name = ttk.Label(self.new_dialog, text=get_lang('launcher.dialog.text.name'))
+        self.new_dialog.title(resource_pack.get_translation('launcher.dialog.title.new'))
+        self.new_dialog_label_name = ttk.Label(self.new_dialog, text=resource_pack.get_translation('launcher.dialog.text.name'))
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
-        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=get_lang('launcher.dialog.text.seed'))
+        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=resource_pack.get_translation('launcher.dialog.text.seed'))
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
         self.new_dialog_label_type = ttk.Label(self.new_dialog, text='Type:')
         self.new_dialog_combobox_type = ttk.Combobox(self.new_dialog, values = ('flat', 'random'), width=8)
         self.new_dialog_combobox_type.state(['readonly'])
         self.new_dialog_button_ok = ttk.Button(self.new_dialog,
-                text=get_lang('launcher.dialog.text.ok'), command=self.new_world
+                text=resource_pack.get_translation('launcher.dialog.text.ok'), command=self.new_world
                                                )
         self.new_dialog_label_name.grid(column=0, row=0, padx=5, pady=5)
         self.new_dialog_entry_name.grid(column=1, row=0, columnspan=2, padx=5,
@@ -131,17 +131,17 @@ class MinecraftLauncher(Tk):
         if re.match(r'^[a-zA-Z_]\w*$', name) is None:
             log_err('invalid world name')
         else:
-            if not os.path.isdir(os.path.join(path['saves'], name)):
-                os.mkdir(os.path.join(path['saves'], name))
-                world = open(os.path.join(path['saves'], name, 'world.json'), 'w+')
+            if not os.path.isdir(os.path.join(saves_path, name)):
+                os.mkdir(os.path.join(saves_path, name))
+                world = open(os.path.join(saves_path, name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
                 world_level = {'data_version': VERSION['data'], 'seed': seed, 'type': self.new_dialog_combobox_type.get(),
                         'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
-                json.dump(world_info, open(os.path.join(path['saves'], name, 'level.json'), 'w+'))
-                os.mkdir(os.path.join(path['saves'], name, 'players'))
+                json.dump(world_info, open(os.path.join(saves_path, name, 'level.json'), 'w+'))
+                os.mkdir(os.path.join(saves_path, name, 'players'))
                 player_info = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
-                json.dump(player_info, open(os.path.join(path['saves'], name, 'players', '%s.json' % player['id']), 'w+'))
+                json.dump(player_info, open(os.path.join(saves_path, name, 'players', '%s.json' % player['id']), 'w+'))
                 self.new_dialog.destroy()
                 log_info('create world successfully')
             else:
@@ -151,15 +151,15 @@ class MinecraftLauncher(Tk):
     def refresh(self):
         # 刷新
         self.game_item_list.delete(0, 'end')
-        for item in [i for i in os.listdir(path['saves']) if is_game_restore(i)]:
+        for item in [i for i in os.listdir(saves_path) if is_game_restore(i)]:
             self.game_item_list.insert('end', item)
 
     def rename(self):
         # 重命名对话框
         self.rename_dialog = Toplevel(self)
-        self.rename_dialog.title(get_lang('launcher.dialog.title.rename'))
+        self.rename_dialog.title(resource_pack.get_translation('launcher.dialog.title.rename'))
         self.rename_dialog_label = ttk.Label(self.rename_dialog,
-            style='TLabel', text=get_lang('launcher.dialog.text.name'))
+            style='TLabel', text=resource_pack.get_translation('launcher.dialog.text.name'))
         self.rename_dialog_entry = ttk.Entry(self.rename_dialog)
         name = self.game_item_list.curselection()
         name = self.game_item_list.get(0) if name == () else self.game_item_list.get(name)
@@ -168,9 +168,9 @@ class MinecraftLauncher(Tk):
         def send_name():
             self.rename_world(name)
 
-        self.old = os.path.join(path['saves'], self.rename_dialog_entry.get())
+        self.old = os.path.join(saves_path, self.rename_dialog_entry.get())
         self.rename_dialog_button = ttk.Button(self.rename_dialog,
-                text=get_lang('launcher.dialog.text.ok'), command=send_name)
+                text=resource_pack.get_translation('launcher.dialog.text.ok'), command=send_name)
         self.rename_dialog_label.grid(column=0, row=0, padx=5, pady=5)
         self.rename_dialog_entry.grid(column=1, row=0, columnspan=2, padx=5, pady=5)
         self.rename_dialog_button.grid(column=2, row=1, padx=5, pady=5)
@@ -184,7 +184,7 @@ class MinecraftLauncher(Tk):
 
     def rename_world(self, name):
         # 重命名世界
-        shutil.move(os.path.join(path['saves'], name), os.path.join(path['saves'], self.rename_dialog_entry.get()))
+        shutil.move(os.path.join(saves_path, name), os.path.join(saves_path, self.rename_dialog_entry.get()))
         self.rename_dialog.destroy()
         self.refresh()
 
@@ -208,7 +208,7 @@ class MinecraftLauncher(Tk):
         except:
             name = time.strftime('error-%Y-%m-%d_%H.%M.%S.log')
             log_err('Catch error, savesd in: log/%s' % name)
-            err_log = open(os.path.join(path['log'], name), 'a+')
+            err_log = open(os.path.join(search_mcpy(), 'log', name), 'a+')
             err_log.write('Minecraft version: %s\n' % VERSION['str'])
             err_log.write('python version: %s for %s\n' % ('.'.join([str(s) for s in sys.version_info[:3]]), sys.platform))
             err_log.write('time: %s\n' % time.ctime())

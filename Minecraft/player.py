@@ -2,7 +2,7 @@ import math
 import os
 import time
 
-from Minecraft.source import path, settings
+from Minecraft.source import settings
 from Minecraft.utils.utils import *
 
 import pyglet
@@ -228,8 +228,7 @@ class Player():
             self._data['hide_hud'] = not self._data['hide_hud']
         elif symbol == key.F2:
             name = time.strftime('%Y-%m-%d_%H.%M.%S.png')
-            pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(
-                path['screenshot'], name))
+            pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(search_mcpy(), 'screenshot', name))
             get_game().dialogue.add_dialogue('Screenshot saved in: %s' % name)
         elif symbol == key.F3:
             get_game().debug['enable'] = True

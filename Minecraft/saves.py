@@ -1,8 +1,9 @@
 import json
 from os.path import join
 
-from Minecraft.source import path, player
+from Minecraft.source import saves_path, player
 from Minecraft.utils.utils import *
+
 
 def load_block(name, add_block, remove_block):
     """
@@ -12,7 +13,7 @@ def load_block(name, add_block, remove_block):
     :param: add_block 添加方块的函数, 函数原型为 Minecraft.world.World.add_block
     :param: remove_block 移除方块的函数, 函数原型为 Minecraft.world.World.remove_block
     """
-    blocks = json.load(open(join(path['saves'], name, 'world.json')))
+    blocks = json.load(open(join(saves_path, name, 'world.json')))
     for position, block in blocks.items():
         position = str2pos(position)
         if block == 'air':
@@ -22,11 +23,11 @@ def load_block(name, add_block, remove_block):
 
 def load_level(name):
     # 读取世界信息
-    return json.load(open(join(path['saves'], name, 'level.json')))
+    return json.load(open(join(saves_path, name, 'level.json')))
 
 def load_player(name):
     # 读取玩家数据
-    data = json.load(open(join(path['saves'], name, 'players', '%s.json' % player['id'])))
+    data = json.load(open(join(saves_path, name, 'players', '%s.json' % player['id'])))
     position = str2pos(data.get('position', (0, 0, 0)), True)
     if len(position) == 3:
         position = position[0], position[1] + 1, position[2]
@@ -39,7 +40,7 @@ def load_player(name):
 
 def load_window():
     # 读取游戏窗口信息
-    data = json.load(open(join(path['mcpypath'], 'settings.json')))['viewport']
+    data = json.load(open(join(search_mcpy(), 'settings.json')))['viewport']
     return {
                 'width': data['width'],
                 'height': data['height']
@@ -53,19 +54,19 @@ def save_block(name, change, full=True):
     :param: full 是否全部写入
     """
     if not full:
-        data = json.load(open(join(path['saves'], name, 'world.json')))
+        data = json.load(open(join(saves_path, name, 'world.json')))
         for position, block in change.items():
             data[position] = block
     else:
         data = change
-    json.dump(data, open(join(path['saves'], name, 'world.json'), 'w+'))
+    json.dump(data, open(join(saves_path, name, 'world.json'), 'w+'))
 
 def save_level(name, time, weather):
     # 将世界信息存入文件
-    data = json.load(open(join(path['saves'], name, 'level.json')))
+    data = json.load(open(join(saves_path, name, 'level.json')))
     data['time'] = int(time)
     data['weather'] = {'now': weather['now'], 'duration': int(weather['duration'])}
-    json.dump(data, open(join(path['saves'], name, 'level.json'), 'w+'))
+    json.dump(data, open(join(saves_path, name, 'level.json'), 'w+'))
 
 
 def save_player(name, position, respawn, rotation, now_block):
@@ -75,12 +76,12 @@ def save_player(name, position, respawn, rotation, now_block):
     data['respawn'] = pos2str(respawn)
     data['rotation'] = rotation
     data['now_block'] = now_block
-    json.dump(data, open(join(path['saves'], name, 'players', '%s.json' % player['id']), 'w+'))
+    json.dump(data, open(join(saves_path, name, 'players', '%s.json' % player['id']), 'w+'))
 
 def save_window(width, height):
-    data = json.load(open(join(path['mcpypath'], 'settings.json')))
+    data = json.load(open(join(search_mcpy(), 'settings.json')))
     data['viewport'] = {
                 'width': width,
                 'height': height
             }
-    json.dump(data, open(join(path['mcpypath'], 'settings.json'), 'w+'))
+    json.dump(data, open(join(search_mcpy(), 'settings.json'), 'w+'))

@@ -2,11 +2,10 @@ from ctypes import byref
 from math import floor
 from os.path import isfile, join
 
-from Minecraft.source import path
+from Minecraft.source import resource_pack
 from Minecraft.utils.nbt import NBT
 from Minecraft.utils.utils import *
 
-from pyglet import image
 from pyglet.image.atlas import TextureAtlas
 from pyglet.graphics import Group
 from pyglet.gl import *
@@ -30,9 +29,9 @@ class BlockTextureGroup(Group):
         self.block_texture = {}
         for name in names:
             if name == 'missing':
-                self.block_texture[name] = image.load(join(path['texture'], 'misc', 'missing_texture.png'))
+                self.block_texture[name] = resource_pack.get_resource('textures/misc/missing_texture')
             else:
-                self.block_texture[name] = image.load(join(path['texture'], 'block', name + '.png'))
+                self.block_texture[name] = resource_pack.get_resource('textures/block/%s' % name)
             size = self.block_texture[name].width
             if bgcolor is not None:
                 data = bytearray(self.block_texture[name].get_image_data().get_data('RGBA', size * 4))
@@ -207,20 +206,20 @@ class Block():
 
 class BlockColorizer():
     def __init__(self, name):
-        self.color_data = image.load(join(path['texture'], 'colormap', name + '.png'))
+        self.color_data = resource_pack.get_resource('textures/colormap/%s' % name)
         if self.color_data is None:
             return
         self.color_data = self.color_data.get_data('RGB', self.color_data.width * 3)
 
-    def get_color(self, temperature, humidity):
-        temperature = 1 - temperature
-        if temperature + humidity > 1:
-            delta = (temperature + humidity - 1) / 2
-            temperature -= delta
-            humidity -= delta
+    def get_color(self, temp, rainfall):
+        temp = 1 - temp
+        if temp + rainfall > 1:
+            delta = (temp + rainfall - 1) / 2
+            temp -= delta
+            rainfall -= delta
         if self.color_data is None:
-            return 1, 1, 1
-        pos = int(floor(humidity * 255) * 768 + 3 * floor((temperature) * 255))
+            return (1, 1, 1)
+        pos = int(floor(rainfall * 255) * 768 + 3 * floor((temp) * 255))
         return (float(self.color_data[pos]) / 255,
                 float(self.color_data[pos + 1]) / 255,
                 float(self.color_data[pos + 2]) / 255)
@@ -239,8 +238,7 @@ class CraftTable(Block):
     textures = 'crafting_table_top', 'planks_oak', 'crafting_table_front', 'crafting_table_side'
 
     def on_use(self):
-        get_game().set_exclusive_mouse(False)
-        get_game().player['in_gui'] = get_game().player['show_bag'] = True
+        get_game().toogle_gui('bag')
 
 class Dirt(Block):
     textures = 'dirt',
@@ -258,17 +256,16 @@ class Glass(Block):
 
 class Grass(Block):
     textures = 'grass_top',
-    colorizer = BlockColorizer('grass')
-    item_colorizer = BlockColorizer('birch')
+    colorizer = BlockColorizer('foliage')
 
-    def get_color(self, temperature, humidity):
+    def get_color(self, temp, rainfall):
         color = []
-        color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
+        color.extend(list(self.colorizer.get_color(temp, rainfall)) * 24)
         return color
 
     def get_item_color(self):
         color = []
-        color.extend(list(self.item_colorizer.get_color(0.5, 0.5)) * 24)
+        color.extend(list(self.colorizer.get_color(0.8, 0.4)) * 24)
         return color
 
     def on_ticking(self, pos):
@@ -281,16 +278,15 @@ class Grass(Block):
 class Leaf(Block):
     textures = 'leaves_oak',
     colorizer = BlockColorizer('foliage')
-    item_colorizer = BlockColorizer('evergreen')
 
-    def get_color(self, temperature, humidity):
+    def get_color(self, temp, rainfall):
         color = []
-        color.extend(list(self.colorizer.get_color(temperature, humidity)) * 24)
+        color.extend(list(self.colorizer.get_color(temp, rainfall)) * 24)
         return color
 
     def get_item_color(self):
         color = []
-        color.extend(list(self.item_colorizer.get_color(0, 0)) * 24)
+        color.extend(list(self.colorizer.get_color(0.8, 0.4)) * 24)
         return color
 
 

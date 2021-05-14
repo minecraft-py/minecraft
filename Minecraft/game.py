@@ -6,39 +6,39 @@ import sys
 import time
 from threading import Thread
 
-#try:
-import pyglet
-from pyglet import image
-from pyglet.gl import *
-from pyglet.shapes import Rectangle
-from pyglet.sprite import Sprite
-from pyglet.window import key, mouse
+try:
+    import pyglet
+    from pyglet import image
+    from pyglet.gl import *
+    from pyglet.shapes import Rectangle
+    from pyglet.sprite import Sprite
+    from pyglet.window import key, mouse
 
-from Minecraft.command.commands import commands
-from Minecraft.gui.bag import Bag
-from Minecraft.gui.dialogue import Dialogue
-from Minecraft.gui.hotbar import HotBar
-from Minecraft.gui.xpbar import XPBar
-from Minecraft.gui.hud.heart import Heart
-from Minecraft.gui.hud.hunger import Hunger
-from Minecraft.gui.loading import Loading
-from Minecraft.gui.guis import Chat, PauseMenu
-from Minecraft.gui.widget.label import ColorLabel
-from Minecraft.player import Player
-import Minecraft.saves as saves
-from Minecraft.source import get_lang, libs, path, player, settings
-from Minecraft.world.block import blocks, get_block_icon
-from Minecraft.world.sky import change_sky_color
-from Minecraft.world.weather import weather, choice_weather
-from Minecraft.world.world import World
-from Minecraft.utils.utils import *
+    from Minecraft.command.commands import commands
+    from Minecraft.gui.bag import Bag
+    from Minecraft.gui.dialogue import Dialogue
+    from Minecraft.gui.hotbar import HotBar
+    from Minecraft.gui.xpbar import XPBar
+    from Minecraft.gui.hud.heart import Heart
+    from Minecraft.gui.hud.hunger import Hunger
+    from Minecraft.gui.loading import Loading
+    from Minecraft.gui.guis import Chat, PauseMenu
+    from Minecraft.gui.widget.label import ColorLabel
+    from Minecraft.player import Player
+    import Minecraft.saves as saves
+    from Minecraft.source import libs, player, resource_pack, settings
+    from Minecraft.world.block import blocks, get_block_icon
+    from Minecraft.world.sky import change_sky_color
+    from Minecraft.world.weather import weather, choice_weather
+    from Minecraft.world.world import World
+    from Minecraft.utils.utils import *
 
-import psutil
-import pyshaders
-import opensimplex
-#except (Exception, ImportError, ModuleNotFoundError) as err:
-#    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
-#    exit(1)
+    import psutil
+    import pyshaders
+    import opensimplex
+except (Exception, ImportError, ModuleNotFoundError) as err:
+    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
+    exit(1)
 
 
 class Game(pyglet.window.Window):
@@ -76,7 +76,7 @@ class Game(pyglet.window.Window):
         # 窗口最小为 800x600
         self.set_minimum_size(800, 600)
         # 这个十字在屏幕中央
-        self.reticle = Sprite(image.load(os.path.join(path['texture.gui'], 'icons.png')).get_region(0, 240, 16, 16))
+        self.reticle = Sprite(resource_pack.get_resource('textures/gui/icons').get_region(0, 240, 16, 16))
         self.reticle.image.anchor_x = 8
         self.reticle.image.anchor_y = 8
         self.reticle.scale = 2
@@ -141,11 +141,11 @@ class Game(pyglet.window.Window):
         """
         if not self.player['die']:
             if self.player['position'][1] < -64:
-                self.player['die_reason'] = get_lang('game.text.die.fall_into_void') % player['name']
+                self.player['die_reason'] = resource_pack.get_translation('game.text.die.fall_into_void') % player['name']
                 self.player['die'] = True
                 self.dialogue.add_dialogue(self.player['die_reason'])
             elif self.player['position'][1] > 512:
-                self.player['die_reason'] = get_lang('game.text.die.no_oxygen') % player['name']
+                self.player['die_reason'] = resource_pack.get_translation('game.text.die.no_oxygen') % player['name']
                 self.player['die'] = True
             if self.player['die']:
                 log_info('%s die: %s' % (player['name'], self.player['die_reason']))
@@ -498,7 +498,7 @@ class Game(pyglet.window.Window):
                 self.dialogue.draw()
             if self.player['die']:
                 # 玩家死亡
-                self.die_info.text = get_lang('game.text.die')
+                self.die_info.text = resource_pack.get_translation('game.text.die')
                 self.label['actionbar'].text = self.player['die_reason']
                 self.die_info.draw()
                 self.label['actionbar'].draw()
@@ -507,7 +507,7 @@ class Game(pyglet.window.Window):
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
                 fps = pyglet.clock.get_fps()
-                text = '\n'.join(get_lang('game.text.debug'))
+                text = '\n'.join(resource_pack.get_translation('game.text.debug'))
                 text = text.replace('%(version)', VERSION['str']).replace('%(info)', ', '.join(self._info_ext))
                 text = text.replace('%(xyz)', '%.1f, %.1f, %.1f' % (x, y, z)).replace('%(rot)', '%.2f, %.2f' % (rx, ry))
                 text = text.replace('%(mem)', '%.2f' % mem).replace('%(fps)', '%d' % fps)
