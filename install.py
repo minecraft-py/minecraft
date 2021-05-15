@@ -1,16 +1,30 @@
 #!/usr/bin/env python3
 
 from json import dump, load
-from os import environ, mkdir, makedirs, path, system
+from os import chmod, environ, mkdir, makedirs, path, system
 from re import match
 from shutil import copyfile, copytree, rmtree
 from sys import executable, platform, argv
+from stat import S_IXUSR
 import uuid
 from zipfile import ZipFile
 
 VERSION = '0.3.2'
 
+def main():
+    # 下载依赖项
+    install()
+    # 注册玩家
+    register_user()
+    # 复制运行所需的文件
+    copy()
+    # 创建启动脚本
+    gen_script()
+    # 完成!
+    print('[Done]')
+
 def copy():
+    print('[(3/3) Copy lib]')
     MCPYPATH = search_mcpy()
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
@@ -26,8 +40,29 @@ def copy():
     copytree(get_file('default'), path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION))
     rmtree(get_file('default'))
 
+def gen_script():
+    if '--gen-script':
+        print('[(4/3) Generate startup script]')
+        script = str()
+        name = get_file('run.sh')
+        if platform.startswith('win'):
+            name = get_file('run.bat')
+            script += '@echo off\n'
+        else:
+            script += '#!/usr/bin/env sh\n'
+        script += 'cd %s\n' % path.dirname(get_file('install.py'))
+        script += '%s -m Minecraft\n' % executable
+        with open(name, 'w+') as f:
+            f.write(script)
+            print("startup script is '%s'" % name)
+        if not platform.startswith('win'):
+            chmod(name, S_IXUSR)
+
+def get_file(f):
+    # 返回文件目录下的文件名
+    return path.abspath(path.join(path.dirname(__file__), f))
+
 def install():
-    # 下载依赖项
     if '--skip-install-requirements' not in argv:
         print('[(1/3) Install requirements]')
         pip = executable + ' -m pip'
@@ -42,17 +77,6 @@ def install():
             print('install successfully')
     else:
         print('[(1/3) Skip install requirements]')
-    # 注册玩家
-    register_user()
-    # 复制运行所需的文件
-    print('[(3/3) Copy lib]')
-    copy()
-    # 完成!
-    print('[Done]')
-
-def get_file(f):
-    # 返回文件目录下的文件名
-    return path.abspath(path.join(path.dirname(__file__), f))
 
 def install_json(f):
     MCPYPATH = search_mcpy()
@@ -100,4 +124,4 @@ def search_mcpy():
     return MCPYPATH
 
 if __name__ == '__main__':
-    install()
+    main()

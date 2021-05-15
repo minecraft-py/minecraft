@@ -53,19 +53,13 @@ else:
     log_err('you have not registered, exit')
     exit(1)
 
-# resource.path = [join(path['pack'])]
-# resource.reindex()
-# resource.add_font('minecraft.ttf')
-
-args_l = False
+# 拓展库
 libs = []
 for args in sys.argv:
-    if args == '-L':
-        args_l = True
-    if args_l and args != '-L':
-        if isdir(join(lib_path, args)) or isfile(join(lib_path, args + '.py')):
-            log_info('loading lib: %s' % args)
-            libs.append(__import__(args))
-        else:
-            log_warn("No lib '%s' found, exit" % args)
-            exit(1)
+    if args.startswith('--extlib='):
+        for lib in args[9:].split(','):
+            if isdir(join(lib_path, lib)) or isfile(join(lib_path, lib + '.py')):
+                log_info("Loading extra lib: '%s'" % lib)
+                libs.append(__import__(lib))
+            else:
+                log_warn("Extra lib '%s' not found, pass" % lib)

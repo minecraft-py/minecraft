@@ -185,7 +185,7 @@ class Player():
         elif symbol == key.D:
             self._data['strafe'][1] += 1
         elif symbol == key.I:
-             if not get_game().debug['enable']:
+             if get_game().debug['enable']:
                 get_game().debug['debug'] = not get_game().debug['debug']
                 get_game().debug['position'] = False
         elif symbol == key.E:
