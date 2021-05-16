@@ -153,7 +153,7 @@ class Game(pyglet.window.Window):
                 self.set_exclusive_mouse(False)
 
     def init_gui(self):
-        # 初始化 GUI
+        # 初始化 HUD
         self.hud = dict()
         # 生命值
         self.hud['heart'] = Heart()
@@ -180,6 +180,8 @@ class Game(pyglet.window.Window):
             self.player['active_gui'] = ''
             self.active_gui.frame.enable(False)
         else:
+            if self.player['in_gui']:
+                return
             self.set_exclusive_mouse(False)
             self.player['in_gui'] = True
             self.player['active_gui'] = name
