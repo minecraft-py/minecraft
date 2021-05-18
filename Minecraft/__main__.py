@@ -1,6 +1,6 @@
 from os import getpid, environ
 
-from Minecraft.launcher import *
+from Minecraft.start import *
 from Minecraft.utils import *
 
 def exist(p):
@@ -18,4 +18,4 @@ if __name__ == '__main__':
     except ModuleNotFoundError:
         pass
     finally:
-        MinecraftLauncher().mainloop()
+        StartScreen().mainloop()

@@ -42,7 +42,7 @@ def is_game_restore(name):
         return False
 
 
-class MinecraftLauncher(Tk):
+class StartScreen(Tk):
 
     def __init__(self):
         try:
@@ -50,21 +50,21 @@ class MinecraftLauncher(Tk):
         except:
             log_err('no display, exit')
             exit(1)
-        self.title(resource_pack.get_translation('launcher.title'))
+        self.title(resource_pack.get_translation('start.title') % VERSION['str'])
         if settings['use-theme'] != 'ttk' and not sys.platform.startswith('win'):
             theme_path = os.path.dirname(os.path.abspath(__file__)) + '/theme/' + settings['use-theme']
             self.tk.eval('lappend auto_path {%s}' % theme_path)
             ttk.Style().theme_use(settings['use-theme'])
         # 小部件
-        self.new_button = ttk.Button(self, text=resource_pack.get_translation('launcher.new'), command=self.new)
-        self.start_button = ttk.Button(self, text=resource_pack.get_translation('launcher.start'), command=self.start_game)
-        self.exit_button = ttk.Button(self, text=resource_pack.get_translation('launcher.exit'),  command=lambda: exit())
+        self.new_button = ttk.Button(self, text=resource_pack.get_translation('start.new'), command=self.new)
+        self.start_button = ttk.Button(self, text=resource_pack.get_translation('start.start'), command=self.start_game)
+        self.exit_button = ttk.Button(self, text=resource_pack.get_translation('start.exit'),  command=lambda: exit())
         self.game_item_list = Listbox(self, height=12)
         self.vscroll = ttk.Scrollbar(self, orient='vertical', command=self.game_item_list.yview)
         self.game_item_list.configure(yscrollcommand=self.vscroll.set)
-        self.repair_button = ttk.Button(self, text=resource_pack.get_translation('launcher.multiplayer'))
-        self.del_button = ttk.Button(self, text=resource_pack.get_translation('launcher.delete'), command=self.delete)
-        self.rename_button = ttk.Button(self, text=resource_pack.get_translation('launcher.rename'), command=self.rename)
+        self.repair_button = ttk.Button(self, text=resource_pack.get_translation('start.multiplayer'))
+        self.del_button = ttk.Button(self, text=resource_pack.get_translation('start.delete'), command=self.delete)
+        self.rename_button = ttk.Button(self, text=resource_pack.get_translation('start.rename'), command=self.rename)
         # 显示
         self.new_button.grid(column=0, row=0, padx=5, pady=5)
         self.start_button.grid(column=1, row=0, padx=5, pady=5)
@@ -83,24 +83,24 @@ class MinecraftLauncher(Tk):
             select = self.game_item_list.get(0)
         else:
             select = self.game_item_list.get(self.game_item_list.curselection()[0])
-        if messagebox.askyesno(message=resource_pack.get_translation('launcher.dialog.text.delete') % select,
-                title=resource_pack.get_translation('launcher.dialog.title.delete')):
+        if messagebox.askyesno(message=resource_pack.get_translation('start.dialog.text.delete') % select,
+                title=resource_pack.get_translation('start.dialog.title.delete')):
             shutil.rmtree(os.path.join(saves_path, select))
         self.refresh()
 
     def new(self, event=None):
         # 新的世界对话框
         self.new_dialog = Toplevel(self)
-        self.new_dialog.title(resource_pack.get_translation('launcher.dialog.title.new'))
-        self.new_dialog_label_name = ttk.Label(self.new_dialog, text=resource_pack.get_translation('launcher.dialog.text.name'))
+        self.new_dialog.title(resource_pack.get_translation('start.dialog.title.new'))
+        self.new_dialog_label_name = ttk.Label(self.new_dialog, text=resource_pack.get_translation('start.dialog.text.name'))
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
-        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=resource_pack.get_translation('launcher.dialog.text.seed'))
+        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=resource_pack.get_translation('start.dialog.text.seed'))
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
         self.new_dialog_label_type = ttk.Label(self.new_dialog, text='Type:')
         self.new_dialog_combobox_type = ttk.Combobox(self.new_dialog, values = ('flat', 'random'), width=8)
         self.new_dialog_combobox_type.state(['readonly'])
         self.new_dialog_button_ok = ttk.Button(self.new_dialog,
-                text=resource_pack.get_translation('launcher.dialog.text.ok'), command=self.new_world
+                text=resource_pack.get_translation('start.dialog.text.ok'), command=self.new_world
                                                )
         self.new_dialog_label_name.grid(column=0, row=0, padx=5, pady=5)
         self.new_dialog_entry_name.grid(column=1, row=0, columnspan=2, padx=5,
@@ -157,9 +157,9 @@ class MinecraftLauncher(Tk):
     def rename(self):
         # 重命名对话框
         self.rename_dialog = Toplevel(self)
-        self.rename_dialog.title(resource_pack.get_translation('launcher.dialog.title.rename'))
+        self.rename_dialog.title(resource_pack.get_translation('start.dialog.title.rename'))
         self.rename_dialog_label = ttk.Label(self.rename_dialog,
-            style='TLabel', text=resource_pack.get_translation('launcher.dialog.text.name'))
+            style='TLabel', text=resource_pack.get_translation('start.dialog.text.name'))
         self.rename_dialog_entry = ttk.Entry(self.rename_dialog)
         name = self.game_item_list.curselection()
         name = self.game_item_list.get(0) if name == () else self.game_item_list.get(name)
@@ -170,7 +170,7 @@ class MinecraftLauncher(Tk):
 
         self.old = os.path.join(saves_path, self.rename_dialog_entry.get())
         self.rename_dialog_button = ttk.Button(self.rename_dialog,
-                text=resource_pack.get_translation('launcher.dialog.text.ok'), command=send_name)
+                text=resource_pack.get_translation('start.dialog.text.ok'), command=send_name)
         self.rename_dialog_label.grid(column=0, row=0, padx=5, pady=5)
         self.rename_dialog_entry.grid(column=1, row=0, columnspan=2, padx=5, pady=5)
         self.rename_dialog_button.grid(column=2, row=1, padx=5, pady=5)

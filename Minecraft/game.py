@@ -6,39 +6,39 @@ import sys
 import time
 from threading import Thread
 
-try:
-    import pyglet
-    from pyglet import image
-    from pyglet.gl import *
-    from pyglet.shapes import Rectangle
-    from pyglet.sprite import Sprite
-    from pyglet.window import key, mouse
+#try:
+import pyglet
+from pyglet import image
+from pyglet.gl import *
+from pyglet.shapes import Rectangle
+from pyglet.sprite import Sprite
+from pyglet.window import key, mouse
 
-    from Minecraft.command.commands import commands
-    from Minecraft.gui.bag import Bag
-    from Minecraft.gui.dialogue import Dialogue
-    from Minecraft.gui.hotbar import HotBar
-    from Minecraft.gui.xpbar import XPBar
-    from Minecraft.gui.hud.heart import Heart
-    from Minecraft.gui.hud.hunger import Hunger
-    from Minecraft.gui.loading import Loading
-    from Minecraft.gui.guis import Chat, PauseMenu
-    from Minecraft.gui.widget.label import ColorLabel
-    from Minecraft.player import Player
-    import Minecraft.saves as saves
-    from Minecraft.source import libs, player, resource_pack, settings
-    from Minecraft.world.block import blocks, get_block_icon
-    from Minecraft.world.sky import change_sky_color
-    from Minecraft.world.weather import weather, choice_weather
-    from Minecraft.world.world import World
-    from Minecraft.utils.utils import *
+from Minecraft.command.commands import commands
+from Minecraft.gui.bag import Bag
+from Minecraft.gui.dialogue import Dialogue
+from Minecraft.gui.hotbar import HotBar
+from Minecraft.gui.xpbar import XPBar
+from Minecraft.gui.hud.heart import Heart
+from Minecraft.gui.hud.hunger import Hunger
+from Minecraft.gui.loading import Loading
+from Minecraft.gui.guis import Chat, PauseMenu
+from Minecraft.gui.widget.label import ColorLabel
+from Minecraft.player import Player
+import Minecraft.saves as saves
+from Minecraft.source import libs, player, resource_pack, settings
+from Minecraft.world.block import blocks, get_block_icon
+from Minecraft.world.sky import change_sky_color
+from Minecraft.world.weather import weather, choice_weather
+from Minecraft.world.world import World
+from Minecraft.utils.utils import *
 
-    import psutil
-    import pyshaders
-    import opensimplex
-except (Exception, ImportError, ModuleNotFoundError) as err:
-    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
-    exit(1)
+import psutil
+import pyshaders
+import opensimplex
+#except (Exception, ImportError, ModuleNotFoundError) as err:
+#    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
+#    exit(1)
 
 
 class Game(pyglet.window.Window):
@@ -238,9 +238,9 @@ class Game(pyglet.window.Window):
         if command not in commands:
             match = get_close_matches(s, list(commands.keys()), n=1)
             if len(match) == 1:
-                self.dialogue.add_dialogue('Command "%s" not found, do you mean "%s"?' % (command, match[0]))
+                self.dialogue.add_dialogue(resource_pack.get_translation('command.not_found')[1] % (command, match[0]))
             else:
-                self.dialogue.add_dialogue('Command "%s" not found' % command)
+                self.dialogue.add_dialogue(resource_pack.get_translation('command.not_found')[0] % command)
         else:
             try:
                 log_info('Run command: %s' % s)

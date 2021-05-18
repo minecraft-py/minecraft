@@ -1,6 +1,7 @@
 import re
 from shlex import split
 
+from Minecraft.source import resource_pack
 from Minecraft.world.block import blocks
 from Minecraft.utils.utils import *
 
@@ -26,7 +27,7 @@ class StringArgument(BaseArgument):
             if re.match(self.re_expr, value):
                 return {self.name: value}
             else:
-                raise TypeError("string '%s' is not available" % value)
+                raise TypeError(resource_pack.get_translation('command.args.string.not_available') % value)
         else:
             return {self.name: value}
 
@@ -43,7 +44,7 @@ class NumberArgument(BaseArgument):
         try:
             value = self.type(value)
         except:
-            raise TypeError("'%s' not a number" % value)
+            raise TypeError(resource_pack.get_translation('command.args.number.not_a_number') % value)
         else:
             if (self.range[0] is not None) and (self.range[1] is not None):
                 if self.range[0] <= value <= self.range[1]:
@@ -58,13 +59,13 @@ class NumberArgument(BaseArgument):
                 return {self.name: value}
             # 都没有匹配后运行到这里生成错误信息
             if (self.range[0] is not None) and (self.range[1] is not None):
-                raise TypeError('number must between %s and %s' % (self.range[0], self.range[1]))
+                raise TypeError(resource_pack.get_translation('command.args.number.not_between') % (self.range[0], self.range[1]))
             elif self.range[0] is not None:
-                raise TypeError('number %s is smaller than %s' % (value, self.range[0]))
+                raise TypeError(resource_pack.get_translation('command.args.number.is_small') % (value, self.range[0]))
             elif self.range[1] is not None:
-                raise TypeError('number %s is bigger than %s' % (value, self.range[1]))
+                raise TypeError(resource_pack.get_translation('command.args.number.is_big') % (value, self.range[1]))
             else:
-                raise TypeError('wrong number: %s' % value)
+                raise TypeError(resource_pack.get_translation('command.args.number.wrong') % value)
 
 
 class BlockArgument(BaseArgument):
@@ -77,7 +78,7 @@ class BlockArgument(BaseArgument):
         if value in blocks:
             return {self.name: value}
         else:
-            raise TypeError("not a block: '%s'" % value)
+            raise TypeError(resource_pack.get_translation('command.args.block.wrong') % value)
 
 class BooleanArgument(BaseArgument):
 
@@ -91,7 +92,7 @@ class BooleanArgument(BaseArgument):
         elif value == 'false':
             return {self.name: False}
         else:
-            raise TypeError("cannot parse '%s' to boolean" % value)
+            raise TypeError(resource_pack.get_translation('command.args.boolean.wrong') % value)
 
 
 class PositionArgument(BaseArgument):
@@ -112,12 +113,12 @@ class PositionArgument(BaseArgument):
                 try:
                     delta = int(value[1:]) - (1 if self.axis == 'y' else 0)
                 except:
-                    raise TypeError("cannot parse '%s' to a position" % value)
+                    raise TypeError(resource_pack.get_translation('command.args.position.wrong') % value)
                 else:
                     return {self.name: int(round(get_game().player['position'][ord(self.axis) - 120] + delta)) -
                             (1 if self.axis == 'y' else 0)}
             else:
-                raise TypeError("not a number: '%s'" % value)
+                raise TypeError(resource_pack.get_translation('command.args.position.wrong') % value)
 
 
 class DictArgument(BaseArgument):

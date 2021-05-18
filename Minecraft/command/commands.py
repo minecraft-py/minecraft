@@ -122,7 +122,7 @@ class CommandWeather(CommandBase):
         if self.args['type'] in weather:
             self.weather['now'] = self.args['type']
         else:
-            self.game.dialogue.add_dialogue("Weather '%s' not exist" % self.args['type'])
+            self.game.dialogue.add_dialogue(resource_pack.get_translation('command.name.weather.none_exist') % self.args['type'])
             return
         if 'duration' in self.args:
             duration = weather[self.args['type']].duration
