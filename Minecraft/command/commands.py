@@ -10,7 +10,7 @@ commands = {}
 
 class CommandGameMode(CommandBase):
 
-    formats = [ArgumentCollection(NumberArgument('mode'))]
+    formats = [ArgumentCollection(mode=NumberArgument())]
     description = ['Change game mode',
             '/gamemode <number:mode>']
 
@@ -26,7 +26,7 @@ class CommandGameMode(CommandBase):
 class CommandHelp(CommandBase):
 
     formats = [ArgumentCollection(),
-            ArgumentCollection(StringArgument('cmd'))]
+            ArgumentCollection(cmd=StringArgument())]
     description = ['Show help',
             '/help',
             '/help <string:command>']
@@ -45,7 +45,7 @@ class CommandHelp(CommandBase):
 
 class CommandSay(CommandBase):
 
-    formats = [ArgumentCollection(StringArgument('text'))]
+    formats = [ArgumentCollection(text=StringArgument())]
     description = ['Say something',
             '/say <string:str>']
 
@@ -65,18 +65,18 @@ class CommandSeed(CommandBase):
 
 class CommandSetBlock(CommandBase):
 
-    formats = [ArgumentCollection(PositionArgument('x', 'x'), PositionArgument('y', 'y'), PositionArgument('z', 'z'),
-        BlockArgument('block'))]
+    formats = [ArgumentCollection(x=PositionArgument('x'), y=PositionArgument('y'), z=PositionArgument('z'),
+        block=BlockArgument())]
     description = ['Place a block',
             '/setblock <position> <block>']
 
-    def run(self):
+    def execute(self):
         self.game.world.add_block(tuple(self.args['x'], self.args['y'], self.args['z']), self.args['block'])
 
 
 class CommandTeleport(CommandBase):
 
-    formats = [ArgumentCollection(PositionArgument('x', 'x'), PositionArgument('y', 'y'), PositionArgument('z', 'z'))]
+    formats = [ArgumentCollection(x=PositionArgument('x'), y=PositionArgument('y'), z=PositionArgument('z'))]
     description = ['Teleport',
             '/tp <position>']
 
@@ -86,8 +86,8 @@ class CommandTeleport(CommandBase):
 
 class CommandTime(CommandBase):
     formats = [ArgumentCollection(),
-            ArgumentCollection(StringArgument('op', '^(add|set)$'), NumberArgument('time', min_=0)),
-            ArgumentCollection(StringArgument('op', 'set'), StringArgument('time', '^(day|noon|night)$'))]
+            ArgumentCollection(op=StringArgument('^(add|set)$'), time=NumberArgument(min_=0)),
+            ArgumentCollection(op=StringArgument('set'), time=StringArgument('^(day|noon|night)$'))]
     description = ['Get or set the time',
             '/time',
             '/time add <int:second>',
@@ -112,8 +112,8 @@ class CommandTime(CommandBase):
 
 class CommandWeather(CommandBase):
 
-    formats = [ArgumentCollection(StringArgument('type')),
-            ArgumentCollection(StringArgument('type'), NumberArgument('duration', min_=0))]
+    formats = [ArgumentCollection(type=StringArgument()),
+            ArgumentCollection(type=StringArgument(), duration=NumberArgument(min_=0))]
     description = ['Change weather',
             '/weather <string:type> [int:duration]']
 

@@ -6,39 +6,39 @@ import sys
 import time
 from threading import Thread
 
-#try:
-import pyglet
-from pyglet import image
-from pyglet.gl import *
-from pyglet.shapes import Rectangle
-from pyglet.sprite import Sprite
-from pyglet.window import key, mouse
+try:
+    import pyglet
+    from pyglet import image
+    from pyglet.gl import *
+    from pyglet.shapes import Rectangle
+    from pyglet.sprite import Sprite
+    from pyglet.window import key, mouse
 
-from Minecraft.command.commands import commands
-from Minecraft.gui.bag import Bag
-from Minecraft.gui.dialogue import Dialogue
-from Minecraft.gui.hotbar import HotBar
-from Minecraft.gui.xpbar import XPBar
-from Minecraft.gui.hud.heart import Heart
-from Minecraft.gui.hud.hunger import Hunger
-from Minecraft.gui.loading import Loading
-from Minecraft.gui.guis import Chat, PauseMenu
-from Minecraft.gui.widget.label import ColorLabel
-from Minecraft.player import Player
-import Minecraft.saves as saves
-from Minecraft.source import libs, player, resource_pack, settings
-from Minecraft.world.block import blocks, get_block_icon
-from Minecraft.world.sky import change_sky_color
-from Minecraft.world.weather import weather, choice_weather
-from Minecraft.world.world import World
-from Minecraft.utils.utils import *
+    from Minecraft.command.commands import commands
+    from Minecraft.gui.bag import Bag
+    from Minecraft.gui.dialogue import Dialogue
+    from Minecraft.gui.hotbar import HotBar
+    from Minecraft.gui.xpbar import XPBar
+    from Minecraft.gui.hud.heart import Heart
+    from Minecraft.gui.hud.hunger import Hunger
+    from Minecraft.gui.loading import Loading
+    from Minecraft.gui.guis import Chat, PauseMenu
+    from Minecraft.gui.widget.label import ColorLabel
+    from Minecraft.player import Player
+    import Minecraft.saves as saves
+    from Minecraft.source import libs, player, resource_pack, settings
+    from Minecraft.world.block import blocks, get_block_icon
+    from Minecraft.world.sky import change_sky_color
+    from Minecraft.world.weather import weather, choice_weather
+    from Minecraft.world.world import World
+    from Minecraft.utils.utils import *
 
-import psutil
-import pyshaders
-import opensimplex
-#except (Exception, ImportError, ModuleNotFoundError) as err:
-#    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
-#    exit(1)
+    import psutil
+    import pyshaders
+    import opensimplex
+except (Exception, ImportError, ModuleNotFoundError) as err:
+    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
+    exit(1)
 
 
 class Game(pyglet.window.Window):
@@ -55,6 +55,11 @@ class Game(pyglet.window.Window):
         self.time = 0
         # 玩家
         self.player = Player()
+        # 键盘/鼠标事件
+        self.event = dict()
+        # HUD/GUI
+        self.hud = dict()
+        self.guis = dict()
         # 显示在 debug 区域的 info
         self._info_ext = list()
         self._info_ext.append('pyglet' + pyglet.version)
@@ -153,8 +158,6 @@ class Game(pyglet.window.Window):
                 self.set_exclusive_mouse(False)
 
     def init_gui(self):
-        # 初始化 HUD
-        self.hud = dict()
         # 生命值
         self.hud['heart'] = Heart()
         # 饥饿值
@@ -166,7 +169,6 @@ class Game(pyglet.window.Window):
         # 经验条
         self.hud['xpbar'] = XPBar()
         # GUI
-        self.guis = dict()
         self.active_gui = None
         self.guis['bag'] = Bag(self)
         self.guis['chat'] = Chat(self)
@@ -231,6 +233,13 @@ class Game(pyglet.window.Window):
     def set_cursor(self, cursor=None):
         # 设置光标形状
         self.set_mouse_cursor(self.get_system_mouse_cursor(cursor))
+
+    def register_event(self, event, func):
+        # 注册事件
+        if ('on_%s' % event) not in self.event:
+            self.event.setdefault('on_%s' % event, [func])
+        else:
+            self.event['on_%s' % event].append(func)
 
     def run_command(self, s):
         # 运行命令
@@ -336,9 +345,13 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_mouse_press(x, y, button, modifiers)
         self.player.on_mouse_press(x, y, button, modifiers)
+        for func in self.event.get('on_mouse_press', []):
+            func(x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
         self.active_gui.frame.on_mouse_release(x, y, button, modifiers)
+        for func in self.event.get('on_mouse_release', []):
+            func(x, y, button, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
         """
@@ -349,6 +362,8 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_mouse_motion(x, y, dx, dy)
         self.player.on_mouse_motion(x, y, dx, dy)
+        for func in self.event.get('on_mouse_motion', []):
+            func(x, y, dx, dy)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         """
@@ -358,6 +373,8 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_mouse_scroll(x, y, scroll_x, scroll_y)
         self.player.on_mouse_scroll(x, y, scroll_x, scroll_y)
+        for func in self.event.get('on_mouse_scroll', []):
+            func(x, y, scroll_x, scroll_y)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -368,6 +385,8 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_key_press(symbol, modifiers)
         self.player.on_key_press(symbol, modifiers)
+        for func in self.event.get('on_key_press', []):
+            func(symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
         """
@@ -377,6 +396,8 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_key_release(symbol, modifiers)
         self.player.on_key_release(symbol, modifiers)
+        for func in self.event.get('on_mouse_release', []):
+            func(symbol, modifiers)
 
     def on_resize(self, width, height):
         # 当窗口被调整到一个新的宽度和高度时调用

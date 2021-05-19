@@ -21,8 +21,9 @@ class Chat():
                 if text.startswith('/'):
                     self.game.run_command(text[1:])
                 else:
-                    text = text.replace('(position)', ' '.join([str(int(pos)) for pos in self.game.player['position']]))
-                    text = text.replace('(chunk)', ' '.join([str(int(pos)) for pos in self.game.sector]))
+                    # 将对话中的 ${pos}, ${chk} 替换为玩家的位置及所在区块
+                    text = text.replace('${pos}', ' '.join([str(int(pos)) for pos in self.game.player['position']]))
+                    text = text.replace('${chk}', ' '.join([str(int(pos)) for pos in self.game.sector]))
                     self.game.dialogue.add_dialogue('<%s> %s' % (player['name'], text))
             self._entry.text('')
             self.game.toggle_gui()
