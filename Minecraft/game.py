@@ -423,7 +423,6 @@ class Game(pyglet.window.Window):
         self.full_screen.height = self.height
         # 聊天区
         self.dialogue.resize(self.width, self.height)
-        # HUD
         # 在第一次调用该函数时, 所有存储 GUI 的变量都没有定义
         if not self.is_init:
             self.hud['heart'].resize(self.width, self.height)
@@ -431,6 +430,8 @@ class Game(pyglet.window.Window):
             self.hud['hotbar'].resize(self.width, self.height)
             self.hud['xpbar'].resize(self.width, self.height)
             self.active_gui.frame.on_resize(width, height)
+            for func in self.event.get('on_resize', []):
+                func(width, height)
 
     def set_2d(self):
         # 使 OpenGL 绘制二维图形
@@ -488,6 +489,8 @@ class Game(pyglet.window.Window):
         if self.is_init:
             self.world.init_world()
             self.init_gui()
+            for func in self.event.get('on_init', []):
+                func()
             self.is_init = False
 
     def on_text(self, text):

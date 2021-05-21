@@ -3,7 +3,7 @@
 
 Making open source Minecraft in python.
 
-Playing and modifying minecraft according to your needs, will it be legal?
+Playing and modifying Minecraft according to your needs, will it be legal?
 Our wish is that you can play and modify your game legally. No copyright issues.
 
 Free and transparent code is the basis of our friendly project, visit our official [website](https://minecraft-in-python.github.io) for more information.
@@ -26,19 +26,14 @@ python3 -m Minecraft
 ```
 
 # Short-term objectives
-The following to-do list, is a list of features to be implemented in Minecraft:
+The following TODO list, is a list of features to be implemented in Minecraft:
 
-- [x] Control the character
-- [x] More blocks
-- [x] Interact with blocks
-- [x] World generation
 - [x] Random world generation
-- [x] A rudimentary file selector
-- [x] i18n (some languages)
-- [x] Saving user changes to worlds
-- [ ] More terrain
+- [x] i18n (more languages)
+- [ ] Entities
 - [ ] Chunk system
-- [ ] Use the `E` key to open the bag
+- [ ] More terrain
+- [ ] Multiplayer
 - [ ] ...
 
 Of course, it doesn't end there, these points will evolve and change over time.
