@@ -138,7 +138,7 @@ class StartScreen(Tk):
                 world.close()
                 world_level = {'data_version': VERSION['data'], 'seed': seed, 'type': self.new_dialog_combobox_type.get(),
                         'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
-                json.dump(world_info, open(os.path.join(saves_path, name, 'level.json'), 'w+'))
+                json.dump(world_level, open(os.path.join(saves_path, name, 'level.json'), 'w+'))
                 os.mkdir(os.path.join(saves_path, name, 'players'))
                 player_info = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
                 json.dump(player_info, open(os.path.join(saves_path, name, 'players', '%s.json' % player['id']), 'w+'))
