@@ -483,9 +483,10 @@ class Game(pyglet.window.Window):
                 self.full_screen.color = (200, 0, 0)
                 self.full_screen.opacity = 100
                 self.full_screen.draw()
-        self.set_2d()
-        if not self.player['hide_hud']:
-            self.draw_label()
+            if not self.player['hide_hud']:
+                self.draw_label()
+            for func in self.event.get('on_draw', []):
+                func()
         if self.is_init:
             self.world.init_world()
             self.init_gui()
@@ -528,7 +529,7 @@ class Game(pyglet.window.Window):
                 self.label['actionbar'].text = self.player['die_reason']
                 self.die_info.draw()
                 self.label['actionbar'].draw()
-            elif self.debug['debug']:
+            elif self.debug['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)
