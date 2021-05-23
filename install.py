@@ -3,6 +3,7 @@
 from json import dump, load
 from os import chmod, environ, mkdir, makedirs, path, system
 from re import match
+from shlex import join
 from shutil import copyfile, copytree, rmtree
 from sys import executable, platform, argv
 from stat import S_IXUSR
@@ -41,7 +42,7 @@ def copy():
     rmtree(get_file('default'))
 
 def gen_script():
-    if '--gen-script':
+    if '--gen-script' in argv:
         print('[(4/3) Generate startup script]')
         script = str()
         name = get_file('run.sh')
@@ -65,7 +66,7 @@ def get_file(f):
 def install():
     if '--skip-install-requirements' not in argv:
         print('[(1/3) Install requirements]')
-        pip = executable + ' -m pip'
+        pip = '"%s" -m pip' % executable
         if '--hide-output' in argv:
             code = system('%s install -U -r %s >> %s' % (pip, get_file('requirements.txt'), path.devnull))
         else:
