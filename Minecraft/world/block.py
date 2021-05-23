@@ -238,7 +238,7 @@ class CraftTable(Block):
     textures = 'crafting_table_top', 'planks_oak', 'crafting_table_front', 'crafting_table_side'
 
     def on_use(self):
-        get_game().toogle_gui('bag')
+        get_game().toggle_gui('bag')
 
 class Dirt(Block):
     textures = 'dirt',
