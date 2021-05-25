@@ -22,7 +22,7 @@ cd Minecraft
 ./install.py
 
 # Run
-python3 -m Minecraft
+python3 -m minecraft
 ```
 
 # Short-term objectives

@@ -2,15 +2,13 @@
 
 from json import dump, load
 from os import chmod, environ, mkdir, makedirs, path, system
-from re import match
+from re import match, search
 from shlex import join
 from shutil import copyfile, copytree, rmtree
 from sys import executable, platform, argv
 from stat import S_IXUSR
 import uuid
 from zipfile import ZipFile
-
-VERSION = '0.3.2'
 
 def main():
     # 下载依赖项
@@ -27,18 +25,19 @@ def main():
 def copy():
     print('[(3/3) Copy lib]')
     MCPYPATH = search_mcpy()
+    version = get_version()
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
     install_json('settings.json')
     for name in ['log', 'saves', 'screenshot', 'resource-pack']:
         if not path.isdir(path.join(MCPYPATH, name)):
             mkdir(path.join(MCPYPATH, name))
-    if not path.isdir(path.join(MCPYPATH, 'lib', VERSION)):
-        makedirs(path.join(MCPYPATH, 'lib', VERSION))
-    if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION)):
-        rmtree(path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION))
+    if not path.isdir(path.join(MCPYPATH, 'lib', version)):
+        makedirs(path.join(MCPYPATH, 'lib', version))
+    if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default-%s' % version)):
+        rmtree(path.join(MCPYPATH, 'resource-pack', 'default-%s' % version))
     ZipFile(path.join(get_file('data'), 'default.zip')).extractall(path.dirname(__file__))
-    copytree(get_file('default'), path.join(MCPYPATH, 'resource-pack', 'default-%s' % VERSION))
+    copytree(get_file('default'), path.join(MCPYPATH, 'resource-pack', 'default-%s' % version))
     rmtree(get_file('default'))
 
 def gen_script():
@@ -52,7 +51,7 @@ def gen_script():
         else:
             script += '#!/usr/bin/env sh\n'
         script += 'cd %s\n' % path.dirname(get_file('install.py'))
-        script += '%s -m Minecraft\n' % executable
+        script += '%s -m minecraft\n' % executable
         with open(name, 'w+') as f:
             f.write(script)
             print("startup script is '%s'" % name)
@@ -62,6 +61,17 @@ def gen_script():
 def get_file(f):
     # 返回文件目录下的文件名
     return path.abspath(path.join(path.dirname(__file__), f))
+
+def get_version():
+    f = open(path.join(get_file('minecraft'), 'utils', 'utils.py'))
+    start_find = False
+    for line in f.readlines():
+        if line.strip() == 'VERSION = {':
+            start_find = True
+        elif (line.strip() == '}') and start_find:
+            start_find = False
+        elif line.strip().startswith("'str'") and start_find:
+            return search(r"\d(\.\d+){2}(\-alpha|\-beta|\-pre\d+)?", line.strip()).group()
 
 def install():
     if '--skip-install-requirements' not in argv:
