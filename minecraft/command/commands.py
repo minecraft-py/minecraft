@@ -2,6 +2,7 @@ import random
 
 from minecraft.command.base import CommandBase
 from minecraft.command.arguments import *
+from minecraft.source import resource_pack
 from minecraft.world.sky import change_sky_color
 from minecraft.world.weather import weather
 
@@ -11,8 +12,9 @@ commands = {}
 class CommandGameMode(CommandBase):
 
     formats = [ArgumentCollection(mode=NumberArgument())]
-    description = ['Change game mode',
-            '/gamemode <number:mode>']
+    description = [resource_pack.get_translation('command.name.gamemode.help'),
+            '/gamemode <number:mode>'
+        ]
 
     def execute(self):
         if self.args['mode'] in [0, 1]:
@@ -27,9 +29,10 @@ class CommandHelp(CommandBase):
 
     formats = [ArgumentCollection(),
             ArgumentCollection(cmd=StringArgument())]
-    description = ['Show help',
+    description = [resource_pack.get_translation('command.name.help.help'),
             '/help',
-            '/help <string:command>']
+            '/help <string:command>'
+        ]
 
     def execute(self):
         global commands
@@ -46,8 +49,9 @@ class CommandHelp(CommandBase):
 class CommandSay(CommandBase):
 
     formats = [ArgumentCollection(text=StringArgument())]
-    description = ['Say something',
-            '/say <string:str>']
+    description = [resource_pack.get_translation('command.name.say.help'),
+            '/say <string:str>'
+        ]
 
     def execute(self):
         self.game.dialogue.add_dialogue(self.args['text'])
@@ -56,8 +60,9 @@ class CommandSay(CommandBase):
 class CommandSeed(CommandBase):
 
     formats = [ArgumentCollection()]
-    description = ['Print the world seed',
-            '/seed']
+    description = [resource_pack.get_translation('command.name.seed.help'),
+            '/seed'
+        ]
 
     def execute(self):
         self.game.dialogue.add_dialogue('Seed: ' + str(self.game.world.seed))
@@ -67,8 +72,9 @@ class CommandSetBlock(CommandBase):
 
     formats = [ArgumentCollection(x=PositionArgument('x'), y=PositionArgument('y'), z=PositionArgument('z'),
         block=BlockArgument())]
-    description = ['Place a block',
-            '/setblock <position> <block>']
+    description = [resource_pack.get_translation('command.name.setblock.help'),
+            '/setblock <position> <block>'
+        ]
 
     def execute(self):
         self.game.world.add_block(tuple(self.args['x'], self.args['y'], self.args['z']), self.args['block'])
@@ -77,8 +83,9 @@ class CommandSetBlock(CommandBase):
 class CommandTeleport(CommandBase):
 
     formats = [ArgumentCollection(x=PositionArgument('x'), y=PositionArgument('y'), z=PositionArgument('z'))]
-    description = ['Teleport',
-            '/tp <position>']
+    description = [resource_pack.get_translation('command.name.teleport'),
+            '/tp <position>'
+        ]
 
     def execute(self):
         self.game.player['position'] = tuple(self.args.values())
@@ -88,11 +95,12 @@ class CommandTime(CommandBase):
     formats = [ArgumentCollection(),
             ArgumentCollection(op=StringArgument('^(add|set)$'), time=NumberArgument(min_=0)),
             ArgumentCollection(op=StringArgument('set'), time=StringArgument('^(day|noon|night)$'))]
-    description = ['Get or set the time',
+    description = [resource_pack.get_translation('command.name.time.help'),
             '/time',
             '/time add <int:second>',
             '/time set <int:time>',
-            '/time set <str:day|noon|night>']
+            '/time set <str:day|noon|night>'
+        ]
 
     def execute(self):
         if 'op' not in self.args:
@@ -114,8 +122,9 @@ class CommandWeather(CommandBase):
 
     formats = [ArgumentCollection(type=StringArgument()),
             ArgumentCollection(type=StringArgument(), duration=NumberArgument(min_=0))]
-    description = ['Change weather',
-            '/weather <string:type> [int:duration]']
+    description = [resource_pack.get_translation('command.name.weather.help'),
+            '/weather <string:type> [int:duration]'
+        ]
 
     def execute(self):
         self.weather = {'now': '', 'duration': 0}

@@ -11,7 +11,7 @@ class Chat():
 
     def __init__(self, game):
         self.game = game
-        self.frame = Frame(self.game, True)
+        self.frame = Frame(self.game)
         self._entry = DialogueEntry()
         self.frame.add_widget(self._entry)
 
