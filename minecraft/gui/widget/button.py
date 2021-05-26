@@ -28,9 +28,9 @@ class Button(Widget):
 
     def _update(self):
         width, height = get_size()
-        self._sprite.position = self._x, height - self._y
+        self._sprite.position = self._x, self._y
         self._label.x = self._x + self._width / 2
-        self._label.y = height - self._y + self._height / 2
+        self._label.y = self._y + self._height / 2
 
     def draw(self):
         self._sprite.scale_x = self._width / 200

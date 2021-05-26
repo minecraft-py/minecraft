@@ -5,40 +5,43 @@ import random
 import sys
 import time
 from threading import Thread
+import traceback
+import uuid
 
-#try:
-import pyglet
-from pyglet import image
-from pyglet.gl import *
-from pyglet.shapes import Rectangle
-from pyglet.sprite import Sprite
-from pyglet.window import key, mouse
+try:
+    import pyglet
+    from pyglet import image
+    from pyglet.gl import *
+    from pyglet.shapes import Rectangle
+    from pyglet.sprite import Sprite
+    from pyglet.window import key, mouse
 
-from minecraft.command.commands import commands
-from minecraft.gui.bag import Bag
-from minecraft.gui.dialogue import Dialogue
-from minecraft.gui.hotbar import HotBar
-from minecraft.gui.xpbar import XPBar
-from minecraft.gui.hud.heart import Heart
-from minecraft.gui.hud.hunger import Hunger
-from minecraft.gui.loading import Loading
-from minecraft.gui.guis import Chat, PauseMenu
-from minecraft.gui.widget.label import ColorLabel
-from minecraft.player import Player
-import minecraft.saves as saves
-from minecraft.source import libs, player, resource_pack, settings
-from minecraft.world.block import blocks, get_block_icon
-from minecraft.world.sky import change_sky_color
-from minecraft.world.weather import weather, choice_weather
-from minecraft.world.world import World
-from minecraft.utils.utils import *
+    from minecraft.command.commands import commands
+    from minecraft.gui.bag import Bag
+    from minecraft.gui.dialogue import Dialogue
+    from minecraft.gui.hotbar import HotBar
+    from minecraft.gui.xpbar import XPBar
+    from minecraft.gui.hud.heart import Heart
+    from minecraft.gui.hud.hunger import Hunger
+    from minecraft.gui.loading import Loading
+    from minecraft.gui.guis import Chat, PauseMenu
+    from minecraft.gui.widget.label import ColorLabel
+    from minecraft.player import Player
+    import minecraft.saves as saves
+    from minecraft.source import libs, player, resource_pack, settings
+    from minecraft.world.block import blocks, get_block_icon
+    from minecraft.world.sky import change_sky_color
+    from minecraft.world.weather import weather, choice_weather
+    from minecraft.world.world import World
+    from minecraft.utils.utils import *
 
-import psutil
-import pyshaders
-import opensimplex
-#except (Exception, ImportError, ModuleNotFoundError) as err:
-#    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
-#    exit(1)
+    import psutil
+    import pyshaders
+    import opensimplex
+except (Exception, ImportError, ModuleNotFoundError) as err:
+    print('[ERR  %s client] Some dependencies are not installed' % time.strftime('%H:%M:%S'))
+    traceback.print_exc()
+    exit(1)
 
 
 class Game(pyglet.window.Window):
@@ -237,9 +240,15 @@ class Game(pyglet.window.Window):
     def register_event(self, event, func):
         # 注册事件
         if ('on_%s' % event) not in self.event:
-            self.event.setdefault('on_%s' % event, [func])
+            self.event.setdefault('on_%s' % event, {str(uuid.uuid4()): func})
         else:
-            self.event['on_%s' % event].append(func)
+            self.event.get('on_%s' % event).setdefault(str(uuid.uuid4()), func)
+        return (event, name)
+
+    def remove_event(self, index):
+        # 删除事件
+        # 参数为 register_event 返回值
+        del self.event['on_%s' % index[0]][index[1]]
 
     def run_command(self, s):
         # 运行命令
@@ -345,12 +354,12 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_mouse_press(x, y, button, modifiers)
         self.player.on_mouse_press(x, y, button, modifiers)
-        for func in self.event.get('on_mouse_press', []):
+        for func in self.event.get('on_mouse_press', {}).values():
             func(x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
         self.active_gui.frame.on_mouse_release(x, y, button, modifiers)
-        for func in self.event.get('on_mouse_release', []):
+        for func in self.event.get('on_mouse_release', {}).values():
             func(x, y, button, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -362,7 +371,7 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_mouse_motion(x, y, dx, dy)
         self.player.on_mouse_motion(x, y, dx, dy)
-        for func in self.event.get('on_mouse_motion', []):
+        for func in self.event.get('on_mouse_motion', {}).values():
             func(x, y, dx, dy)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
@@ -373,7 +382,7 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_mouse_scroll(x, y, scroll_x, scroll_y)
         self.player.on_mouse_scroll(x, y, scroll_x, scroll_y)
-        for func in self.event.get('on_mouse_scroll', []):
+        for func in self.event.get('on_mouse_scroll', {}).values():
             func(x, y, scroll_x, scroll_y)
 
     def on_key_press(self, symbol, modifiers):
@@ -385,7 +394,7 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_key_press(symbol, modifiers)
         self.player.on_key_press(symbol, modifiers)
-        for func in self.event.get('on_key_press', []):
+        for func in self.event.get('on_key_press', {}).values():
             func(symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
@@ -396,7 +405,7 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_key_release(symbol, modifiers)
         self.player.on_key_release(symbol, modifiers)
-        for func in self.event.get('on_mouse_release', []):
+        for func in self.event.get('on_mouse_release', {}).values():
             func(symbol, modifiers)
 
     def on_resize(self, width, height):
@@ -430,7 +439,7 @@ class Game(pyglet.window.Window):
             self.hud['hotbar'].resize(self.width, self.height)
             self.hud['xpbar'].resize(self.width, self.height)
             self.active_gui.frame.on_resize(width, height)
-            for func in self.event.get('on_resize', []):
+            for func in self.event.get('on_resize', {}).values():
                 func(width, height)
 
     def set_2d(self):
@@ -485,12 +494,12 @@ class Game(pyglet.window.Window):
                 self.full_screen.draw()
             if not self.player['hide_hud']:
                 self.draw_label()
-            for func in self.event.get('on_draw', []):
+            for func in self.event.get('on_draw', {}).values():
                 func()
         if self.is_init:
             self.world.init_world()
             self.init_gui()
-            for func in self.event.get('on_init', []):
+            for func in self.event.get('on_init', {}).values():
                 func()
             self.is_init = False
 

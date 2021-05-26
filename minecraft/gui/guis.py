@@ -51,6 +51,7 @@ class PauseMenu():
             exit(0)
 
         def on_resize(width, height):
+            h = get_size()[1]
             self._back_button.x = (self.game.width - 200) / 2
             self._back_button.y = 100
             self._exit_button.x = (self.game.width - 200) / 2

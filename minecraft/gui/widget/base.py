@@ -1,3 +1,5 @@
+from minecraft.utils.utils import *
+
 from pyglet.event import EventDispatcher
 
 
@@ -33,7 +35,7 @@ class Widget(EventDispatcher):
 
     @y.setter
     def y(self, y):
-        self._y = y
+        self._y = get_size()[1] - y
         self._update()
 
     @property
