@@ -35,7 +35,9 @@ class ZipfileResourcePack(ResourcePack):
     def get_resource(self, path):
         if path.find('/') != -1:
             file_type = path.split('/')[0]
-            if file_type == 'textures':
+            if file_type == 'text':
+                return self.zipfile.open(path + '.zip').read()
+            elif file_type == 'textures':
                 return load_image('image.png', file=self.zipfile.open(path + '.png'))
             else:
                 return json.load(self.zipfile.open(path + '.json'))

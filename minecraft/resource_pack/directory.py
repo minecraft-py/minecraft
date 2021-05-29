@@ -33,7 +33,9 @@ class DirectoryResourcePack(ResourcePack):
     def get_resource(self, path):
         if path.find('/') != -1:
             file_type = path.split('/')[0]
-            if file_type == 'textures':
+            if file_type == 'text':
+                return open(os.path.join(self.base_dir, path + '.txt'), 'r+').read()
+            elif file_type == 'textures':
                 return load_image('image.png', file=open(os.path.join(self.base_dir, path + '.png'), 'rb'))
             else:
                 return json.load(open(os.path.join(self.base_dir, path + '.json'), 'r+', encoding='utf-8'))
