@@ -63,6 +63,7 @@ def get_file(f):
     return path.abspath(path.join(path.dirname(__file__), f))
 
 def get_version():
+    # 从 minecraft/utils/utils.py 文件里面把版本号"抠"出来
     f = open(path.join(get_file('minecraft'), 'utils', 'utils.py'))
     start_find = False
     for line in f.readlines():
@@ -71,7 +72,7 @@ def get_version():
         elif (line.strip() == '}') and start_find:
             start_find = False
         elif line.strip().startswith("'str'") and start_find:
-            return search(r"\d(\.\d+){2}(\-alpha|\-beta|\-pre\d+)?", line.strip()).group()
+            return search(r"\d(\.\d+){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
 
 def install():
     if '--skip-install-requirements' not in argv:

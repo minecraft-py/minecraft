@@ -18,6 +18,7 @@ from minecraft.source import saves_path, player, settings
 log_info('Start game')
 
 import pyglet
+from pyglet.gl import gl_info
 
 def is_game_restore(name):
     """
@@ -207,10 +208,11 @@ class StartScreen(Tk):
             pass
         except:
             name = time.strftime('error-%Y-%m-%d_%H.%M.%S.log')
-            log_err('Catch error, savesd in: log/%s' % name)
+            log_err('Catch error, saved in: log/%s' % name)
             with open(os.path.join(search_mcpy(), 'log', name), 'a+') as err_log:
                 err_log.write('Minecraft version: %s\n' % VERSION['str'])
                 err_log.write('python version: %s for %s\n' % ('.'.join([str(s) for s in sys.version_info[:3]]), sys.platform))
+                err_log.write('pyglet version: %s(OpenGL %s)\n' % (pyglet.version, gl_info.get_version()))
                 err_log.write('time: %s\n' % time.ctime())
                 err_log.write('save: %s\n' % select)
                 err_log.write('traceback:\n' + '=' * 34 + '\n')
