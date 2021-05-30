@@ -189,7 +189,7 @@ class Player():
                 get_game().debug['debug'] = not get_game().debug['debug']
                 get_game().debug['position'] = False
         elif symbol == key.E:
-            get_game().toggle_gui('bag')
+            get_game().toggle_gui('inventory')
         elif symbol == key.SPACE:
             if self._data['key_press']['space']['count'] == 1:
                 if time.time() - self._data['key_press']['space']['last'] <= 0.1:

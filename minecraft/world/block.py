@@ -234,11 +234,11 @@ class Brick(Block):
     textures = 'brick',
 
 
-class CraftTable(Block):
+class CraftingTable(Block):
     textures = 'crafting_table_top', 'planks_oak', 'crafting_table_front', 'crafting_table_side'
 
     def on_use(self):
-        get_game().toggle_gui('bag')
+        get_game().toggle_gui('crafting_table')
 
 class Dirt(Block):
     textures = 'dirt',
@@ -310,7 +310,7 @@ class Sand(Block):
 blocks = {}
 blocks['bedrock'] = Bedrock()
 blocks['brick'] = Brick()
-blocks['craft_table'] = CraftTable()
+blocks['crafting_table'] = CraftingTable()
 blocks['dirt'] = Dirt()
 blocks['glass'] = Glass()
 blocks['grass'] = Grass()

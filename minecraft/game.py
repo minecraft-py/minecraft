@@ -17,9 +17,10 @@ try:
     from pyglet.window import key, mouse
 
     from minecraft.command.commands import commands
-    from minecraft.gui.bag import Bag
     from minecraft.gui.dialogue import Dialogue
     from minecraft.gui.hotbar import HotBar
+    from minecraft.gui.container.crafting_table import CraftingTable
+    from minecraft.gui.container.inventory import Inventory
     from minecraft.gui.xpbar import XPBar
     from minecraft.gui.hud.heart import Heart
     from minecraft.gui.hud.hunger import Hunger
@@ -71,7 +72,7 @@ class Game(pyglet.window.Window):
         # 天气(现在天气, 持续时间)
         self.weather = {'now': 'clear', 'duration': 0}
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'craft_table', 'glass']
+        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'crafting_table', 'glass']
         self.inventory += [None] * (9 - len(self.inventory))
         # 数字键列表
         self.num_keys = [key._1, key._2, key._3, key._4, key._5, key._6, key._7, key._8, key._9, key._0]
@@ -80,7 +81,7 @@ class Game(pyglet.window.Window):
         # 聊天区
         self.dialogue = Dialogue()
         # 设置图标
-        self.set_icon(get_block_icon(blocks['craft_table'], 64))
+        self.set_icon(get_block_icon(blocks['crafting_table'], 64))
         # 窗口最小为 800x600
         self.set_minimum_size(800, 600)
         # 这个十字在屏幕中央
@@ -173,8 +174,9 @@ class Game(pyglet.window.Window):
         self.hud['xpbar'] = XPBar()
         # GUI
         self.active_gui = None
-        self.guis['bag'] = Bag(self)
         self.guis['chat'] = Chat(self)
+        self.guis['crafting_table'] = CraftingTable(self)
+        self.guis['inventory'] = Inventory(self)
         self.guis['pause'] = PauseMenu(self)
         self.toggle_gui('pause')
 
