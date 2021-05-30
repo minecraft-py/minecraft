@@ -2,6 +2,8 @@ import atexit
 import math
 import time
 
+start_time = time.strftime('%Y-%m-%d_%H.%M.%S')
+log_str = list()
 _have_color = None
 try:
     from colorama import Fore, Style, init
@@ -40,6 +42,7 @@ def get_game():
 
 def log_err(text, name='client'):
     # 打印错误信息
+    log_str.append('[ERR  %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
     if _have_color:
         print('%s[ERR  %s %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
     else:
@@ -47,6 +50,7 @@ def log_err(text, name='client'):
 
 def log_info(text, name='client'):
     # 打印信息
+    log_str.append('[INFO %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
     if _have_color:
         print('%s[INFO %s %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
     else:
@@ -54,6 +58,7 @@ def log_info(text, name='client'):
 
 def log_warn(text, name='client'):
     # 打印警告信息
+    log_str.append('[WARN %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
     if _have_color:
         print('%s[WARN %s %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
     else:
@@ -68,7 +73,13 @@ def normalize(position):
 
 @atexit.register
 def on_exit():
+    _os  = __import__('os')
+    log_info("Save logs to 'log/log-%s.log'" % start_time)
     log_info('Exit')
+    with open(_os.path.join(search_mcpy(), 'log', 'log-%s.log' % start_time), 'w+') as log:
+        log.write('\n'.join(log_str))
+    with open(_os.path.join(search_mcpy(), 'log', 'log-latest.log'), 'w+') as latest_log:
+        latest_log.write('\n'.join(log_str))
 
 def pos2str(position):
     # 将坐标转换为字符串

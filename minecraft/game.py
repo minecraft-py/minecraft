@@ -239,10 +239,11 @@ class Game(pyglet.window.Window):
 
     def register_event(self, event, func):
         # 注册事件
+        name = str(uuid.uuid4())
         if ('on_%s' % event) not in self.event:
-            self.event.setdefault('on_%s' % event, {str(uuid.uuid4()): func})
+            self.event.setdefault('on_%s' % event, {name: func})
         else:
-            self.event.get('on_%s' % event).setdefault(str(uuid.uuid4()), func)
+            self.event.get('on_%s' % event).setdefault(name, func)
         return (event, name)
 
     def remove_event(self, index):

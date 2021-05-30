@@ -208,15 +208,16 @@ class StartScreen(Tk):
         except:
             name = time.strftime('error-%Y-%m-%d_%H.%M.%S.log')
             log_err('Catch error, savesd in: log/%s' % name)
-            err_log = open(os.path.join(search_mcpy(), 'log', name), 'a+')
-            err_log.write('Minecraft version: %s\n' % VERSION['str'])
-            err_log.write('python version: %s for %s\n' % ('.'.join([str(s) for s in sys.version_info[:3]]), sys.platform))
-            err_log.write('time: %s\n' % time.ctime())
-            err_log.write('save: %s\n' % select)
-            err_log.write('traceback:\n' + '=' * 34 + '\n')
-            traceback.print_exc(file=err_log)
-            err_log.write('=' * 34 + '\n')
-            err_log.flush()
-            err_log.close()
+            with open(os.path.join(search_mcpy(), 'log', name), 'a+') as err_log:
+                err_log.write('Minecraft version: %s\n' % VERSION['str'])
+                err_log.write('python version: %s for %s\n' % ('.'.join([str(s) for s in sys.version_info[:3]]), sys.platform))
+                err_log.write('time: %s\n' % time.ctime())
+                err_log.write('save: %s\n' % select)
+                err_log.write('traceback:\n' + '=' * 34 + '\n')
+                traceback.print_exc(file=err_log)
+                err_log.write('=' * 34 + '\n')
+            with open(os.path.join(search_mcpy(), 'log', 'error-latest.log'), 'w+') as latest_log:
+                with open(os.path.join(search_mcpy(), 'log', name), 'r+') as err_log:
+                    latest_log.write(err_log.read())
             exit(1)
 
