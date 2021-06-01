@@ -1,6 +1,6 @@
 import random
 
-from minecraft.entity.base import EntityBase
+from minecraft.entity.base import Entity
 from minecraft.source import resource_pack
 from minecraft.utils.utils import *
 
