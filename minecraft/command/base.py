@@ -1,6 +1,6 @@
 from shlex import split
 
-from minecraft.world.block import blocks
+from minecraft.block import blocks
 from minecraft.utils.utils import *
 
 

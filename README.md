@@ -30,7 +30,7 @@ The following TODO list, is a list of features to be implemented in Minecraft:
 
 - [x] Random world generation
 - [x] i18n (more languages)
-- [ ] Entities
+- [x] Entities(TNT)
 - [ ] Chunk system
 - [ ] More terrain
 - [ ] Multiplayer

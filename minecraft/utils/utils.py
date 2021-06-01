@@ -26,6 +26,29 @@ def cube_vertices(x, y, z, n):
             x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
         ]
 
+def tex_coords(top, bottom, side0, side1=None, n=1):
+
+    def tex_coord(x, y):
+        m = 1.0 / n
+        dx = x * m
+        dy = y * m
+        return dx, dy, dx + m, dy, dx + m, dy + m, dx, dy + m
+
+    top = tex_coord(*top)
+    bottom = tex_coord(*bottom)
+    side0 = tex_coord(*side0)
+    if side1 is not None:
+        side1 =tex_coord(*side1)
+    result = list()
+    result.extend(top)
+    result.extend(bottom)
+    if side1 is None:
+        result.extend(side0)
+    else:
+        result.extend(side1)
+    result.extend(side0 * 3)
+    return result
+
 def get_size():
     # 返回窗口大小
     for w in pyglet.canvas.get_display().get_windows():

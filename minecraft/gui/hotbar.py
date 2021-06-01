@@ -1,6 +1,7 @@
 from minecraft.gui.base import GUI
 from minecraft.source import resource_pack
-from minecraft.world.block import blocks, get_block_icon
+from minecraft.block import blocks
+from minecraft.block.base import get_block_icon
 from minecraft.utils.utils import *
 
 import pyglet

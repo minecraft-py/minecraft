@@ -2,7 +2,7 @@ import re
 from shlex import split
 
 from minecraft.source import resource_pack
-from minecraft.world.block import blocks
+from minecraft.block import blocks
 from minecraft.utils.utils import *
 
 

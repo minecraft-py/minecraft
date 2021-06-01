@@ -6,7 +6,7 @@ import time
 
 import minecraft.saves as saves
 from minecraft.source import resource_pack
-from minecraft.world.block import blocks
+from minecraft.block import blocks
 from minecraft.utils.utils import *
 
 from opensimplex import OpenSimplex
@@ -129,6 +129,7 @@ class World(object):
             if block in blocks:
                 self.world[position] = blocks[block]
                 self.world[position].on_build(position)
+                self.world[position].position = position
             else:
                 # 将不存在的方块替换为 missing
                 self.world[position] = blocks['missing']

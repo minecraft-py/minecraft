@@ -16,7 +16,10 @@ try:
     from pyglet.sprite import Sprite
     from pyglet.window import key, mouse
 
+    import minecraft.saves as saves
     from minecraft.command.commands import commands
+    from minecraft.entity.manager import EntityManager
+    from minecraft.entity.player.player import Player
     from minecraft.gui.dialogue import Dialogue
     from minecraft.gui.hotbar import HotBar
     from minecraft.gui.container.crafting_table import CraftingTable
@@ -27,10 +30,9 @@ try:
     from minecraft.gui.loading import Loading
     from minecraft.gui.guis import Chat, PauseMenu
     from minecraft.gui.widget.label import ColorLabel
-    from minecraft.player import Player
-    import minecraft.saves as saves
     from minecraft.source import libs, player, resource_pack, settings
-    from minecraft.world.block import blocks, get_block_icon
+    from minecraft.block import blocks
+    from minecraft.block.base import get_block_icon
     from minecraft.world.sky import change_sky_color
     from minecraft.world.weather import weather, choice_weather
     from minecraft.world.world import World
@@ -59,6 +61,8 @@ class Game(pyglet.window.Window):
         self.time = 0
         # 玩家
         self.player = Player()
+        # 实体
+        self.entities = EntityManager()
         # 键盘/鼠标事件
         self.event = dict()
         # HUD/GUI
@@ -72,7 +76,7 @@ class Game(pyglet.window.Window):
         # 天气(现在天气, 持续时间)
         self.weather = {'now': 'clear', 'duration': 0}
         # 玩家可以放置的方块, 使用数字键切换
-        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'crafting_table', 'glass']
+        self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'crafting_table', 'glass', 'tnt']
         self.inventory += [None] * (9 - len(self.inventory))
         # 数字键列表
         self.num_keys = [key._1, key._2, key._3, key._4, key._5, key._6, key._7, key._8, key._9, key._0]
@@ -279,6 +283,7 @@ class Game(pyglet.window.Window):
         """
         self.world.process_queue()
         self.dialogue.update()
+        self.entities.on_update(dt)
         sector = sectorize(self.player['position'])
         self.time += dt
         self.weather['duration'] -= dt
@@ -481,6 +486,7 @@ class Game(pyglet.window.Window):
             self.set_3d()
             glColor3d(1, 1, 1)
             self.world.draw()
+            self.entities.on_draw()
             self.draw_focused_block()
             weather[self.weather['now']].draw()
             self.set_2d()

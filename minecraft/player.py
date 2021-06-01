@@ -135,6 +135,7 @@ class Player():
                         block.on_use()
                     elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:
                         get_game().world.add_block(previous, get_game().inventory[self._data['now_block']])
+                        get_game().world.get(previous).position = previous
             elif (button == pyglet.window.mouse.LEFT):
                 if block.hardness > 0 and (not self._data['die']) and (not self._data['in_gui']):
                     get_game().world.remove_block(now)
