@@ -1,5 +1,6 @@
 # Minecraft
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.com/Minecraft-in-python/Minecraft.svg?branch=master)](https://travis-ci.com/Minecraft-in-python/Minecraft)
 
 Making open source Minecraft in python.
 

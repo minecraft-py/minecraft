@@ -11,6 +11,9 @@ import uuid
 from zipfile import ZipFile
 
 def main():
+    if '--travis-ci' in argv:
+        print('[Travis CI: build]')
+        print('[Travis CI: version: %s]' % get_version())
     # 下载依赖项
     install()
     # 注册玩家
@@ -75,7 +78,7 @@ def get_version():
             return search(r"\d(\.\d+){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
 
 def install():
-    if '--skip-install-requirements' not in argv:
+    if ('--skip-install-requirements' not in argv) and ('--travis-ci' not in argv):
         print('[(1/3) Install requirements]')
         pip = '"%s" -m pip' % executable
         if '--hide-output' in argv:
@@ -105,7 +108,7 @@ def install_json(f):
 
 def register_user():
     # 注册
-    if '--skip-register' not in argv:
+    if ('--skip-register' not in argv) and ('--travis-ci' not in argv):
         print('[(2/3) Register]')
         MCPYPATH = search_mcpy()
         if not path.isdir(MCPYPATH):
