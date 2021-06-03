@@ -11,4 +11,3 @@ install:
   - pip3 install -r requirements.txt
 script:
   - python3 install.py --travis-ci --gen-script
-  - cat run.sh
