@@ -5,15 +5,21 @@ from os import chmod, environ, mkdir, makedirs, path, system
 from re import match, search
 from shlex import join
 from shutil import copyfile, copytree, rmtree
-from sys import executable, platform, argv
+from sys import argv, executable, platform, version_info
 from stat import S_IXUSR
 import uuid
 from zipfile import ZipFile
 
 def main():
     if '--travis-ci' in argv:
-        print('[Travis CI: build]')
-        print('[Travis CI: version: %s]' % get_version())
+        do_travis_ci()
+    # 检查 python 版本
+    if version_info[:2] < (3, 8):
+        print('Minecraft-in-python need python3.8 or later, but %s found.' % '.'.join([str(s) for s in version_info[:2]]))
+        if '--travis-ci' in argv:
+            exit(0)
+        else:
+            exit(1)
     # 下载依赖项
     install()
     # 注册玩家
@@ -43,6 +49,11 @@ def copy():
     copytree(get_file('default'), path.join(MCPYPATH, 'resource-pack', 'default-%s' % version))
     rmtree(get_file('default'))
 
+def do_travis_ci():
+    print('[(0/3) Travis CI]')
+    print('python version: %s' % '.'.join([str(s) for s in version_info[:3]]))
+    print('Minecraft-in-python version: %s' % get_version())
+
 def gen_script():
     if '--gen-script' in argv:
         print('[(4/3) Generate startup script]')
@@ -57,7 +68,7 @@ def gen_script():
         script += '%s -m minecraft\n' % executable
         with open(name, 'w+') as f:
             f.write(script)
-            print("startup script is '%s'" % name)
+            print("Startup script at '%s'" % name)
         if not platform.startswith('win'):
             chmod(name, S_IXUSR)
 

@@ -15,10 +15,20 @@ class DirectoryResourcePack(ResourcePack):
         self.base_dir = os.path.join(search_mcpy(), 'resource-pack', self.name)
 
     def set_lang(self, lang):
+        # 玩家设置的语言
         lang_file = os.path.join(self.base_dir, 'lang', '%s.json' % lang)
         if os.path.exists(lang_file):
             try:
                 self.lang = json.load(open(lang_file, 'r+', encoding='utf-8'))
+            except:
+                pass
+        else:
+            pass
+        # 默认的, 英语语言
+        lang_file = os.path.join(self.base_dir, 'lang', 'en_US.json')
+        if os.path.exists(lang_file):
+            try:
+                self.lang_en_us = json.load(open(lang_file, 'r+', encoding='utf-8'))
                 return True
             except:
                 return False

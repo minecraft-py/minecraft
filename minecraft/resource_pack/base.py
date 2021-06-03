@@ -3,6 +3,7 @@ class ResourcePack():
     def __init__(self, name):
         self.name = name
         self.lang = dict()
+        self.lang_en_us = dict()
 
     def set_lang(self, lang):
         # 成功则返回 True
@@ -10,7 +11,7 @@ class ResourcePack():
         pass
 
     def get_translation(self, name):
-        return self.lang.get(name, name)
+        return self.lang.get(name, self.lang_en_us.get(name))
 
     def get_pack_info(self):
         # 返回一个 (pack.json, pack.png) 
@@ -20,5 +21,6 @@ class ResourcePack():
         # path 为用 '/' 分隔的路径名
         # lang/*     - *.json(不建议)
         # sounds/*   - *.ogg
+        # text/*     - *.txt
         # textures/* - *.png
         pass
