@@ -1,8 +1,6 @@
 language: python
 jobs:
   include:
-    - name: "python 3.7 on Linux"
-      python: 3.7
     - name: "python 3.8 on Linux"
       python: "3.8"
     - name: "python 3.9 on Linux"
@@ -11,5 +9,5 @@ install:
   - pip3 install -U pip
   - pip3 install -r requirements.txt
 script:
-  - python3 install.py --travis-ci --gen-sctipt
+  - python3 install.py --travis-ci --gen-script
   - cat run.sh
