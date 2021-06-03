@@ -14,6 +14,7 @@ pyre/
 .*.swp
 .*.swo
 notes.txt
+run.sh
 
 # 二进制文件
 .*.so
