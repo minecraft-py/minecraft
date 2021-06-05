@@ -11,7 +11,7 @@ class ResourcePack():
         pass
 
     def get_translation(self, name):
-        return self.lang.get(name, self.lang_en_us.get(name))
+        return self.lang.get(name, self.lang_en_us.get(name, name))
 
     def get_pack_info(self):
         # 返回一个 (pack.json, pack.png) 

@@ -43,7 +43,8 @@ class DieScreen():
         self.frame.set_background_color((255, 0, 0, 100))
         self._text = ColorLabel(text=resource_pack.get_translation('game.text.die'),
                 x=self.game.width / 2, y=0.6 * self.game.height, font_size=24, anchor_x='center', anchor_y='center')
-        self._respawn = Button(((self.game.width - 200) / 2), 0.6 * self.game.height, 200, 40, 'Respawn')
+        self._respawn = Button(((self.game.width - 200) / 2), 0.6 * self.game.height, 200, 40,
+                resource_pack.get_translation('game.text.respawn'))
 
         def on_press():
             self.game.player['die'] = False
