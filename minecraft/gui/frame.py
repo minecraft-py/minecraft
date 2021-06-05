@@ -11,6 +11,7 @@ class Frame():
         self._widget = []
         self._enable = False
         self._draw_full_screen = draw_full_screen
+        self._background_color = (0, 0, 0, 100)
 
     def add_widget(self, width):
         self._count += 1
@@ -27,6 +28,9 @@ class Frame():
 
     def register_event(self, event, func):
         setattr(self, 'on_%s' % event, func)
+
+    def set_background_color(self, color):
+        self._background_color = color
 
     def on_key_press(self, symbol, modifiers):
         if not self._enable:
@@ -92,8 +96,8 @@ class Frame():
         if not self._enable:
             return
         if self._draw_full_screen:
-            get_game().full_screen.color = (0, 0, 0)
-            get_game().full_screen.opacity = 100
+            get_game().full_screen.color = self._background_color[:3]
+            get_game().full_screen.opacity = self._background_color[-1]
             get_game().full_screen.draw()
         for widget in self._widget:
             widget.draw()

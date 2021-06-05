@@ -61,6 +61,10 @@ def save_block(name, change, full=True):
         data = change
     json.dump(data, open(join(saves_path, name, 'world.json'), 'w+'))
 
+def save_entity(name, data):
+    # 将实体信息存入文件
+    json.dump(data, open(join(saves_path, name, 'entities.json'), 'w+'))
+
 def save_level(name, time, weather):
     # 将世界信息存入文件
     data = json.load(open(join(saves_path, name, 'level.json')))

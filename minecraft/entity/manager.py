@@ -18,6 +18,13 @@ class EntityManager():
     def get(self):
         return list(self.entity.values())
 
+    def get_entities(self):
+        data = list()
+        for entity in self.entity.values():
+            data.append(entity.get_data())
+        else:
+            return data
+
     def on_draw(self):
         try:
             for entity in self.entity.values():

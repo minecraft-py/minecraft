@@ -1,10 +1,10 @@
 from difflib import get_close_matches
+from threading import Thread
 import math
 import os
 import random
 import sys
 import time
-from threading import Thread
 import traceback
 import uuid
 
@@ -28,7 +28,7 @@ try:
     from minecraft.gui.hud.heart import Heart
     from minecraft.gui.hud.hunger import Hunger
     from minecraft.gui.loading import Loading
-    from minecraft.gui.guis import Chat, PauseMenu
+    from minecraft.gui.guis import Chat, DieScreen, PauseMenu
     from minecraft.gui.widget.label import ColorLabel
     from minecraft.source import libs, player, resource_pack, settings
     from minecraft.block import blocks
@@ -108,10 +108,6 @@ class Game(pyglet.window.Window):
         # 这个标签在画布正中再偏下一点显示
         self.label['actionbar'] = ColorLabel('',
                 x=self.width // 2, y=self.height // 2 - 150, anchor_x='center', anchor_y='center')
-        # 死亡信息
-        self.die_info = ColorLabel('', color='white',
-            x=self.width // 2, y=self.height // 2, anchor_x='center',
-            anchor_y='center', font_size=24) 
         # 覆盖屏幕的矩形
         self.full_screen = Rectangle(0, 0, self.width, self.height)
         # 将 self.upgrade() 方法每 1.0 / TICKS_PER_SEC 调用一次, 它是游戏的主事件循环
@@ -144,26 +140,7 @@ class Game(pyglet.window.Window):
             return False
 
     def add_info_ext(self, s):
-        self._info_ext.append(s)
-
-    def check_die(self, dt):
-        """
-        这个函数被 pyglet 计时器反复调用
-
-        :param: dt 距上次调用的时间
-        """
-        if not self.player['die']:
-            if self.player['position'][1] < -64:
-                self.player['die_reason'] = resource_pack.get_translation('game.text.die.fall_into_void') % player['name']
-                self.player['die'] = True
-                self.dialogue.add_dialogue(self.player['die_reason'])
-            elif self.player['position'][1] > 512:
-                self.player['die_reason'] = resource_pack.get_translation('game.text.die.no_oxygen') % player['name']
-                self.player['die'] = True
-            if self.player['die']:
-                log_info('%s die: %s' % (player['name'], self.player['die_reason']))
-                self.dialogue.add_dialogue(self.player['die_reason'])
-                self.set_exclusive_mouse(False)
+        self._info_ext.append(s) 
 
     def init_gui(self):
         # 生命值
@@ -180,6 +157,7 @@ class Game(pyglet.window.Window):
         self.active_gui = None
         self.guis['chat'] = Chat(self)
         self.guis['crafting_table'] = CraftingTable(self)
+        self.guis['die'] = DieScreen(self)
         self.guis['inventory'] = Inventory(self)
         self.guis['pause'] = PauseMenu(self)
         self.toggle_gui('pause')
@@ -205,10 +183,11 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
-        saves.save_block(self.name, self.world.change)
-        saves.save_player(self.name, self.player['position'], self.player['respawn_position'],
+        saves.save_block(self.save_name, self.world.change)
+        saves.save_player(self.save_name, self.player['position'], self.player['respawn_position'],
                 normalize(self.player['rotation']), self.player['now_block'])
-        saves.save_level(self.name, self.time, self.weather)
+        saves.save_entity(self.save_name, self.entities.get_entities())
+        saves.save_level(self.save_name, self.time, self.weather)
 
     def set_exclusive_mouse(self, exclusive):
         # 如果 exclusive 为 True, 窗口会捕获鼠标. 否则忽略之
@@ -219,14 +198,14 @@ class Game(pyglet.window.Window):
 
     def set_name(self, name):
         # 设置游戏存档名
-        self.name = name
+        self.save_name = name
         self.world = World(name)
         # 读取玩家位置和背包
-        data = saves.load_player(self.name)
+        data = saves.load_player(self.save_name)
         self.player['position'] = data['position']
         self.player['respawn_position'] = data['respawn']
         if len(self.player['position']) != 3:
-            if saves.load_level(self.name)['type'] == 'flat':
+            if saves.load_level(self.save_name)['type'] == 'flat':
                 self.player['position'] = self.player['respawn_position'] = (0, 8, 0)
             else:
                 self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
@@ -234,7 +213,7 @@ class Game(pyglet.window.Window):
         self.player['rotation'] = tuple(data['rotation'])
         self.player['now_block'] = data['now_block']
         # 读取世界数据
-        self.world_level = saves.load_level(self.name)
+        self.world_level = saves.load_level(self.save_name)
         self.time = self.world_level['time']
         self.weather = self.world_level['weather']
         weather[self.weather['now']].change()
@@ -428,8 +407,6 @@ class Game(pyglet.window.Window):
         self.label['subtitle'].y = self.height / 2 - 100
         self.label['actionbar'].x = self.width / 2
         self.label['actionbar'].y = self.height / 2 - 150
-        self.die_info.x = self.width / 2
-        self.die_info.y = self.height / 2
         # 加载窗口
         self.loading.resize(self.width, self.height)
         # 窗口中央的十字线
@@ -495,12 +472,8 @@ class Game(pyglet.window.Window):
                     self.hud['hotbar'].draw()
                 if not self.player['in_gui']:
                     self.reticle.draw()
-                if self.player['in_gui']:
-                    self.active_gui.frame.draw()
-            elif self.player['die']:
-                self.full_screen.color = (200, 0, 0)
-                self.full_screen.opacity = 100
-                self.full_screen.draw()
+            if self.player['in_gui']:
+                self.active_gui.frame.draw()
             if not self.player['hide_hud']:
                 self.draw_label()
             for func in self.event.get('on_draw', {}).values():
@@ -540,14 +513,8 @@ class Game(pyglet.window.Window):
     def draw_label(self):
         if not self.is_init:
             if self.exclusive:
-                self.dialogue.draw()
-            if self.player['die']:
-                # 玩家死亡
-                self.die_info.text = resource_pack.get_translation('game.text.die')
-                self.label['actionbar'].text = self.player['die_reason']
-                self.die_info.draw()
-                self.label['actionbar'].draw()
-            elif self.debug['debug'] and self.exclusive:
+                self.dialogue.draw() 
+            if self.debug['debug'] and self.exclusive:
                 x, y, z = self.player['position']
                 rx, ry = self.player['rotation']
                 mem = round(psutil.Process(os.getpid()).memory_full_info()[0] / 1048576, 2)

@@ -1,5 +1,7 @@
 from pyglet.text import Label
 
+from minecraft.gui.widget.base import Widget
+
 _color_tabel = {
             'black': [(0, 0, 0), (0, 0, 0)],
             'dark_blue': [(0, 0, 170), (0, 0, 42)],
@@ -19,7 +21,7 @@ _color_tabel = {
         }
 
 
-class ColorLabel():
+class ColorLabel(Widget):
 
     def __init__(self, text='', color='white', x=0, y=0, **kwargs):
         global _color_tabel
@@ -29,6 +31,7 @@ class ColorLabel():
         self._label = []
         self._label.append(Label(text=text, x=x, y=y, color=colors['fg'], **kwargs))
         self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors['bg'], **kwargs))
+        super().__init__(x, y, 1, 1)
 
     @property
     def color(self):

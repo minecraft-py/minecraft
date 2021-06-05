@@ -4,8 +4,9 @@ from minecraft.utils.utils import *
 
 
 class Grass(Block):
-    textures = 'grass_top',
     colorizer = BlockColorizer('foliage')
+    name = 'grass'
+    textures = 'grass_top',
 
     def get_color(self, temp, rainfall):
         color = []

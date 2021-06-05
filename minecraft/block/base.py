@@ -32,7 +32,8 @@ class Block():
     transparent = False
     # 硬度
     hardness = 1
-    mode = ''
+    # 名称
+    name = 'default'
 
     def __init__(self):
         self._nbt.set_value('name', self.name)
@@ -40,8 +41,7 @@ class Block():
 
     def get_texture_data(self):
         textures = self.top_texture + self.bottom_texture + self.front_texture + self.side_texture
-        if self.mode != 'x':
-            textures += self.side_texture * 2
+        textures += self.side_texture * 2
         return list(textures)
 
     def get_vertices(self, x, y, z):

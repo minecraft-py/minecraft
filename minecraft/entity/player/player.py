@@ -160,10 +160,6 @@ class Player():
                 get_game().guis['chat'].text()
                 get_game().toggle_gui()
             return
-        if symbol == key.Q:
-            self._data['die'] = True
-            self._data['die_reason'] = 'killed by self'
-            get_game().set_exclusive_mouse(False)
         elif symbol == key.T:
             get_game().toggle_gui('chat')
         elif symbol == key.SLASH:
@@ -203,19 +199,12 @@ class Player():
                 self._data['dy'] = 0.1 * JUMP_SPEED
             elif self._data['dy'] == 0:
                 self._data['dy'] = JUMP_SPEED
-        elif symbol == key.ENTER:
-            if self._data['die']:
-                self._data['die'] = False
-                self._data['position'] = self._data['respawn_position']
-                get_game().set_exclusive_mouse(True)
         elif symbol == key.ESCAPE:
-            if self._data['in_gui']:
+            if self._data['in_gui'] and (not self._data['die']):
                 get_game().toggle_gui()
             else:
                 get_game().save(0)
                 get_game().toggle_gui('pause')
-                if self._data['die']:
-                    get_game().close()
         elif symbol == key.LSHIFT:
             if self._data['flying']:
                 self._data['dy'] = -0.1 * JUMP_SPEED

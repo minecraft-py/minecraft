@@ -3,6 +3,7 @@ from minecraft.utils.utils import *
 
 
 class Dirt(Block):
+    name = 'dirt'
     textures = 'dirt',
 
     def on_ticking(self, pos):

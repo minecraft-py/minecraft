@@ -2,8 +2,9 @@ import json
 
 class NBT(object):
 
-    def __init__(self):
+    def __init__(self, data={}):
         self._nbt = dict()
+        self.set_values(data)
 
     def load_dict(self, d):
         for k, v in d.items():
@@ -32,6 +33,10 @@ class NBT(object):
                 return False
         else:
             return False
+
+    def set_values(self, data):
+        for k, v in data.items():
+            self.set_value(k, v)
 
     def get_dict(self):
         return self._nbt

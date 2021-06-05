@@ -3,8 +3,9 @@ from minecraft.block.base import BlockColorizer
 
 
 class Leaf(Block):
-    textures = 'leaves_oak',
     colorizer = BlockColorizer('foliage')
+    name = 'leaf'
+    textures = 'leaves_oak',
 
     def get_color(self, temp, rainfall):
         color = []
