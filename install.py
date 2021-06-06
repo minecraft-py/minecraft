@@ -78,15 +78,22 @@ def get_file(f):
 
 def get_version():
     # 从 minecraft/utils/utils.py 文件里面把版本号"抠"出来
-    f = open(path.join(get_file('minecraft'), 'utils', 'utils.py'))
-    start_find = False
-    for line in f.readlines():
-        if line.strip() == 'VERSION = {':
-            start_find = True
-        elif (line.strip() == '}') and start_find:
-            start_find = False
-        elif line.strip().startswith("'str'") and start_find:
-            return search(r"\d(\.\d+){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
+    try:
+        f = open(path.join(get_file('minecraft'), 'utils', 'utils.py'))
+        start_find = False
+        for line in f.readlines():
+            if line.strip() == 'VERSION = {':
+                start_find = True
+            elif (line.strip() == '}') and start_find:
+                start_find = False
+            elif line.strip().startswith("'str'") and start_find:
+                # 匹配版本号
+                # 一位主版本号, 两位小版本号/修订版本号
+                # 匹配 -alpha, -beta 后缀, -pre, -rc 后跟数字
+                return search(r"\d(\.\d{1,2}){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
+    except:
+        # 可恶的 Windows 操作系统
+        return '0.3.2'
 
 def install():
     if ('--skip-install-requirements' not in argv) and ('--travis-ci' not in argv):
