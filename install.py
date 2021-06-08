@@ -64,8 +64,8 @@ def gen_script():
             script += '@echo off\n'
         else:
             script += '#!/usr/bin/env sh\n'
-        script += 'cd %s\n' % path.dirname(get_file('install.py'))
-        script += '%s -m minecraft\n' % executable
+        script += 'cd "%s"\n' % path.dirname(get_file('install.py'))
+        script += '"%s" -m minecraft\n' % executable
         with open(name, 'w+') as f:
             f.write(script)
             print("Startup script at '%s'" % name)
