@@ -13,6 +13,7 @@ class DirectoryResourcePack(ResourcePack):
     def __init__(self, name):
         super().__init__(name)
         self.base_dir = os.path.join(search_mcpy(), 'resource-pack', self.name)
+        self.language = ''
 
     def set_lang(self, lang):
         # 玩家设置的语言
@@ -20,6 +21,7 @@ class DirectoryResourcePack(ResourcePack):
         if os.path.exists(lang_file):
             try:
                 self.lang = json.load(open(lang_file, 'r+', encoding='utf-8'))
+                self.language = lang
             except:
                 pass
         else:
@@ -43,8 +45,11 @@ class DirectoryResourcePack(ResourcePack):
     def get_resource(self, path):
         if path.find('/') != -1:
             file_type = path.split('/')[0]
-            if file_type == 'text':
-                return open(os.path.join(self.base_dir, path + '.txt'), 'r+').read()
+            if file_type == 'texts':
+                if os.path.isfile(os.path.join(self.base_dir, path + '-%s.txt' % self.language)):
+                    return open(os.path.join(self.base_dir, path + '-%s.txt' % self.language), 'r+').read()
+                else:
+                    return open(os.path.join(self.base_dir, path + '-en_us.txt'), 'r+').read()
             elif file_type == 'textures':
                 return load_image('image.png', file=open(os.path.join(self.base_dir, path + '.png'), 'rb'))
             else:

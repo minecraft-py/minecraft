@@ -14,6 +14,7 @@ class ZipfileResourcePack(ResourcePack):
     def __init__(self, name):
         super().__init__(name)
         self.zipfile = zipfile.ZipFile(os.path.join(search_mcpy(), 'resource-pack', name))
+        self.language = ''
         self._namelist = self.zipfile.namelist()
 
     def set_lang(self, lang):
@@ -21,6 +22,7 @@ class ZipfileResourcePack(ResourcePack):
         if lang_file in self._namelist:
             try:
                 self.lang = json.load(self.zipfile.open(lang_file))
+                self.language = lang
             except:
                 pass
         else:
@@ -28,7 +30,7 @@ class ZipfileResourcePack(ResourcePack):
         lang_file = 'lang/en_US.json'
         if lang_file in self._namelist:
             try:
-                self.lang = json.load(self.zipfile.open(lang_file))
+                self.lang_en_us = json.load(self.zipfile.open(lang_file))
                 return True
             except:
                 return False
@@ -43,8 +45,11 @@ class ZipfileResourcePack(ResourcePack):
     def get_resource(self, path):
         if path.find('/') != -1:
             file_type = path.split('/')[0]
-            if file_type == 'text':
-                return self.zipfile.open(path + '.zip').read()
+            if file_type == 'texts':
+                if (path + '-%s.txt' % self.language) in self._namelist:
+                    return self.zipfile.open(path + '-%s.txt' % self.language).read()
+                else:
+                    return self.zipfile.open(path + '-en_us.txt' % self.language).read()
             elif file_type == 'textures':
                 return load_image('image.png', file=self.zipfile.open(path + '.png'))
             else:
