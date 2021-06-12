@@ -3,7 +3,7 @@ from pyglet.text import Label
 from minecraft.gui.widget.base import Widget
 
 _color_tabel = {
-            'black': [(0, 0, 0), (0, 0, 0)],
+            'black': [(0, 0, 0), (255, 255, 255)],
             'dark_blue': [(0, 0, 170), (0, 0, 42)],
             'dark_green': [(0, 170, 0), (0, 42, 0)],
             'dark_aqua': [(0, 170, 170), (0, 42, 42)],
