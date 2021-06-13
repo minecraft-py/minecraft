@@ -27,7 +27,7 @@ class ZipfileResourcePack(ResourcePack):
                 pass
         else:
             pass
-        lang_file = 'lang/en_US.json'
+        lang_file = 'lang/en_us.json'
         if lang_file in self._namelist:
             try:
                 self.lang_en_us = json.load(self.zipfile.open(lang_file))

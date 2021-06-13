@@ -39,6 +39,9 @@ class Block():
         self._nbt.set_value('name', self.name)
         self.update_texture()
 
+    def get_textures(self):
+        return self.texture
+
     def get_texture_data(self):
         textures = self.top_texture + self.bottom_texture + self.front_texture + self.side_texture
         textures += self.side_texture * 2
