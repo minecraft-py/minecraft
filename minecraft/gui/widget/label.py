@@ -23,7 +23,7 @@ _color_tabel = {
 
 class ColorLabel(Widget):
 
-    def __init__(self, text='', color='white', x=0, y=0, **kwargs):
+    def __init__(self, text='', color='white', x=0, y=0, shadow=True, **kwargs):
         global _color_tabel
         colors = {}
         colors['fg'] = _color_tabel.get(color, _color_tabel['white'])[0] + (255,)
@@ -31,6 +31,7 @@ class ColorLabel(Widget):
         self._label = []
         self._label.append(Label(text=text, x=x, y=y, color=colors['fg'], **kwargs))
         self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors['bg'], **kwargs))
+        self._shadow = shadow
         super().__init__(x, y, 1, 1)
 
     @property
@@ -83,5 +84,6 @@ class ColorLabel(Widget):
         self._label[1].y = value - 2
 
     def draw(self):
-        self._label[1].draw()
+        if self._shadow:
+            self._label[1].draw()
         self._label[0].draw()

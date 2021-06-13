@@ -16,12 +16,12 @@ class Inventory():
                 resource_pack.get_resource('textures/gui/containers/inventory').get_region(0, 90, 176, 166))
         self._inventory.sprite.scale = 2
         self._label = ColorLabel(text='Inventory', color='black', bold=True, anchor_x='left',
-                font_size=12, x=(width - 353) / 2 + 194, y=height - (height- 332) / 2 - 24)
+                font_size=12, x=(width - 353) / 2 + 194, y=height - (height- 332) / 2 - 28, shadow=False)
 
         def on_resize(width, height):
             self._inventory.sprite.position = (width - 352) / 2, height - (height - 332) / 2
             self._label.x = (width - 353) / 2 + 194
-            self._label.y = height - (height - 332) / 2 - 24
+            self._label.y = height - (height - 332) / 2 - 28
 
         self.frame.register_event('resize', on_resize)
         self.frame.add_widget(self._inventory)
