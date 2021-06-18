@@ -11,15 +11,12 @@ import uuid
 from zipfile import ZipFile
 
 def main():
+    # 最好遵守 Mojang 的 Minecraft eula
+    see_eula()
     if '--travis-ci' in argv:
         do_travis_ci()
     # 检查 python 版本
-    if version_info[:2] < (3, 8):
-        print('Minecraft-in-python need python3.8 or later, but %s found.' % '.'.join([str(s) for s in version_info[:2]]))
-        if '--travis-ci' in argv:
-            exit(0)
-        else:
-            exit(1)
+    check_ver()
     # 下载依赖项
     install()
     # 注册玩家
@@ -30,6 +27,14 @@ def main():
     gen_script()
     # 完成!
     print('[Done]')
+
+def check_ver():
+    if version_info[:2] < (3, 8):
+        print('Minecraft-in-python need python3.8 or later, but %s found.' % '.'.join([str(s) for s in version_info[:2]]))
+        if '--travis-ci' in argv:
+            exit(0)
+        else:
+            exit(1)
 
 def copy():
     print('[(3/3) Copy lib]')
@@ -155,6 +160,11 @@ def search_mcpy():
     else:
         MCPYPATH = path.join(path.expanduser('~'), '.mcpy')
     return MCPYPATH
+
+def see_eula():
+    print('NOTE: This is not official Minecraft product. Not approved by or associated with Mojang.')
+    if '--travis-ci' not in argv:
+        input('NOTE: Press ENTER when you have finished reading the above information: ')
 
 if __name__ == '__main__':
     main()
