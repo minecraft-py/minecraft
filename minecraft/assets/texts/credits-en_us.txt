@@ -1,0 +1,35 @@
+[C]$f============
+[C]$eMinecraft-in-python Team
+[C]$f============
+
+$7Original Creator
+$f    fogleman
+
+$7Game Developers
+$f    ismaelxyz
+$f    jason-bowen-zheng
+$f    wzh656
+
+[C]$f============
+[C]$eLICENSE
+[C]$f============
+
+$fThis program use $eGNU GENERAL PUBLIC LICENSE version 3
+
+[C]$f============
+[C]$eSpecial Thanks
+[C]$f============
+
+$fboskee    $9https://github.com/boskee/Minecraft
+$ffogleman  $9https://github.com/fogleman/Minecraft
+$fgabdube   $9https://github.com/gabdube/pyshaders
+$fgiampaolo $9https://github.com/giampaolo/psutil
+$fImas      $9https://github.com/lmas/opensimplex
+$fpyglet    $9https://github.com/pyglet/pyglet
+
+
+
+
+
+$f"Twenty years from now you will be more disappointed by the things that you didn't do than by the ones you did do. So throw off the bowlines. Sail away from the safe harbor. Catch the trade winds in your sails. Explore. Dream. Discover."
+[R]$7 - Unknow

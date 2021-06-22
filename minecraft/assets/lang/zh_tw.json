@@ -1,0 +1,35 @@
+{
+	"description": "中文(繁體)",
+	"game.pause_menu.back_to_game": "返回遊戲",
+	"game.pause_menu.exit": "退出",
+	"game.text.build_out_of_world": [
+		"最高建築限制是%d個方塊",
+		"你不能在世界外放置方塊中"
+	],
+	"game.text.debug": [
+		"Minecraft %(version) (%(info))",
+		"XYZ: %(xyz)",
+		"ROT: %(rot)",
+		"MEM: %(mem)MB",
+		"FPS: %(fps)"
+	],
+	"game.text.die": "你死了",
+	"game.text.die.fall_into_void": "%s 墜入了虛空",
+	"game.text.loading": "初始化...",
+	"general.seed": "世界種子",
+	"start.delete": "刪除",
+	"start.dialog.text.delete": "這將刪除 %s 存檔(很長時間)?",
+	"start.dialog.text.name": "存檔名:",
+	"start.dialog.text.ok": "確認",
+	"start.dialog.text.rename": "重命名",
+	"start.dialog.text.seed": "種子",
+	"start.dialog.title.delete": "刪除存檔",
+	"start.dialog.title.new": "新建存檔",
+	"start.dialog.title.rename": "重命名存檔",
+	"start.exit": "退出",
+	"start.multiplayer": "多人遊戲",
+	"start.new": "新的世界",
+	"start.rename": "重命名",
+	"start.start": "開始遊戲",
+	"start.title": "Minecraft %s"
+}

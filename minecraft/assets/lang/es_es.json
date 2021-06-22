@@ -1,0 +1,34 @@
+{
+	"description": "Español (España)",
+	"game.pause_menu.back_to_game": "Volver al juego",
+	"game.pause_menu.exit": "Salir",
+	"game.text.build_out_of_world": [
+		"El límite máximo de generación es de %d bloques",
+		"No puedes construir fuera del mundo"
+	],
+	"game.text.debug": [
+		"Minecraft %(version) (%(info))",
+		"XYZ: %(xyz)",
+		"ROT: %(rot)",
+		"MEM: %(mem)MB",
+		"FPS: %(fps)"
+	],
+	"game.text.die": "As muerto",
+	"game.text.die.fall_into_void": "%s a caído en el vacío",
+	"game.text.loading": "Cargando...",
+	"start.delete": "Eliminar",
+	"start.dialog.text.delete": "¿Desea eliminar: %s, permanentemente?",
+	"start.dialog.text.name": "Nombre:",
+	"start.dialog.text.ok": "Aceptar",
+	"start.dialog.text.rename": "Renombrar:",
+	"start.dialog.text.seed": "Semilla:",
+	"start.dialog.title.delete": "Eliminar",
+	"start.dialog.title.new": "Nuevo",
+	"start.dialog.title.rename": "Cambiar Nombre",
+	"start.exit": "Salir",
+	"start.multiplayer": "Juego multijugador",
+	"start.new": "Nuevo",
+	"start.rename": "Renombrar",
+	"start.start": "Iniciar",
+	"start.title": "Minecraft %s"
+}

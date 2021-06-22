@@ -1,3 +1,5 @@
+> **NOTE: We haven't tested this game on MacOS!**
+
 # Minecraft
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.com/Minecraft-in-python/Minecraft.svg?branch=master)](https://travis-ci.com/Minecraft-in-python/Minecraft)
@@ -7,7 +9,8 @@ Making open source Minecraft in python.
 Playing and modifying Minecraft according to your needs, will it be legal?
 Our wish is that you can play and modify your game legally. No copyright issues.
 
-Free and transparent code is the basis of our friendly project, visit our official [website](https://minecraft-in-python.github.io) for more information.
+Free and transparent code is the basis of our friendly project,
+visit our official [website](https://minecraft-in-python.github.io) for more information.
 
 
 ## Play

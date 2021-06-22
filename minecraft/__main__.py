@@ -1,3 +1,4 @@
+import os
 from os import getpid, environ
 
 from minecraft.start import *

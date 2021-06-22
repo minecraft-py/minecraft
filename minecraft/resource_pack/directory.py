@@ -12,7 +12,7 @@ class DirectoryResourcePack(ResourcePack):
 
     def __init__(self, name):
         super().__init__(name)
-        self.base_dir = os.path.join(search_mcpy(), 'resource-pack', self.name)
+        self.base_dir = name
         self.language = ''
 
     def set_lang(self, lang):

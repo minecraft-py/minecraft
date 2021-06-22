@@ -17,12 +17,10 @@ def main():
         do_travis_ci()
     # 检查 python 版本
     check_ver()
-    # 下载依赖项
+    # 安装
     install()
     # 注册玩家
     register_user()
-    # 复制运行所需的文件
-    copy()
     # 创建启动脚本
     gen_script()
     # 完成!
@@ -36,32 +34,14 @@ def check_ver():
         else:
             exit(1)
 
-def copy():
-    print('[(3/3) Copy lib]')
-    MCPYPATH = search_mcpy()
-    version = get_version()
-    if not path.isdir(MCPYPATH):
-        mkdir(MCPYPATH)
-    install_json('settings.json')
-    for name in ['log', 'saves', 'screenshot', 'resource-pack']:
-        if not path.isdir(path.join(MCPYPATH, name)):
-            mkdir(path.join(MCPYPATH, name))
-    if not path.isdir(path.join(MCPYPATH, 'lib', version)):
-        makedirs(path.join(MCPYPATH, 'lib', version))
-    if path.isdir(path.join(MCPYPATH, 'resource-pack', 'default-%s' % version)):
-        rmtree(path.join(MCPYPATH, 'resource-pack', 'default-%s' % version))
-    ZipFile(path.join(get_file('data'), 'default.zip')).extractall(path.dirname(__file__))
-    copytree(get_file('default'), path.join(MCPYPATH, 'resource-pack', 'default-%s' % version))
-    rmtree(get_file('default'))
-
 def do_travis_ci():
-    print('[(0/3) Travis CI]')
+    print('[(0/2) Travis CI]')
     print('python version: %s' % '.'.join([str(s) for s in version_info[:3]]))
     print('Minecraft-in-python version: %s' % get_version())
 
 def gen_script():
     if '--gen-script' in argv:
-        print('[(4/3) Generate startup script]')
+        print('[(3/2) Generate startup script]')
         script = str()
         name = get_file('run.sh')
         if platform.startswith('win'):
@@ -101,8 +81,18 @@ def get_version():
         return '0.3.2'
 
 def install():
+    MCPYPATH = search_mcpy()
+    version = get_version()
+    if not path.isdir(MCPYPATH):
+        mkdir(MCPYPATH)
+    install_json('settings.json')
+    for name in ['log', 'saves', 'screenshot', 'resource-pack']:
+        if not path.isdir(path.join(MCPYPATH, name)):
+            mkdir(path.join(MCPYPATH, name))
+    if not path.isdir(path.join(MCPYPATH, 'lib', version)):
+        makedirs(path.join(MCPYPATH, 'lib', version))
     if ('--skip-install-requirements' not in argv) and ('--travis-ci' not in argv):
-        print('[(1/3) Install requirements]')
+        print('[(1/2) Install requirements]')
         pip = '"%s" -m pip' % executable
         if '--hide-output' in argv:
             code = system('%s install -U -r %s >> %s' % (pip, get_file('requirements.txt'), path.devnull))
@@ -132,7 +122,7 @@ def install_json(f):
 def register_user():
     # 注册
     if ('--skip-register' not in argv) and ('--travis-ci' not in argv):
-        print('[(2/3) Register]')
+        print('[(2/2) Register]')
         MCPYPATH = search_mcpy()
         if not path.isdir(MCPYPATH):
             mkdir(MCPYPATH)
@@ -147,7 +137,7 @@ def register_user():
         else:
             print('You have regsitered!')
     else:
-        print('[(2/3) Skip regsiter]')
+        print('[(2/2) Skip regsiter]')
 
 def search_mcpy():
     # 搜索文件存储位置

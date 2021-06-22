@@ -1,7 +1,7 @@
 {
 	"fov": 70,
 	"lang": "en_us",
-	"resource-pack": "default",
+	"resource-pack": "(default)",
 	"use-theme": "arc",
 	"viewport": {
 		"width": 800,

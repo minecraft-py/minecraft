@@ -13,7 +13,7 @@ class ZipfileResourcePack(ResourcePack):
 
     def __init__(self, name):
         super().__init__(name)
-        self.zipfile = zipfile.ZipFile(os.path.join(search_mcpy(), 'resource-pack', name))
+        self.zipfile = zipfile.ZipFile(name)
         self.language = ''
         self._namelist = self.zipfile.namelist()
 

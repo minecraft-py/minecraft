@@ -49,8 +49,6 @@ elif settings['fov'] > 100:
     settings['fov'] = 100
 
 # resource-pack 设置
-if settings['resource-pack'].startswith('default'):
-    settings['resource-pack'] += '-' + VERSION['str']
 resource_pack = load(settings['resource-pack'])
 
 # lang 设置

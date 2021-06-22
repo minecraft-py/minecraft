@@ -65,7 +65,7 @@ class CommandSeed(CommandBase):
         ]
 
     def execute(self):
-        self.game.dialogue.add_dialogue('Seed: ' + str(self.game.world.seed))
+        self.game.dialogue.add_dialogue(resource_pack.get_translation('general.seed') + ': ' + str(self.game.world.seed))
 
 
 class CommandSetBlock(CommandBase):
