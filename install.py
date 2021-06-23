@@ -83,9 +83,9 @@ def get_version():
 def install():
     MCPYPATH = search_mcpy()
     version = get_version()
+    install_settings()
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
-    install_json('settings.json')
     for name in ['log', 'saves', 'screenshot', 'resource-pack']:
         if not path.isdir(path.join(MCPYPATH, name)):
             mkdir(path.join(MCPYPATH, name))
@@ -106,18 +106,27 @@ def install():
     else:
         print('[(1/3) Skip install requirements]')
 
-def install_json(f):
+def install_settings():
     MCPYPATH = search_mcpy()
-    source = load(open(path.join(get_file('data'), f)))
+    source = {
+            'fov': 70,
+            'lang': 'en_us',
+            'resource-pack': '(default)',
+            'use-theme': 'arc', 
+            'viewport': {
+                'width': 800, 
+                'height': 600
+            }
+        }
     target = {}
-    if path.isfile(path.join(MCPYPATH, f)):
-        target = load(open(path.join(MCPYPATH, f)))
+    if path.isfile(path.join(MCPYPATH, 'settings.json')):
+        target = load(open(path.join(MCPYPATH, 'settings.json')))
     else:
         target = {}
     for k, v in source.items():
         if k not in target or not isinstance(target[k], type(v)):
             target[k] = v
-    dump(target, open(path.join(MCPYPATH, f), 'w+'))
+    dump(target, open(path.join(MCPYPATH, 'settings.json'), 'w+'))
 
 def register_user():
     # 注册

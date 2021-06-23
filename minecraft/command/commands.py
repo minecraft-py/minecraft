@@ -108,14 +108,13 @@ class CommandTime(CommandBase):
         else:
             if self.args['op'] == 'add':
                 self.game.time += self.args['time']
-                change_sky_color(0)
             elif self.args['op'] == 'set':
                 if isinstance(self.args['time'], int):
                     self.game.time = self.args['time']
                 elif isinstance(self.args['time'], str):
                     d = {'day': 300, 'noon': 600, 'night':900}
                     self.game.time = int(self.game.time) // 1200 * 1200 + d[self.args['time']]
-                    change_sky_color(0)
+            change_sky_color(0)
 
 
 class CommandWeather(CommandBase):

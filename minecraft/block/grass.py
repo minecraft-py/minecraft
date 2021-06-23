@@ -6,16 +6,18 @@ from minecraft.utils.utils import *
 class Grass(Block):
     colorizer = BlockColorizer('foliage')
     name = 'grass'
-    textures = 'grass_top',
+    textures = 'grass_top', 'dirt', 'grass_side', 'grass_side'
 
     def get_color(self, temp, rainfall):
         color = []
-        color.extend(list(self.colorizer.get_color(temp, rainfall)) * 24)
+        color.extend(list(self.colorizer.get_color(temp, rainfall)) * 4)
+        color.extend([1] * 60)
         return color
 
     def get_item_color(self):
         color = []
-        color.extend(list(self.colorizer.get_color(0.8, 0.4)) * 24)
+        color.extend(list(self.colorizer.get_color(0.8, 0.4)) * 4)
+        color.extend([1] * 60)
         return color
 
     def on_ticking(self, pos):
