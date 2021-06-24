@@ -83,9 +83,9 @@ def get_version():
 def install():
     MCPYPATH = search_mcpy()
     version = get_version()
-    install_settings()
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
+    install_settings()
     for name in ['log', 'saves', 'screenshot', 'resource-pack']:
         if not path.isdir(path.join(MCPYPATH, name)):
             mkdir(path.join(MCPYPATH, name))
@@ -111,7 +111,7 @@ def install_settings():
     source = {
             'fov': 70,
             'lang': 'en_us',
-            'resource-pack': '(default)',
+            'resource-pack': ['(default)'],
             'use-theme': 'arc', 
             'viewport': {
                 'width': 800, 

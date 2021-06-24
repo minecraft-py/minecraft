@@ -25,8 +25,6 @@ class ZipfileResourcePack(ResourcePack):
                 self.language = lang
             except:
                 pass
-        else:
-            pass
         lang_file = 'lang/en_us.json'
         if lang_file in self._namelist:
             try:

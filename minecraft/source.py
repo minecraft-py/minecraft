@@ -4,7 +4,7 @@ from os.path import abspath, dirname, isdir, isfile, join
 import re
 import sys
 
-from minecraft.resource_pack import load
+from minecraft.resource_pack import ResourcePackManager
 from minecraft.utils.utils import *
 
 from pyglet import resource
@@ -49,7 +49,9 @@ elif settings['fov'] > 100:
     settings['fov'] = 100
 
 # resource-pack 设置
-resource_pack = load(settings['resource-pack'])
+resource_pack = ResourcePackManager()
+for pack in settings['resource-pack']:
+    resource_pack.add(pack)
 
 # lang 设置
 if not resource_pack.set_lang(settings['lang']):

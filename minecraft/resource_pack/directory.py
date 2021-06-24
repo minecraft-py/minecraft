@@ -24,8 +24,6 @@ class DirectoryResourcePack(ResourcePack):
                 self.language = lang
             except:
                 pass
-        else:
-            pass
         # 默认的, 英语语言
         lang_file = os.path.join(self.base_dir, 'lang', 'en_us.json')
         if os.path.exists(lang_file):
