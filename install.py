@@ -24,6 +24,11 @@ def main():
     # 创建启动脚本
     gen_script()
     # 完成!
+    if platform.startswith('win'):
+        pycmd = 'py'
+    else:
+        pycmd = 'python3'
+    print("Use `%s -m minecraft` to start game." % pycmd)
     print('[Done]')
 
 def check_ver():
@@ -35,27 +40,36 @@ def check_ver():
             exit(1)
 
 def do_travis_ci():
-    print('[(0/2) Travis CI]')
+    print('[(0/3) Travis CI]')
     print('python version: %s' % '.'.join([str(s) for s in version_info[:3]]))
     print('Minecraft-in-python version: %s' % get_version())
 
 def gen_script():
-    if '--gen-script' in argv:
-        print('[(3/2) Generate startup script]')
-        script = str()
-        name = get_file('run.sh')
-        if platform.startswith('win'):
-            name = get_file('run.bat')
-            script += '@echo off\n'
-        else:
-            script += '#!/usr/bin/env sh\n'
-        script += 'cd "%s"\n' % path.dirname(get_file('install.py'))
-        script += '"%s" -m minecraft\n' % executable
-        with open(name, 'w+') as f:
-            f.write(script)
-            print("Startup script at '%s'" % name)
-        if not platform.startswith('win'):
-            chmod(name, S_IXUSR)
+    if '--skip-gen-script' in argv:
+        return
+    while True:
+        if '--travis-ci' in argv:
+            break
+        ret = input('Generate startup script[Y/n]? ')
+        if (ret.lower() == 'y') or (len(ret) == 0):
+            break
+        elif ret.lower() == 'n':
+            return
+    print('[(3/3) Generate startup script]')
+    script = str()
+    name = get_file('run.sh')
+    if platform.startswith('win'):
+        name = get_file('run.bat')
+        script += '@echo off\n'
+    else:
+        script += '#!/usr/bin/env sh\n'
+    script += 'cd "%s"\n' % path.dirname(get_file('install.py'))
+    script += '"%s" -m minecraft\n' % executable
+    with open(name, 'w+') as f:
+        f.write(script)
+        print("Startup script at '%s'" % name)
+    if not platform.startswith('win'):
+        chmod(name, S_IXUSR)
 
 def get_file(f):
     # 返回文件目录下的文件名
@@ -92,7 +106,7 @@ def install():
     if not path.isdir(path.join(MCPYPATH, 'lib', version)):
         makedirs(path.join(MCPYPATH, 'lib', version))
     if ('--skip-install-requirements' not in argv) and ('--travis-ci' not in argv):
-        print('[(1/2) Install requirements]')
+        print('[(1/3) Install requirements]')
         pip = '"%s" -m pip' % executable
         if '--hide-output' in argv:
             code = system('%s install -U -r %s >> %s' % (pip, get_file('requirements.txt'), path.devnull))
@@ -131,7 +145,7 @@ def install_settings():
 def register_user():
     # 注册
     if ('--skip-register' not in argv) and ('--travis-ci' not in argv):
-        print('[(2/2) Register]')
+        print('[(2/3) Register]')
         MCPYPATH = search_mcpy()
         if not path.isdir(MCPYPATH):
             mkdir(MCPYPATH)
@@ -146,7 +160,7 @@ def register_user():
         else:
             print('You have regsitered!')
     else:
-        print('[(2/2) Skip regsiter]')
+        print('[(2/3) Skip regsiter]')
 
 def search_mcpy():
     # 搜索文件存储位置
