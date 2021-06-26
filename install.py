@@ -6,7 +6,7 @@ from re import match, search
 from shlex import join
 from shutil import copyfile, copytree, rmtree
 from sys import argv, executable, platform, version_info
-from stat import S_IXUSR
+from stat import S_IRUSR, S_IWUSR, S_IXUSR
 import uuid
 from zipfile import ZipFile
 
@@ -69,7 +69,7 @@ def gen_script():
         f.write(script)
         print("Startup script at '%s'" % name)
     if not platform.startswith('win'):
-        chmod(name, S_IXUSR)
+        chmod(name, S_IRUSR | S_IWUSR | S_IXUSR)
 
 def get_file(f):
     # 返回文件目录下的文件名
