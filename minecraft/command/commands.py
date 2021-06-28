@@ -83,7 +83,7 @@ class CommandSetBlock(CommandBase):
 class CommandTeleport(CommandBase):
 
     formats = [ArgumentCollection(x=PositionArgument('x'), y=PositionArgument('y'), z=PositionArgument('z'))]
-    description = [resource_pack.get_translation('command.name.teleport'),
+    description = [resource_pack.get_translation('command.name.teleport.help'),
             '/tp <position>'
         ]
 

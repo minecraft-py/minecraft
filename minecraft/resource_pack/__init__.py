@@ -37,7 +37,6 @@ class ResourcePackManager():
 
     def get_translation(self, name):
         for pack in self._packs:
-            print(name, ':' , pack.get_translation(name))
             if pack.get_translation(name) != name:
                 return pack.get_translation(name)
         else:
