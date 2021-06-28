@@ -12,21 +12,22 @@ class ResourcePackManager():
         self._packs = list()
 
     def add(self, name):
-        resource_pack_dir = os.path.join(search_mcpy(), 'resource-pack')
-        if os.path.exists(os.path.join(resource_pack_dir, name)) or (name == '(default)'):
-            if os.path.isdir(os.path.join(resource_pack_dir, name)) and (not name.endswith('.zip')):
-                self._packs.append(DirectoryResourcePack(os.path.join(resource_pack_dir, name)))
+        name.replace('(game)', os.path.join(search_mcpy(), 'resource-pack'))
+        log_info(name)
+        if os.path.exists(os.path.join(name)) or (name == '(default)'):
+            if os.path.isdir(os.path.join(name)) and (not name.endswith('.zip')):
+                self._packs.append(DirectoryResourcePack(name))
                 return
             if name == '(default)':
                 self._packs.append(DirectoryResourcePack(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'assets'))))
                 return
-            if os.path.isfile(os.path.join(resource_pack_dir, name)) and is_zipfile(os.path.join(resource_pack_dir, name)):
-                self._packs.append(ZipfileResourcePack(os.path.join(resource_pack_dir, name)))
+            if os.path.isfile(name) and is_zipfile(name):
+                self._packs.append(ZipfileResourcePack(name))
             else:
-                log_err("Not a zipfile: '%s', exit" % os.path.join(resource_pack_dir, name))
+                log_err("Not a zipfile: '%s', exit" % name)
                 exit(1)
         else:
-            log_err("No such file or directory: '%s', exit" % os.path.join(resource_pack_dir, name))
+            log_err("No such file or directory: '%s', exit" % name)
             exit(1)
 
     def set_lang(self, lang):
@@ -35,7 +36,12 @@ class ResourcePackManager():
         return True
 
     def get_translation(self, name):
-        return self._packs[0].get_translation(name)
+        for pack in self._packs:
+            print(name, ':' , pack.get_translation(name))
+            if pack.get_translation(name) != name:
+                return pack.get_translation(name)
+        else:
+            return name
 
     def get_pack_info(self):
         l = list()

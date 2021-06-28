@@ -17,25 +17,6 @@ settings = json.load(open(join(mcpypath, 'settings.json'), encoding='utf-8'))
 saves_path = join(mcpypath, 'saves')
 resource_pack = None
 
-# 解析命令行参数
-for args in sys.argv:
-    if args.startswith('--include='):
-        for lib in args[10:].split(';'):
-            if isdir(lib):
-                sys.path.insert(0, lib)
-                log_info("Add new lib path: '%s'" % lib)
-            else:
-                log_warn("Lib path '%s' not available" % lib)
-
-for args in sys.argv:
-    if args.startswith('--extlib='):
-        for lib in args[9:].split(';'):
-            if isdir(join(lib_path, lib)) or isfile(join(lib_path, lib + '.py')):
-                log_info("Loading extra lib: '%s'" % lib)
-                libs.append(__import__(lib))
-            else:
-                log_warn("Extra lib '%s' not found, pass" % lib)
-
 # 检查 settings.json 的正确性
 for key in ['fov', 'lang', 'resource-pack', 'use-theme']:
     if key not in settings:
@@ -73,3 +54,21 @@ else:
     log_err('you have not registered, exit')
     exit(1)
 
+# 解析命令行参数
+for args in sys.argv:
+    if args.startswith('--include='):
+        for lib in args[10:].split(';'):
+            if isdir(lib):
+                sys.path.insert(0, lib)
+                log_info("Add new lib path: '%s'" % lib)
+            else:
+                log_warn("Lib path '%s' not available" % lib)
+
+for args in sys.argv:
+    if args.startswith('--extlib='):
+        for lib in args[9:].split(';'):
+            if isdir(join(lib_path, lib)) or isfile(join(lib_path, lib + '.py')):
+                log_info("Loading extra lib: '%s'" % lib)
+                libs.append(__import__(lib))
+            else:
+                log_warn("Extra lib '%s' not found, pass" % lib)
