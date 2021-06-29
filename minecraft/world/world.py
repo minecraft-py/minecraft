@@ -43,7 +43,7 @@ class World(object):
     def init_world(self):
         # 放置所有方块以初始化世界, 非常耗时
         get_game().loading.draw()
-        log_info('Generate terrain')
+        log_info('Generate terrain...')
         now = time.time()
         if saves.load_level(self.name)['type'] == 'flat':
             self.init_flat_world()

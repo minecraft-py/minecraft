@@ -1,3 +1,4 @@
+import math
 import random
 
 from minecraft.entity.base import Entity
@@ -18,6 +19,8 @@ class ExplodingTNT(Entity):
         self._data['fuse'] = fuse
 
     def explode(self):
+        if math.dist(get_game().player['position'], self._data['position']) <= 2:
+            get_game().player.die('game.text.die.exploded')
         for pos_x in range(-1, 2):
             for pos_y in range(-1, 2):
                 for pos_z in range(-1, 2):

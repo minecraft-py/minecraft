@@ -14,6 +14,7 @@
 		"FPS: %(fps)"
 	],
 	"game.text.die": "你死了",
+	"game.text.die.exploded": "%s 爆炸了",
 	"game.text.die.fall_into_void": "%s 墜入了虛空",
 	"game.text.loading": "初始化...",
 	"general.seed": "世界種子",

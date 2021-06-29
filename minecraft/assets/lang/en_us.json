@@ -37,6 +37,7 @@
 		"FPS: %(fps)"
 	],
 	"game.text.die": "You die",
+	"game.text.die.exploded": "%s exploded",
 	"game.text.die.fall_into_void": "%s falling into the void",
 	"game.text.loading": "Loading...",
 	"game.text.respawn": "Respawn",

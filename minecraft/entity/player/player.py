@@ -2,7 +2,7 @@ import math
 import os
 import time
 
-from minecraft.source import settings
+from minecraft.source import player, resource_pack, settings
 from minecraft.utils.utils import *
 
 import pyglet
@@ -68,10 +68,17 @@ class Player():
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
-                        self._data['dy'] = 0 #get_game().world.get(tuple(op)).on_player_land(tuple(op))
+                        self._data['dy'] = 0
                     break
         else:
             return tuple(p)
+
+    def die(self, reason):
+        if not self._data['die']:
+            self._data['die'] = True
+            self._data['die_reason'] = resource_pack.get_translation(reason)
+            get_game().dialogue.add_dialogue(self._data['die_reason'] % player['name'])
+            get_game().toggle_gui('die')
 
     def get_sight_vector(self):
         # 返回玩家的视线方向
@@ -92,14 +99,9 @@ class Player():
         y_angle = math.radians(y)
         x_angle = math.radians(x + strafe)
         if any(self._data['strafe']):
-            if self._data['flying']:
-                dx = math.cos(x_angle)
-                dy = 0
-                dz = math.sin(x_angle)
-            else:
-                dx = math.cos(x_angle)
-                dy = 0
-                dz = math.sin(x_angle)
+            dx = math.cos(x_angle)
+            dy = 0
+            dz = math.sin(x_angle)
         elif self._data['flying'] and (self._data['dy'] != 0):
             dx = 0
             dy = self._data['dy']
@@ -135,10 +137,10 @@ class Player():
                         block.on_use()
                     elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:
                         get_game().world.add_block(previous, get_game().inventory[self._data['now_block']])
-            elif (button == pyglet.window.mouse.LEFT):
+            elif (button == mouse.LEFT):
                 if block.hardness > 0 and (not self._data['die']) and (not self._data['in_gui']):
                     get_game().world.remove_block(now)
-            elif (button == pyglet.window.mouse.MIDDLE) and previous:
+            elif (button == mouse.MIDDLE) and previous:
                 pass
         elif not self._data['die'] and not self._data['in_gui']:
             pass

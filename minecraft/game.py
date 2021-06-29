@@ -263,6 +263,7 @@ class Game(pyglet.window.Window):
         self.world.process_queue()
         self.dialogue.update()
         self.entities.on_update(dt)
+        self.test_die()
         sector = sectorize(self.player['position'])
         self.time += dt
         self.weather['duration'] -= dt
@@ -529,3 +530,6 @@ class Game(pyglet.window.Window):
             # 初始化屏幕
             self.loading.draw()
 
+    def test_die(self):
+        if self.player['position'][1] < -4:
+            self.player.die('game.text.die.fall_into_void')

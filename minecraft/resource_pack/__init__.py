@@ -13,7 +13,6 @@ class ResourcePackManager():
 
     def add(self, name):
         name.replace('(game)', os.path.join(search_mcpy(), 'resource-pack'))
-        log_info(name)
         if os.path.exists(os.path.join(name)) or (name == '(default)'):
             if os.path.isdir(os.path.join(name)) and (not name.endswith('.zip')):
                 self._packs.append(DirectoryResourcePack(name))

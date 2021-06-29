@@ -40,7 +40,7 @@ class DieScreen():
     def __init__(self, game):
         self.game = game
         self.frame = Frame(self.game, True)
-        self.frame.set_background_color((255, 0, 0, 100))
+        self.frame.set_background_color((220, 0, 0, 100))
         self._text = ColorLabel(text=resource_pack.get_translation('game.text.die'),
                 x=self.game.width / 2, y=0.6 * self.game.height, font_size=24, anchor_x='center', anchor_y='center')
         self._respawn = Button(((self.game.width - 200) / 2), 0.6 * self.game.height, 200, 40,
