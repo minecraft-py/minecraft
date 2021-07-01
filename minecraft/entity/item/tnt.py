@@ -55,11 +55,11 @@ class ExplodingTNT(Entity):
     def on_update(self, dt):
         super().on_update(dt)
         self._duration += dt
-        s = 2 * dt
+        s = 4 * dt
         if self._duration >= 0.5:
             self._duration = 0
             self._show = not self._show
-        if get_game().world.get((int(self._data['position'][0]), int(self._data['position'][1] - 0.1), int(self._data['position'][2]))) is None:
+        if get_game().world.get((int(self._data['position'][0]), int(self._data['position'][1] - 0.01), int(self._data['position'][2]))) is None:
             self._data['position'] = (self._data['position'][0], self._data['position'][1] - s, self._data['position'][2])
         if self._data['alive'] >= self._data['fuse']:
             self.explode()
