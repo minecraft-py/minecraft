@@ -119,7 +119,6 @@ class StartScreen(Tk):
         self.new_dialog.deiconify()
         self.new_dialog.grab_set()
         self.new_dialog.wait_window()
-        self.new_dialog.mainloop()
 
     def new_world(self, event=None):
         # 创建一个新的世界
@@ -129,7 +128,9 @@ class StartScreen(Tk):
             seed = hash(time.ctime())
         else:
             seed = hash(seed)
-        if re.match(r'^[a-zA-Z_]\w*$', name) is None:
+
+        is_valid_char = lambda c: any([c.isalpha(), c.isdigit(), c == '-', c == '_'])
+        if not all([c for c in map(is_valid_char, name)]):
             log_err('invalid world name')
         else:
             if not os.path.isdir(os.path.join(saves_path, name)):
@@ -181,7 +182,6 @@ class StartScreen(Tk):
         self.rename_dialog.deiconify()
         self.rename_dialog.grab_set()
         self.rename_dialog.wait_window()
-        self.rename_dialog.mainloop()
 
     def rename_world(self, name):
         # 重命名世界

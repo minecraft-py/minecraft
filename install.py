@@ -2,9 +2,9 @@
 
 from json import dump, load
 from os import chmod, environ, mkdir, makedirs, path, system
-from re import match, search
+from re import search
 from shlex import join
-from shutil import copyfile, copytree, rmtree
+from shutil import rmtree # copyfile, copytree,
 from sys import argv, executable, platform, version_info
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
 import uuid
@@ -95,10 +95,18 @@ def get_version():
         return '0.3.2'
 
 def install():
-    MCPYPATH = search_mcpy()
+
     version = get_version()
+
+    if path.isdir(MCPYPATH):
+        print("An old minecraft installation was detected, do you want to remove it?")
+        if input("yes/no [no]: ").lower() in ["yes", "y"]:
+            print("the old installation is removed")
+            __import__("shutil").rmtree(MCPYPATH)
+
     if not path.isdir(MCPYPATH):
         mkdir(MCPYPATH)
+
     install_settings()
     for name in ['log', 'saves', 'screenshot', 'resource-pack']:
         if not path.isdir(path.join(MCPYPATH, name)):
@@ -121,7 +129,7 @@ def install():
         print('[(1/3) Skip install requirements]')
 
 def install_settings():
-    MCPYPATH = search_mcpy()
+
     source = {
             'fov': 70,
             'lang': 'en_us',
@@ -146,14 +154,16 @@ def register_user():
     # 注册
     if ('--skip-register' not in argv) and ('--travis-ci' not in argv):
         print('[(2/3) Register]')
-        MCPYPATH = search_mcpy()
+        
         if not path.isdir(MCPYPATH):
             mkdir(MCPYPATH)
         if not path.isfile(path.join(MCPYPATH, 'player.json')):
             player_id = str(uuid.uuid4())
             print('Your uuid is %s, do not change it' % player_id)
             player_name = ''
-            while not match(r'^([a-z]|[A-Z]|_)\w+$', player_name):
+
+            is_valid_char = lambda c: any([c.isalpha(), c.isdigit(), c == '-', c == '_'])
+            while not all([c for c in map(is_valid_char, name)]):
                 player_name = input('Your name: ')
             dump({'id': player_id, 'name': player_name}, open(path.join(MCPYPATH, 'player.json'), 'w+'), indent='\t')
             print('Regsitered successfully, you can use your id to play multiplayer game!')
@@ -178,6 +188,9 @@ def see_eula():
     print('NOTE: This is not official Minecraft product. Not approved by or associated with Mojang.')
     if '--travis-ci' not in argv:
         input('NOTE: Press ENTER when you have finished reading the above information: ')
+
+MCPYPATH = search_mcpy()
+del search_mcpy
 
 if __name__ == '__main__':
     main()
