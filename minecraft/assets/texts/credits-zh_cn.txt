@@ -2,7 +2,7 @@
 [C]$eMinecraft-in-python 团队
 [C]$f============
 
-$7xxx
+$7 感谢
 $f    fogleman
 
 $7 游戏开发者

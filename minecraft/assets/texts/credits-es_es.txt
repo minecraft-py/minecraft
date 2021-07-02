@@ -27,6 +27,5 @@ $fgiampaolo $9https://github.com/giampaolo/psutil
 $fImas      $9https://github.com/lmas/opensimplex
 $fpyglet    $9https://github.com/pyglet/pyglet
 
-
 $f "Dentro de veinte años estarás más decepcionado por las cosas que no hiciste que por las que hiciste. Así que suelta las amarras de la proa. Navega lejos del puerto seguro. Atrapa los vientos alisios en tus velas. Explora. Sueña. Descubre".
 [R]$7 - Desconocido
