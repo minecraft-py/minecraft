@@ -2,7 +2,7 @@
 [C]$eMinecraft-in-python 团队
 [C]$f============
 
-$7 最初开发者
+$7xxx
 $f    fogleman
 
 $7 游戏开发者
@@ -26,10 +26,6 @@ $fgabdube   $9https://github.com/gabdube/pyshaders
 $fgiampaolo $9https://github.com/giampaolo/psutil
 $fImas      $9https://github.com/lmas/opensimplex
 $fpyglet    $9https://github.com/pyglet/pyglet
-
-
-
-
 
 $f"20年之后, 更令你失望的不是你做了什么, 而是你没做什么. 所以解开帆脚索, 离开安全的港湾, 赶着航程中的信风, 去探索, 去梦想, 去发现."
 [R]$7 - 佚名

@@ -2,22 +2,22 @@
 [C]$eMinecraft-in-python Team
 [C]$f============
 
-$7Original Creator
+$7Creador Original
 $f    fogleman
 
-$7Game Developers
+$7Desarrolladores del Videojuego
 $f    ismaelxyz
 $f    jason-bowen-zheng
 $f    wzh656
 
 [C]$f============
-[C]$eLICENSE
+[C]$eLICENCIA
 [C]$f============
 
-$fThis program use $eGNU GENERAL PUBLIC LICENSE version 3
+$fEste programa utiliza $eGNU GENERAL PUBLIC LICENSE version 3
 
 [C]$f============
-[C]$eSpecial Thanks
+[C]$eAgradecimientos Especiales
 [C]$f============
 
 $fboskee    $9https://github.com/boskee/Minecraft
@@ -27,5 +27,6 @@ $fgiampaolo $9https://github.com/giampaolo/psutil
 $fImas      $9https://github.com/lmas/opensimplex
 $fpyglet    $9https://github.com/pyglet/pyglet
 
-$f"Twenty years from now you will be more disappointed by the things that you didn't do than by the ones you did do. So throw off the bowlines. Sail away from the safe harbor. Catch the trade winds in your sails. Explore. Dream. Discover."
-[R]$7 - Unknow
+
+$f "Dentro de veinte años estarás más decepcionado por las cosas que no hiciste que por las que hiciste. Así que suelta las amarras de la proa. Navega lejos del puerto seguro. Atrapa los vientos alisios en tus velas. Explora. Sueña. Descubre".
+[R]$7 - Desconocido
