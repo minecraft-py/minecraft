@@ -48,6 +48,7 @@
 	"start.dialog.text.ok": "确认",
 	"start.dialog.text.rename": "重命名:",
 	"start.dialog.text.seed": "种子:",
+	"start.dialog.text.type": "世界类型:",
 	"start.dialog.title.delete": "删除存档",
 	"start.dialog.title.new": "新建存档",
 	"start.dialog.title.rename": "重命名存档",
@@ -56,5 +57,9 @@
 	"start.new": "新的世界",
 	"start.rename": "重命名",
 	"start.start": "开始游戏",
-	"start.title": "Minecraft %s"
+	"start.title": "Minecraft %s",
+	"start.worldtype": [
+		"平坦",
+		"随机"
+	]
 }

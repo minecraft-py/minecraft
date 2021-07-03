@@ -48,6 +48,7 @@
 	"start.dialog.text.ok": "OK",
 	"start.dialog.text.rename": "Rename:",
 	"start.dialog.text.seed": "Seed:",
+	"start.dialog.text.type": "Type:",
 	"start.dialog.title.delete": "Delete",
 	"start.dialog.title.new": "New",
 	"start.dialog.title.rename": "Rename",
@@ -56,5 +57,9 @@
 	"start.new": "New",
 	"start.rename": "Rename",
 	"start.start": "Start",
-	"start.title": "Minecraft %s"
+	"start.title": "Minecraft %s",
+	"start.worldtype": [
+		"flat",
+		"random"
+	]
 }

@@ -97,8 +97,9 @@ class StartScreen(Tk):
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
         self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=resource_pack.get_translation('start.dialog.text.seed'))
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
-        self.new_dialog_label_type = ttk.Label(self.new_dialog, text='Type:')
-        self.new_dialog_combobox_type = ttk.Combobox(self.new_dialog, values = ('flat', 'random'), width=8)
+        self.new_dialog_label_type = ttk.Label(self.new_dialog, text=resource_pack.get_translation('start.dialog.text.type'))
+        self.new_dialog_combobox_type = ttk.Combobox(self.new_dialog, values =resource_pack.get_translation('start.worldtype'),
+                width=18)
         self.new_dialog_combobox_type.state(['readonly'])
         self.new_dialog_button_ok = ttk.Button(self.new_dialog,
                 text=resource_pack.get_translation('start.dialog.text.ok'), command=self.new_world
@@ -110,7 +111,7 @@ class StartScreen(Tk):
         self.new_dialog_entry_seed.grid(column=1, row=1, columnspan=2, padx=5,
                                         pady=5)
         self.new_dialog_label_type.grid(column=0, row=2, padx=5, pady=5)
-        self.new_dialog_combobox_type.grid(column=1, row=2, pady=5)
+        self.new_dialog_combobox_type.grid(column=1, row=2, columnspan=2, padx=5, pady=5)
         self.new_dialog_button_ok.grid(column=2, row=3, padx=5, pady=5)
         self.new_dialog.resizable(False, False)
         self.new_dialog.geometry('+%d+%d' % (self.winfo_x() + 50,
@@ -124,11 +125,14 @@ class StartScreen(Tk):
         # 创建一个新的世界
         name = self.new_dialog_entry_name.get()
         seed = s = self.new_dialog_entry_seed.get()
+        if self.new_dialog_combobox_type.get() == resource_pack.get_translation('start.worldtype'):
+            world_type = 'flat'
+        else:
+            world_type = 'random'
         if seed == '':
             seed = hash(time.ctime())
         else:
             seed = hash(seed)
-
         is_valid_char = lambda c: any([c.isalpha(), c.isdigit(), c == '-', c == '_'])
         if not all([c for c in map(is_valid_char, name)]):
             log_err('invalid world name')
@@ -138,7 +142,7 @@ class StartScreen(Tk):
                 world = open(os.path.join(saves_path, name, 'world.json'), 'w+')
                 world.write('{\n}\n')
                 world.close()
-                world_level = {'data_version': VERSION['data'], 'seed': seed, 'type': self.new_dialog_combobox_type.get(),
+                world_level = {'data_version': VERSION['data'], 'seed': seed, 'type': world_type,
                         'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
                 json.dump(world_level, open(os.path.join(saves_path, name, 'level.json'), 'w+'))
                 os.mkdir(os.path.join(saves_path, name, 'players'))

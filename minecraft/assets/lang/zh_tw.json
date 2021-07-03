@@ -23,7 +23,8 @@
 	"start.dialog.text.name": "存檔名:",
 	"start.dialog.text.ok": "確認",
 	"start.dialog.text.rename": "重命名",
-	"start.dialog.text.seed": "種子",
+	"start.dialog.text.seed": "種子:",
+	"start.dialog.text.type": "世界類型:",
 	"start.dialog.title.delete": "刪除存檔",
 	"start.dialog.title.new": "新建存檔",
 	"start.dialog.title.rename": "重命名存檔",
@@ -32,5 +33,9 @@
 	"start.new": "新的世界",
 	"start.rename": "重命名",
 	"start.start": "開始遊戲",
-	"start.title": "Minecraft %s"
+	"start.title": "Minecraft %s",
+	"start.worldtype": [
+		"平坦",
+		"隨機"
+	]
 }

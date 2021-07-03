@@ -45,6 +45,7 @@
 	"start.dialog.text.ok": "Aceptar",
 	"start.dialog.text.rename": "Renombrar:",
 	"start.dialog.text.seed": "Semilla:",
+	"start.dialog.text.type": "Tipos de mundo:",
 	"start.dialog.title.delete": "Eliminar",
 	"start.dialog.title.new": "Nuevo",
 	"start.dialog.title.rename": "Cambiar Nombre",
@@ -53,5 +54,9 @@
 	"start.new": "Nuevo",
 	"start.rename": "Renombrar",
 	"start.start": "Iniciar",
-	"start.title": "Minecraft %s"
+	"start.title": "Minecraft %s",
+	"start.worldtype": [
+		"Plano",
+		"Estocástico"
+	]
 }
