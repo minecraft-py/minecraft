@@ -22,9 +22,10 @@
 		"Command '%s' not found",
 		"Command '%s' not found, do you mean '%s'?"
 	],
-	"description": "English",
-	"game.pause_menu.back_to_game": "Back to game",
-	"game.pause_menu.exit": "Exit",
+	"description": "English(US)",
+	"game.gui.craft.name": "Craft",
+	"game.gui.pause_menu.back_to_game": "Back to game",
+	"game.gui.pause_menu.exit": "Exit",
 	"game.text.build_out_of_world": [
 		"Max build limit are %d blocks",
 		"You can't build out of world"
@@ -44,11 +45,10 @@
 	"general.seed": "Seed",
 	"start.delete": "Delete",
 	"start.dialog.text.delete": "It will delete %s for a long time?",
-	"start.dialog.text.name": "Name:",
+	"start.dialog.text.name": "Name",
 	"start.dialog.text.ok": "OK",
-	"start.dialog.text.rename": "Rename:",
-	"start.dialog.text.seed": "Seed:",
-	"start.dialog.text.type": "Type:",
+	"start.dialog.text.rename": "Rename",
+	"start.dialog.text.type": "Type",
 	"start.dialog.title.delete": "Delete",
 	"start.dialog.title.new": "New",
 	"start.dialog.title.rename": "Rename",

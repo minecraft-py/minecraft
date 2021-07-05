@@ -69,9 +69,9 @@ class PauseMenu():
         self.game = game
         self.frame = Frame(self.game, True)
         self._back_button = Button((self.game.width - 200) / 2, 100, 200, 40,
-                resource_pack.get_translation('game.pause_menu.back_to_game'))
+                resource_pack.get_translation('game.gui.pause_menu.back_to_game'))
         self._exit_button = Button((self.game.width - 200) / 2, 150, 200, 40,
-                resource_pack.get_translation('game.pause_menu.exit'))
+                resource_pack.get_translation('game.gui.pause_menu.exit'))
 
         def on_back_press():
             self.game.toggle_gui()

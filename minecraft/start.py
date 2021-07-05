@@ -95,7 +95,7 @@ class StartScreen(Tk):
         self.new_dialog.title(resource_pack.get_translation('start.dialog.title.new'))
         self.new_dialog_label_name = ttk.Label(self.new_dialog, text=resource_pack.get_translation('start.dialog.text.name'))
         self.new_dialog_entry_name = ttk.Entry(self.new_dialog)
-        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=resource_pack.get_translation('start.dialog.text.seed'))
+        self.new_dialog_label_seed = ttk.Label(self.new_dialog, text=resource_pack.get_translation('general.seed'))
         self.new_dialog_entry_seed = ttk.Entry(self.new_dialog)
         self.new_dialog_label_type = ttk.Label(self.new_dialog, text=resource_pack.get_translation('start.dialog.text.type'))
         self.new_dialog_combobox_type = ttk.Combobox(self.new_dialog, values =resource_pack.get_translation('start.worldtype'),
