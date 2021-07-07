@@ -6,7 +6,7 @@
 	"command.args.number.not_a_number": "'%s' 不是数字",
 	"command.args.number.not_between": "数字必须在 %s ~ %s 之间",
 	"command.args.number.wrong": "错误的数字: '%s'",
-	"command.args.position.not_a_number": "'%s'不是数字",
+	"command.args.position.not_a_number": "'%s' 不是数字",
 	"command.args.position.wrong": "不能将 '%s' 转换为坐标",
 	"command.args.string.not_available": "字符串 '%s' 没有匹配上",
 	"command.name.gamemode.help": "更换游戏模式",

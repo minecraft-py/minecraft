@@ -29,7 +29,7 @@ class ExplodingTNT(Entity):
                         round(self._data['position'][2] + pos_z)))
                     if block:
                         if block.hardness > 0:
-                            if block.name == 'tnt':
+                            if (block.name == 'tnt'):
                                 get_game().world.get((round(self._data['position'][0] + pos_x),
                                     round(self._data['position'][1] + pos_y),
                                     round(self._data['position'][2] + pos_z))).on_use()
@@ -46,7 +46,7 @@ class ExplodingTNT(Entity):
                         if block.name == 'tnt':
                             get_game().world.get((round(self._data['position'][0] + pos_x),
                                 round(self._data['position'][1] + pos_y),
-                                round(self._data['position'][2] + pos_z))).on_use(random.randint(30, 40) / 10)
+                                round(self._data['position'][2] + pos_z))).on_use(random.randint(40, 50) / 10)
                         if (block.hardness > 0) and (random.randint(0, 9) >= 5):
                             get_game().world.remove_block((round(self._data['position'][0] + pos_x),
                                 round(self._data['position'][1] + pos_y),
