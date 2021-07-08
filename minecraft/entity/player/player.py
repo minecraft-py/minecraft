@@ -76,8 +76,8 @@ class Player():
     def die(self, reason):
         if not self._data['die']:
             self._data['die'] = True
-            self._data['die_reason'] = resource_pack.get_translation(reason)
-            get_game().dialogue.add_dialogue(self._data['die_reason'] % player['name'])
+            self._data['die_reason'] = resource_pack.get_translation(reason) % player['name']
+            get_game().dialogue.add_dialogue(self._data['die_reason'])
             get_game().toggle_gui('die')
 
     def get_sight_vector(self):

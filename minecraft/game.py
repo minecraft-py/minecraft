@@ -332,6 +332,10 @@ class Game(pyglet.window.Window):
         saves.save_window(self.width, self.height)
         pyglet.app.exit()
 
+    def on_die(self):
+        for func in self.event.get('on_die', {}).values():
+            func()
+
     def on_mouse_press(self, x, y, button, modifiers):
         """
         当玩家按下鼠标按键时调用
@@ -533,3 +537,4 @@ class Game(pyglet.window.Window):
     def test_die(self):
         if self.player['position'][1] < -4:
             self.player.die('game.text.die.fall_into_void')
+        self.on_die()

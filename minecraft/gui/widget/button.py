@@ -27,7 +27,6 @@ class Button(Widget):
         self._enable = True
 
     def _update(self):
-        width, height = get_size()
         self._sprite.position = self._x, self._y
         self._label.x = self._x + self._width / 2
         self._label.y = self._y + self._height / 2
@@ -75,7 +74,7 @@ Button.register_event_type('on_press')
 Button.register_event_type('on_release')
 
 
-class ChoseButton(Button):
+class ChooseButton(Button):
 
     def __init__(self, x, y, width, height, prefix, values):
         super().__init__(x, y, width, height, text='%s: %s' % (prefix, values[0]))
