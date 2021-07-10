@@ -1,6 +1,7 @@
 {
 	"command.args.block.wrong": "方塊 '%s' 沒有找到",
 	"command.args.boolean.wrong": "'%s' 不能轉換為布爾值",
+	"command.args.dict.wrong": "鍵的長度必須大於0",
 	"command.args.number.is_big": "%s 比 %s 大",
 	"command.args.number.is_small": "%s 比 %s 小",
 	"command.args.number.not_a_number": "'%s' 不是數字",

@@ -119,14 +119,19 @@ class DictArgument(BaseArgument):
 
     def __init__(self, argument):
         super().__init__()
-        if isinstance(arg, DictArgument):
+        if isinstance(argument, DictArgument):
             # 禁止套娃
             raise RecursionError()
-        else:
+        elif isinstance(argument, BaseArgument):
             self.argument = argument
 
     def valid(self, value):
-        pass
+        if '=' in value:
+            key, value = value.split('=', 1)
+            if len(key) < 1:
+                raise TypeError(resource_pack.get_translation('command.args.dict.wrong') % key)
+            else:
+                return {key: self.argument(value)}
 
 
 class ArgumentCollection():

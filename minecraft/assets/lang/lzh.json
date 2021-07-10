@@ -1,6 +1,7 @@
 {
 	"command.args.block.wrong": "無 '%s' 塊",
 	"command.args.boolean.wrong": "'%s' 非真亦非假",
+	"command.args.dict.wrong": "鍵值之長必無空",
 	"command.args.number.is_big": "%s 比 %s 大",
 	"command.args.number.is_small": "%s 比 %s 小",
 	"command.args.number.not_a_number": "'%s' 非數也",

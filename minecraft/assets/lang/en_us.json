@@ -1,6 +1,7 @@
 {
 	"command.args.block.wrong": "Not a block: '%s'",
 	"command.args.boolean.wrong": "Can't parse '%s' to boolean",
+	"command.args.dict.wrong": "The length of key must greater than 0",
 	"command.args.number.is_big": "Number %s is bigger than %s",
 	"command.args.number.is_small": "Number %s is smaller than %s",
 	"command.args.number.not_a_number": "'%s' is not a number",
