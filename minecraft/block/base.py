@@ -48,7 +48,7 @@ class Block():
         return list(textures)
 
     def get_vertices(self, x, y, z):
-        return cube_vertices(x, y, z, 0.5) 
+        return cube_vertices(x, y, z, 1, 1) 
 
     def update_texture(self):
         if self.textures:

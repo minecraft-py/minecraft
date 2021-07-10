@@ -505,7 +505,7 @@ class Game(pyglet.window.Window):
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block and self.player['gamemode'] != 1:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 0.501)
+            vertex_data = cube_vertices(x, y, z, 1.01, 1.01)
             glColor3f(0.0, 0.0, 0.0)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             glLineWidth(1.5)

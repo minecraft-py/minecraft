@@ -15,15 +15,16 @@ else:
 
 import pyglet
 
-def cube_vertices(x, y, z, n):
-    # 返回在 x, y, z 坐标的方形顶点 
+def cube_vertices(x, y, z, bottom, height):
+    # 返回在 x, y, z 坐标的方形顶点
+    b, h = bottom / 2, height / 2
     return [
-            x-n,y+n,z-n, x-n,y+n,z+n, x+n,y+n,z+n, x+n,y+n,z-n,  # 顶部
-            x-n,y-n,z-n, x+n,y-n,z-n, x+n,y-n,z+n, x-n,y-n,z+n,  # 底部
-            x-n,y-n,z-n, x-n,y-n,z+n, x-n,y+n,z+n, x-n,y+n,z-n,  # 左边
-            x+n,y-n,z+n, x+n,y-n,z-n, x+n,y+n,z-n, x+n,y+n,z+n,  # 右边
-            x-n,y-n,z+n, x+n,y-n,z+n, x+n,y+n,z+n, x-n,y+n,z+n,  # 前面
-            x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # 后面
+            x-b,y+h,z-b, x-b,y+h,z+b, x+b,y+h,z+b, x+b,y+h,z-b,  # 顶部
+            x-b,y-h,z-b, x+b,y-h,z-b, x+b,y-h,z+b, x-b,y-h,z+b,  # 底部
+            x-b,y-h,z-b, x-b,y-h,z+b, x-b,y+h,z+b, x-b,y+h,z-b,  # 左边
+            x+b,y-h,z+b, x+b,y-h,z-b, x+b,y+h,z-b, x+b,y+h,z+b,  # 右边
+            x-b,y-h,z+b, x+b,y-h,z+b, x+b,y+h,z+b, x-b,y+h,z+b,  # 前面
+            x+b,y-h,z-b, x-b,y-h,z-b, x-b,y+h,z-b, x+b,y+h,z-b,  # 后面
         ]
 
 def tex_coords(top, bottom, side0, side1=None, n=1):

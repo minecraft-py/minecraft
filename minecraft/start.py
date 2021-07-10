@@ -146,7 +146,7 @@ class StartScreen(Tk):
                         'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
                 json.dump(world_level, open(os.path.join(saves_path, name, 'level.json'), 'w+'))
                 os.mkdir(os.path.join(saves_path, name, 'players'))
-                player_info = {'position': '0.0', 'respawn': '0.0', 'now_block': 0}
+                player_info = {'position': '0', 'respawn': '0', 'now_block': 0}
                 json.dump(player_info, open(os.path.join(saves_path, name, 'players', '%s.json' % player['id']), 'w+'))
                 self.new_dialog.destroy()
                 log_info('create world successfully')

@@ -1,5 +1,5 @@
 import json
-from os.path import join
+from os.path import isfile, join
 
 from minecraft.source import saves_path, player
 from minecraft.utils.utils import *
@@ -27,16 +27,24 @@ def load_level(name):
 
 def load_player(name):
     # 读取玩家数据
-    data = json.load(open(join(saves_path, name, 'players', '%s.json' % player['id'])))
-    position = str2pos(data.get('position', (0, 0, 0)), True)
-    if len(position) == 3:
-        position = position[0], position[1] + 1, position[2]
-    return {
-                'position': position,
-                'respawn': str2pos(data.get('respawn', (0, 0, 0)), True),
-                'rotation': data.get('rotation', (0, 0)),
-                'now_block': int(data.get('now_block', 0))
-            }
+    if isfile(join(saves_path, name, 'players', '%s.json' % player['id'])):
+        data = json.load(open(join(saves_path, name, 'players', '%s.json' % player['id'])))
+        position = str2pos(data.get('position', (0, 0, 0)), True)
+        if len(position) == 3:
+            position = position[0], position[1] + 1, position[2]
+        return {
+                    'position': position,
+                    'respawn': str2pos(data.get('respawn', (0, 0, 0)), True),
+                    'rotation': data.get('rotation', [0, 0]),
+                    'now_block': int(data.get('now_block', 0))
+                }
+    else:
+        return {
+                    'position': '0',
+                    'respawn': '0',
+                    'rotation': [0, 0],
+                    'now_block': 0
+                }
 
 def load_window():
     # 读取游戏窗口信息
