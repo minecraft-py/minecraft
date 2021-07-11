@@ -33,6 +33,7 @@ class HotBar(GUI):
     def set_all(self, items):
         width = get_size()[0]
         self._items = items
+        self._item = list()
         for item in range(len(self._items)):
             if item <= 9:
                 if self._items[item]:

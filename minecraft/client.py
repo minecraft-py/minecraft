@@ -6,7 +6,7 @@ import threading
 from minecraft.source import player
 from minecraft.utils.utils import *
 
-def connect(self, ip, addr):
+def connect(ip, addr):
     # 创建&连接套接字
     socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     socket.connect((ip, addr))

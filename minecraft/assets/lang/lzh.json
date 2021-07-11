@@ -21,7 +21,7 @@
 	"command.name.weather.none_exist": "天公於 '%s' 無應",
 	"command.not_found": [
 		"旨 '%s' 未尋得",
-		"旨 '%s' 未尋得, 為 '%s' 乎?"
+		"旨 '%s' 未尋得, 莫非 '%s' 耶?"
 	],
 	"description": "中文(華夏)",
 	"game.gui.craft.name": "為",
