@@ -17,6 +17,8 @@ try:
     from pyglet.window import key, mouse
 
     import minecraft.saves as saves
+    from minecraft.block import blocks
+    from minecraft.block.base import get_block_icon
     from minecraft.command.commands import commands
     from minecraft.entity.manager import EntityManager
     from minecraft.entity.player.player import Player
@@ -31,8 +33,6 @@ try:
     from minecraft.gui.guis import Chat, DieScreen, PauseMenu
     from minecraft.gui.widget.label import ColorLabel
     from minecraft.source import libs, player, resource_pack, settings
-    from minecraft.block import blocks
-    from minecraft.block.base import get_block_icon
     from minecraft.world.sky import change_sky_color
     from minecraft.world.weather import weather, choice_weather
     from minecraft.world.world import World
@@ -55,6 +55,9 @@ class Game(pyglet.window.Window):
         self.is_init = True
         # 窗口是否捕获鼠标
         self.exclusive = False
+        # 鼠标位置
+        self.mouse_position = (0, 0)
+        self.active_item = self.active_item_name = None
         # 玩家所处的区域
         self.sector = None
         # 游戏世界(秒)
@@ -117,7 +120,7 @@ class Game(pyglet.window.Window):
         # 每30秒保存一次进度
         pyglet.clock.schedule_interval(self.save, 30.0)
         # 天空颜色变换
-        pyglet.clock.schedule_interval(change_sky_color, 7.5)
+        pyglet.clock.schedule_interval(change_sky_color, 1.0)
         log_info('Welcome %s' % player['name'])
         for lib in libs:
             if hasattr(lib, 'main'):
@@ -140,7 +143,17 @@ class Game(pyglet.window.Window):
             return False
 
     def add_info_ext(self, s):
-        self._info_ext.append(s) 
+        self._info_ext.append(s)
+
+    def set_active_item(self, item=None):
+        if item is None:
+            self.active_item = self.active_item_name = None
+        else:
+            self.active_item = Sprite(get_block_icon(blocks[item], 32))
+            self.active_item_name = item
+
+    def get_active_item(self):
+        return self.active_item_name
 
     def init_gui(self):
         # 生命值
@@ -168,6 +181,9 @@ class Game(pyglet.window.Window):
             self.player['in_gui'] = False
             self.player['active_gui'] = ''
             self.active_gui.frame.enable(False)
+            if hasattr(self.active_gui, 'on_close'):
+                self.active_gui.on_close()
+            self.active_item = self.active_item_name = None
         else:
             if self.player['in_gui']:
                 return
@@ -176,6 +192,8 @@ class Game(pyglet.window.Window):
             self.player['active_gui'] = name
             self.active_gui = self.guis[name]
             self.active_gui.frame.enable(True)
+            if hasattr(self.active_gui, 'on_open'):
+                self.active_gui.on_open()
 
     def save(self, dt):
         """
@@ -363,6 +381,7 @@ class Game(pyglet.window.Window):
         """
         self.active_gui.frame.on_mouse_motion(x, y, dx, dy)
         self.player.on_mouse_motion(x, y, dx, dy)
+        self.mouse_position = (x, y)
         for func in self.event.get('on_mouse_motion', {}).values():
             func(x, y, dx, dy)
 
@@ -479,6 +498,9 @@ class Game(pyglet.window.Window):
                     self.reticle.draw()
             if self.player['in_gui']:
                 self.active_gui.frame.draw()
+                if self.active_item is not None:
+                    self.active_item.position = self.mouse_position[0], self.mouse_position[1] - 32
+                    self.active_item.draw()
             if not self.player['hide_hud']:
                 self.draw_label()
             for func in self.event.get('on_draw', {}).values():
