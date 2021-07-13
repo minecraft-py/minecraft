@@ -21,7 +21,8 @@ class ItemSlot(Widget):
 
     def _update(self):
         self._rect.position = self.x, get_size()[1] - self.y - 32
-        self._item.position = self.x, get_size()[1] - self.y - 32
+        if self._item is not None:
+            self._item.position = self.x, get_size()[1] - self.y - 32
 
     def on_mouse_motion(self, x, y, dx, dy):
         if self.check_hit(x, get_size()[1] - y):
@@ -69,9 +70,8 @@ class BagSlot():
         for x in range(9):
             for y in range(0, -3, -1):
                 self._slot['bag'].setdefault((x, y), ItemSlot(self.x + 36 * x, self.y + 36 * y))
+        for x in range(9):
             self._slot['hotbar'].setdefault(x, ItemSlot(self.x + 36 * x, self.y - 116))
-        for i in range(len(get_game().inventory)):
-            self._slot['hotbar'][i].set_item(get_game().inventory[i])
 
     def resize(self, x, y):
         self.x = x

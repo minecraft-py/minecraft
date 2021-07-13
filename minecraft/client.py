@@ -12,8 +12,10 @@ def connect(ip, addr):
     socket.connect((ip, addr))
     socket.send('client'.encode())
     data = socket.recv(1024).decode()
+    if data == 'refuse':
+        return False
     # 互换版本号
-    if data.startswith('server '):
+    else data.startswith('server '):
         log_info('server version %s' % json.loads(data[7:])['version'])
         socket.send(('client {"version": %s}' % VERSION['data']).encode())
         data = socket.recv(1024).decode()

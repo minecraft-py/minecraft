@@ -88,7 +88,6 @@ class Game(pyglet.window.Window):
         # 聊天区
         self.dialogue = Dialogue()
         # 设置图标
-        self.set_icon(get_block_icon(blocks['crafting_table'], 64))
         # 窗口最小为 800x600
         self.set_minimum_size(800, 600)
         # 这个十字在屏幕中央
@@ -511,6 +510,7 @@ class Game(pyglet.window.Window):
             for func in self.event.get('on_init', {}).values():
                 func()
             self.is_init = False
+            self.set_icon(get_block_icon(blocks['crafting_table'], 64))
 
     def on_text(self, text):
         self.active_gui.frame.on_text(text)
@@ -527,10 +527,10 @@ class Game(pyglet.window.Window):
         block = self.world.hit_test(self.player['position'], vector)[0]
         if block and self.player['gamemode'] != 1:
             x, y, z = block
-            vertex_data = cube_vertices(x, y, z, 1.01, 1.01)
+            vertex_data = cube_vertices(x, y, z, 1.001, 1.001)
             glColor3f(0.0, 0.0, 0.0)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-            glLineWidth(1.5)
+            glLineWidth(2.5)
             glDisable(GL_CULL_FACE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
             glEnable(GL_CULL_FACE)

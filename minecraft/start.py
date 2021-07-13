@@ -124,6 +124,9 @@ class StartScreen(Tk):
     def new_world(self, event=None):
         # 创建一个新的世界
         name = self.new_dialog_entry_name.get()
+        if ('懒' in name) or ('懶' in name) and ('zh' in settings['lang']):
+            messagebox.showinfo(title=resource_pack.get_translation('start.egg.title'),
+                    message=resource_pack.get_translation('start.egg.message'))
         seed = s = self.new_dialog_entry_seed.get()
         if self.new_dialog_combobox_type.get() == resource_pack.get_translation('start.worldtype'):
             world_type = 'flat'

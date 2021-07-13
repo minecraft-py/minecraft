@@ -106,7 +106,7 @@ class World(object):
         x, y, z = position
         for dx, dy, dz in FACES:
             pos = (x + dx, y + dy, z + dz)
-            if  pos not in self.world:
+            if  self.world.get(pos) is None:
                 return True
         else:
             return False
