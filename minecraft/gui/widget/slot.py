@@ -10,10 +10,10 @@ from pyglet.window import mouse
 
 class ItemSlot(Widget):
     
-    def __init__(self, x, y):
+    def __init__(self, x, y, index=None):
         y = get_size()[1] - y
         super().__init__(x, y, 32, 32)
-        self._press = 0
+        self._index = index
         self._on = False
         self._item = self._item_name = None
         self._rect = Rectangle(self.x, get_size()[1] - self.y - 32, 32, 32, color=(255, ) * 3)
@@ -33,14 +33,14 @@ class ItemSlot(Widget):
     def on_mouse_press(self, x, y, buttons, modifiers):
         if not self._on:
             return
-        if self._press == 1:
-            self._press = 0
-            return
-        elif self._press == 0:
-            self._press = 1
-        i1, i2 = self._item_name, get_game().get_active_item()
-        self.set_item(i2)
-        get_game().set_active_item(i1)
+        if buttons == mouse.LEFT:
+            i1, i2 = self._item_name, get_game().get_active_item()
+            self.set_item(i2)
+            get_game().set_active_item(i1)
+        elif buttons == mouse.MIDDLE:
+            get_game().set_active_item(self._item_name)
+        if hasattr(self, 'on_change'):
+            self.on_change(buttons, modifiers, self._index)
 
     def set_item(self, item=None):
         if item is None:
@@ -63,23 +63,23 @@ class BagSlot():
 
     def __init__(self, x, y):
         self.x = x
-        self.y = y - 4
+        self.y = y
         self._slot = dict()
         self._slot['bag'] = dict()
         self._slot['hotbar'] = dict()
         for x in range(9):
             for y in range(0, -3, -1):
-                self._slot['bag'].setdefault((x, y), ItemSlot(self.x + 36 * x, self.y + 36 * y))
+                self._slot['bag'].setdefault((x, -y), ItemSlot(self.x + 36 * x, self.y + 36 * y))
         for x in range(9):
             self._slot['hotbar'].setdefault(x, ItemSlot(self.x + 36 * x, self.y - 116))
 
     def resize(self, x, y):
         self.x = x
-        self.y = y - 4
+        self.y = y
         for x in range(9):
             for y in range(0, -3, -1):
-                self._slot['bag'][x, y].x = self.x + 36 * x
-                self._slot['bag'][x, y].y = self.y + 36 * y
+                self._slot['bag'][x, -y].x = self.x + 36 * x
+                self._slot['bag'][x, -y].y = self.y + 36 * y
             self._slot['hotbar'][x].x = self.x + 36 * x
             self._slot['hotbar'][x].y = self.y - 116
 

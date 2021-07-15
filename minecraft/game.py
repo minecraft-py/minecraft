@@ -361,13 +361,11 @@ class Game(pyglet.window.Window):
         :param: button 哪个按键被按下: 1 = 左键, 4 = 右键
         :param: modifiers 表示单击鼠标按钮时按下的任何修改键的数字
         """
-        self.active_gui.frame.on_mouse_press(x, y, button, modifiers)
         self.player.on_mouse_press(x, y, button, modifiers)
         for func in self.event.get('on_mouse_press', {}).values():
             func(x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
-        self.active_gui.frame.on_mouse_release(x, y, button, modifiers)
         for func in self.event.get('on_mouse_release', {}).values():
             func(x, y, button, modifiers)
 
@@ -378,7 +376,6 @@ class Game(pyglet.window.Window):
         :param: x, y 鼠标点击时的坐标, 如果被捕获的话它们总是在屏幕中央
         :param: dx, dy 鼠标移动的距离
         """
-        self.active_gui.frame.on_mouse_motion(x, y, dx, dy)
         self.player.on_mouse_motion(x, y, dx, dy)
         self.mouse_position = (x, y)
         for func in self.event.get('on_mouse_motion', {}).values():
@@ -402,7 +399,6 @@ class Game(pyglet.window.Window):
         :param: symbol 按下的键
         :param: modifiers 同时按下的修饰键
         """
-        self.active_gui.frame.on_key_press(symbol, modifiers)
         self.player.on_key_press(symbol, modifiers)
         for func in self.event.get('on_key_press', {}).values():
             func(symbol, modifiers)
@@ -413,9 +409,8 @@ class Game(pyglet.window.Window):
 
         :param: symbol 释放的键
         """
-        self.active_gui.frame.on_key_release(symbol, modifiers)
         self.player.on_key_release(symbol, modifiers)
-        for func in self.event.get('on_mouse_release', {}).values():
+        for func in self.event.get('on_key_release', {}).values():
             func(symbol, modifiers)
 
     def on_resize(self, width, height):
@@ -513,13 +508,16 @@ class Game(pyglet.window.Window):
             self.set_icon(get_block_icon(blocks['crafting_table'], 64))
 
     def on_text(self, text):
-        self.active_gui.frame.on_text(text)
+        for func in self.event.get('on_text', {}).values():
+            func(text)
 
     def on_text_motion(self, motion):
-        self.active_gui.frame.on_text_motion(motion)
+        for func in self.event.get('on_text_motion', {}).values():
+            func(motion)
 
     def on_text_motion_select(self, motion):
-        self.active_gui.frame.on_text_motion_select(motion)
+        for func in self.event.get('on_text_motion_select', {}).values():
+            func(motion)
 
     def draw_focused_block(self):
         # 在十字线选中的方块绘制黑框

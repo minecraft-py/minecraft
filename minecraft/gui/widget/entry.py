@@ -32,7 +32,6 @@ class DialogueEntry(Widget):
         self._layout.y = 20
         self._focus = False
         self._press = False
-        self.last_char = ''
         self.last_press = [0, 0]
         super().__init__(5, 20, get_size()[0] + self.pad - 5, self.text_height)
 
@@ -99,11 +98,6 @@ class DialogueEntry(Widget):
         self._layout.width = width
 
     def on_text(self, text):
-        if text == self.last_char:
-            self.last_char = ''
-            return
-        else:
-            self.last_char = text
         if self._focus:
             if text in ('\r', '\n'):
                 self.dispatch_event('on_commit', self._layout.document.text)
@@ -147,7 +141,6 @@ class TextEntry(Widget):
         self._layout.y = win_height - y
         self._focus = False
         self._press = False
-        self.last_char = ''
         super().__init__(x, win_height - y, width, height)
 
     def _update(self):
@@ -191,11 +184,6 @@ class TextEntry(Widget):
             self._press = False
 
     def on_text(self, text):
-        if text == self.last_char:
-            self.last_char = ''
-            return
-        else:
-            self.last_char = text
         if self._focus:
             if text in ('\r', '\n'):
                 self.dispatch_event('on_commit', self._layout.document.text)
