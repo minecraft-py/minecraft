@@ -132,7 +132,7 @@ class Player():
                 return
             if (button == mouse.RIGHT) or ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)) and previous:
                 # 在 Mac OS X 中, Ctrl + 左键 = 右键
-                if (not self._data['die']) and (not self._data['in_gui']) and (not self._data['active_gui'] == 'pause'):
+                if (not self._data['die']) and (not self._data['in_gui']):
                     if hasattr(block, 'on_use') and (not self._data['stealing']):
                         block.on_use()
                     elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:

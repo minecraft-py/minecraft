@@ -26,19 +26,14 @@ def is_game_restore(name):
 
     :param: name 要检查的游戏目录
     """
-    if name == '_server':
-        return False
     if os.path.isdir(os.path.join(saves_path, name)):
-        if 'world.json' in os.listdir(os.path.join(saves_path, name)):
-            if 'level.json' in os.listdir(os.path.join(saves_path, name)):
-                if 'players' in os.listdir(os.path.join(saves_path, name)):
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
+        if not os.path.isfile(os.path.join(saves_path, name, 'level.json')):
             return False
+        if not os.path.isfile(os.path.join(saves_path, name, 'world.json')):
+            return False
+        if not os.path.isdir(os.path.join(saves_path, name, 'players')):
+            return False
+        return True
     else:
         return False
 
@@ -123,11 +118,8 @@ class StartScreen(Tk):
 
     def new_world(self, event=None):
         # 创建一个新的世界
-        name = self.new_dialog_entry_name.get()
-        if ('懒' in name) or ('懶' in name) and ('zh' in settings['lang']):
-            messagebox.showinfo(title=resource_pack.get_translation('start.egg.title'),
-                    message=resource_pack.get_translation('start.egg.message'))
-        seed = s = self.new_dialog_entry_seed.get()
+        name = self.new_dialog_entry_name.get() 
+        seed = self.new_dialog_entry_seed.get()
         if self.new_dialog_combobox_type.get() == resource_pack.get_translation('start.worldtype'):
             world_type = 'flat'
         else:
@@ -139,11 +131,14 @@ class StartScreen(Tk):
         is_valid_char = lambda c: any([c.isalpha(), c.isdigit(), c == '-', c == '_'])
         if not all([c for c in map(is_valid_char, name)]):
             log_err('invalid world name')
-        else:
+        else: 
             if not os.path.isdir(os.path.join(saves_path, name)):
+                if (('懒' in name) or ('懶' in name)) and ('zh' in settings['lang']):
+                    messagebox.showinfo(title=resource_pack.get_translation('start.egg.title'),
+                            message=resource_pack.get_translation('start.egg.message'))
                 os.mkdir(os.path.join(saves_path, name))
                 world = open(os.path.join(saves_path, name, 'world.json'), 'w+')
-                world.write('{\n}\n')
+                world.write('{}\n')
                 world.close()
                 world_level = {'data_version': VERSION['data'], 'seed': seed, 'type': world_type,
                         'time': 400, 'weather': {'now': 'clear', 'duration': 600}}
