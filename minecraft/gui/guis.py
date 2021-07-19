@@ -1,3 +1,5 @@
+from time import sleep
+
 from minecraft.gui.frame import Frame
 from minecraft.gui.widget.button import Button, ChooseButton
 from minecraft.gui.widget.entry import DialogueEntry
@@ -6,6 +8,7 @@ from minecraft.source import resource_pack, player
 from minecraft.utils.utils import *
 
 import pyglet
+from pyglet.clock import schedule_once
 
 
 class Chat():
@@ -83,7 +86,7 @@ class PauseMenu():
                 resource_pack.get_translation('game.gui.pause_menu.exit'))
 
         def on_back_press():
-            self.game.toggle_gui()
+            schedule_once(lambda dt: self.game.toggle_gui(), 0.1)
 
         def on_exit_press():
             self.game.save(0)
