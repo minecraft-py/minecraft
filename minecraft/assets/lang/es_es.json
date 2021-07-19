@@ -1,13 +1,14 @@
 {
 	"command.args.block.wrong": "No es un bloque: '%s'",
 	"command.args.boolean.wrong": "No se puede convertir '%s' en booleano",
+	"command.args.dict.wrong": "La longitud de la clave debe ser mayor que 0",
 	"command.args.number.is_big": "El número %s es mayor que %s",
 	"command.args.number.is_small": "El número %s es menor que %s",
 	"command.args.number.not_a_number": "'%s' no es un número",
 	"command.args.number.not_between": "El número debe estar entre %s y %s",
 	"command.args.number.wrong": "Número equivocado: '%s'",
 	"command.args.position.not_a_number": "No es un número: '%s'",
-	"command.args.position.wrong": "'%s' no es puede convertir en una posición",
+	"command.args.position.wrong": "'%s' no se puede convertir a una posición",
 	"command.args.string.not_available": "El texto '%s' no está disponible",
 	"command.name.gamemode.help": "Cambiar el modo de juego",
 	"command.name.help.help": "Mostrar la ayuda",
@@ -22,7 +23,7 @@
 		"Comando '%s' no encontrado",
 		"Command '%s' no encontrado, ¿quieres decir '%s'??"
 	],
-	"description": "Español(Venezuela)",
+	"description": "Español(España)",
 	"game.gui.craft.name": "Proceso",
 	"game.pause_menu.back_to_game": "Volver al juego",
 	"game.pause_menu.exit": "Salir",
@@ -38,14 +39,16 @@
 		"FPS: %(fps)"
 	],
 	"game.text.die": "As muerto",
+	"game.text.die.exploded": "%s explotó",
 	"game.text.die.fall_into_void": "%s a caído en el vacío",
 	"game.text.loading": "Cargando...",
+	"game.text.respawn": "Reaparecer",
+	"general.seed": "Semilla",
 	"start.delete": "Eliminar",
 	"start.dialog.text.delete": "¿Desea eliminar: %s, permanentemente?",
 	"start.dialog.text.name": "Nombre",
 	"start.dialog.text.ok": "Aceptar",
 	"start.dialog.text.rename": "Renombrar",
-	"start.dialog.text.seed": "Semilla",
 	"start.dialog.text.type": "Tipos de mundo",
 	"start.dialog.title.delete": "Eliminar",
 	"start.dialog.title.new": "Nuevo",
@@ -58,6 +61,6 @@
 	"start.title": "Minecraft %s",
 	"start.worldtype": [
 		"Plano",
-		"Estocástico"
+		"Aleatorio"
 	]
 }
