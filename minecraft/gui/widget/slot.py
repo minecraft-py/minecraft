@@ -16,6 +16,7 @@ class ItemSlot(Widget):
         self._index = index
         self._on = False
         self._item = self._item_name = None
+        self._state = {'set': True, 'get': True}
         self._rect = Rectangle(self.x, get_size()[1] - self.y - 32, 32, 32, color=(255, ) * 3)
         self._rect.opacity = 100
 
@@ -35,8 +36,17 @@ class ItemSlot(Widget):
             return
         if buttons == mouse.LEFT:
             i1, i2 = self._item_name, get_game().get_active_item()
-            self.set_item(i2)
-            get_game().set_active_item(i1)
+            if all(self._state.values()):
+                self.set_item(i2)
+                get_game().set_active_item(i1)
+            elif self._state['set']:
+                if get_game().get_active_item() is not None:
+                    self.set_item(i2)
+                    get_game().set_active_item(i1)
+            elif self._state['get']:
+                if get_game().get_active_item() is None:
+                    self.set_item()
+                    get_game().set_active_item(i1)
         elif buttons == mouse.MIDDLE:
             get_game().set_active_item(self._item_name)
         if hasattr(self, 'on_change'):
@@ -48,6 +58,10 @@ class ItemSlot(Widget):
         else:
             self._item_name = item
             self._item = Sprite(get_block_icon(blocks[item], 32), x=self.x, y=get_size()[1] - self.y - 32)
+
+    def set_state(self, set_=True, get=True):
+        self._state['set'] = set_
+        self._state['get'] = get
 
     def get_item(self):
         return self._item_name
