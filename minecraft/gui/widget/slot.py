@@ -86,6 +86,12 @@ class BagSlot():
                 self._slot['bag'].setdefault((x, -y), ItemSlot(self.x + 36 * x, self.y + 36 * y))
         for x in range(9):
             self._slot['hotbar'].setdefault(x, ItemSlot(self.x + 36 * x, self.y - 116))
+            self._slot['hotbar'][x].register_event('change', self.on_hotbars_change)
+
+    def on_hotbars_change(self, buttons, modifiers, index):
+        for i in range(len(get_game().inventory)):
+            get_game().inventory[i] = self._slot['hotbar'][i].get_item()
+        get_game().hud['hotbar'].set_all(get_game().inventory)
 
     def resize(self, x, y):
         self.x = x

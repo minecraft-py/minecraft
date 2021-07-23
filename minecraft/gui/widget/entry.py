@@ -21,19 +21,19 @@ class DialogueEntry(Widget):
         font = self._doc.get_font()
         self.text_height = font.ascent - font.descent
         self.pad = 2
-        self._outline = Rectangle(0, 20 - self.pad,
-                get_size()[0], self.text_height + self.pad, color=(0, 0, 0))
+        self._outline = Rectangle(5, 15 + self.pad,
+                get_size()[0] - self.pad - 10, self.text_height + self.pad, color=(0, 0, 0))
         self._outline.opacity = 150
-        self._layout = IncrementalTextLayout(self._doc, get_size()[0], self.text_height,
+        self._layout = IncrementalTextLayout(self._doc, get_size()[0] - 14, self.text_height,
                 multiline=False, batch=self.batch)
         self._caret = Caret(self._layout, color=(255, 255, 255))
         self._caret.visible = False
-        self._layout.x = 0
-        self._layout.y = 20
+        self._layout.x = 5
+        self._layout.y = 15 + self.pad
         self._focus = False
         self._press = False
         self.last_press = [0, 0]
-        super().__init__(5, 20, get_size()[0] + self.pad - 5, self.text_height)
+        super().__init__(5, 15 + self.pad, get_size()[0] - self.pad - 10, self.text_height + self.pad)
 
     def draw(self):
         self._outline.draw()
@@ -93,9 +93,9 @@ class DialogueEntry(Widget):
             self._press = False
 
     def on_resize(self, width, height):
-        self.width = width
-        self._outline.width = width
-        self._layout.width = width
+        self.width = width - self.pad - 10
+        self._outline.width = width - self.pad - 10
+        self._layout.width = width - self.pad - 10
 
     def on_text(self, text):
         if self._focus:
