@@ -21,7 +21,7 @@ class DialogueEntry(Widget):
         font = self._doc.get_font()
         self.text_height = font.ascent - font.descent
         self.pad = 2
-        self._outline = Rectangle(5, 15 + self.pad,
+        self._outline = Rectangle(5, 5 + self.pad,
                 get_size()[0] - self.pad - 10, self.text_height + self.pad, color=(0, 0, 0))
         self._outline.opacity = 150
         self._layout = IncrementalTextLayout(self._doc, get_size()[0] - 14, self.text_height,
@@ -29,11 +29,11 @@ class DialogueEntry(Widget):
         self._caret = Caret(self._layout, color=(255, 255, 255))
         self._caret.visible = False
         self._layout.x = 5
-        self._layout.y = 15 + self.pad
+        self._layout.y = 5 + self.pad
         self._focus = False
         self._press = False
         self.last_press = [0, 0]
-        super().__init__(5, 15 + self.pad, get_size()[0] - self.pad - 10, self.text_height + self.pad)
+        super().__init__(5, 5 + self.pad, get_size()[0] - self.pad - 10, self.text_height + self.pad)
 
     def draw(self):
         self._outline.draw()

@@ -7,6 +7,7 @@ from shlex import join
 from shutil import rmtree
 from sys import argv, executable, platform, version_info
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
+from subprocess import run
 import uuid
 from zipfile import ZipFile
 
@@ -43,6 +44,19 @@ def do_travis_ci():
     print('[(0/3) Travis CI]')
     print('python version: %s' % '.'.join([str(s) for s in version_info[:3]]))
     print('Minecraft-in-python version: %s' % get_version())
+    print('[(0/3) Check tabnanny]')
+    output = run([executable, '-m', 'tabnanny', '-v', get_file('minecraft')], capture_output=True)
+    lines = output.stderr.decode().split('\n')
+    failed = False
+    for line in lines:
+        if 'Indentation Error:' in line:
+            print('Check failed: %s(line %s)' % (line[1: line.find(':') - 1], line[line.rindex(' ') + 1: -1]))
+            failed = True
+    else:
+        if failed:
+            exit(1)
+        else:
+            print('Pass')
 
 def gen_script():
     if '--skip-gen-script' in argv:
@@ -77,22 +91,18 @@ def get_file(f):
 
 def get_version():
     # 从 minecraft/utils/utils.py 文件里面把版本号"抠"出来
-    try:
-        f = open(path.join(get_file('minecraft'), 'utils', 'utils.py'))
-        start_find = False
-        for line in f.readlines():
-            if line.strip() == 'VERSION = {':
-                start_find = True
-            elif (line.strip() == '}') and start_find:
-                start_find = False
-            elif line.strip().startswith("'str'") and start_find:
-                # 匹配版本号
-                # 一位主版本号, 两位小版本号/修订版本号
-                # 匹配 -alpha, -beta 后缀, -pre, -rc 后跟数字
-                return search(r"\d(\.\d{1,2}){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
-    except:
-        # 可恶的 Windows 操作系统
-        return '0.3.2'
+    f = open(path.join(get_file('minecraft'), 'utils', 'utils.py'), encoding='utf-8')
+    start_find = False
+    for line in f.readlines():
+        if line.strip() == 'VERSION = {':
+            start_find = True
+        elif (line.strip() == '}') and start_find:
+            start_find = False
+        elif line.strip().startswith("'str'") and start_find:
+            # 匹配版本号
+            # 一位主版本号, 两位小版本号/修订版本号
+            # 匹配 -alpha, -beta 后缀, -pre, -rc 后跟数字
+            return search(r"\d(\.\d{1,2}){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
 
 def install():
     MCPYPATH = search_mcpy()
