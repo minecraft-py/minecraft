@@ -8,6 +8,7 @@ import minecraft.saves as saves
 from minecraft.source import resource_pack
 from minecraft.block import blocks
 from minecraft.utils.utils import *
+from minecraft.utils.leaf_shapes import LEAF_SHAPE
 
 from opensimplex import OpenSimplex
 import pyglet
@@ -50,34 +51,40 @@ class World(object):
         else:
             self.init_random_world()
         log_info('Generate done, takes %s seconds' % round(time.time() - now, 2))
-        saves.load_block(self.name, self.add_block, self.remove_block)
+        saves.load_block(self.name)
         self.is_init = False
 
     def init_flat_world(self):
         # 生成平坦世界
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                self.add_block((x, 0, z), 'bedrock', record=False)
-        for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for y in range(1, 6):
-                for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                    if y == 5:
-                        self.add_block((x, y, z), 'grass', record=False)
-                    else:
-                        self.add_block((x, y, z), 'dirt', record=False)
+                self.add_block((x, 0, z), 'bedrock', immediate=False, record=False)
+                for y in range(1, 6):
+                    self.add_block((x, 5, z), 'dirt', immediate=False, record=False)
+                self.add_block((x, 6, z), 'grass', immediate=False, record=False)
 
     def init_random_world(self):
         # 生成随机世界
+        trees = []
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                self.add_block((x, 0, z), 'bedrock', record=False)
-        for x in range(-MAX_SIZE, MAX_SIZE + 1):
-            for z in range(-MAX_SIZE, MAX_SIZE + 1):
-                h = int(self.simplex.noise2d(x=x / 20, y=z / 20) * 5 + SEA_LEVEL)
-                for y in range(1, h):
-                    self.add_block((x, y, z), 'dirt', record=False)
-                else:
-                    self.add_block((x, h, z), 'grass', record=False)
+                self.add_block((x, 0, z), 'bedrock', immediate=False, record=False)
+                h = int(self.simplex.noise2d(x=x / 25, y=z / 25) * 3 + SEA_LEVEL)
+                if (0.511 < self.simplex.noise2d(x=x, y=z) < 0.512) or (0.301 < self.simplex.noise2d(x=x, y=z) < 0.302):
+                    trees.append((x, z))
+                for y in range(1, h + 1):
+                    self.add_block((x, y, z), 'dirt', immediate=False, record=False)
+                self.add_block((x, h + 1, z), 'grass', immediate=False, record=False)
+        self.add_trees(trees)
+
+    def add_trees(self, tree_list):
+        for pos in tree_list:
+            highest_block = self.get_highest_block(*pos) + 1
+            for y in range(highest_block, highest_block + 5):
+                self.add_block((pos[0], y, pos[1]), 'log', immediate=False, record=False)
+            y = highest_block + 4
+            for dx, dy, dz in LEAF_SHAPE['oak_normal']:
+                self.add_block((pos[0] + dx, y + dy, pos[1] + dz), 'leaf', immediate=False, record=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """
@@ -111,6 +118,13 @@ class World(object):
         else:
             return False
 
+    def get_highest_block(self, x, z):
+        high = 0
+        for y in range(-64, 513):
+            if (x, y, z) in self.world:
+                high = y
+        return high
+
     def add_block(self, position, block, immediate=True, record=True):
         """
         在 position 处添加一个方块
@@ -139,7 +153,7 @@ class World(object):
             if not self.world[position].transparent:
                 self.check_neighbors(position)
         else:
-            if position[1] >= 256:
+            if position[1] >= 512:
                 get_game().dialogue.add_dialogue(resource_pack.get_translation('game.text.build_out_of_world')[0] % 512)
             else:
                 get_game().dialogue.add_dialogue(resource_pack.get_translation('game.text.build_out_of_world')[1])
@@ -167,11 +181,9 @@ class World(object):
         return self.world.get(position, None)
 
     def check_neighbors(self, position):
-        """
-        检查 position 周围所有的方块, 确保它们的状态是最新的.
-        这意味着将隐藏不可见的方块, 并显示可见的方块.
-        通常在添加或删除方块时使用.
-        """
+        # 检查 position 周围所有的方块, 确保它们的状态是最新的.
+        # 这意味着将隐藏不可见的方块, 并显示可见的方块.
+        # 通常在添加或删除方块时使用.
         x, y, z = position
         for dx, dy, dz in FACES:
             key = (x + dx, y + dy, z + dz)
@@ -209,28 +221,25 @@ class World(object):
         """
         vertex_data = list(block.get_vertices(*position))
         texture_data = list(block.texture_data)
-        color_data = None
-        if hasattr(block, 'get_color'):
-            _, y, _ = position
-            if y <= 10:
-                t = 0.8
-            else:
-                t = 0.8 - (y - 0.8) / 600
-            h = 0.4
-            color_data = block.get_color(t, h)
         count = len(texture_data) // 2
-        batch = self.batch3d
-        if block.transparent:
-            batch = self.batch3d_transparent
-        if color_data is None:
-            self._shown[position] = batch.add(count, GL_QUADS, block.group,
-                    ('v3f/static', vertex_data),
-                    ('t2f/static', texture_data))
+        if hasattr(block, 'get_color'):
+            color = block.get_color(0.8, 0.4)
         else:
-            self._shown[position] = batch.add(count, GL_QUADS, block.group,
+            color = [1, 1, 1] * count
+        batch = self.batch3d
+        if not block.transparent:
+            self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
                     ('v3f/static', vertex_data),
                     ('t2f/static', texture_data),
-                    ('c3f/static', color_data))
+                    ('c3f/static', color))
+        else:
+            self._shown[position] = self.batch3d_transparent.add(count, GL_QUADS, block.group,
+                    ('v3f/static', vertex_data),
+                    ('t2f/static', texture_data),
+                    ('c3f/static', color))
+
+    def get_color(self, position):
+        self._shown[position].vertices
 
     def hide_block(self, position, immediate=True):
         """
@@ -262,12 +271,7 @@ class World(object):
                 self.hide_block(position, False)
 
     def change_chunk(self, before, after):
-        """
-        改变玩家所在区域
-
-        :param: before 之前的区域
-        :param: after 现在的区域
-        """
+        # 改变玩家所在区域
         before_set = set()
         after_set = set()
         pad = 4

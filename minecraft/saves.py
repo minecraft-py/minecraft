@@ -5,21 +5,19 @@ from minecraft.source import saves_path, player
 from minecraft.utils.utils import *
 
 
-def load_block(name, add_block, remove_block):
+def load_block(name):
     """
     读取游戏方块数据(该 API 将在下一个版本中废除)
 
     :param: name 存档名, 为 JSON 文件
-    :param: add_block 添加方块的函数, 函数原型为 minecraft.world.World.add_block
-    :param: remove_block 移除方块的函数, 函数原型为 minecraft.world.World.remove_block
     """
     blocks = json.load(open(join(saves_path, name, 'world.json')))
     for position, block in blocks.items():
         position = str2pos(position)
         if block == 'air':
-            remove_block(position)
+            get_game().world.remove_block(position)
         else:
-            add_block(position, block)
+            get_game().world.add_block(position, block)
 
 def load_level(name):
     # 读取世界信息
@@ -31,7 +29,7 @@ def load_player(name):
         data = json.load(open(join(saves_path, name, 'players', '%s.json' % player['id'])))
         position = str2pos(data.get('position', (0, 0, 0)), True)
         if len(position) == 3:
-            position = position[0], position[1] + 1, position[2]
+            position = position[0], position[1], position[2]
         return {
                     'position': position,
                     'respawn': str2pos(data.get('respawn', (0, 0, 0)), True),
@@ -61,6 +59,7 @@ def save_block(name, change, full=True):
     :param: change 方块数据, 符合 JSON 标准的 python 字典
     :param: full 是否全部写入
     """
+    data = dict()
     if not full:
         data = json.load(open(join(saves_path, name, 'world.json')))
         for position, block in change.items():

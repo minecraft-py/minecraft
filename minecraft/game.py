@@ -75,7 +75,7 @@ class Game(pyglet.window.Window):
         self._info_ext = list()
         self._info_ext.append('pyglet' + pyglet.version)
         # 拓展功能
-        self.debug = dict(debug=False, enable=False)
+        self.debug = dict(debug=False)
         # 天气(现在天气, 持续时间)
         self.weather = {'now': 'clear', 'duration': 0}
         # 玩家可以放置的方块, 使用数字键切换
@@ -220,13 +220,7 @@ class Game(pyglet.window.Window):
         # 读取玩家位置和背包
         data = saves.load_player(self.save_name)
         self.player['position'] = data['position']
-        self.player['respawn_position'] = data['respawn']
-        if len(self.player['position']) != 3:
-            if saves.load_level(self.save_name)['type'] == 'flat':
-                self.player['position'] = self.player['respawn_position'] = (0, 8, 0)
-            else:
-                self.player['position'] = self.player['respawn_position'] = (0, self.world.simplex.noise2d(x=0, y=0) * 5 + 13, 0)
-        self.sector = sectorize(self.player['position'])
+        self.player['respawn_position'] = data['respawn'] 
         self.player['rotation'] = tuple(data['rotation'])
         self.player['now_block'] = data['now_block']
         # 读取世界数据
@@ -277,6 +271,8 @@ class Game(pyglet.window.Window):
 
         :param: dt 距上次调用的时间
         """
+        if self.is_init:
+            return
         self.world.process_queue()
         self.dialogue.update()
         self.entities.on_update(dt)
@@ -506,6 +502,9 @@ class Game(pyglet.window.Window):
                 func()
             self.is_init = False
             self.set_icon(get_block_icon(blocks['crafting_table'], 64))
+            if len(self.player['position']) != 3:
+                self.player['position'] = self.player['respawn_position'] = (0, self.world.get_highest_block(0, 0) + 3, 0)
+            self.sector = sectorize(self.player['position'])
 
     def on_text(self, text):
         for func in self.event.get('on_text', {}).values():
@@ -555,6 +554,8 @@ class Game(pyglet.window.Window):
             self.loading.draw()
 
     def test_die(self):
+        if self.is_init:
+            return
         if self.player['position'][1] < -4:
             self.player.die('game.text.die.fall_into_void')
         self.on_die()

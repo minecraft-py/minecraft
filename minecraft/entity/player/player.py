@@ -183,10 +183,6 @@ class Player():
             self._data['strafe'][1] -= 1
         elif symbol == key.D:
             self._data['strafe'][1] += 1
-        elif symbol == key.I:
-             if get_game().debug['enable']:
-                get_game().debug['debug'] = not get_game().debug['debug']
-                get_game().debug['position'] = False
         elif symbol == key.E:
             get_game().toggle_gui('inventory')
         elif symbol == key.SPACE:
@@ -224,7 +220,7 @@ class Player():
             pyglet.image.get_buffer_manager().get_color_buffer().save(os.path.join(search_mcpy(), 'screenshot', name))
             get_game().dialogue.add_dialogue('Screenshot saved in: %s' % name)
         elif symbol == key.F3:
-            get_game().debug['enable'] = True
+            get_game().debug['debug'] = not get_game().debug['debug']
         elif symbol == key.F11:
             get_game().set_fullscreen(not get_game().fullscreen)
 
@@ -258,5 +254,3 @@ class Player():
                 self._data['dy'] = 0
             else:
                 self._data['stealing'] = False
-        elif symbol == key.F3:
-            get_game().debug['enable'] = False

@@ -14,12 +14,6 @@ class Grass(Block):
         color.extend([1] * 60)
         return color
 
-    def get_item_color(self):
-        color = []
-        color.extend(list(self.colorizer.get_color(0.8, 0.4)) * 4)
-        color.extend([1] * 60)
-        return color
-
     def on_ticking(self, pos):
         block = get_game().world.get((pos[0], pos[1] + 1, pos[2]))
         if block != None:

@@ -156,11 +156,11 @@ def get_block_icon(block, size):
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glEnable(GL_DEPTH_TEST)
     batch = pyglet.graphics.Batch()
-    if hasattr(block, 'get_item_color'):
+    if hasattr(block, 'get_color'):
         batch.add(count, GL_QUADS, block.group,
                 ('v3f/static', vertex_data),
                 ('t2f/static', texture_data),
-                ('c3f/static', block.get_item_color()))
+                ('c3f/static', block.get_color(0.8, 0.4)))
     else:
         batch.add(count, GL_QUADS, block.group,
                   ('v3f/static', vertex_data),

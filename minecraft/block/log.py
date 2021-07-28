@@ -3,4 +3,4 @@ from minecraft.block.base import Block
 
 class Log(Block):
     name = 'log'
-    textures = 'log_oak_top', 'log_oak'
+    textures = 'oak_log_top', 'oak_log'
