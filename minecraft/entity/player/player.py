@@ -6,6 +6,7 @@ from minecraft.source import player, resource_pack, settings
 from minecraft.utils.utils import *
 
 import pyglet
+from pyglet import clock
 from pyglet import image
 from pyglet.gl import *
 from pyglet.window import key, mouse
@@ -35,6 +36,7 @@ class Player():
         self._data['key_press'] = dict()
         self._data['key_press']['w'] = {'count': 0, 'last': time.time()}
         self._data['key_press']['space'] = {'count': 0, 'last': time.time()}
+        self._press = False
 
     def __getitem__(self, item):
         return self._data.get(item, None)
@@ -139,12 +141,24 @@ class Player():
                     elif get_game().can_place(previous, self._data['position']) and get_game().inventory[self._data['now_block']]:
                         get_game().world.add_block(previous, get_game().inventory[self._data['now_block']])
             elif (button == mouse.LEFT):
-                if block.hardness > 0 and (not self._data['die']) and (not self._data['in_gui']):
-                    get_game().world.remove_block(now)
+                clock.schedule_once(self.remove_block, 0.01)
             elif (button == mouse.MIDDLE) and previous:
                 pass
         elif not self._data['die'] and not self._data['in_gui']:
             pass
+
+    def remove_block(self, dt):
+        vector = self.get_sight_vector()
+        now, _ = get_game().world.hit_test(self._data['position'], vector)
+        if now:
+            block = get_game().world.get(now)
+            if block.hardness > 0 and (not self._data['die']) and (not self._data['in_gui']):
+                get_game().world.remove_block(now)
+            if self._press:
+                clock.schedule_once(self.remove_block, 0.05)
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        self._press = False
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if get_game().exclusive:

@@ -65,6 +65,15 @@ def get_game():
         if str(w).startswith('Game'):
             return w
 
+def get_color_by_brightness(brightness, color=None):
+    # 获取不同亮度下的颜色
+    brightness = int(min(16, max(1, brightness)))
+    if color is None:
+        # 0.9 / 16 = 0.05625
+        return [0.1 + brightness * 0.05625] * 3
+    else:
+        return [(i / 16) * brightness for i in color]
+
 def log_err(text, name='client'):
     # 打印错误信息
     log_str.append('[ERR  %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
@@ -88,6 +97,14 @@ def log_warn(text, name='client'):
         print('%s[WARN %s %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
     else:
         print('[WARN %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
+
+def mdist(p, q):
+    # 曼哈顿距离
+    assert len(p) == len(q), 'both points must have the same number of dimensions'
+    total = 0
+    for i in range(len(p)):
+        total += abs(p[i] + q[i])
+    return total
 
 def normalize(position):
     pos = []

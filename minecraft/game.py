@@ -78,7 +78,7 @@ class Game(pyglet.window.Window):
         self.debug = dict(debug=False)
         # 天气(现在天气, 持续时间)
         self.weather = {'now': 'clear', 'duration': 0}
-        # 玩家可以放置的方块, 使用数字键切换
+        # 玩家可以放置的方块
         self.inventory = ['grass', 'dirt', 'log', 'brick', 'leaf', 'plank', 'crafting_table', 'glass', 'tnt']
         self.inventory += [None] * (9 - len(self.inventory))
         # 数字键列表
@@ -87,7 +87,6 @@ class Game(pyglet.window.Window):
         self.loading = Loading()
         # 聊天区
         self.dialogue = Dialogue()
-        # 设置图标
         # 窗口最小为 800x600
         self.set_minimum_size(800, 600)
         # 这个十字在屏幕中央
@@ -220,7 +219,7 @@ class Game(pyglet.window.Window):
         # 读取玩家位置和背包
         data = saves.load_player(self.save_name)
         self.player['position'] = data['position']
-        self.player['respawn_position'] = data['respawn'] 
+        self.player['respawn_position'] = data['respawn']
         self.player['rotation'] = tuple(data['rotation'])
         self.player['now_block'] = data['now_block']
         # 读取世界数据
@@ -266,11 +265,6 @@ class Game(pyglet.window.Window):
                 cmd.execute()
 
     def update(self, dt):
-        """
-        这个方法被 pyglet 计时器反复调用
-
-        :param: dt 距上次调用的时间
-        """
         if self.is_init:
             return
         self.world.process_queue()

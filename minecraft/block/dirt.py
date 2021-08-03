@@ -7,6 +7,6 @@ class Dirt(Block):
     textures = 'dirt',
 
     def on_ticking(self, pos):
-        block = get_game().world.get((pos[0], pos[1] + 1, pos[2]))
-        if block == None:
+        pos = (pos[0], pos[1] + 1, pos[2])
+        if (pos not in get_game().world.world) or ((pos in get_game().world.world) and (get_game().world.get(pos).transparent)):
             get_game().world.add_block(pos, 'grass')

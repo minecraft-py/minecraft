@@ -66,7 +66,7 @@ class ExplodingTNT(Entity):
             get_game().entities.remove_entity(self.entity_id)
 
     def on_draw(self):
-        vertex_data = cube_vertices(*self._data['position'], 0.5)
+        vertex_data = cube_vertices(*self._data['position'], 1, 1)
         if self._show:
             glColor3f(1.0, 1.0, 1.0)
         else:

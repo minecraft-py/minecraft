@@ -1,5 +1,6 @@
 from minecraft.block.base import Block
 from minecraft.block.base import BlockColorizer
+from minecraft.utils.utils import *
 
 
 class Leaf(Block):
@@ -8,7 +9,7 @@ class Leaf(Block):
     textures = 'oak_leaves',
     transparent = True
 
-    def get_color(self, temp, rainfall):
+    def get_color(self, temp, rainfall, brightness=16):
         color = []
-        color.extend(list(self.colorizer.get_color(temp, rainfall)) * 24)
+        color.extend(get_color_by_brightness(brightness, self.colorizer.get_color(temp, rainfall)) * 24)
         return color
