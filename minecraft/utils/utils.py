@@ -74,29 +74,38 @@ def get_color_by_brightness(brightness, color=None):
     else:
         return [(i / 16) * brightness for i in color]
 
-def log_err(text, name='client'):
+def log_err(text, name='client', where='cl'):
     # 打印错误信息
-    log_str.append('[ERR  %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
-    if _have_color:
-        print('%s[ERR  %s %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
-    else:
-        print('[ERR  %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
+    # 于何处: where
+    # c(onsole) - 于标准输出中打印
+    # l(og)     - 保存至日志文件
+    if 'l' in where:
+        log_str.append('[ERR  %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
+    if 'c' in where:
+        if _have_color:
+            print('%s[ERR  %s %s]%s %s' % (Fore.RED, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
+        else:
+            print('[ERR  %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
 
-def log_info(text, name='client'):
+def log_info(text, name='client', where='cl'):
     # 打印信息
-    log_str.append('[INFO %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
-    if _have_color:
-        print('%s[INFO %s %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
-    else:
-        print('[INFO %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
+    if 'l' in where:
+        log_str.append('[INFO %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
+    if 'c' in where:
+        if _have_color:
+            print('%s[INFO %s %s]%s %s' % (Fore.GREEN, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
+        else:
+            print('[INFO %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
 
-def log_warn(text, name='client'):
+def log_warn(text, name='client', where='cl'):
     # 打印警告信息
-    log_str.append('[WARN %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
-    if _have_color:
-        print('%s[WARN %s %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
-    else:
-        print('[WARN %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
+    if 'l' in where:
+        log_str.append('[WARN %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
+    if 'c' in where:
+        if _have_color:
+            print('%s[WARN %s %s]%s %s' % (Fore.YELLOW, time.strftime('%H:%M:%S'), name, Style.RESET_ALL, text))
+        else:
+            print('[WARN %s %s] %s' % (time.strftime('%H:%M:%S'), name, text))
 
 def mdist(p, q):
     # 曼哈顿距离
