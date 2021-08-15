@@ -33,9 +33,9 @@ try:
     from minecraft.gui.guis import Chat, DieScreen, PauseMenu
     from minecraft.gui.widget.label import ColorLabel
     from minecraft.source import libs, player, resource_pack, settings
-    from minecraft.world.sky import change_sky_color
     from minecraft.world.weather import weather, choice_weather
     from minecraft.world.world import World
+    from minecraft.utils.opengl import change_sky_color, toggle_blind
     from minecraft.utils.utils import *
 
     import psutil

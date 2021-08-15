@@ -3,8 +3,8 @@ import random
 from minecraft.command.base import CommandBase
 from minecraft.command.arguments import *
 from minecraft.source import resource_pack
-from minecraft.world.sky import change_sky_color
 from minecraft.world.weather import weather
+from minecraft.utils.opengl import change_sky_color
 
 commands = {}
 

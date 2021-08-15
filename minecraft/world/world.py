@@ -223,9 +223,9 @@ class World(object):
         texture_data = list(block.texture_data)
         count = len(texture_data) // 2
         if hasattr(block, 'get_color'):
-            color = block.get_color(0.8, 0.4)
+            color = block.get_color(0.8, 0.4, 16)
         else:
-            color = [1, 1, 1] * count
+            color = get_color_by_brightness(16) * count
         batch = self.batch3d
         if not block.transparent:
             self._shown[position] = self.batch3d.add(count, GL_QUADS, block.group,
