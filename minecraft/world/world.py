@@ -69,8 +69,8 @@ class World(object):
         for x in range(-MAX_SIZE, MAX_SIZE + 1):
             for z in range(-MAX_SIZE, MAX_SIZE + 1):
                 self.add_block((x, 0, z), 'bedrock', immediate=False, record=False)
-                h = int(self.simplex.noise2d(x=x / 25, y=z / 25) * 3 + SEA_LEVEL)
-                if (0.511 < self.simplex.noise2d(x=x, y=z) < 0.512) or (0.301 < self.simplex.noise2d(x=x, y=z) < 0.302):
+                h = int(self.simplex.noise2(x=x / 25, y=z / 25) * 3 + SEA_LEVEL)
+                if (0.511 < self.simplex.noise2(x=x, y=z) < 0.512) or (0.301 < self.simplex.noise2(x=x, y=z) < 0.302):
                     trees.append((x, z))
                 for y in range(1, h + 1):
                     self.add_block((x, y, z), 'dirt', immediate=False, record=False)
