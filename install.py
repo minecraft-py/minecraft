@@ -136,7 +136,7 @@ def install_settings():
     MCPYPATH = search_mcpy()
     source = {
             'fov': 70,
-            'lang': 'en_us',
+            'lang': '(auto)',
             'resource-pack': ['(default)'],
             'viewport': {
                 'width': 800, 
