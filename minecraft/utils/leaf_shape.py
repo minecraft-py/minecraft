@@ -3,7 +3,7 @@
 LEAF_SHAPE = {}
 
 # 普通橡木
-LEAF_SHAPE['oak_tree'] = [
+LEAF_SHAPE["oak_tree"] = [
     # 第6层
     (0, 1, 0), (1, 1, 0), (-1, 1, 0), (0, 1, 1), (0, 1, -1),
     # 第5层

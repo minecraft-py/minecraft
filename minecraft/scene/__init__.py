@@ -21,21 +21,21 @@ class Scene(EventDispatcher):
 class GameWindow(Window):
 
     def __init__(self, *args, **kwargs):
-        # 游戏主窗口, 所有场景都绘制在这里
+        # 游戏主窗口, 所有的场景都绘制在这里
         super().__init__(*args, **kwargs)
-        self.set_caption('Minecraft %s' % VERSION['str'])
+        self.set_caption("Minecraft-in-python %s" % VERSION["str"])
         self._scenes = {}
-        self._now = ''
+        self._now = ""
     
     def add_scene(self, name, scene):
         # 添加场景
         self._scenes[name] = scene(self)
     
     def switch_scene(self, name):
-        # 切换至一个场景
+        # 切换至另一个场景
         if name not in self._scenes:
             pass
-        if self._now != '':
+        if self._now != "":
             self.pop_handlers()
             self._scenes[self._now].on_scene_leave()
         self._now = name

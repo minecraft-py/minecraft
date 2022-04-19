@@ -28,6 +28,7 @@ def start():
     except SystemExit:
         pass
     except:
+        # 这里负责处理异常
         name = time.strftime('error-%Y-%m-%d_%H.%M.%S.log')
         log_err('Catch error, saved in: log/%s' % name)
         with open(os.path.join(search_mcpy(), 'log', name), 'a+') as err_log:
