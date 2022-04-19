@@ -41,10 +41,12 @@ def check_ver():
             exit(1)
 
 def do_travis_ci():
-    print('[(0/3) Travis CI]')
+    # 专门给 Travis CI 使用, 也可以检测代码是否有语法错误
+    print('[Travis CI]')
     print('python version: %s' % '.'.join([str(s) for s in version_info[:3]]))
     print('Minecraft-in-python version: %s' % get_version())
-    print('[(0/3) Check tabnanny]')
+    # 检测模糊缩进
+    print('[Travis CI > Check tabnanny]')
     output = run([executable, '-m', 'tabnanny', '-v', get_file('minecraft')], capture_output=True)
     lines = output.stderr.decode().split('\n')
     failed = False
@@ -61,6 +63,7 @@ def do_travis_ci():
 def gen_script():
     if '--skip-gen-script' in argv:
         return
+    print('[Generate startup script]')
     while True:
         if '--travis-ci' in argv:
             break
@@ -69,8 +72,7 @@ def gen_script():
             break
         elif ret.lower() == 'n':
             return
-    print('[(3/3) Generate startup script]')
-    script = str()
+    script = ''
     name = get_file('run.sh')
     if platform.startswith('win'):
         name = get_file('run.bat')
@@ -116,7 +118,7 @@ def install():
     if not path.isdir(path.join(MCPYPATH, 'lib', version)):
         makedirs(path.join(MCPYPATH, 'lib', version))
     if ('--skip-install-requirements' not in argv) and ('--travis-ci' not in argv):
-        print('[(1/3) Install requirements]')
+        print('[Install requirements]')
         pip = '"%s" -m pip' % executable
         if '--hide-output' in argv:
             code = system('%s install -U -r %s >> %s' % (pip, get_file('requirements.txt'), path.devnull))
@@ -128,7 +130,7 @@ def install():
         else:
             print('install successfully')
     else:
-        print('[(1/3) Skip install requirements]')
+        print('[Skip install requirements]')
 
 def install_settings():
     MCPYPATH = search_mcpy()
@@ -136,7 +138,6 @@ def install_settings():
             'fov': 70,
             'lang': 'en_us',
             'resource-pack': ['(default)'],
-            'use-theme': 'arc', 
             'viewport': {
                 'width': 800, 
                 'height': 600
@@ -151,9 +152,9 @@ def install_settings():
     dump(target, open(path.join(MCPYPATH, 'settings.json'), 'w+'))
 
 def register_user():
-    # 注册
+    # 离线注册
     if ('--skip-register' not in argv) and ('--travis-ci' not in argv):
-        print('[(2/3) Register]')
+        print('[Register]')
         MCPYPATH = search_mcpy()
         if not path.isfile(path.join(MCPYPATH, 'player.json')):
             player_id = str(uuid.uuid4())
@@ -167,7 +168,7 @@ def register_user():
         else:
             print('You have regsitered!')
     else:
-        print('[(2/3) Skip regsiter]')
+        print('[Skip regsiter]')
 
 def search_mcpy():
     # 搜索文件存储位置
@@ -183,6 +184,7 @@ def search_mcpy():
 
 def see_eula():
     print('NOTE: This is not official Minecraft product. Not approved by or associated with Mojang.')
+    print('      Visit `https://minecraft.net/term` for more information.')
     if '--travis-ci' not in argv:
         input('NOTE: Press ENTER when you have finished reading the above information: ')
 

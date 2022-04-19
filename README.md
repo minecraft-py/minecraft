@@ -1,5 +1,3 @@
-> **NOTE: We haven't tested this game on MacOS!**
-
 # Minecraft
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.com/Minecraft-in-python/Minecraft.svg?branch=master)](https://travis-ci.com/Minecraft-in-python/Minecraft)
@@ -12,20 +10,12 @@ Our wish is that you can play and modify your game legally. No copyright issues.
 Free and transparent code is the basis of our friendly project,
 visit our official [website](https://minecraft-in-python.github.io) for more information.
 
-
 ## Play
 To play Minecraft, please type in a UNIX-like terminal first:
 ```shell
-# Github
 git clone https://github.com/Minecraft-in-python/Minecraft
-
-# Gitee
-git clone https://gitee.com/Minecraft-in-python/Minecraft
-
 cd Minecraft
 ./install.py
-
-# Run
 python3 -m minecraft
 ```
 
