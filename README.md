@@ -1,17 +1,15 @@
-# Minecraft
+# Minecraft in python
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.com/Minecraft-in-python/Minecraft.svg?branch=master)](https://travis-ci.com/Minecraft-in-python/Minecraft)
 
-Making open source Minecraft in python.
+<p align="center"><b>用Python编写开源的Minecraft！</b></p>
 
-Playing and modifying Minecraft according to your needs, will it be legal?
-Our wish is that you can play and modify your game legally. No copyright issues.
+如同上述的标语所示，我们致力于创造一个类似于Minecraft的游戏。它是完全免费的。
 
-Free and transparent code is the basis of our friendly project,
-visit our official [website](https://minecraft-in-python.github.io) for more information.
+访问[官网](https://minecraft-in-python.github.io)了解更多。
 
-## Play
-To play Minecraft, please type in a UNIX-like terminal first:
+## 游玩这个游戏
+非常简单，你只需要输入如下命令：
 ```shell
 git clone https://github.com/Minecraft-in-python/Minecraft
 cd Minecraft
@@ -19,19 +17,16 @@ cd Minecraft
 python3 -m minecraft
 ```
 
-# Short-term objectives
-The following TODO list, is a list of features to be implemented in Minecraft:
+好了，很简单吧。
 
-- [x] Random world generation
-- [x] i18n (more languages)
-- [x] Entities(TNT)
-- [ ] Chunk system
-- [ ] More terrain
-- [ ] Multiplayer
+## 目标
+下面这个列表展示了将要在这个游戏中实现的一些特性：
+
+- [x] 代码库正在重写中，故现在的目标是完成代码库的重写和优化
 - [ ] ...
 
-Of course, it doesn't end there, these points will evolve and change over time.
+当然，我们觉得不会止步于此，这个列表会不断更新。
 
-Making Minecraft more and more a high quality video game.
-
-Are you ready to play? Are you ready to support?
+## 向我们提交更改
+如果您看到了代码的那里有错误或想到了什么好点子，千万不要吝啬，
+您可以创建Issue或者Pull Request。
