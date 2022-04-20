@@ -65,11 +65,10 @@ def log_warn(text, name="client", where="cl"):
         else:
             print("[WARN %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
 
-@atexit.register
 def on_exit():
     # 在退出时保存日志
     _os  = __import__("os")
-    log_info("Save logs to "log/log-%s.log"" % start_time, where="c")
+    log_info("Save logs to `log/log-%s.log`" % start_time, where="c")
     log_info("Exit", where="c")
     with open(_os.path.join(search_mcpy(), "log", "log-%s.log" % start_time), "w+") as log:
         log.write("\n".join(log_str))
@@ -101,3 +100,17 @@ def mdist(p, q):
     for i in range(len(p)):
         total += abs(p[i] + q[i])
     return total
+
+def get_size():
+    # 返回窗口大小
+    for w in pyglet.canvas.get_display().get_windows():
+        if str(w).startswith('GameWindow'):
+            return w.width, w.height
+    else:
+        return 800, 600
+
+def get_game():
+    # 获取 Game 类
+    for w in pyglet.canvas.get_display().get_windows():
+        if str(w).startswith('GameWindow'):
+            return w

@@ -79,8 +79,8 @@ def gen_script():
         script += "@echo off\n"
     else:
         script += "#!/usr/bin/env sh\n"
-    script += "cd "%s"\n" % path.dirname(get_file("install.py"))
-    script += ""%s" -m minecraft\n" % executable
+    script += "cd \"%s\"\n" % path.dirname(get_file("install.py"))
+    script += "\"%s\" -m minecraft\n" % executable
     with open(name, "w+") as f:
         f.write(script)
         print("Startup script at `%s`" % name)
@@ -100,7 +100,7 @@ def get_version():
             start_find = True
         elif (line.strip() == "}") and start_find:
             start_find = False
-        elif line.strip().startswith(""str"") and start_find:
+        elif line.strip().startswith("\"str\"") and start_find:
             # 匹配版本号
             # 一位主版本号, 两位小版本号/修订版本号
             # 匹配 -alpha, -beta 后缀, -pre, -rc 后跟数字
@@ -119,7 +119,7 @@ def install():
         makedirs(path.join(MCPYPATH, "lib", version))
     if ("--skip-install-requirements" not in argv) and ("--travis-ci" not in argv):
         print("[Install requirements]")
-        pip = ""%s" -m pip" % executable
+        pip = "\"%s\" -m pip" % executable
         if "--hide-output" in argv:
             code = system("%s install -U -r %s >> %s" % (pip, get_file("requirements.txt"), path.devnull))
         else:
@@ -135,14 +135,14 @@ def install():
 def install_settings():
     MCPYPATH = search_mcpy()
     source = {
-            "fov": 70,
-            "lang": "(auto)",
-            "resource-pack": ["(default)"],
-            "viewport": {
-                "width": 800, 
-                "height": 600
-            }
+        "fov": 70,
+        "lang": "${auto}",
+        "resource-pack": ["${default}"],
+        "viewport": {
+            "width": 800, 
+            "height": 600
         }
+    }
     target = {}
     if path.isfile(path.join(MCPYPATH, "settings.json")):
         target = load(open(path.join(MCPYPATH, "settings.json")))

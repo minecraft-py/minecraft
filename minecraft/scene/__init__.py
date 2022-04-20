@@ -1,3 +1,4 @@
+from minecraft.sources import *
 from minecraft.utils.utils import *
 from pyglet.event import EventDispatcher
 from pyglet.window import Window
@@ -26,6 +27,9 @@ class GameWindow(Window):
         self.set_caption("Minecraft-in-python %s" % VERSION["str"])
         self._scenes = {}
         self._now = ""
+        # 一些变量, 可通过 get_game() 获取
+        self.resource_pack = resource_pack
+        self.settings = settings
     
     def add_scene(self, name, scene):
         # 添加场景
