@@ -42,11 +42,11 @@ def start():
                 latest_log.write(err_log.read())
 
 if __name__ == "__main__":
-    if isfile(join(search_mcpy(), ".mcpy_running")):
+    if isfile(join(search_mcpy(), "mcpy.lock")):
         # 检测程序是否重复启动
         log_info("Minecrft-in-python is running now!", where="c")
     else:
-        with open(join(search_mcpy(), ".mcpy_running"), "w+") as f:
+        with open(join(search_mcpy(), "mcpy.lock"), "w+") as f:
             pass
         # 注册退出处理器
         atexit.register(on_exit)
@@ -54,5 +54,5 @@ if __name__ == "__main__":
         test()
         # 开始游戏
         start()
-        if isfile(join(search_mcpy(), ".mcpy_running")):
-            remove(join(search_mcpy(), ".mcpy_running"))
+        if isfile(join(search_mcpy(), "mcpy.lock")):
+            remove(join(search_mcpy(), "mcpy.lock"))

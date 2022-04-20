@@ -6,7 +6,7 @@ from pyglet.window import Window
 
 class Scene(EventDispatcher):
 
-    def __init__(self, game):
+    def __init__(self):
         # 一个场景
         super().__init__()
     
@@ -24,7 +24,8 @@ class GameWindow(Window):
     def __init__(self, *args, **kwargs):
         # 游戏主窗口, 所有的场景都绘制在这里
         super().__init__(*args, **kwargs)
-        self.set_caption("Minecraft-in-python %s" % VERSION["str"])
+        self.set_caption("Minecraft in python %s" % VERSION["str"])
+        self.set_minimum_size(640, 480)
         self._scenes = {}
         self._now = ""
         # 一些变量, 可通过 get_game() 获取
@@ -33,7 +34,7 @@ class GameWindow(Window):
     
     def add_scene(self, name, scene):
         # 添加场景
-        self._scenes[name] = scene(self)
+        self._scenes[name] = scene()
     
     def switch_scene(self, name):
         # 切换至另一个场景

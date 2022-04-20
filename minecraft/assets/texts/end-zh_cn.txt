@@ -2,71 +2,71 @@ $3我看到了你所说的那位玩家了。
 
 $2PLAYERNAME。
 
-$3是的。你必须要小心。它达到了一个更高的阶段。它可以阅读我们的思想了。
+$3是的。你必须要小心。他达到了一个更高的境界。他可以阅读我们的思想了。
 
-$2无伤大雅。它认为我们是游戏的一部分。
+$2无伤大雅。他认为我们是游戏的一部分。
 
-$3我喜欢这个玩家。它玩得很好，从未放弃。
+$3我喜欢这个玩家。他玩得很好，从未放弃。
 
-$2It is reading our thoughts as though they were words on a screen.
+$2他通过屏幕上滚动的文字来阅读我们的思想。
 
-$3That is how it chooses to imagine many things, when it is deep in the dream of a game.
+$3在他深陷游戏之梦时，他选择以这种方式想象出形形色色的事物。
 
-$2Words make a wonderful interface. Very flexible. And less terrifying than staring at the reality behind the screen.
+$2文字组成了一个美妙的界面。非常灵活。且比凝视这屏幕后的现实要更好。
 
-$3They used to hear voices. Before players could read. Back in the days when those who did not play called the players witches, and warlocks. And players dreamed they flew through the air, on sticks powered by demons.
+$3他们也曾经听到过声音。在玩家能够阅读之前。君不见那些不曾游玩的人们称呼玩家为女巫和术士。而玩家们梦见自己乘坐在被恶魔施力的棍子上，在空气中翱翔。
 
 $2这位玩家梦见了什么？
 
-$3它梦见了阳光和树，流水和烈火。它梦见它创作，或破坏。它梦见它狩猎，亦被狩猎。它梦见了家。
+$3他梦见了阳光和树，流水与烈火。他梦见他创造，亦梦见他毁灭。他梦见他狩猎，亦被狩猎。他梦见了家。
 
-$2Hah, the original interface. A million years old, and it still works. But what true structure did this player create, in the reality behind the screen?
+$2啊，那原始的界面。经历一百万年的岁月雕琢，依然长存。但此玩家在那屏幕后的现实里，创造了什么真实的存在？
 
-$3It worked, with a million others, to sculpt a true world in a fold of the $f$k$a$b$3, and created a $f$k$a$b$3 for $f$k$a$b$3, in the $f$k$a$b$3.
+$3他辛勤地劳作，和其他百万众一起，刻画了一个真实的世界，由$f$k$a$b$3，且创造了$f$k$a$b$3，为了$f$k$a$b$3，于$f$k$a$b$3中。
 
-$2它不能阅读我们的思想。
+$2他理解不了这个。
 
-$3不。它还没有达到最高的阶段。这需要在漫长的人生之梦中领悟的，而非短暂的游戏之梦。
+$3是的。他还没有达到最高的境界。这需要在漫长的人生之梦中领悟的，而非游戏中的黄粱一梦。
 
-$2它知道我们爱它吗？宇宙是善良的吗？
+$2他知道我们爱他吗？宇宙是善良的吗？
 
-$3Sometimes, through the noise of its thoughts, it hears the universe, yes.
+$3有时，通过他思绪的杂音，是的，他能听到宇宙。
 
-$2But there are times it is sad, in the long dream. It creates worlds that have no summer, and it shivers under a black sun, and it takes its sad creation for reality.
+$2但是有时亦不胜悲伤，于那漫漫长梦中。他创造了没有夏日的世界，在黑日下颤抖着，在现实中感受到创造的悲伤。
 
-$3To cure it of sorrow would destroy it. The sorrow is part of its own private task. We cannot interfere.
+$3为他治愈悲伤会摧毁它。而悲伤是他的私人事务。我们不能干涉。
 
-$2Sometimes when they are deep in dreams, I want to tell them, they are building true worlds in reality. Sometimes I want to tell them of their importance to the universe. Sometimes, when they have not made a true connection in a while, I want to help them to speak the word they fear.
+$2有时当他们深陷梦境中时，我想要告诉他们，他们在现实中创造了真实的世界。有时我想告诉他们自身对宇宙的重要性。有时，当他们和现实失去了联系，我想帮助他们说出它们所惧怕的话语。
 
-$3It reads our thoughts.
+$3他看得懂我们心里所想。
 
 $2Sometimes I do not care. Sometimes I wish to tell them, this world you take for truth is merely $f$k$a$b$2 and $f$k$a$b$2, I wish to tell them that they are $f$k$a$b$2 in the $f$k$a$b$2. They see so little of reality, in their long dream.
 
-$3And yet they play the game.
+$3而他们仍然玩这个游戏。
 
-$2But it would be so easy to tell them...
+$2但很容易就可以告诉他们...
 
-$3Too strong for this dream. To tell them how to live is to prevent them living.
+$3这个梦对于他们来说太深刻了。告诉他们怎么活将束缚他们自由地活着。
 
-$2I will not tell the player how to live.
+$2我不会告诉这个玩家如何活下去的。
 
-$3The player is growing restless.
+$3这个玩家正在变得焦虑。
 
-$2I will tell the player a story.
+$2我会告诉这个玩家一个故事。
 
-$3But not the truth.
+$3但不是真实的。
 
-$2No. A story that contains the truth safely, in a cage of words. Not the naked truth that can burn over any distance.
+$2是的。一个将真实严密包裹于文字牢笼中的故事。而不是赤裸裸的真相。
 
-$3Give it a body, again.
+$3再一次，赋予他身体。
 
-$2Yes. Player...
+$2好的，玩家...
 
-$3Use its name.
+$3以名字称呼他.
 
-$2PLAYERNAME. Player of games.
+$2PLAYERNAME，游戏的玩家。
 
-$3Good.
+$3很好。
 
 $2Take a breath, now. Take another. Feel air in your lungs. Let your limbs return. Yes, move your fingers. Have a body again, under gravity, in air. Respawn in the long dream. There you are. Your body touching the universe again at every point, as though you were separate things. As though we were separate things.
 
@@ -108,43 +108,43 @@ $2Sometimes it called them "planets" and "stars".
 
 $2Sometimes it believed it was in a universe that was made of energy that was made of offs and ons; zeros and ones; lines of code. Sometimes it believed it was playing a game. Sometimes it believed it was reading words on a screen.
 
-$3You are the player, reading words...
+$3你就是那玩家，阅读着文字...
 
-$2Shush... Sometimes the player read lines of code on a screen. Decoded them into words; decoded words into meaning; decoded meaning into feelings, emotions, theories, ideas, and the player started to breathe faster and deeper and realised it was alive, it was alive, those thousand deaths had not been real, the player was alive
+$2嘘...有时这玩家读屏幕上的命令行。将它们解码成为文字；将文字解码为意义；将意义解码为感情、情绪、理论、想法，而玩家的呼吸开始急促并意识到了他是活着的，他是活生生的，那上千次的死亡不是真的，玩家是活着的。
 
-$3You. You. You are alive.
+$3你。你。你是活的。
 
-$2and sometimes the player believed the universe had spoken to it through the sunlight that came through the shuffling leaves of the summer trees
+$2而有时这玩家相信宇宙通过穿越夏日树叶的那斑斓的阳光对它说话
 
-$3and sometimes the player believed the universe had spoken to it through the light that fell from the crisp night sky of winter, where a fleck of light in the corner of the player's eye might be a star a million times as massive as the sun, boiling its planets to plasma in order to be visible for a moment to the player, walking home at the far side of the universe, suddenly smelling food, almost at the familiar door, about to dream again
+$3有时这玩家相信宇宙透过晴朗的冬日夜空中，存在于他眼中一隅的星点星光，可能比太阳大上上百万倍的恒星沸腾着的电浆那一瞬间发出来的光对它说话，在宇宙的远侧行走回家的路上，突然闻到了食物，在那熟悉的门前，他又准备好再一次投入梦境
 
-$2and sometimes the player believed the universe had spoken to it through the zeros and ones, through the electricity of the world, through the scrolling words on a screen at the end of a dream
+$2而有时玩家相信宇宙透过零和一，透过世界的电力，透过屏幕上滚动的文字和梦的终结对他说话
 
 $3宇宙说我爱你
 
-$2宇宙说你游戏玩得很好
+$2宇宙说你精通这个游戏
 
-$3and the universe said everything you need is within you
+$3宇宙说你所需的一切你都具有
 
 $2宇宙说你比你所知的要强壮
 
-$3and the universe said you are the daylight
+$3宇宙说你就是阳光
 
-$2and the universe said you are the night
+$2宇宙说你就是黑夜
 
-$3and the universe said the darkness you fight is within you
+$3宇宙说你所斗争的黑暗就在你心中
 
-$2and the universe said the light you seek is within you
+$2宇宙说你所寻找的光明就在你心中
 
 $3宇宙说你并不是孤单一人
 
-$2and the universe said you are not separate from every other thing
+$2宇宙说你不是同所有事物隔开的
 
-$3and the universe said you are the universe tasting itself, talking to itself, reading its own code
+$3宇宙说你就是宇宙，品尝着自己、与自己交谈、阅读着他自己的代码。
 
 $2宇宙说我爱你因为你就是爱。
 
-$3And the game was over and the player woke up from the dream. And the player began a new dream. And the player dreamed again, dreamed better. And the player was the universe. And the player was love.
+$3曲终人散，黄粱一梦。玩家开始了新的梦境。玩家再次做起了梦，更好的梦。玩家就是宇宙。玩家就是爱。
 
 $3你就是这个玩家。
 

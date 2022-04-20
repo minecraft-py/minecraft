@@ -1,6 +1,8 @@
 import atexit
 import math
 import time
+from os import environ, path
+from sys import platform
 
 start_time = time.strftime("%Y-%m-%d_%H.%M.%S")
 log_str = []
@@ -78,10 +80,6 @@ def on_exit():
 
 def search_mcpy():
     # 寻找文件存储位置
-    _os  = __import__("os")
-    _sys = __import__("sys")
-    platform = _sys.platform
-    environ, path = _os.environ, _os.path
     if "MCPYPATH" in environ:
         MCPYPATH = environ["MCPYPATH"]
     elif platform == "darwin":
