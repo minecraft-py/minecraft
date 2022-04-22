@@ -14,11 +14,13 @@ class StartScene(Scene):
         super().__init__()
         width, height = get_size()
         self._back = LoadingBackground()
+        # 在窗口从上往下的20%处居中绘制Minecraft标题
         self._title = Sprite(get_game().resource_pack.get_resource("textures/gui/title/minecraft"),
                              x=width // 2, y=0.8 * height)
         self._title.image.anchor_x = self._title.image.width // 2
         self._title.image.anchor_y = self._title.image.height // 2
         self._title.scale = 2
+        # 在Minecraft标题下面隔3个像素居中绘制副标题
         self._title_edition = Sprite(get_game().resource_pack.get_resource("textures/gui/title/edition"))
         self._title_edition.position = (width // 2, 0.8 * height - self._title.image.height - self._title_edition.image.height - 3)
         self._title_edition.image.anchor_x = self._title_edition.image.width // 2

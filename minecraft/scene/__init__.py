@@ -32,9 +32,9 @@ class GameWindow(Window):
         self.resource_pack = resource_pack
         self.settings = settings
     
-    def add_scene(self, name, scene):
+    def add_scene(self, name, scene, *args, **kwargs):
         # 添加场景
-        self._scenes[name] = scene()
+        self._scenes[name] = scene(*args, **kwargs)
     
     def switch_scene(self, name):
         # 切换至另一个场景

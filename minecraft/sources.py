@@ -55,6 +55,7 @@ for args in sys.argv:
             else:
                 log_warn("Lib path `%s` is not available" % lib)
     elif args.startswith("--extlib="):
+        # 如果没有下面的for循环, 那么即使有模组加载器也没有任何用处
         for lib in args[9:].split(";"):
             if isdir(join(lib_path, lib)) or isfile(join(lib_path, lib + ".py")):
                 log_info("Loading extra lib: `%s`" % lib)
