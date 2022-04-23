@@ -86,6 +86,11 @@ def gen_script():
         print("Startup script at `%s`" % name)
     if not platform.startswith("win"):
         chmod(name, S_IRUSR | S_IWUSR | S_IXUSR)
+    if "--travis-ci" in argv:
+        with open("run.sh", "r") as f:
+            print("[Generate startup script > start run.sh]")
+            print(f.read()[:-1])
+            print("[Generate startup script > end   run.sh]")
 
 def get_file(f):
     # 返回文件目录下的文件名
