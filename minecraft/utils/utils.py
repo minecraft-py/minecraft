@@ -92,7 +92,7 @@ def search_mcpy():
 
 def mdist(p, q):
     # 计算曼哈顿距离
-    # 注意和 math.dist 的区别
+    # 注意和math.dist的区别
     assert len(p) == len(q), "both points must have the same number of dimensions"
     total = 0
     for i in range(len(p)):
@@ -105,6 +105,7 @@ def get_size():
         if str(w).startswith('GameWindow'):
             return w.width, w.height
     else:
+        # 应该绝对不会运行到这里
         return 800, 600
 
 def get_game():

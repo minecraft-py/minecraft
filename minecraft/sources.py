@@ -33,6 +33,7 @@ else:
 resource_pack.set_lang(lang)
 
 # 设置视角
+# 在50~100之间, 默认70
 settings["fov"] = max(50, min(100, settings.get("fov", 70)))
 
 # 读取玩家信息
