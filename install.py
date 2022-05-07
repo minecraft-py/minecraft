@@ -124,11 +124,18 @@ def install():
         makedirs(path.join(MCPYPATH, "lib", version))
     if ("--skip-install-requirements" not in argv) and ("--travis-ci" not in argv):
         print("[Install requirements]")
-        pip = "\"%s\" -m pip" % executable
+        def processing_space(file_path):
+            array = file_path.split("\\")
+            for item in array:
+                if ' ' in item:
+                    array[array.index(item)] = "\"" + item + "\""
+            return "\\".join(array)
+        pip = "%s -m pip" % processing_space(executable)
+        requirements_path = get_file("requirements.txt")
         if "--hide-output" in argv:
-            code = system("%s install -U -r %s >> %s" % (pip, get_file("requirements.txt"), path.devnull))
+            code = system("%s install -U -r \"%s\" >> %s" % (pip, requirements_path, path.devnull))
         else:
-            code = system("%s install -U -r %s" % (pip, get_file("requirements.txt")))
+            code = system("%s install -U -r \"%s\"" % (pip, requirements_path))
         if code != 0:
             print("pip raise error code: %d" % code)
             exit(1)
