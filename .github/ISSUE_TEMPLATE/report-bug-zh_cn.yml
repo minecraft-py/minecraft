@@ -4,6 +4,7 @@ title: "[BUG] "
 labels: ["bug"]
 body:
   - type: dropdown
+    id: os
     attributes:
       label: 操作系统
       description: 您使用何种操作系统？
@@ -15,10 +16,12 @@ body:
     validations:
       required: true
   - type: input
+    id: python
     attributes:
       label: Python解释器
       description: 您使用了哪个版本的Python？
   - type: textarea
+    id: issue
     attributes:
       label: 具体问题
       description: 请告诉我们发生了什么问题
