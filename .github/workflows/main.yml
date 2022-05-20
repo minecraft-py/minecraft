@@ -1,0 +1,22 @@
+name: check
+on: [push]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    name: Check source code in python${{matrix.python-version}}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Check
+        run: |
+        pip install -U pip
+        pip install -r requirements.txt
+        python3 install.py --action --gen-script

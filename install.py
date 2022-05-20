@@ -14,8 +14,8 @@ from zipfile import ZipFile
 def main():
     # 最好遵守 Mojang 的 Minecraft eula
     see_eula()
-    if "--travis-ci" in argv:
-        do_travis_ci()
+    if "--action" in argv:
+        do_action()
     # 检查 python 版本
     check_ver()
     # 安装
@@ -35,18 +35,18 @@ def main():
 def check_ver():
     if version_info[:2] < (3, 8):
         print("Minecraft-in-python need python3.8 or later, but %s found." % ".".join([str(s) for s in version_info[:2]]))
-        if "--travis-ci" in argv:
+        if "--action" in argv:
             exit(0)
         else:
             exit(1)
 
-def do_travis_ci():
-    # 专门给 Travis CI 使用, 也可以检测代码是否有语法错误
-    print("[Travis CI]")
+def do_action():
+    # 专门给GitHub Action使用, 也可以检测代码是否有语法错误
+    print("[Check source]")
     print("python version: %s" % ".".join([str(s) for s in version_info[:3]]))
     print("Minecraft-in-python version: %s" % get_version())
     # 检测模糊缩进
-    print("[Travis CI > Check tabnanny]")
+    print("[Check source > Check tabnanny]")
     output = run([executable, "-m", "tabnanny", "-v", get_file("minecraft")], capture_output=True)
     lines = output.stderr.decode().split("\n")
     failed = False
@@ -57,15 +57,13 @@ def do_travis_ci():
     else:
         if failed:
             exit(1)
-        else:
-            print("Pass")
 
 def gen_script():
     if "--skip-gen-script" in argv:
         return
     print("[Generate startup script]")
     while True:
-        if "--travis-ci" in argv:
+        if "--action" in argv:
             break
         ret = input("Generate startup script[Y/n]? ")
         if (ret.lower() == "y") or (len(ret) == 0):
@@ -86,8 +84,8 @@ def gen_script():
         print("Startup script at `%s`" % name)
     if not platform.startswith("win"):
         chmod(name, S_IRUSR | S_IWUSR | S_IXUSR)
-    if "--travis-ci" in argv:
-        with open("run.sh", "r") as f:
+    if "--action" in argv:
+        with open("run.bat" if platform.startswith("win") else "run.sh", "r") as f:
             print("[Generate startup script > start run.sh]")
             print(f.read()[:-1])
             print("[Generate startup script > end   run.sh]")
@@ -124,11 +122,7 @@ def install():
         makedirs(path.join(MCPYPATH, "lib", version))
     if ("--skip-install-requirements" not in argv) and ("--travis-ci" not in argv):
         print("[Install requirements]")
-        pip = "\"%s\" -m pip" % executable
-        if "--hide-output" in argv:
-            code = system("%s install -U -r \"%s\" >> %s" % (pip, get_file("requirements.txt"), path.devnull))
-        else:
-            code = system("%s install -U -r \"%s\"" % (pip, get_file("requirements.txt")))
+        code = run([executable, "-m", "pip", "install", "-U", "-r", get_file("requirements.txt")]).returncode
         if code != 0:
             print("pip raise error code: %d" % code)
             exit(1)
@@ -158,7 +152,7 @@ def install_settings():
 
 def register_user():
     # 离线注册
-    if ("--skip-register" not in argv) and ("--travis-ci" not in argv):
+    if ("--skip-register" not in argv) and ("--action" not in argv):
         print("[Register]")
         MCPYPATH = search_mcpy()
         if not path.isfile(path.join(MCPYPATH, "player.json")):
@@ -190,7 +184,7 @@ def search_mcpy():
 def see_eula():
     print("NOTE: This is not official Minecraft product. Not approved by or associated with Mojang.")
     print("      Visit `https://minecraft.net/term` for more information.")
-    if "--travis-ci" not in argv:
+    if "--action" not in argv:
         input("NOTE: Press ENTER when you have finished reading the above information: ")
 
 if __name__ == "__main__":
