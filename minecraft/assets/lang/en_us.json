@@ -1,4 +1,6 @@
 {
-    "text.start_scent.hello": "Hello",
-    "text.start_scent.exit": "Exit"
+    "text.start_scent.single_player": "Singleplayer",
+    "text.start_scent.multi_player": "Multiplayer",
+    "text.start_scent.options": "Options...",
+    "text.start_scent.quit_game": "Quit Game"
 }

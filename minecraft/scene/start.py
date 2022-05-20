@@ -34,11 +34,13 @@ class StartScene(Scene):
                                     anchor_x="right", bold=True)
         # 该场景中的所有GUI
         self._frame = Frame(get_game())
-        self._choose_game_btn = Button(width // 2 - 200, 0.5 * height, 400, 40, resource_pack.get_translation("text.start_scent.hello"))
-        self._exit_btn = Button(width // 2 - 200, 0.5 * height + 50, 400, 40, resource_pack.get_translation("text.start_scent.exit"))
-        self._frame.add_widget(self._choose_game_btn, self._exit_btn)
+        self._singleplayer_btn = Button(width // 2 - 200, 0.5 * height, 400, 40, resource_pack.get_translation("text.start_scent.single_player"))
+        self._multiplayer_btn = Button(width // 2 - 200, 0.5 * height - 50, 400, 40, resource_pack.get_translation("text.start_scent.multi_player"))
+        self._options_btn = Button(width // 2 - 200, 0.5 * height - 110, 195, 40, resource_pack.get_translation("text.start_scent.options"))
+        self._exit_btn = Button(width // 2 + 5, 0.5 * height - 110, 195, 40, resource_pack.get_translation("text.start_scent.quit_game"))
+        self._frame.add_widget(self._singleplayer_btn, self._multiplayer_btn, self._options_btn, self._exit_btn)
 
-        @self._choose_game_btn.event
+        @self._singleplayer_btn.event
         def on_press():
             log_info("You press a button")
 
@@ -68,7 +70,7 @@ class StartScene(Scene):
         self._title.position = (width // 2, 0.8 * height)
         self._title_edition.position = (width // 2, 0.8 * height - self._title.image.height - self._title_edition.image.height - 3)
         self._version_label.x = width - 2
-        self._choose_game_btn.x = width // 2 - 200
-        self._choose_game_btn.y =  0.5 * height
-        self._exit_btn.x = width // 2 - 200
-        self._exit_btn.y =  0.5 * height + 50
+        self._singleplayer_btn.position = (width // 2 - 200, 0.5 * height)
+        self._multiplayer_btn.position = (width // 2 - 200, 0.5 * height - 50)
+        self._options_btn.position = (width // 2 - 200, 0.5 * height - 110)
+        self._exit_btn.position = (width // 2 + 5, 0.5 * height - 110)

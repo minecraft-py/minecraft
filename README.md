@@ -1,6 +1,6 @@
 # Minecraft in python
 [![Join the chat at https://gitter.im/Minecraft-in-python/community](https://badges.gitter.im/Minecraft-in-python/community.svg)](https://gitter.im/Minecraft-in-python/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.com/Minecraft-in-python/Minecraft.svg?branch=master)](https://travis-ci.com/Minecraft-in-python/Minecraft)
+[![install](https://github.com/Minecraft-in-python/Minecraft/actions/workflows/main.yml/badge.svg)](https://github.com/Minecraft-in-python/Minecraft/actions/workflows/main.yml)
 
 <p align="center"><b>用Python编写开源的Minecraft！</b></p>
 

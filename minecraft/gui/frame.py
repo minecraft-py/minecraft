@@ -1,4 +1,3 @@
-import pyglet
 from minecraft.utils.utils import *
 
 

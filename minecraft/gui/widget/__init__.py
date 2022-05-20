@@ -16,8 +16,8 @@ class Widget(EventDispatcher):
         return self._x, self._y
 
     @position.setter
-    def position(self, x, y):
-        self._x, self._y = x, y
+    def position(self, value):
+        self._x, self._y = value
         self._update()
 
     @property
@@ -35,7 +35,7 @@ class Widget(EventDispatcher):
 
     @y.setter
     def y(self, y):
-        self._y = get_size()[1] - y
+        self._y =  y
         self._update()
 
     @property
