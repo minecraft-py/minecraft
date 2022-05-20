@@ -8,7 +8,6 @@ from os.path import isfile, join
 import pyglet
 from pyglet.gl import gl_info
 
-import minecraft.sources
 from minecraft.scene import GameWindow
 from minecraft.scene.start import StartScene
 from minecraft.utils.opengl import setup_opengl

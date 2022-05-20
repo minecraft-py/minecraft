@@ -1,5 +1,5 @@
 # 内置的树叶结构
-# 参照 `https://minecraft.fandom.com/wiki/Tree/Structure`
+# 参照https://minecraft.fandom.com/wiki/Tree/Structure
 LEAF_SHAPE = {}
 
 # 普通橡木

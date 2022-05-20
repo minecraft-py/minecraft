@@ -2,10 +2,7 @@ import json
 import re
 import sys
 from locale import getdefaultlocale
-from os import environ
-from os.path import abspath, dirname, isdir, isfile, join
-
-from pyglet import resource
+from os.path import isdir, isfile, join
 
 from minecraft.resource_pack import ResourcePackManager
 from minecraft.utils.utils import *

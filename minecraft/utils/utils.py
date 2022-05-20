@@ -1,5 +1,3 @@
-import atexit
-import math
 import time
 from os import environ, path
 from sys import platform

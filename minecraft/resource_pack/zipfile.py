@@ -1,8 +1,6 @@
 import json
-import os
 import zipfile
 
-import pyglet
 from minecraft.resource_pack.base import ResourcePack
 from minecraft.utils.utils import *
 from pyglet.image import load as load_image
