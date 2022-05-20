@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
 from json import dump, load
-from os import chmod, environ, listdir, mkdir, makedirs, path, system
+from os import chmod, environ, mkdir, makedirs, path
 from re import search
-from shlex import join
-from shutil import rmtree
 from sys import argv, executable, platform, version_info
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
 from subprocess import run
 import uuid
-from zipfile import ZipFile
 
 def main():
     # 最好遵守 Mojang 的 Minecraft eula
