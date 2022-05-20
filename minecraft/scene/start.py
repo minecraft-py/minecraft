@@ -1,11 +1,12 @@
-from minecraft.gui.loading import LoadingBackground
+import pyglet
+from minecraft.gui.frame import Frame
 from minecraft.gui.widget.button import Button
+from minecraft.gui.widget.label import ColorLabel
+from minecraft.gui.widget.loading import LoadingBackground
 from minecraft.scene import Scene
 from minecraft.sources import resource_pack
 from minecraft.utils.utils import *
-from pyglet.shapes import Circle
 from pyglet.sprite import Sprite
-from minecraft.gui.widget.label import ColorLabel
 from pyglet.window import key
 
 
@@ -31,13 +32,32 @@ class StartScene(Scene):
         self._title_edition.scale = 2
         self._version_label = ColorLabel("Minecraft in python %s" % VERSION["str"], x=width - 2, y=3,
                                     anchor_x="right", bold=True)
-        self._btn = Button(100, 100, 200, 20, "Hello")
+        # 该场景中的所有GUI
+        self._frame = Frame(get_game())
+        self._choose_game_btn = Button(width // 2 - 200, 0.5 * height, 400, 40, resource_pack.get_translation("text.start_scent.hello"))
+        self._exit_btn = Button(width // 2 - 200, 0.5 * height + 50, 400, 40, resource_pack.get_translation("text.start_scent.exit"))
+        self._frame.add_widget(self._choose_game_btn, self._exit_btn)
+
+        @self._choose_game_btn.event
+        def on_press():
+            log_info("You press a button")
+
+        @self._exit_btn.event
+        def on_press():
+            pyglet.app.exit()
+
+    def on_scene_enter(self):
+        self._frame.enable()
+
+    def on_scene_leave(self):
+        self._frame.enable(False)
 
     def on_draw(self):
         self._back.draw()
         self._title.draw()
         self._title_edition.draw()
         self._version_label.draw()
+        self._frame.draw()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
@@ -48,3 +68,7 @@ class StartScene(Scene):
         self._title.position = (width // 2, 0.8 * height)
         self._title_edition.position = (width // 2, 0.8 * height - self._title.image.height - self._title_edition.image.height - 3)
         self._version_label.x = width - 2
+        self._choose_game_btn.x = width // 2 - 200
+        self._choose_game_btn.y =  0.5 * height
+        self._exit_btn.x = width // 2 - 200
+        self._exit_btn.y =  0.5 * height + 50

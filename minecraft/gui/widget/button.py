@@ -1,4 +1,4 @@
-from minecraft.gui import Widget
+from minecraft.gui.widget import Widget
 from minecraft.gui.widget.label import ColorLabel
 from minecraft.utils.utils import *
 from pyglet.sprite import Sprite

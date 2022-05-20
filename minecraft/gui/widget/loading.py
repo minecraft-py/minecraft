@@ -1,6 +1,5 @@
 from minecraft.utils.utils import *
 
-import pyglet
 from pyglet.shapes import Rectangle
 from pyglet.sprite import Sprite
 

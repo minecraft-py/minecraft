@@ -1,4 +1,4 @@
-from minecraft.gui import Widget
+from minecraft.gui.widget import Widget
 from pyglet.text import Label
 
 _color_tabel = {

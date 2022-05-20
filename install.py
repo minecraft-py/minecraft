@@ -126,9 +126,9 @@ def install():
         print("[Install requirements]")
         pip = "\"%s\" -m pip" % executable
         if "--hide-output" in argv:
-            code = system("%s install -U -r %s >> %s" % (pip, get_file("requirements.txt"), path.devnull))
+            code = system("%s install -U -r \"%s\" >> %s" % (pip, get_file("requirements.txt"), path.devnull))
         else:
-            code = system("%s install -U -r %s" % (pip, get_file("requirements.txt")))
+            code = system("%s install -U -r \"%s\"" % (pip, get_file("requirements.txt")))
         if code != 0:
             print("pip raise error code: %d" % code)
             exit(1)
