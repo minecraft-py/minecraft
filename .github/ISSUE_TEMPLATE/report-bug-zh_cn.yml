@@ -1,0 +1,26 @@
+name: 报告漏洞
+description: 请先查看Issues列表确保没有重复
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    attributes:
+      label: 操作系统
+      description: 您使用何种操作系统？
+      options:
+        - Linux
+        - MacOS
+        - Windows
+        - 其它（需另说明）
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Python解释器
+      description: 您使用了哪个版本的Python？
+  - type: textarea
+    attributes:
+      label: 具体问题
+      description: 请告诉我们发生了什么问题
+    validations:
+      required: true
