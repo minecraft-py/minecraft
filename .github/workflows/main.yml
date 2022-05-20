@@ -17,6 +17,6 @@ jobs:
           cache: pip
       - name: Check
         run: |
-        pip install -U pip
-        pip install -r requirements.txt
-        python3 install.py --action --gen-script
+          pip install -U pip
+          pip install -r requirements.txt
+          python3 install.py --action --gen-script
