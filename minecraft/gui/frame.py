@@ -19,66 +19,63 @@ class Frame():
     def enable(self, status=True):
         self._enable = bool(status)
 
-    def register_event(self, event, func):
-        setattr(self, 'on_%s' % event, func)
-
     def on_key_press(self, symbol, modifiers):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_key_press', symbol, modifiers)
+            widget.dispatch_event("on_key_press", symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_key_release', symbol, modifiers)
+            widget.dispatch_event("on_key_release", symbol, modifiers)
 
     def on_mouse_press(self, x, y, buttons, modifiers):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_mouse_press', x, y, buttons, modifiers)
+            widget.dispatch_event("on_mouse_press", x, y, buttons, modifiers)
 
     def on_mouse_release(self, x, y, buttons, modifiers):
         for widget in self._widget:
-            widget.dispatch_event('on_mouse_release', x, y, buttons, modifiers)
+            widget.dispatch_event("on_mouse_release", x, y, buttons, modifiers)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_mouse_drag', x, y, dx, dy, buttons, modifiers)
+            widget.dispatch_event("on_mouse_drag", x, y, dx, dy, buttons, modifiers)
     
     def on_mouse_scroll(self, x, y, index, direction):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_mouse_scroll', x, y, index, direction)
+            widget.dispatch_event("on_mouse_scroll", x, y, index, direction)
 
     def on_mouse_motion(self, x, y, dx, dy):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_mouse_motion', x, y, dx, dy)
+            widget.dispatch_event("on_mouse_motion", x, y, dx, dy)
 
     def on_text(self, text):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_text', text)
+            widget.dispatch_event("on_text", text)
 
     def on_text_motion(self, motion):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_text_motion', motion)
+            widget.dispatch_event("on_text_motion", motion)
 
     def on_text_motion_select(self, motion):
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event('on_text_motion_select', motion)
+            widget.dispatch_event("on_text_motion_select", motion)
 
     def draw(self):
         if not self._enable:

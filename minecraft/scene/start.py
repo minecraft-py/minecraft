@@ -6,6 +6,7 @@ from minecraft.gui.widget.loading import LoadingBackground
 from minecraft.scene import Scene
 from minecraft.sources import resource_pack
 from minecraft.utils.utils import *
+from pyglet.gl import *
 from pyglet.sprite import Sprite
 from pyglet.window import key
 
@@ -69,7 +70,7 @@ class StartScene(Scene):
         self._back.resize(width, height)
         self._title.position = (width // 2, 0.8 * height)
         self._title_edition.position = (width // 2, 0.8 * height - self._title.image.height - self._title_edition.image.height - 3)
-        self._version_label.x = width - 2
+        self._version_label.x = width - 3
         self._singleplayer_btn.position = (width // 2 - 200, 0.5 * height)
         self._multiplayer_btn.position = (width // 2 - 200, 0.5 * height - 50)
         self._options_btn.position = (width // 2 - 200, 0.5 * height - 110)

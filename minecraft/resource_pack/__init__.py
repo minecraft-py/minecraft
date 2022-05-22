@@ -22,9 +22,9 @@ class ResourcePackManager():
             elif os.path.isfile(name) and is_zipfile(name):
                 self._packs.append(ZipfileResourcePack(name))
             else:
-                log_warn("Not a zipfile: `%s`" % name)
+                log_warn("Not a zipfile: \"%s\"" % name)
         else:
-            log_warn("No such file or directory: `%s`" % name)
+            log_warn("No such file or directory: \"%s\"" % name)
 
     def set_lang(self, lang):
         for pack in self._packs:
