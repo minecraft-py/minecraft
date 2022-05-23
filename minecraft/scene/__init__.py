@@ -9,7 +9,7 @@ class Scene(EventDispatcher):
     def __init__(self):
         # 一个场景
         super().__init__()
-    
+
     def on_scene_enter(self):
         # 场景特有的方法, 进入场景时调用
         pass
@@ -31,11 +31,11 @@ class GameWindow(Window):
         # 一些变量, 可通过 get_game() 获取
         self.resource_pack = resource_pack
         self.settings = settings
-    
+
     def add_scene(self, name, scene, *args, **kwargs):
         # 添加场景
         self._scenes[name] = scene(*args, **kwargs)
-    
+
     def switch_scene(self, name):
         # 切换至另一个场景
         if name not in self._scenes:

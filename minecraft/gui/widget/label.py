@@ -1,6 +1,7 @@
 from minecraft.gui.widget import Widget
 from pyglet.text import Label
 
+# 颜色代码请见https://minecraft.fandom.com/wiki/Formatting_codes#Formatting_codes
 _color_tabel = {
             "black": [(0, 0, 0), (255, 255, 255)],
             "dark_blue": [(0, 0, 170), (0, 0, 42)],
@@ -28,8 +29,8 @@ class ColorLabel(Widget):
         colors["fg"] = _color_tabel.get(color, _color_tabel["white"])[0] + (255,)
         colors["bg"] = _color_tabel.get(color, _color_tabel["white"])[1] + (255,)
         self._label = []
-        self._label.append(Label(text=text, x=x, y=y, color=colors["fg"], **kwargs))
-        self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors["bg"], **kwargs))
+        self._label.append(Label(text=text, x=x, y=y, color=colors["fg"], font_name="Minecraft", **kwargs))
+        self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors["bg"], font_name="Minecraft", **kwargs))
         self._shadow = shadow
         super().__init__(x, y, 1, 1)
 

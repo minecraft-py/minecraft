@@ -2,5 +2,6 @@
     "text.start_scent.single_player": "Singleplayer",
     "text.start_scent.multi_player": "Multiplayer",
     "text.start_scent.options": "Options...",
-    "text.start_scent.quit_game": "Quit Game"
+    "text.start_scent.quit_game": "Quit Game",
+    "text.single_player_scene.choose_a_save": "Choose a save"
 }

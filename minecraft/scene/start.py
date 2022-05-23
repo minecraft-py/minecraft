@@ -1,3 +1,5 @@
+from importlib import import_module
+
 import pyglet
 from minecraft.gui.frame import Frame
 from minecraft.gui.widget.button import Button
@@ -16,7 +18,6 @@ class StartScene(Scene):
     def __init__(self):
         # 开始场景, 这是游戏启动后的第一个场景
         super().__init__()
-        self.event_types = ()
         width, height = get_size()
         self._back = LoadingBackground()
         # 在窗口从上往下的20%处居中绘制Minecraft标题
@@ -31,8 +32,7 @@ class StartScene(Scene):
         self._title_edition.image.anchor_x = self._title_edition.image.width // 2
         self._title_edition.image.anchor_y = self._title_edition.image.height // 2
         self._title_edition.scale = 2
-        self._version_label = ColorLabel("Minecraft in python %s" % VERSION["str"], x=width - 2, y=3,
-                                    anchor_x="right", bold=True)
+        self._version_label = ColorLabel("Minecraft in python %s" % VERSION["str"], x=width - 2, y=3, anchor_x="right")
         # 该场景中的所有GUI
         self._frame = Frame(get_game())
         self._singleplayer_btn = Button(width // 2 - 200, 0.5 * height, 400, 40, resource_pack.get_translation("text.start_scent.single_player"))
@@ -43,7 +43,9 @@ class StartScene(Scene):
 
         @self._singleplayer_btn.event
         def on_press():
-            log_info("You press a button")
+            single_player = import_module("minecraft.scene.single_player").SinglePlayerScene
+            get_game().add_scene("single_player", single_player)
+            get_game().switch_scene("single_player")
 
         @self._exit_btn.event
         def on_press():

@@ -2,7 +2,7 @@ import atexit
 import os
 import sys
 import traceback
-from os import environ, getpid, remove
+from os import remove
 from os.path import isfile, join
 
 import pyglet

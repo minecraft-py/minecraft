@@ -34,9 +34,6 @@ VERSION = {
 
 def log_err(text, name="client", where="cl"):
     # 打印错误信息
-    # 于何处(where)
-    # c(onsole) - 于标准输出中打印
-    # l(og)     - 保存至日志文件
     if "l" in where:
         log_str.append("[ERR  %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
     if "c" in where:
@@ -72,7 +69,7 @@ def on_exit():
     log_info("Exit", where="c")
     with open(_os.path.join(search_mcpy(), "log", "log-%s.log" % start_time), "w+") as log:
         log.write("\n".join(log_str))
-    # 将当前日志文件再保存一份至`log-latest.log`
+    # 将当前日志文件再保存一份至"log-latest.log"
     with open(_os.path.join(search_mcpy(), "log", "log-latest.log"), "w+") as latest_log:
         latest_log.write("\n".join(log_str))
 
