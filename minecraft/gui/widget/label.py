@@ -1,3 +1,6 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 from minecraft.gui.widget import Widget
 from pyglet.text import Label
 
@@ -29,8 +32,8 @@ class ColorLabel(Widget):
         colors["fg"] = _color_tabel.get(color, _color_tabel["white"])[0] + (255,)
         colors["bg"] = _color_tabel.get(color, _color_tabel["white"])[1] + (255,)
         self._label = []
-        self._label.append(Label(text=text, x=x, y=y, color=colors["fg"], font_name="Minecraft", **kwargs))
-        self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors["bg"], font_name="Minecraft", **kwargs))
+        self._label.append(Label(text=text, x=x, y=y, color=colors["fg"], **kwargs))
+        self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors["bg"], **kwargs))
         self._shadow = shadow
         super().__init__(x, y, 1, 1)
 

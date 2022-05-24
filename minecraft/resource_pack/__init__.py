@@ -1,3 +1,6 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 import os
 from zipfile import is_zipfile
 

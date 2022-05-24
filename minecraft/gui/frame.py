@@ -1,3 +1,6 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 from minecraft.utils.utils import *
 
 

@@ -1,25 +1,28 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 from minecraft.gui.widget import Widget
 from minecraft.gui.widget.label import ColorLabel
 from minecraft.utils.utils import *
-from pyglet.sprite import Sprite
+from minecraft.gui.widget import Sprite
 from pyglet.window import key
 
 
 class Button(Widget):
 
-    def __init__(self, x, y, width, height, text):
+    def __init__(self, text, x, y, width, height, enable=True):
         self._size = win_width, win_height = get_size()
         super().__init__(x, win_height - y, width, height)
         self._width = width
         self._pressed_img = get_game().resource_pack.get_resource("textures/gui/widgets").get_region(0, 150, 200, 20)
         self._depressed_img = get_game().resource_pack.get_resource("textures/gui/widgets").get_region(0, 170, 200, 20)
         self._unable_img = get_game().resource_pack.get_resource("textures/gui/widgets").get_region(0, 190, 200, 20)
-        self._sprite = Sprite(self._depressed_img, x, win_height - y)
+        self._sprite = Sprite(self._depressed_img if enable else self._unable_img, x, win_height - y, border_width=2)
         self._text = text
-        self._label = ColorLabel(self._text, color="white", align="center", anchor_x="center", anchor_y="center",
+        self._label = ColorLabel(self._text, color="white" if enable else "gray", align="center", anchor_x="center", anchor_y="center",
                 x=x + width / 2, y=win_height - y + height / 2, font_size=16)
         self._pressed = False
-        self._enable = True
+        self._enable = enable
 
     def _update(self):
         self._sprite.position = self._x, self._y

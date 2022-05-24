@@ -1,10 +1,12 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 import json
 import re
 import sys
 from locale import getdefaultlocale
-from os.path import abspath, dirname, isdir, isfile, join
+from os.path import isdir, isfile, join
 
-from pyglet import font
 from minecraft.resource_pack import ResourcePackManager
 from minecraft.utils.utils import *
 
@@ -13,8 +15,6 @@ sys.path.insert(0, join(mcpypath, "lib", VERSION["str"]))
 lib_path = sys.path[0]
 libs = []
 settings = json.load(open(join(mcpypath, "settings.json"), encoding="utf-8"))
-
-font.add_file(abspath(join(dirname(__file__), "assets", "font.ttf")))
 
 # 设置资源包
 resource_pack = ResourcePackManager()
@@ -25,7 +25,6 @@ else:
         resource_pack.add(pack)
 
 # 设置语言
-lang = ""
 if settings.get("lang", "${auto}") == "${auto}":
     lang = getdefaultlocale()[0].lower()
 else:

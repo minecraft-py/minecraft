@@ -1,3 +1,6 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 from importlib import import_module
 
 import pyglet
@@ -35,10 +38,10 @@ class StartScene(Scene):
         self._version_label = ColorLabel("Minecraft in python %s" % VERSION["str"], x=width - 2, y=3, anchor_x="right")
         # 该场景中的所有GUI
         self._frame = Frame(get_game())
-        self._singleplayer_btn = Button(width // 2 - 200, 0.5 * height, 400, 40, resource_pack.get_translation("text.start_scent.single_player"))
-        self._multiplayer_btn = Button(width // 2 - 200, 0.5 * height - 50, 400, 40, resource_pack.get_translation("text.start_scent.multi_player"))
-        self._options_btn = Button(width // 2 - 200, 0.5 * height - 110, 195, 40, resource_pack.get_translation("text.start_scent.options"))
-        self._exit_btn = Button(width // 2 + 5, 0.5 * height - 110, 195, 40, resource_pack.get_translation("text.start_scent.quit_game"))
+        self._singleplayer_btn = Button(resource_pack.get_translation("text.start_scent.single_player"), width // 2 - 200, 0.5 * height, 400, 40)
+        self._multiplayer_btn = Button(resource_pack.get_translation("text.start_scent.multi_player"), width // 2 - 200, 0.5 * height - 50, 400, 40, False)
+        self._options_btn = Button(resource_pack.get_translation("text.start_scent.options"), width // 2 - 200, 0.5 * height - 110, 195, 40)
+        self._exit_btn = Button(resource_pack.get_translation("text.start_scent.quit_game"), width // 2 + 5, 0.5 * height - 110, 195, 40)
         self._frame.add_widget(self._singleplayer_btn, self._multiplayer_btn, self._options_btn, self._exit_btn)
 
         @self._singleplayer_btn.event

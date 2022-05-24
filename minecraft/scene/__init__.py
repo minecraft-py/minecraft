@@ -1,3 +1,6 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 from minecraft.sources import *
 from minecraft.utils.utils import *
 from pyglet.event import EventDispatcher
@@ -28,7 +31,7 @@ class GameWindow(Window):
         self.set_minimum_size(640, 480)
         self._scenes = {}
         self._now = ""
-        # 一些变量, 可通过 get_game() 获取
+        # 一些变量, 可通过minecraft.utils.utils.get_game()获取
         self.resource_pack = resource_pack
         self.settings = settings
 

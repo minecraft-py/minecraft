@@ -1,3 +1,6 @@
+# Copyright 2020-2022 Minecraft-in-python.
+# SPDX-License-Identifier: GPL-3.0-only
+
 # 内置的树叶结构请见https://minecraft.fandom.com/wiki/Tree/Structure
 LEAF_SHAPE = {}
 
