@@ -6,7 +6,7 @@ from os import environ, path
 from sys import platform
 
 start_time = time.strftime("%Y-%m-%d_%H.%M.%S")
-log_str = []
+_log_str = []
 _have_colorama = False
 try:
     from colorama import Fore, Style, init
@@ -38,7 +38,7 @@ VERSION = {
 def log_err(text, name="client", where="cl"):
     # 打印错误信息
     if "l" in where:
-        log_str.append("[ERR  %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
+        _log_str.append("[ERR  %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
     if "c" in where:
         if _have_colorama:
             print("%s[ERR  %s %s]%s %s" % (Fore.RED, time.strftime("%H:%M:%S"), name, Style.RESET_ALL, text))
@@ -48,7 +48,7 @@ def log_err(text, name="client", where="cl"):
 def log_info(text, name="client", where="cl"):
     # 打印普通信息
     if "l" in where:
-        log_str.append("[INFO %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
+        _log_str.append("[INFO %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
     if "c" in where:
         if _have_colorama:
             print("%s[INFO %s %s]%s %s" % (Fore.GREEN, time.strftime("%H:%M:%S"), name, Style.RESET_ALL, text))
@@ -58,7 +58,7 @@ def log_info(text, name="client", where="cl"):
 def log_warn(text, name="client", where="cl"):
     # 打印警告信息
     if "l" in where:
-        log_str.append("[WARN %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
+        _log_str.append("[WARN %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
     if "c" in where:
         if _have_colorama:
             print("%s[WARN %s %s]%s %s" % (Fore.YELLOW, time.strftime("%H:%M:%S"), name, Style.RESET_ALL, text))
@@ -69,12 +69,12 @@ def on_exit():
     # 在退出时保存日志
     _os  = __import__("os")
     log_info("Save logs to `log/log-%s.log`" % start_time, where="c")
-    log_info("Exit", where="c")
+    log_info("Exit")
     with open(_os.path.join(search_mcpy(), "log", "log-%s.log" % start_time), "w+") as log:
-        log.write("\n".join(log_str))
+        log.write("\n".join(_log_str))
     # 将当前日志文件再保存一份至"log-latest.log"
     with open(_os.path.join(search_mcpy(), "log", "log-latest.log"), "w+") as latest_log:
-        latest_log.write("\n".join(log_str))
+        latest_log.write("\n".join(_log_str))
 
 def search_mcpy():
     # 寻找文件存储位置
