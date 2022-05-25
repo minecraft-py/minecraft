@@ -11,6 +11,7 @@ from pyglet.window import key
 class Button(Widget):
 
     def __init__(self, text, x, y, width, height, enable=True):
+        # 一个有文字的按钮
         self._size = win_width, win_height = get_size()
         super().__init__(x, win_height - y, width, height)
         self._width = width
@@ -20,7 +21,7 @@ class Button(Widget):
         self._sprite = Sprite(self._depressed_img if enable else self._unable_img, x, win_height - y, border_width=2)
         self._text = text
         self._label = ColorLabel(self._text, color="white" if enable else "gray", align="center", anchor_x="center", anchor_y="center",
-                x=x + width / 2, y=win_height - y + height / 2, font_size=16)
+                                 x=x + width / 2, y=win_height - y + height / 2, font_size=16)
         self._pressed = False
         self._enable = enable
 
@@ -72,6 +73,61 @@ Button.register_event_type("on_press")
 Button.register_event_type("on_release")
 
 
+class ImageButton(Widget):
+
+    def __init__(self, images, x, y, width, height, enable=True):
+        # images = [按下按钮时的图片, 未按下时的图片, 禁用时的图片]
+        # 找不到禁用时的图片搞成透明的就行了
+        self._size = win_width, win_height = get_size()
+        super().__init__(x, y, width, height)
+        assert len(images) == 3
+        self._width = width
+        self._pressed_img = images[0]
+        self._depressed_img = images[1]
+        self._unable_img = images[2]
+        self._sprite = Sprite(self._depressed_img if enable else self._unable_img, x, win_height - y, border_width=2)
+        self._pressed = False
+        self._enable = enable
+
+    def _update(self):
+        self._sprite.position = self._x, self._y
+
+    def draw(self):
+        self._sprite.scale_x = self._width / self._pressed_img.width
+        self._sprite.scale_y = self._height / self._pressed_img.height
+        self._sprite.draw()
+
+    def enable(self, status):
+        self._enable = bool(status)
+        if self._enable:
+            self._sprite.image = self._depressed_img
+        else:
+            self._sprite.image = self._unable_img
+
+    def on_mouse_press(self, x, y, buttons, modifiers):
+        if self.check_hit(x, y) and self._enable:
+            self._sprite.image = self._pressed_img
+            self._pressed = True
+            self.dispatch_event("on_press")
+
+    def on_mouse_release(self, x, y, buttons, modifiers):
+        if self._pressed:
+            self._sprite.image = self._depressed_img
+            self._pressed = False
+            self.dispatch_event("on_release")
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        if not self._pressed:
+            if self.check_hit(x, y) and self._enable:
+                self._sprite.image = self._pressed_img
+            else:
+                self._sprite.image = self._depressed_img if self._enable else self._unable_img
+
+
+ImageButton.register_event_type("on_press")
+ImageButton.register_event_type("on_release")
+
+
 class ChooseButton(Button):
 
     def __init__(self, x, y, width, height, prefix, values):
@@ -91,7 +147,7 @@ class ChooseButton(Button):
                 self._point = 0
             elif self._point < 0:
                 self._point = len(self._values) - 1
-            self.text("%s: %s" %(self._prefix, self._values[self._point]))
+            self.text("%s: %s" % (self._prefix, self._values[self._point]))
 
     def value(self):
         return self._values[self._point]

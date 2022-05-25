@@ -4,8 +4,11 @@
 import json
 import re
 import sys
+from importlib import import_module
 from locale import getdefaultlocale
+from os import pathsep
 from os.path import isdir, isfile, join
+from zipfile import is_zipfile
 
 from minecraft.resource_pack import ResourcePackManager
 from minecraft.utils.utils import *
@@ -46,19 +49,21 @@ else:
     exit(1)
 
 # 解析命令行参数
+# 就不用argparse了，毕竟参数比较少
 for args in sys.argv:
     if args.startswith("--include="):
-        for lib in args[10:].split(";"):
-            if isdir(lib):
+        # 将某一路径添加到sys.path，zip文件亦受支持
+        for lib in args[10:].split(pathsep):
+            if isdir(lib) or (isfile(lib) and is_zipfile(lib)):
                 sys.path.insert(0, lib)
                 log_info("Add new lib path: `%s`" % lib)
             else:
-                log_warn("Lib path `%s` is not available" % lib)
+                log_warn("Lib path \"%s\" is not available" % lib)
     elif args.startswith("--extlib="):
-        # 如果没有下面的for循环, 那么即使有模组加载器也没有任何用处
-        for lib in args[9:].split(";"):
+        # 如果没有下面的for循环, 那么即使有模组加载器也没有任何用处，对吧
+        for lib in args[9:].split(pathsep):
             if isdir(join(lib_path, lib)) or isfile(join(lib_path, lib + ".py")):
-                log_info("Loading extra lib: `%s`" % lib)
-                libs.append(__import__(lib))
+                log_info("Loading extra lib: \"%s\"" % lib)
+                libs.append(import_module(lib))
             else:
-                log_warn("Extra lib `%s` not found" % lib)
+                log_warn("Extra lib \"%s\" not found" % lib)
