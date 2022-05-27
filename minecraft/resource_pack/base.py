@@ -12,17 +12,13 @@ class ResourcePack():
         pass
 
     def get_translation(self, name):
-        # 返回对应语言的翻译, 否则返回英语翻译
+        # 返回对应语言的翻译，否则返回英语翻译
         return self.lang.get(name, self.lang_en_us.get(name, name))
 
     def get_pack_info(self):
-        # 返回一个 (pack.json, pack.png) 
+        # 返回一个(pack.json, pack.png)
         pass
 
     def get_resource(self, path):
-        # path 为用 "/" 分隔的路径名
-        # lang/*     - *.json(不建议)
-        # sounds/*   - *.ogg
-        # text/*     - *.txt
-        # textures/* - *.png
+        # path为用"/"分隔的路径名，特定的路径下存储着特定的文件类型
         pass

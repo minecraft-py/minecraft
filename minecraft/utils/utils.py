@@ -97,17 +97,16 @@ def mdist(p, q):
         total += abs(p[i] + q[i])
     return total
 
-def get_size():
-    # 返回窗口大小
-    for w in pyglet.canvas.get_display().get_windows():
-        if str(w).startswith('GameWindow'):
-            return w.width, w.height
-    else:
-        # 应该绝对不会运行到这里
-        return 800, 600
-
 def get_game():
-    # 获取 Game 类
+    # 获取GameWindow类的实例
+    # 根据下面的算法，只能存在一个minecraft.scene.GameWindow对象
     for w in pyglet.canvas.get_display().get_windows():
         if str(w).startswith('GameWindow'):
             return w
+    # 正常启动游戏是不可能引发异常的，除非你导入了该模块并调用了这个函数
+    raise RuntimeError("No game window found")
+
+def get_size():
+    # 返回窗口大小
+    w = get_game()
+    return w.width, w.height

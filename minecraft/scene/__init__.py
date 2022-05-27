@@ -6,6 +6,9 @@ from minecraft.utils.utils import *
 from pyglet.event import EventDispatcher
 from pyglet.window import Window
 
+# GameWindow的实例是否创建了呢？
+_has_gamewin = False
+
 
 class Scene(EventDispatcher):
 
@@ -25,7 +28,11 @@ class Scene(EventDispatcher):
 class GameWindow(Window):
 
     def __init__(self, *args, **kwargs):
-        # 游戏主窗口, 所有的场景都绘制在这里
+        # 游戏主窗口，只能创建一个，否则引发异常
+        global _has_gamewin
+        if _has_gamewin:
+            raise RuntimeError("GameWindow has existed")
+        _has_gamewin = True
         super().__init__(*args, **kwargs)
         self.set_caption("Minecraft in python %s" % VERSION["str"])
         self.set_minimum_size(640, 480)

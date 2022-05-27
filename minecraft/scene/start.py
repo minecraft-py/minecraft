@@ -19,7 +19,7 @@ from pyglet.window import key
 class StartScene(Scene):
 
     def __init__(self):
-        # 开始场景, 这是游戏启动后的第一个场景
+        # 开始场景, 这是游戏启动后的第一个出现场景
         super().__init__()
         width, height = get_size()
         self._back = LoadingBackground()
