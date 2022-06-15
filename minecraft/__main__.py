@@ -19,7 +19,10 @@ from minecraft.utils.utils import *
 
 
 def start():
-    # 游戏从这里开始
+    """游戏从这里开始。
+
+    创建窗口、进入场景、开始游戏。
+    """
     try:
         setup_opengl()
         game = GameWindow(800, 600, resizable=True)

@@ -12,13 +12,13 @@ from pyglet.window import key
 
 
 class SinglePlayerScene(Scene):
-
+    """单人游戏选择存档的场景。"""
     def __init__(self):
         super().__init__()
         width, height = get_size()
         self._back = LoadingBackground()
-        self._title = ColorLabel(resource_pack.get_translation("text.single_player_scene.choose_a_save"), font_size=15,
-                                 x=width // 2, y=0.95 * height, anchor_x="center", anchor_y="center")
+        self._title = ColorLabel(resource_pack.get_translation("text.single_player_scene.choose_a_save"),
+                                 font_size=15, x=width // 2, y=0.95 * height, anchor_x="center", anchor_y="center")
 
     def on_draw(self):
         self._back.draw()
@@ -32,4 +32,4 @@ class SinglePlayerScene(Scene):
     def on_resize(self, width, height):
         self._back.resize(width, height)
         self._title.x = width // 2
-        self._title.y = 0.95 * height 
+        self._title.y = 0.95 * height

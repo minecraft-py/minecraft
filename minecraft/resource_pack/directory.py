@@ -10,15 +10,13 @@ from pyglet.image import load as load_image
 
 
 class DirectoryResourcePack(ResourcePack):
-
+    """以目录为结构的资源包"""
     def __init__(self, name):
-        # 以目录结构作为资源包
         super().__init__(name)
         self.base_dir = name
         self.language = ""
 
     def set_lang(self, lang):
-        # 玩家设置的语言
         lang_file = os.path.join(self.base_dir, "lang", "%s.json" % lang)
         if os.path.exists(lang_file):
             try:
@@ -26,16 +24,12 @@ class DirectoryResourcePack(ResourcePack):
                 self.language = lang
             except:
                 pass
-        # 默认的，英语语言
         lang_file = os.path.join(self.base_dir, "lang", "en_us.json")
         if os.path.exists(lang_file):
             try:
                 self.lang_en_us = json.load(open(lang_file, "r+", encoding="utf-8"))
-                return True
             except:
-                return False
-        else:
-            return False
+                pass
 
     def get_pack_info(self):
         info = json.load(open(os.path.join(self.base_dir, "pack.json"), "r+", encoding="utf-8"))

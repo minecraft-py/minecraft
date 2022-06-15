@@ -9,9 +9,8 @@ from pyglet.window import key
 
 
 class Button(Widget):
-
+    """一个有文字的按钮。"""
     def __init__(self, text, x, y, width, height, enable=True):
-        # 一个有文字的按钮
         self._size = win_width, win_height = get_size()
         super().__init__(x, win_height - y, width, height)
         self._width = width
@@ -74,7 +73,7 @@ Button.register_event_type("on_release")
 
 
 class ImageButton(Widget):
-
+    """以图片作为按钮。"""
     def __init__(self, images, x, y, width, height, enable=True):
         # images = [按下按钮时的图片, 未按下时的图片, 禁用时的图片]
         # 找不到禁用时的图片搞成透明的就行了
@@ -129,7 +128,7 @@ ImageButton.register_event_type("on_release")
 
 
 class ChooseButton(Button):
-
+    """一个提供选项的按钮，通过点击来改变所选项。"""
     def __init__(self, x, y, width, height, prefix, values):
         super().__init__(x, y, width, height, text="%s: %s" % (prefix, values[0]))
         self._prefix = prefix

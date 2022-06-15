@@ -10,9 +10,11 @@ from minecraft.utils.utils import *
 
 
 class ResourcePackManager():
-
+    """资源包管理器。
+    
+    使用它对游戏的资源包进行添加、读取等操作。
+    """
     def __init__(self):
-        # 资源包管理器
         self._packs = []
 
     def add(self, name):
@@ -32,7 +34,6 @@ class ResourcePackManager():
     def set_lang(self, lang):
         for pack in self._packs:
             pack.set_lang(lang)
-        return True
 
     def get_translation(self, name):
         for pack in self._packs:

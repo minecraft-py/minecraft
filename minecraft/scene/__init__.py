@@ -11,24 +11,27 @@ _has_gamewin = False
 
 
 class Scene(EventDispatcher):
+    """一个场景。"""
 
     def __init__(self):
-        # 一个场景
         super().__init__()
 
     def on_scene_enter(self):
-        # 场景特有的方法, 进入场景时调用
+        """进入场景时调用。"""
         pass
 
     def on_scene_leave(self):
-        # 场景特有的方法, 离开场景时调用
+        """离开场景时调用。"""
         pass
 
 
 class GameWindow(Window):
+    """游戏的主窗口。
+
+    只能有一个主场口，否则会报错。
+    """
 
     def __init__(self, *args, **kwargs):
-        # 游戏主窗口，只能创建一个，否则引发异常
         global _has_gamewin
         if _has_gamewin:
             raise RuntimeError("GameWindow has existed")
@@ -43,11 +46,21 @@ class GameWindow(Window):
         self.settings = settings
 
     def add_scene(self, name, scene, *args, **kwargs):
-        # 添加场景
+        """添加场景。
+
+        :param name: 场景的名字
+        :param scene: 场景类
+        """
+        assert isinstance(scene, Scene)
         self._scenes[name] = scene(*args, **kwargs)
 
     def switch_scene(self, name):
-        # 切换至另一个场景
+        """切换至一个场景。
+
+        在切换时会调用前一个场景的`on_scene_leave()`方法，并调用当前场景的`on_scene_enter()`方法。
+
+        :param name: 场景的名字
+        """
         if name not in self._scenes:
             pass
         if self._now != "":

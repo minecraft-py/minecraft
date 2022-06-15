@@ -7,9 +7,8 @@ from pyglet.sprite import Sprite as PygletSprite
 
 
 class Widget(EventDispatcher):
-
+    """窗口中所有可交互（当然, 也可以不提供交互功能）的小部件的基类。"""
     def __init__(self, x, y, width, height):
-        # 窗口中所有可交互（当然, 也可以不提供交互功能）的小部件的基类
         self._x = x
         self._y = y
         self._width = width
@@ -116,10 +115,18 @@ Widget.register_event_type("on_text_motion_select")
 
 
 class Sprite():
+    """即使缩放也不会失真的精灵图片。
 
+    为了代码简洁，只将贴图分成了5块，应在横纵坐标缩放率不一致时才使用，类似于九宫格。
+    """
     def __init__(self, img, x=0, y=0, border=1, border_width=1):
-        # 即使缩放也不会失真的精灵图片
-        # 有局限性，只将贴图分成了5块，应在横纵坐标缩放率不一致时才使用，类似于九宫格
+        """初始化图片精灵，类似于直接使用`pyglet.sprite.Sprite`。
+
+        :param img: 一幅图片
+        :param x, y: 放在何处
+        :param border: 缩放后边框的宽度
+        :param border_width: 在原图中以该值作为边框宽度
+        """
         self._image = img
         self._x, self._y = x, y
         self._border, self._border_width = border, border_width

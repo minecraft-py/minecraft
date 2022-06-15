@@ -10,9 +10,8 @@ from pyglet.image import load as load_image
 
 
 class ZipfileResourcePack(ResourcePack):
-
+    """以zip压缩包作为资源包"""
     def __init__(self, name):
-        # 以压缩文件作为资源包
         super().__init__(name)
         self.zipfile = zipfile.ZipFile(name)
         self.language = ""
@@ -30,11 +29,8 @@ class ZipfileResourcePack(ResourcePack):
         if lang_file in self._namelist:
             try:
                 self.lang_en_us = json.load(self.zipfile.open(lang_file))
-                return True
             except:
-                return False
-        else:
-            return False
+                pass
 
     def get_pack_info(self):
         info = json.load(self.zipfile.open("pack.json"))

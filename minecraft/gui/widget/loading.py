@@ -8,9 +8,8 @@ from pyglet.sprite import Sprite
 
 
 class LoadingBackground():
-
+    """加载时使用的背景。"""
     def __init__(self, opacity=100):
-        # 加载时使用的背景
         width, height = get_size()
         self._rect = Rectangle(0, 0, width, height, color=(0, 0, 0))
         self._rect.opacity = opacity

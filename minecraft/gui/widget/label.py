@@ -25,7 +25,7 @@ _color_tabel = {
 
 
 class ColorLabel(Widget):
-
+    """标签。"""
     def __init__(self, text="", color="white", x=0, y=0, shadow=True, **kwargs):
         global _color_tabel
         colors = {}

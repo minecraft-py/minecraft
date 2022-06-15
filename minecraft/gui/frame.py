@@ -5,7 +5,10 @@ from minecraft.utils.utils import *
 
 
 class Frame():
+    """小部件框架。
 
+    绑定到窗口实现交互功能。
+    """
     def __init__(self, window):
         window.push_handlers(self)
         self._widget = []
