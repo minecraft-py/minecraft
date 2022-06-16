@@ -3,6 +3,7 @@
 
 class ResourcePack():
     """资源包的基类。"""
+
     def __init__(self, name):
         self.name = name
         self.lang = {}

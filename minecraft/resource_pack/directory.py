@@ -11,6 +11,7 @@ from pyglet.image import load as load_image
 
 class DirectoryResourcePack(ResourcePack):
     """以目录为结构的资源包"""
+
     def __init__(self, name):
         super().__init__(name)
         self.base_dir = name
@@ -27,13 +28,16 @@ class DirectoryResourcePack(ResourcePack):
         lang_file = os.path.join(self.base_dir, "lang", "en_us.json")
         if os.path.exists(lang_file):
             try:
-                self.lang_en_us = json.load(open(lang_file, "r+", encoding="utf-8"))
+                self.lang_en_us = json.load(
+                    open(lang_file, "r+", encoding="utf-8"))
             except:
                 pass
 
     def get_pack_info(self):
-        info = json.load(open(os.path.join(self.base_dir, "pack.json"), "r+", encoding="utf-8"))
-        image = load_image("pack.png", file=open(os.path.join(self.base_dir, "pack.png"), "rb"))
+        info = json.load(
+            open(os.path.join(self.base_dir, "pack.json"), "r+", encoding="utf-8"))
+        image = load_image("pack.png", file=open(
+            os.path.join(self.base_dir, "pack.png"), "rb"))
         return (info, image)
 
     def get_resource(self, path):

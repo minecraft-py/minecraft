@@ -10,14 +10,19 @@ from pyglet.window import key
 
 class Button(Widget):
     """一个有文字的按钮。"""
+
     def __init__(self, text, x, y, width, height, enable=True):
         self._size = win_width, win_height = get_size()
         super().__init__(x, win_height - y, width, height)
         self._width = width
-        self._pressed_img = get_game().resource_pack.get_resource("textures/gui/widgets").get_region(0, 150, 200, 20)
-        self._depressed_img = get_game().resource_pack.get_resource("textures/gui/widgets").get_region(0, 170, 200, 20)
-        self._unable_img = get_game().resource_pack.get_resource("textures/gui/widgets").get_region(0, 190, 200, 20)
-        self._sprite = Sprite(self._depressed_img if enable else self._unable_img, x, win_height - y, border_width=2)
+        self._pressed_img = get_game().resource_pack.get_resource(
+            "textures/gui/widgets").get_region(0, 150, 200, 20)
+        self._depressed_img = get_game().resource_pack.get_resource(
+            "textures/gui/widgets").get_region(0, 170, 200, 20)
+        self._unable_img = get_game().resource_pack.get_resource(
+            "textures/gui/widgets").get_region(0, 190, 200, 20)
+        self._sprite = Sprite(
+            self._depressed_img if enable else self._unable_img, x, win_height - y, border_width=2)
         self._text = text
         self._label = ColorLabel(self._text, color="white" if enable else "gray", align="center", anchor_x="center", anchor_y="center",
                                  x=x + width / 2, y=win_height - y + height / 2, font_size=16)
@@ -74,6 +79,7 @@ Button.register_event_type("on_release")
 
 class ImageButton(Widget):
     """以图片作为按钮。"""
+
     def __init__(self, images, x, y, width, height, enable=True):
         # images = [按下按钮时的图片, 未按下时的图片, 禁用时的图片]
         # 找不到禁用时的图片搞成透明的就行了
@@ -84,7 +90,8 @@ class ImageButton(Widget):
         self._pressed_img = images[0]
         self._depressed_img = images[1]
         self._unable_img = images[2]
-        self._sprite = Sprite(self._depressed_img if enable else self._unable_img, x, win_height - y, border_width=2)
+        self._sprite = Sprite(
+            self._depressed_img if enable else self._unable_img, x, win_height - y, border_width=2)
         self._pressed = False
         self._enable = enable
 
@@ -129,8 +136,10 @@ ImageButton.register_event_type("on_release")
 
 class ChooseButton(Button):
     """一个提供选项的按钮，通过点击来改变所选项。"""
+
     def __init__(self, x, y, width, height, prefix, values):
-        super().__init__(x, y, width, height, text="%s: %s" % (prefix, values[0]))
+        super().__init__(x, y, width, height,
+                         text="%s: %s" % (prefix, values[0]))
         self._prefix = prefix
         self._values = values
         self._point = 0

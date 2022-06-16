@@ -9,6 +9,7 @@ class Frame():
 
     绑定到窗口实现交互功能。
     """
+
     def __init__(self, window):
         window.push_handlers(self)
         self._widget = []
@@ -51,8 +52,9 @@ class Frame():
         if not self._enable:
             return
         for widget in self._widget:
-            widget.dispatch_event("on_mouse_drag", x, y, dx, dy, buttons, modifiers)
-    
+            widget.dispatch_event("on_mouse_drag", x, y,
+                                  dx, dy, buttons, modifiers)
+
     def on_mouse_scroll(self, x, y, index, direction):
         if not self._enable:
             return

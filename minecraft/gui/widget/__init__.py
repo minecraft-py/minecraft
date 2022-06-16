@@ -8,6 +8,7 @@ from pyglet.sprite import Sprite as PygletSprite
 
 class Widget(EventDispatcher):
     """窗口中所有可交互（当然, 也可以不提供交互功能）的小部件的基类。"""
+
     def __init__(self, x, y, width, height):
         self._x = x
         self._y = y
@@ -38,7 +39,7 @@ class Widget(EventDispatcher):
 
     @y.setter
     def y(self, y):
-        self._y =  y
+        self._y = y
         self._update()
 
     @property
@@ -119,6 +120,7 @@ class Sprite():
 
     为了代码简洁，只将贴图分成了5块，应在横纵坐标缩放率不一致时才使用，类似于九宫格。
     """
+
     def __init__(self, img, x=0, y=0, border=1, border_width=1):
         """初始化图片精灵，类似于直接使用`pyglet.sprite.Sprite`。"""
         self._image = img
@@ -195,25 +197,35 @@ class Sprite():
     def _split_img(self):
         b, w, h = self._border, self._image.width, self._image.height
         self._top = PygletSprite(self._image.get_region(0, h - b, w, b))
-        self._center_left = PygletSprite(self._image.get_region(0, b, b, h - 2 * b))
-        self._center_center = PygletSprite(self._image.get_region(b, b, w - 2 * b, h - 2 * b))
-        self._center_right = PygletSprite(self._image.get_region(w - b, b, b, h - 2 * b))
+        self._center_left = PygletSprite(
+            self._image.get_region(0, b, b, h - 2 * b))
+        self._center_center = PygletSprite(
+            self._image.get_region(b, b, w - 2 * b, h - 2 * b))
+        self._center_right = PygletSprite(
+            self._image.get_region(w - b, b, b, h - 2 * b))
         self._bottom = PygletSprite(self._image.get_region(0, 0, w, b))
 
     def _update(self):
-        w, h = self._image.width * self._scale[0], self._image.height * self._scale[1]
+        w, h = self._image.width * \
+            self._scale[0], self._image.height * self._scale[1]
         self._top.position = (self._x, self._y + h - self._border_width)
         self._top.scale_x = w / self._top.image.width
         self._top.scale_y = self._border_width / self._top.image.height
         self._center_left.position = (self._x, self._y + self._border_width)
         self._center_left.scale_x = self._border_width / self._center_left.image.width
-        self._center_left.scale_y = (h - 2 * self._border_width) / self._center_left.image.height
-        self._center_center.position = (self._x + self._border_width, self._y + self._border_width)
-        self._center_center.scale_x = (w - 2 * self._border_width) / self._center_center.image.width
-        self._center_center.scale_y = (h - 2 * self._border_width) / self._center_center.image.height
-        self._center_right.position = (self._x + w - self._border_width, self._y + self._border_width)
+        self._center_left.scale_y = (
+            h - 2 * self._border_width) / self._center_left.image.height
+        self._center_center.position = (
+            self._x + self._border_width, self._y + self._border_width)
+        self._center_center.scale_x = (
+            w - 2 * self._border_width) / self._center_center.image.width
+        self._center_center.scale_y = (
+            h - 2 * self._border_width) / self._center_center.image.height
+        self._center_right.position = (
+            self._x + w - self._border_width, self._y + self._border_width)
         self._center_right.scale_x = self._border_width / self._center_right.image.width
-        self._center_right.scale_y = (h - 2 * self._border_width) / self._center_right.image.height
+        self._center_right.scale_y = (
+            h - 2 * self._border_width) / self._center_right.image.height
         self._bottom.position = (self.x, self.y + self._border_width)
         self._bottom.scale_x = w / self._bottom.image.width
         self._bottom.scale_y = self._border_width / self._bottom.image.height

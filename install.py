@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
+import uuid
 from json import dump, load
-from os import chmod, environ, mkdir, makedirs, path
+from os import chmod, environ, makedirs, mkdir, path
 from re import search
-from sys import argv, executable, platform, version_info
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
 from subprocess import run
-import uuid
+from sys import argv, executable, platform, version_info
+
 
 def main():
     # 最好遵守 Mojang 的 Minecraft eula
@@ -29,13 +30,16 @@ def main():
     print("Use `%s -m minecraft` to start game." % pycmd)
     print("[Done]")
 
+
 def check_ver():
     if version_info[:2] < (3, 8):
-        print("Minecraft-in-python need python3.8 or later, but %s found." % ".".join([str(s) for s in version_info[:2]]))
+        print("Minecraft-in-python need python3.8 or later, but %s found." %
+              ".".join([str(s) for s in version_info[:2]]))
         if "--action" in argv:
             exit(0)
         else:
             exit(1)
+
 
 def do_action():
     # 专门给GitHub Action使用, 也可以检测代码是否有语法错误
@@ -44,16 +48,19 @@ def do_action():
     print("Minecraft-in-python version: %s" % get_version())
     # 检测模糊缩进
     print("[Check source > Check tabnanny]")
-    output = run([executable, "-m", "tabnanny", "-v", get_file("minecraft")], capture_output=True)
+    output = run([executable, "-m", "tabnanny", "-v",
+                 get_file("minecraft")], capture_output=True)
     lines = output.stderr.decode().split("\n")
     failed = False
     for line in lines:
         if "Indentation Error:" in line:
-            print("Check failed: %s(line %s)" % (line[1: line.find(":") - 1], line[line.rindex(" ") + 1: -1]))
+            print("Check failed: %s(line %s)" %
+                  (line[1: line.find(":") - 1], line[line.rindex(" ") + 1: -1]))
             failed = True
     else:
         if failed:
             exit(1)
+
 
 def gen_script():
     if "--skip-gen-script" in argv:
@@ -87,13 +94,16 @@ def gen_script():
             print(f.read()[:-1])
             print("[Generate startup script > end   run.sh]")
 
+
 def get_file(f):
     # 返回文件目录下的文件名
     return path.abspath(path.join(path.dirname(__file__), f))
 
+
 def get_version():
     # 从 minecraft/utils/utils.py 文件里面把版本号"抠"出来
-    f = open(path.join(get_file("minecraft"), "utils", "utils.py"), encoding="utf-8")
+    f = open(path.join(get_file("minecraft"),
+             "utils", "utils.py"), encoding="utf-8")
     start_find = False
     for line in f.readlines():
         if line.strip() == "VERSION = {":
@@ -105,6 +115,7 @@ def get_version():
             # 一位主版本号, 两位小版本号/修订版本号
             # 匹配 -alpha, -beta 后缀, -pre, -rc 后跟数字
             return search(r"\d(\.\d{1,2}){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
+
 
 def install():
     MCPYPATH = search_mcpy()
@@ -119,7 +130,8 @@ def install():
         makedirs(path.join(MCPYPATH, "lib", version))
     if ("--skip-install-requirements" not in argv) and ("--travis-ci" not in argv):
         print("[Install requirements]")
-        code = run([executable, "-m", "pip", "install", "-U", "-r", get_file("requirements.txt")]).returncode
+        code = run([executable, "-m", "pip", "install", "-U",
+                   "-r", get_file("requirements.txt")]).returncode
         if code != 0:
             print("pip raise error code: %d" % code)
             exit(1)
@@ -128,6 +140,7 @@ def install():
     else:
         print("[Skip install requirements]")
 
+
 def install_settings():
     MCPYPATH = search_mcpy()
     source = {
@@ -135,7 +148,7 @@ def install_settings():
         "lang": "${auto}",
         "resource-pack": ["${default}"],
         "viewport": {
-            "width": 800, 
+            "width": 800,
             "height": 600
         }
     }
@@ -147,6 +160,7 @@ def install_settings():
             target[k] = v
     dump(target, open(path.join(MCPYPATH, "settings.json"), "w+"))
 
+
 def register_user():
     # 离线注册
     if ("--skip-register" not in argv) and ("--action" not in argv):
@@ -156,33 +170,40 @@ def register_user():
             player_id = str(uuid.uuid4())
             print("Your uuid is %s, do not change it" % player_id)
             player_name = ""
-            is_valid_char = lambda c: any([c.isalpha(), c.isdigit(), c == "_"])
+            def is_valid_char(c): return any(
+                [c.isalpha(), c.isdigit(), c == "_"])
             while all([c for c in map(is_valid_char, player_name)]) and len(player_name) < 3:
                 player_name = input("Your name: ")
-            dump({"id": player_id, "name": player_name}, open(path.join(MCPYPATH, "player.json"), "w+"), indent="\t")
-            print("Regsitered successfully, you can use your id to play multiplayer game!")
+            dump({"id": player_id, "name": player_name}, open(
+                path.join(MCPYPATH, "player.json"), "w+"), indent="\t")
+            print(
+                "Regsitered successfully, you can use your id to play multiplayer game!")
         else:
             print("You have regsitered!")
     else:
         print("[Skip regsiter]")
+
 
 def search_mcpy():
     # 搜索文件存储位置
     if "MCPYPATH" in environ:
         MCPYPATH = environ["MCPYPATH"]
     elif platform == "darwin":
-        MCPYPATH = path.join(path.expanduser("~"), "Library", "Application Support", "mcpy")
+        MCPYPATH = path.join(path.expanduser(
+            "~"), "Library", "Application Support", "mcpy")
     elif platform.startswith("win"):
         MCPYPATH = path.join(path.expanduser("~"), "mcpy")
     else:
         MCPYPATH = path.join(path.expanduser("~"), ".mcpy")
     return MCPYPATH
 
+
 def see_eula():
     print("NOTE: This is not official Minecraft product. Not approved by or associated with Mojang.")
     print("      Visit `https://minecraft.net/term` for more information.")
     if "--action" not in argv:
         input("NOTE: Press ENTER when you have finished reading the above information: ")
+
 
 if __name__ == "__main__":
     main()

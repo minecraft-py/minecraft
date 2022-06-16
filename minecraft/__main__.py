@@ -2,14 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 import atexit
-import os
 import sys
 import traceback
 from os import remove
 from os.path import isfile, join
 
 import pyglet
-from pyglet.gl import gl_info
 
 from minecraft.scene import GameWindow
 from minecraft.scene.start import StartScene
@@ -36,6 +34,7 @@ def start():
         for line in traceback.format_exception(*sys.exc_info()):
             for s in line.split("\n")[:-1]:
                 log_err(s)
+
 
 if __name__ == "__main__":
     if isfile(join(search_mcpy(), "mcpy.lock")):

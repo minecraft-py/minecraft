@@ -11,9 +11,10 @@ from minecraft.utils.utils import *
 
 class ResourcePackManager():
     """资源包管理器。
-    
+
     使用它对游戏的资源包进行添加、读取等操作。
     """
+
     def __init__(self):
         self._packs = []
 
@@ -28,12 +29,14 @@ class ResourcePackManager():
         2) `${game}`：存放游戏数据目录下的`resource-pack`目录
         """
         if name.startswith("${game}"):
-            name.replace("${game}", os.path.join(search_mcpy(), "resource-pack"))
+            name.replace("${game}", os.path.join(
+                search_mcpy(), "resource-pack"))
         if os.path.exists(os.path.join(name)) or (name == "${default}"):
             if os.path.isdir(os.path.join(name)) and (not name.endswith(".zip")):
                 self._packs.append(DirectoryResourcePack(name))
             elif name == "${default}":
-                self._packs.append(DirectoryResourcePack(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets"))))
+                self._packs.append(DirectoryResourcePack(os.path.abspath(
+                    os.path.join(os.path.dirname(__file__), "..", "assets"))))
             elif os.path.isfile(name) and is_zipfile(name):
                 self._packs.append(ZipfileResourcePack(name))
             else:

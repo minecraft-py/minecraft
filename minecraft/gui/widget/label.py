@@ -6,34 +6,39 @@ from pyglet.text import Label
 
 # 颜色代码请见https://minecraft.fandom.com/wiki/Formatting_codes#Formatting_codes
 _color_tabel = {
-            "black": [(0, 0, 0), (255, 255, 255)],
-            "dark_blue": [(0, 0, 170), (0, 0, 42)],
-            "dark_green": [(0, 170, 0), (0, 42, 0)],
-            "dark_aqua": [(0, 170, 170), (0, 42, 42)],
-            "dark_red": [(170, 0, 0), (42, 0, 0)],
-            "dark_purple": [(170, 0, 170), (42, 0, 42)],
-            "gold": [(255, 170, 0), (64, 42, 0)],
-            "gray": [(170, 170, 170), (42, 42, 42)],
-            "dark_gray": [(85, 85, 85), (21, 21, 21)],
-            "blue": [(85, 85, 255), (21, 21, 63)],
-            "aqua": [(85, 255, 255), (21, 63, 63)],
-            "red": [(255, 85, 85), (66, 21, 21)],
-            "light_purple": [(255, 85, 255), (63, 21, 63)],
-            "yellow": [(255, 255, 85), (63, 63, 21)],
-            "white": [(255, 255, 255), (63, 63, 63)]
-        }
+    "black": [(0, 0, 0), (255, 255, 255)],
+    "dark_blue": [(0, 0, 170), (0, 0, 42)],
+    "dark_green": [(0, 170, 0), (0, 42, 0)],
+    "dark_aqua": [(0, 170, 170), (0, 42, 42)],
+    "dark_red": [(170, 0, 0), (42, 0, 0)],
+    "dark_purple": [(170, 0, 170), (42, 0, 42)],
+    "gold": [(255, 170, 0), (64, 42, 0)],
+    "gray": [(170, 170, 170), (42, 42, 42)],
+    "dark_gray": [(85, 85, 85), (21, 21, 21)],
+    "blue": [(85, 85, 255), (21, 21, 63)],
+    "aqua": [(85, 255, 255), (21, 63, 63)],
+    "red": [(255, 85, 85), (66, 21, 21)],
+    "light_purple": [(255, 85, 255), (63, 21, 63)],
+    "yellow": [(255, 255, 85), (63, 63, 21)],
+    "white": [(255, 255, 255), (63, 63, 63)]
+}
 
 
 class ColorLabel(Widget):
     """标签。"""
+
     def __init__(self, text="", color="white", x=0, y=0, shadow=True, **kwargs):
         global _color_tabel
         colors = {}
-        colors["fg"] = _color_tabel.get(color, _color_tabel["white"])[0] + (255,)
-        colors["bg"] = _color_tabel.get(color, _color_tabel["white"])[1] + (255,)
+        colors["fg"] = _color_tabel.get(
+            color, _color_tabel["white"])[0] + (255,)
+        colors["bg"] = _color_tabel.get(
+            color, _color_tabel["white"])[1] + (255,)
         self._label = []
-        self._label.append(Label(text=text, x=x, y=y, color=colors["fg"], **kwargs))
-        self._label.append(Label(text=text, x=x + 3, y=y - 2, color=colors["bg"], **kwargs))
+        self._label.append(
+            Label(text=text, x=x, y=y, color=colors["fg"], **kwargs))
+        self._label.append(Label(text=text, x=x + 3, y=y -
+                           2, color=colors["bg"], **kwargs))
         self._shadow = shadow
         super().__init__(x, y, 1, 1)
 
@@ -45,8 +50,10 @@ class ColorLabel(Widget):
     def color(self, value):
         global _color_tabel
         color = {}
-        color["fg"] = _color_tabel.get(value, _color_tabel["white"])[0] + (255,)
-        color["bg"] = _color_tabel.get(value, _color_tabel["white"])[1] + (255,)
+        color["fg"] = _color_tabel.get(
+            value, _color_tabel["white"])[0] + (255,)
+        color["bg"] = _color_tabel.get(
+            value, _color_tabel["white"])[1] + (255,)
         self._label[0].color = color["fg"]
         self._label[1].color = color["bg"]
 
@@ -80,7 +87,7 @@ class ColorLabel(Widget):
     def x(self, value):
         self._label[0].x = value
         self._label[1].x = value + 3
-    
+
     @property
     def y(self):
         return self._label[0].y

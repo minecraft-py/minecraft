@@ -11,6 +11,7 @@ from pyglet.image import load as load_image
 
 class ZipfileResourcePack(ResourcePack):
     """以zip压缩包作为资源包"""
+
     def __init__(self, name):
         super().__init__(name)
         self.zipfile = zipfile.ZipFile(name)
