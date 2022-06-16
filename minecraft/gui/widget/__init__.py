@@ -120,13 +120,7 @@ class Sprite():
     为了代码简洁，只将贴图分成了5块，应在横纵坐标缩放率不一致时才使用，类似于九宫格。
     """
     def __init__(self, img, x=0, y=0, border=1, border_width=1):
-        """初始化图片精灵，类似于直接使用`pyglet.sprite.Sprite`。
-
-        :param img: 一幅图片
-        :param x, y: 放在何处
-        :param border: 缩放后边框的宽度
-        :param border_width: 在原图中以该值作为边框宽度
-        """
+        """初始化图片精灵，类似于直接使用`pyglet.sprite.Sprite`。"""
         self._image = img
         self._x, self._y = x, y
         self._border, self._border_width = border, border_width

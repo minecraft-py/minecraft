@@ -20,6 +20,7 @@ libs = []
 settings = json.load(open(join(mcpypath, "settings.json"), encoding="utf-8"))
 
 # 设置资源包
+# 如果设置里的"resource-pack"键没有设置或者为空列表则设置为默认资源包
 resource_pack = ResourcePackManager()
 if (settings.get("resource-pack") is None) or (len(settings.get("resource-pack", [])) == 0):
     resource_pack.add("${default}")
@@ -28,6 +29,7 @@ else:
         resource_pack.add(pack)
 
 # 设置语言
+# 如果设置里的"lang"键没有设置默认为系统语言
 if settings.get("lang", "${auto}") == "${auto}":
     lang = getdefaultlocale()[0].lower()
 else:

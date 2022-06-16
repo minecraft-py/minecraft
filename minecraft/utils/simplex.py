@@ -19,6 +19,10 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"""这是opensimplex库某一个历史版本的副本。
+
+最新的opensimplex使用了numpy，可能严重影响程序运行效率。
+"""
 from ctypes import c_long
 from math import floor
 

@@ -46,11 +46,7 @@ class GameWindow(Window):
         self.settings = settings
 
     def add_scene(self, name, scene, *args, **kwargs):
-        """添加场景。
-
-        :param name: 场景的名字
-        :param scene: 场景类
-        """
+        """添加场景。"""
         assert isinstance(scene, Scene)
         self._scenes[name] = scene(*args, **kwargs)
 
@@ -58,8 +54,6 @@ class GameWindow(Window):
         """切换至一个场景。
 
         在切换时会调用前一个场景的`on_scene_leave()`方法，并调用当前场景的`on_scene_enter()`方法。
-
-        :param name: 场景的名字
         """
         if name not in self._scenes:
             pass
