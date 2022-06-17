@@ -7,5 +7,5 @@ from esper import World
 class EntityManager():
     """管理各实体。"""
 
-    def __call__(self):
+    def __init__(self):
         self.entities = World()

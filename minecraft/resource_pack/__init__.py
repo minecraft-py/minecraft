@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 import os
+from typing import Any
 from zipfile import is_zipfile
 
 from minecraft.resource_pack.directory import DirectoryResourcePack
@@ -18,7 +19,7 @@ class ResourcePackManager():
     def __init__(self):
         self._packs = []
 
-    def add(self, name):
+    def add(self, name: str):
         """添加资源包。
 
         支持以zip压缩文件作为资源包或直接使用文件系统上的资源包。
@@ -44,24 +45,24 @@ class ResourcePackManager():
         else:
             log_warn("No such file or directory: \"%s\"" % name)
 
-    def set_lang(self, lang):
+    def set_lang(self, lang: str):
         for pack in self._packs:
             pack.set_lang(lang)
 
-    def get_translation(self, name):
+    def get_translation(self, name: str) -> str:
         for pack in self._packs:
             if pack.get_translation(name) != name:
                 return pack.get_translation(name)
         else:
             return name
 
-    def get_pack_info(self):
-        l = list()
+    def get_pack_info(self) -> list:
+        l = []
         for pack in self._packs:
             l.append(pack.get_pack_info())
         return l
 
-    def get_resource(self, path):
+    def get_resource(self, path: str) -> Any:
         """获取资源。
 
         与上面的各个`get_*`方法不同，没有找到的资源会报错。

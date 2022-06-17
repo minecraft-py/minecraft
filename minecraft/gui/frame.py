@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 from minecraft.utils.utils import *
-
+from pyglet.window import Window
 
 class Frame():
     """小部件框架。
@@ -10,7 +10,7 @@ class Frame():
     绑定到窗口实现交互功能。
     """
 
-    def __init__(self, window):
+    def __init__(self, window: Window):
         window.push_handlers(self)
         self._widget = []
         self._enable = False

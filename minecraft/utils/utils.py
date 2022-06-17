@@ -4,6 +4,7 @@
 import time
 from os import environ, path
 from sys import platform
+from typing import Tuple, Union
 
 import pyglet
 
@@ -108,7 +109,7 @@ def search_mcpy() -> str:
     return MCPYPATH
 
 
-def mdist(p: float, q: float) -> float:
+def mdist(p: Union[int, float], q: Union[int, float]) -> Union[int, float]:
     """计算曼哈顿距离。"""
     assert len(p) == len(
         q), "both points must have the same number of dimensions"
@@ -118,7 +119,7 @@ def mdist(p: float, q: float) -> float:
     return total
 
 
-def get_game():
+def get_game() -> pyglet.window.Window:
     """获取GameWindow类的实例。
 
     根据程序算法，只能存在一个`minecraft.scene.GameWindow`对象。
@@ -131,7 +132,7 @@ def get_game():
     raise RuntimeError("No game window found")
 
 
-def get_size():
+def get_size() -> Tuple[int, int]:
     """返回窗口大小。"""
     w = get_game()
     return w.width, w.height

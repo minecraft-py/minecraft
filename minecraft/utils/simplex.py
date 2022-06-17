@@ -61,7 +61,7 @@ GRADIENTS_3D = (
 )
 
 
-def overflow(x):
+def overflow(x: int):
     # Since normal python ints and longs can be quite humongous we have to use
     # this hack to make them be able to overflow
     return c_long(x).value
