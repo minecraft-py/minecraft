@@ -43,7 +43,8 @@ settings["fov"] = max(50, min(100, settings.get("fov", 70)))
 # 读取玩家信息
 if isfile(join(mcpypath, "player.json")):
     player = json.load(open(join(mcpypath, "player.json"), encoding="utf-8"))
-    if not re.match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", player["id"]):
+    # TODO: Add support for multi players rigth now!
+    if not re.match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", list(player.keys())[0]):
         log_err("Invalid player id: %s" % player["id"])
         exit(1)
 else:

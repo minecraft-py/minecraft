@@ -174,7 +174,7 @@ def register_user():
                 [c.isalpha(), c.isdigit(), c == "_"])
             while all([c for c in map(is_valid_char, player_name)]) and len(player_name) < 3:
                 player_name = input("Your name: ")
-            dump({"id": player_id, "name": player_name}, open(
+            dump({player_id: {"name": player_name}}, open(
                 path.join(MCPYPATH, "player.json"), "w+"), indent="\t")
             print(
                 "Regsitered successfully, you can use your id to play multiplayer game!")
