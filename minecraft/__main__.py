@@ -41,13 +41,12 @@ if __name__ == "__main__":
         # 检测程序是否重复启动
         log_info("Minecrft-in-python is running now!", where="c")
     else:
-        with open(join(search_mcpy(), "mcpy.lock"), "w+") as f:
-            pass
+        open(join(search_mcpy(), "mcpy.lock"), "w+").close()
         # 注册退出处理器
         atexit.register(on_exit)
         # 打印运行环境等基本信息
         test()
-        # 开始游戏
+        # Start game!
         start()
         if isfile(join(search_mcpy(), "mcpy.lock")):
             remove(join(search_mcpy(), "mcpy.lock"))

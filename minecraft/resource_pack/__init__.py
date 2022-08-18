@@ -11,7 +11,7 @@ from minecraft.utils.utils import *
 
 
 class ResourcePackManager():
-    """资源包管理器。
+    """Resource pack manager.
 
     使用它对游戏的资源包进行添加、读取等操作。
     """
@@ -20,14 +20,14 @@ class ResourcePackManager():
         self._packs = []
 
     def add(self, name: str):
-        """添加资源包。
+        """Add resource pack.
 
         支持以zip压缩文件作为资源包或直接使用文件系统上的资源包。
 
         同时定义了几个特殊量：
 
-        1) `${default}`：默认资源包，在游戏源代码的`minecraft/assert`处
-        2) `${game}`：存放游戏数据目录下的`resource-pack`目录
+        1. `${default}`：Default resource pack, 在游戏源代码的`minecraft/assert`处
+        2. `${game}`：存放游戏数据目录下的`resource-pack`目录
         """
         if name.startswith("${game}"):
             name.replace("${game}", os.path.join(
@@ -63,10 +63,6 @@ class ResourcePackManager():
         return l
 
     def get_resource(self, path: str) -> Any:
-        """获取资源。
-
-        与上面的各个`get_*`方法不同，没有找到的资源会报错。
-        """
         for pack in self._packs:
             try:
                 return pack.get_resource(path)

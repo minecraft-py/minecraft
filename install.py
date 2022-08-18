@@ -128,7 +128,7 @@ def install():
             mkdir(path.join(MCPYPATH, name))
     if not path.isdir(path.join(MCPYPATH, "lib", version)):
         makedirs(path.join(MCPYPATH, "lib", version))
-    if ("--skip-install-requirements" not in argv) and ("--travis-ci" not in argv):
+    if ("--skip-install-requirements" not in argv) and ("--action" not in argv):
         print("[Install requirements]")
         code = run([executable, "-m", "pip", "install", "-U",
                    "-r", get_file("requirements.txt")]).returncode
@@ -162,7 +162,7 @@ def install_settings():
 
 
 def register_user():
-    # 离线注册
+    # Register offline
     if ("--skip-register" not in argv) and ("--action" not in argv):
         print("[Register]")
         MCPYPATH = search_mcpy()

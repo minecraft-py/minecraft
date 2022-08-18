@@ -28,7 +28,7 @@ FACES = [
     (0, 0, -1),
 ]
 
-# 版本号, "str"项用于外部程序以及直接显示
+# Game version.
 VERSION = {
     "major": 0,
     "minor": 3,
@@ -39,10 +39,7 @@ VERSION = {
 
 
 def log_err(text: str, name: str = "client", where: str = "cl"):
-    """打印错误信息。
-
-    可以选择向终端打印（`where="c"`）、向日志文件打印（`where="l"`）或是同时打印（`where="cl"`）。
-    """
+    """Print error information."""
     if "l" in where:
         _log_str.append("[ERR  %s %s] %s" %
                         (time.strftime("%H:%M:%S"), name, text))
@@ -55,7 +52,7 @@ def log_err(text: str, name: str = "client", where: str = "cl"):
 
 
 def log_info(text: str, name: str = "client", where: str = "cl"):
-    """打印普通信息。"""
+    """Print information."""
     if "l" in where:
         _log_str.append("[INFO %s %s] %s" %
                         (time.strftime("%H:%M:%S"), name, text))
@@ -68,7 +65,7 @@ def log_info(text: str, name: str = "client", where: str = "cl"):
 
 
 def log_warn(text: str, name: str = "client", where: str = "cl"):
-    """打印警告信息。"""
+    """Print warn information."""
     if "l" in where:
         _log_str.append("[WARN %s %s] %s" %
                         (time.strftime("%H:%M:%S"), name, text))
@@ -81,7 +78,7 @@ def log_warn(text: str, name: str = "client", where: str = "cl"):
 
 
 def on_exit():
-    """在退出时保存日志。
+    """Save logs when exit.
 
     你不应该调用这个函数，它由`atexit`在退出时自动调用。
     """
@@ -110,7 +107,7 @@ def search_mcpy() -> str:
 
 
 def mdist(p: Union[int, float], q: Union[int, float]) -> Union[int, float]:
-    """计算曼哈顿距离。"""
+    """Calaulate distence between p and q."""
     assert len(p) == len(
         q), "both points must have the same number of dimensions"
     total = 0
@@ -133,6 +130,6 @@ def get_game() -> pyglet.window.Window:
 
 
 def get_size() -> Tuple[int, int]:
-    """返回窗口大小。"""
+    """Return window size."""
     w = get_game()
     return w.width, w.height

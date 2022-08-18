@@ -10,7 +10,7 @@ from pyglet.image import load as load_image
 
 
 class DirectoryResourcePack(ResourcePack):
-    """以目录为结构的资源包"""
+    """Resource pack in file system."""
 
     def __init__(self, name):
         super().__init__(name)
