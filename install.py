@@ -3,7 +3,7 @@
 import uuid
 from json import dump, load
 from os import chmod, environ, makedirs, mkdir, path
-from re import search
+from re import match, search
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
 from subprocess import run
 from sys import argv, executable, platform, version_info
@@ -166,7 +166,20 @@ def register_user():
     if ("--skip-register" not in argv) and ("--action" not in argv):
         print("[Register]")
         MCPYPATH = search_mcpy()
-        if not path.isfile(path.join(MCPYPATH, "player.json")):
+        is_ready = True
+        if path.isfile(path.join(MCPYPATH, "player.json")):
+            player = load(open(path.join(MCPYPATH, "player.json")))
+            try:
+                for key, value in player.items():
+                    if not match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", key):
+                        is_ready = False
+                    if "name" not in value:
+                        is_ready = False
+            except:
+                is_ready = False
+        else:
+            is_ready = False
+        if not is_ready:
             player_id = str(uuid.uuid4())
             print("Your uuid is %s, do not change it" % player_id)
             player_name = ""
