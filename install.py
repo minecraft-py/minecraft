@@ -167,6 +167,7 @@ def register_user():
         print("[Register]")
         MCPYPATH = search_mcpy()
         is_ready = True
+        previous_uuid = None
         if path.isfile(path.join(MCPYPATH, "player.json")):
             player = load(open(path.join(MCPYPATH, "player.json")))
             try:
@@ -178,11 +179,14 @@ def register_user():
             except:
                 is_ready = False
             if is_ready == False:
-                input("Your pervious player infomatiom is unvalid, please remember your id and press ENTER: ")
+                s = open(path.join(MCPYPATH, "player.json"), "r").read()
+                previous_uuid = search("[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}", s)
+                if previous_uuid:
+                    previous_uuid = previous_uuid.group(0)
         else:
             is_ready = False
         if not is_ready:
-            player_id = str(uuid.uuid4())
+            player_id = previous_uuid or str(uuid.uuid4())
             print("Your uuid is %s, do not change it" % player_id)
             player_name = ""
             def is_valid_char(c): return any(
