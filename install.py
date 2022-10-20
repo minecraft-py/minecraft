@@ -180,9 +180,8 @@ def register_user():
                 is_ready = False
             if is_ready == False:
                 s = open(path.join(MCPYPATH, "player.json"), "r").read()
-                previous_uuid = search("[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}", s)
-                if previous_uuid:
-                    previous_uuid = previous_uuid.group(0)
+                if (result := search("[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}", s)) is not None:
+                    previous_uuid = result.group(0)
         else:
             is_ready = False
         if not is_ready:

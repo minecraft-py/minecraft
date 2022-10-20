@@ -40,9 +40,10 @@ settings["fov"] = max(50, min(100, settings.get("fov", 70)))
 # Read player information.
 if isfile(join(mcpypath, "player.json")):
     player = json.load(open(join(mcpypath, "player.json"), encoding="utf-8"))
-    if not re.match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", player["id"]):
-        log_err("Invalid player id: %s" % player["id"])
-        exit(1)
+    for key, _ in player.items():
+        if not re.match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", key):
+            log_err("Invalid player id: %s" % player["id"])
+            exit(1)
 else:
     log_err("You have not registered, exit")
     exit(1)
