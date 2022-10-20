@@ -136,7 +136,7 @@ def install():
             print("pip raise error code: %d" % code)
             exit(1)
         else:
-            print("install successfully")
+            print("Install successfully")
     else:
         print("[Skip install requirements]")
 
@@ -177,6 +177,8 @@ def register_user():
                         is_ready = False
             except:
                 is_ready = False
+            if is_ready == False:
+                input("Your pervious player infomatiom is unvalid, please remember your id and press ENTER: ")
         else:
             is_ready = False
         if not is_ready:
