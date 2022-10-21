@@ -6,29 +6,29 @@ from minecraft.utils.utils import *
 from pyglet.event import EventDispatcher
 from pyglet.window import Window
 
-# Did GameWindow created?
+# GameWindow的实例创建过了吗？
 _has_gamewin = False
 
 
 class Scene(EventDispatcher):
-    """A sene."""
+    """一个场景。"""
 
     def __init__(self):
         super().__init__()
 
     def on_scene_enter(self):
-        """Call this function when enter the scene."""
+        """在进入场景时的回调函数。"""
         pass
 
     def on_scene_leave(self):
-        """Call this function when leave the scene."""
+        """在离开场景时的回调函数。"""
         pass
 
 
 class GameWindow(Window):
-    """The main window of game.
+    """游戏的主场口。
 
-    `RuntimeError` will be raised when more than one `GameWindow` created.
+    只能创建一个GameWindow实例！
     """
 
     def __init__(self, *args, **kwargs):
@@ -41,16 +41,16 @@ class GameWindow(Window):
         self.set_minimum_size(640, 480)
         self._scenes = {}
         self._now = ""
-        # Some variables, use minecraft.utils.utils.get_game() to get them.
+        # 一些变量，可通过minecraft.utils.utils.get_game()获得
         self.resource_pack = resource_pack
         self.settings = settings
 
     def add_scene(self, name: str, scene: Scene, *args, **kwargs):
-        """Add a scene."""
+        """添加一个场景。"""
         self._scenes[name] = scene(*args, **kwargs)
 
     def switch_scene(self, name: str):
-        """Switch to another scene."""
+        """切换到另一个场景。"""
         if name not in self._scenes:
             pass
         if self._now != "":

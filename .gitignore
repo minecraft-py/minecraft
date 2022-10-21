@@ -10,7 +10,6 @@ pyre/
 .vscode/
 .*.swp
 .*.swo
-notes.txt
 run.sh
 run.bat
 .*.so

@@ -17,7 +17,7 @@ from pyglet.window import key
 
 
 class StartScene(Scene):
-    """The start scene, it's the first scene when game start."""
+    """这是第一个场景，供玩家选择游戏模式和更改游戏设置。"""
 
     def __init__(self):
         super().__init__()
@@ -39,7 +39,7 @@ class StartScene(Scene):
         self._title_edition.scale = 2
         self._version_label = ColorLabel(
             "Minecraft in python %s" % VERSION["str"], x=width - 2, y=3, anchor_x="right", bold=True)
-        # All GUIs
+        # 场景中所有GUI
         self._frame = Frame(get_game())
         self._singleplayer_btn = Button(resource_pack.get_translation(
             "text.start_scent.single_player"), width // 2 - 200, 0.5 * height, 400, 40)

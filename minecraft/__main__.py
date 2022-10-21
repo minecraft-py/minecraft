@@ -46,7 +46,7 @@ if __name__ == "__main__":
         atexit.register(on_exit)
         # 打印运行环境等基本信息
         test()
-        # Start game!
+        # 开始游戏！
         start()
         if isfile(join(search_mcpy(), "mcpy.lock")):
             remove(join(search_mcpy(), "mcpy.lock"))

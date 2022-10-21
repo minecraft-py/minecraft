@@ -10,7 +10,7 @@ from pyglet.image import load as load_image
 
 
 class ZipfileResourcePack(ResourcePack):
-    """Resource pack based on zip file."""
+    """以zip文件作为资源包。"""
 
     def __init__(self, name):
         super().__init__(name)

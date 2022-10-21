@@ -10,11 +10,11 @@ from sys import argv, executable, platform, version_info
 
 
 def main():
-    # 最好遵守 Mojang 的 Minecraft eula
+    # 最好遵守Mojang的Minecraft eula
     see_eula()
     if "--action" in argv:
         do_action()
-    # 检查 python 版本
+    # 检查python版本
     check_ver()
     # 安装
     install()
@@ -22,7 +22,7 @@ def main():
     register_user()
     # 创建启动脚本
     gen_script()
-    # 完成!
+    # 完成！
     if platform.startswith("win"):
         pycmd = "py"
     else:
@@ -101,7 +101,7 @@ def get_file(f):
 
 
 def get_version():
-    # 从 minecraft/utils/utils.py 文件里面把版本号"抠"出来
+    # 从`minecraft/utils/utils.py`文件里面把版本号"抠"出来
     f = open(path.join(get_file("minecraft"),
              "utils", "utils.py"), encoding="utf-8")
     start_find = False
@@ -162,14 +162,16 @@ def install_settings():
 
 
 def register_user():
-    # Register offline
+    # 生成玩家信息
     if ("--skip-register" not in argv) and ("--action" not in argv):
         print("[Register]")
         MCPYPATH = search_mcpy()
         is_ready = True
         previous_uuid = None
+        # 如果之前已经存在玩家信息
         if path.isfile(path.join(MCPYPATH, "player.json")):
             player = load(open(path.join(MCPYPATH, "player.json")))
+            # 是否符合当前的数据格式呢？
             try:
                 for key, value in player.items():
                     if not match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", key):
@@ -178,10 +180,11 @@ def register_user():
                         is_ready = False
             except:
                 is_ready = False
+            # 如果不符合，将之前的uuid记录下来（如果存在的话）
             if is_ready == False:
                 s = open(path.join(MCPYPATH, "player.json"), "r").read()
-                if (result := search("[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}", s)) is not None:
-                    previous_uuid = result.group(0)
+                if (result := search("\"[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}\"", s)) is not None:
+                    previous_uuid = result.group(0)[1:-1]
         else:
             is_ready = False
         if not is_ready:

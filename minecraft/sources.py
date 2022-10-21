@@ -19,7 +19,7 @@ lib_path = sys.path[0]
 libs = []
 settings = json.load(open(join(mcpypath, "settings.json"), encoding="utf-8"))
 
-# Set resource pack
+# 设置资源包
 resource_pack = ResourcePackManager()
 if (settings.get("resource-pack") is None) or (len(settings.get("resource-pack", [])) == 0):
     resource_pack.add("${default}")
@@ -27,17 +27,17 @@ else:
     for pack in settings["resource-pack"]:
         resource_pack.add(pack)
 
-# Set language.
+# 设置语言
 if settings.get("lang", "${auto}") == "${auto}":
     lang = getdefaultlocale()[0].lower()
 else:
     lang = settings.get("lang", "en_us").lower()
 resource_pack.set_lang(lang)
 
-# Set fov, range from 50 to 100, default is 70.
+# 设置视场
 settings["fov"] = max(50, min(100, settings.get("fov", 70)))
 
-# Read player information.
+# 读取并检验玩家信息
 if isfile(join(mcpypath, "player.json")):
     player = json.load(open(join(mcpypath, "player.json"), encoding="utf-8"))
     for key, _ in player.items():
@@ -48,10 +48,10 @@ else:
     log_err("You have not registered, exit")
     exit(1)
 
-# Parse command line arguments.
+# 解析命令行参数
 for args in sys.argv:
     if args.startswith("--include="):
-        # Add some paths to sys.path, zip file is also supported.
+        # 将路径添加到sys.path
         for lib in args[10:].split(pathsep):
             if isdir(lib) or (isfile(lib) and is_zipfile(lib)):
                 sys.path.insert(0, lib)
@@ -59,6 +59,7 @@ for args in sys.argv:
             else:
                 log_warn("Lib path \"%s\" is not available" % lib)
     elif args.startswith("--extlib="):
+        # 添加外部库
         for lib in args[9:].split(pathsep):
             if (loader := find_loader(lib)) is not None:
                 log_info("Loading extra lib: \"%s\"" % lib)

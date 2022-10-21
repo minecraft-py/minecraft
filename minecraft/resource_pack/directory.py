@@ -10,7 +10,7 @@ from pyglet.image import load as load_image
 
 
 class DirectoryResourcePack(ResourcePack):
-    """Resource pack in file system."""
+    """文件系统中的资源包。"""
 
     def __init__(self, name):
         super().__init__(name)
