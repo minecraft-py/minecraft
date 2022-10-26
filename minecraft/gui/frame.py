@@ -4,14 +4,14 @@
 from minecraft.utils.utils import *
 from pyglet.window import Window
 
+
 class Frame():
     """小部件框架。
 
-    绑定到窗口实现交互功能。
+    绑定到窗口以实现交互功能。
     """
 
-    def __init__(self, window: Window):
-        window.push_handlers(self)
+    def __init__(self):
         self._widget = []
         self._enable = False
 
@@ -23,8 +23,13 @@ class Frame():
         self.widget = []
         self._enable = False
 
-    def enable(self, status=True):
-        self._enable = bool(status)
+    def enable(self):
+        get_game().push_handlers(self)
+        self._enable = True
+
+    def disable(self):
+        get_game().remove_handlers(self)
+        self._enable = False
 
     def on_key_press(self, symbol, modifiers):
         if not self._enable:

@@ -43,7 +43,8 @@ if __name__ == "__main__":
     else:
         open(join(search_mcpy(), "mcpy.lock"), "w+").close()
         # 注册退出处理器
-        atexit.register(on_exit)
+        if "--no-save-log" not in sys.argv:
+            atexit.register(on_exit)
         # 打印运行环境等基本信息
         test()
         # 开始游戏！

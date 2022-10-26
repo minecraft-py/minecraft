@@ -40,7 +40,7 @@ class StartScene(Scene):
         self._version_label = ColorLabel(
             "Minecraft in python %s" % VERSION["str"], x=width - 2, y=3, anchor_x="right", bold=True)
         # 场景中所有GUI
-        self._frame = Frame(get_game())
+        self._frame = Frame()
         self._singleplayer_btn = Button(resource_pack.get_translation(
             "text.start_scent.single_player"), width // 2 - 200, 0.5 * height, 400, 40)
         self._multiplayer_btn = Button(resource_pack.get_translation("text.start_scent.multi_player"),
@@ -75,7 +75,7 @@ class StartScene(Scene):
         self._frame.enable()
 
     def on_scene_leave(self):
-        self._frame.enable(False)
+        self._frame.disable()
 
     def on_draw(self):
         self._back.draw()

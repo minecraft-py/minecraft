@@ -1,6 +1,7 @@
 # Copyright 2020-2022 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
+from minecraft.gui.frame import Frame
 from minecraft.gui.widget.label import ColorLabel
 from minecraft.gui.widget.loading import LoadingBackground
 from minecraft.scene import Scene
@@ -18,10 +19,18 @@ class SinglePlayerScene(Scene):
         self._back = LoadingBackground()
         self._title = ColorLabel(resource_pack.get_translation("text.single_player_scene.choose_a_save"),
                                  font_size=15, x=width // 2, y=0.95 * height, anchor_x="center", anchor_y="center")
+        self._frame = Frame()
+
+    def on_scene_enter(self):
+        self._frame.enable()
+
+    def on_scene_leave(self):
+        self._frame.disable()
 
     def on_draw(self):
         self._back.draw()
         self._title.draw()
+        self._frame.draw()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:

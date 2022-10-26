@@ -52,9 +52,9 @@ class GameWindow(Window):
     def switch_scene(self, name: str):
         """切换到另一个场景。"""
         if name not in self._scenes:
-            pass
+            raise NameError("scene '%s' not found" % name)
         if self._now != "":
-            self.pop_handlers()
+            self.remove_handlers(self._scenes[self._now])
             self._scenes[self._now].on_scene_leave()
         self._now = name
         self.push_handlers(self._scenes[self._now])
