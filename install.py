@@ -8,12 +8,12 @@ from stat import S_IRUSR, S_IWUSR, S_IXUSR
 from subprocess import run
 from sys import argv, executable, platform, version_info
 
+step = 1
+
 
 def main():
     # 最好遵守Mojang的Minecraft eula
     see_eula()
-    if "--action" in argv:
-        do_action()
     # 检查python版本
     check_ver()
     # 安装
@@ -28,47 +28,22 @@ def main():
     else:
         pycmd = "python3"
     print("Use `%s -m minecraft` to start game." % pycmd)
-    print("[Done]")
 
 
 def check_ver():
     if version_info[:2] < (3, 8):
-        print("Minecraft-in-python need python3.8 or later, but %s found." %
+        print("Minecraft-in-python needs python3.8 or later, but %s found!" %
               ".".join([str(s) for s in version_info[:2]]))
-        if "--action" in argv:
-            exit(0)
-        else:
-            exit(1)
-
-
-def do_action():
-    # 专门给GitHub Action使用, 也可以检测代码是否有语法错误
-    print("[Check source]")
-    print("python version: %s" % ".".join([str(s) for s in version_info[:3]]))
-    print("Minecraft-in-python version: %s" % get_version())
-    # 检测模糊缩进
-    print("[Check source > Check tabnanny]")
-    output = run([executable, "-m", "tabnanny", "-v",
-                 get_file("minecraft")], capture_output=True)
-    lines = output.stderr.decode().split("\n")
-    failed = False
-    for line in lines:
-        if "Indentation Error:" in line:
-            print("Check failed: %s(line %s)" %
-                  (line[1: line.find(":") - 1], line[line.rindex(" ") + 1: -1]))
-            failed = True
-    else:
-        if failed:
-            exit(1)
+        exit(1)
 
 
 def gen_script():
+    global step
     if "--skip-gen-script" in argv:
         return
-    print("[Generate startup script]")
+    print("Step %d: Generate startup script" % step)
+    step += 1
     while True:
-        if "--action" in argv:
-            break
         ret = input("Generate startup script[Y/n]? ")
         if (ret.lower() == "y") or (len(ret) == 0):
             break
@@ -88,11 +63,6 @@ def gen_script():
         print("Startup script at `%s`" % name)
     if not platform.startswith("win"):
         chmod(name, S_IRUSR | S_IWUSR | S_IXUSR)
-    if "--action" in argv:
-        with open("run.bat" if platform.startswith("win") else "run.sh", "r") as f:
-            print("[Generate startup script > start run.sh]")
-            print(f.read()[:-1])
-            print("[Generate startup script > end   run.sh]")
 
 
 def get_file(f):
@@ -118,6 +88,7 @@ def get_version():
 
 
 def install():
+    global step
     MCPYPATH = search_mcpy()
     version = get_version()
     if not path.isdir(MCPYPATH):
@@ -128,17 +99,13 @@ def install():
             mkdir(path.join(MCPYPATH, name))
     if not path.isdir(path.join(MCPYPATH, "lib", version)):
         makedirs(path.join(MCPYPATH, "lib", version))
-    if ("--skip-install-requirements" not in argv) and ("--action" not in argv):
-        print("[Install requirements]")
+    if "--skip-install-requirements" not in argv:
+        print("Step %s: Install requirements" % step)
+        step += 1
         code = run([executable, "-m", "pip", "install", "-U",
                    "-r", get_file("requirements.txt")]).returncode
         if code != 0:
-            print("pip raise error code: %d" % code)
             exit(1)
-        else:
-            print("Install successfully")
-    else:
-        print("[Skip install requirements]")
 
 
 def install_settings():
@@ -162,47 +129,47 @@ def install_settings():
 
 
 def register_user():
-    # 生成玩家信息
-    if ("--skip-register" not in argv) and ("--action" not in argv):
-        print("[Register]")
-        MCPYPATH = search_mcpy()
-        is_ready = True
-        previous_uuid = None
-        # 如果之前已经存在玩家信息
-        if path.isfile(path.join(MCPYPATH, "player.json")):
-            player = load(open(path.join(MCPYPATH, "player.json")))
-            # 是否符合当前的数据格式呢？
-            try:
-                for key, value in player.items():
-                    if not match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", key):
-                        is_ready = False
-                    if "name" not in value:
-                        is_ready = False
-            except:
-                is_ready = False
-            # 如果不符合，将之前的uuid记录下来（如果存在的话）
-            if is_ready == False:
-                s = open(path.join(MCPYPATH, "player.json"), "r").read()
-                if (result := search("\"[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}\"", s)) is not None:
-                    previous_uuid = result.group(0)[1:-1]
-        else:
+    global step
+    if "--skip-register" in argv:
+        return
+    print("Step %d: Register" % step)
+    step += 1
+    MCPYPATH = search_mcpy()
+    is_ready = True
+    previous_uuid = None
+    # 如果之前已经存在玩家信息
+    if path.isfile(path.join(MCPYPATH, "player.json")):
+        player = load(open(path.join(MCPYPATH, "player.json")))
+        # 是否符合当前的数据格式呢？
+        try:
+            for key, value in player.items():
+                if not match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", key):
+                    is_ready = False
+                if "name" not in value:
+                    is_ready = False
+        except:
             is_ready = False
-        if not is_ready:
-            player_id = previous_uuid or str(uuid.uuid4())
-            print("Your uuid is %s, do not change it" % player_id)
-            player_name = ""
-            def is_valid_char(c): return any(
-                [c.isalpha(), c.isdigit(), c == "_"])
-            while all([c for c in map(is_valid_char, player_name)]) and len(player_name) < 3:
-                player_name = input("Your name: ")
-            dump({player_id: {"name": player_name}}, open(
-                path.join(MCPYPATH, "player.json"), "w+"), indent="\t")
-            print(
-                "Regsitered successfully, you can use your id to play multiplayer game!")
-        else:
-            print("You have regsitered!")
+        # 如果不符合，将之前的uuid记录下来（如果存在的话）
+        if is_ready == False:
+            s = open(path.join(MCPYPATH, "player.json"), "r").read()
+            if (result := search("\"[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}\"", s)) is not None:
+                previous_uuid = result.group(0)[1:-1]
     else:
-        print("[Skip regsiter]")
+        is_ready = False
+    if not is_ready:
+        player_id = previous_uuid or str(uuid.uuid4())
+        print("Your uuid is %s, do not change it!" % player_id)
+        player_name = ""
+        def is_valid_char(c): return any(
+            [c.isalpha(), c.isdigit(), c == "_"])
+        while all([c for c in map(is_valid_char, player_name)]) and len(player_name) < 3:
+            player_name = input("Your name: ")
+        dump({player_id: {"name": player_name}}, open(
+            path.join(MCPYPATH, "player.json"), "w+"), indent="\t")
+        print(
+            "Regsitered successfully, you can use your id to play multiplayer game!")
+    else:
+        print("You have regsitered!")
 
 
 def search_mcpy():
@@ -222,8 +189,7 @@ def search_mcpy():
 def see_eula():
     print("NOTE: This is not official Minecraft product. Not approved by or associated with Mojang.")
     print("      Visit `https://minecraft.net/term` for more information.")
-    if "--action" not in argv:
-        input("NOTE: Press ENTER when you have finished reading the above information: ")
+    input("NOTE: Press ENTER when you have finished reading the above information: ")
 
 
 if __name__ == "__main__":
