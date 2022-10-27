@@ -49,6 +49,11 @@ class Button(Widget):
         self._sprite.draw()
         self._label.draw()
 
+    @property
+    def enable(self):
+        return self._enable
+
+    @enable.setter
     def enable(self, status):
         self._enable = bool(status)
         if self._enable:
@@ -63,13 +68,10 @@ class Button(Widget):
             self.dispatch_event("on_press")
 
     def on_mouse_release(self, x, y, buttons, modifiers):
-        # 请注意：由于触发`on_mouse_press`而切换场景时就无法触发该函数
-        # 所以会在再切换回场景时调用该函数，而非释放鼠标时
         if self._pressed:
             self._sprite.image = self._depressed_img
             self._pressed = False
-            if (x != float("nan")) and (y != float("nan")):
-                self.dispatch_event("on_release")
+            self.dispatch_event("on_release")
 
     def on_mouse_motion(self, x, y, dx, dy):
         if self.check_hit(x, y) and self._enable:
@@ -127,8 +129,7 @@ class ImageButton(Widget):
         if self._pressed:
             self._sprite.image = self._depressed_img
             self._pressed = False
-            if (x != float("nan")) and (y != float("nan")):
-                self.dispatch_event("on_release")
+            self.dispatch_event("on_release")
 
     def on_mouse_motion(self, x, y, dx, dy):
         if self.check_hit(x, y) and self._enable:

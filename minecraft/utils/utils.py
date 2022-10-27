@@ -28,7 +28,7 @@ FACES = [
     (0, 0, -1),
 ]
 
-# Game version.
+# 游戏版本信息
 VERSION = {
     "major": 0,
     "minor": 3,
@@ -81,14 +81,14 @@ def on_exit():
     """在退出时保存日志。
 
     你不应该调用这个函数，它由`atexit`在退出时自动调用。
+    可以使用`--no-save-log`命令行参数禁止这个操作。
     """
-    _os = __import__("os")
     log_info("Save logs to `log/log-%s.log`" % start_time, where="c")
     log_info("Exit")
-    with open(_os.path.join(search_mcpy(), "log", "log-%s.log" % start_time), "w+") as log:
+    with open(path.join(search_mcpy(), "log", "log-%s.log" % start_time), "w+") as log:
         log.write("\n".join(_log_str))
     # 将当前日志文件再保存一份至"log-latest.log"
-    with open(_os.path.join(search_mcpy(), "log", "log-latest.log"), "w+") as latest_log:
+    with open(path.join(search_mcpy(), "log", "log-latest.log"), "w+") as latest_log:
         latest_log.write("\n".join(_log_str))
 
 
