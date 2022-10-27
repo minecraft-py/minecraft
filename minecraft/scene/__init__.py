@@ -39,23 +39,23 @@ class GameWindow(Window):
         super().__init__(*args, **kwargs)
         self.set_caption("Minecraft in python %s" % VERSION["str"])
         self.set_minimum_size(640, 480)
-        self._scenes = {}
-        self._now = ""
+        self.__scenes = {}
+        self.__now = ""
         # 一些变量，可通过minecraft.utils.utils.get_game()获得
         self.resource_pack = resource_pack
         self.settings = settings
 
     def add_scene(self, name: str, scene: Scene, *args, **kwargs):
         """添加一个场景。"""
-        self._scenes[name] = scene(*args, **kwargs)
+        self.__scenes[name] = scene(*args, **kwargs)
 
     def switch_scene(self, name: str):
         """切换到另一个场景。"""
-        if name not in self._scenes:
+        if name not in self.__scenes:
             raise NameError("scene '%s' not found" % name)
-        if self._now != "":
-            self.remove_handlers(self._scenes[self._now])
-            self._scenes[self._now].on_scene_leave()
-        self._now = name
-        self.push_handlers(self._scenes[self._now])
-        self._scenes[self._now].on_scene_enter()
+        if self.__now != "":
+            self.remove_handlers(self.__scenes[self.__now])
+            self.__scenes[self.__now].on_scene_leave()
+        self.__now = name
+        self.push_handlers(self.__scenes[self.__now])
+        self.__scenes[self.__now].on_scene_enter()

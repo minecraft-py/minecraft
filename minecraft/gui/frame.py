@@ -1,8 +1,8 @@
 # Copyright 2020-2022 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
+from minecraft.gui.widget.button import Button, ImageButton
 from minecraft.utils.utils import *
-from pyglet.window import Window
 
 
 class Frame():
@@ -20,10 +20,13 @@ class Frame():
             self._widget.append(widget)
 
     def clean(self):
-        self.widget = []
+        self._widget = []
         self._enable = False
 
     def enable(self):
+        for widget in self._widget:
+            if isinstance(widget, (Button, ImageButton)):
+                widget.on_mouse_release(float("nan"), float("nan"), 0, 0)
         get_game().push_handlers(self)
         self._enable = True
 

@@ -34,6 +34,15 @@ class Button(Widget):
         self._label.x = self._x + self._width / 2
         self._label.y = self._y + self._height / 2
 
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, text):
+        self._text = text
+        self._label.text = self._text
+
     def draw(self):
         self._sprite.scale_x = self._width / 200
         self._sprite.scale_y = self._height / 20
@@ -47,10 +56,6 @@ class Button(Widget):
         else:
             self._label.color = "gray"
 
-    def text(self, text):
-        self._text = text
-        self._label.text = self._text
-
     def on_mouse_press(self, x, y, buttons, modifiers):
         if self.check_hit(x, y) and self._enable:
             self._sprite.image = self._pressed_img
@@ -58,19 +63,21 @@ class Button(Widget):
             self.dispatch_event("on_press")
 
     def on_mouse_release(self, x, y, buttons, modifiers):
+        # 请注意：由于触发`on_mouse_press`而切换场景时就无法触发该函数
+        # 所以会在再切换回场景时调用该函数，而非释放鼠标时
         if self._pressed:
             self._sprite.image = self._depressed_img
             self._pressed = False
-            self.dispatch_event("on_release")
+            if (x != float("nan")) and (y != float("nan")):
+                self.dispatch_event("on_release")
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if not self._pressed:
-            if self.check_hit(x, y) and self._enable:
-                self._sprite.image = self._pressed_img
-                self._label.color = "yellow"
-            else:
-                self._sprite.image = self._depressed_img if self._enable else self._unable_img
-                self._label.color = "white" if self._enable else "gray"
+        if self.check_hit(x, y) and self._enable:
+            self._sprite.image = self._pressed_img
+            self._label.color = "yellow"
+        else:
+            self._sprite.image = self._depressed_img if self._enable else self._unable_img
+            self._label.color = "white" if self._enable else "gray"
 
 
 Button.register_event_type("on_press")
@@ -120,14 +127,14 @@ class ImageButton(Widget):
         if self._pressed:
             self._sprite.image = self._depressed_img
             self._pressed = False
-            self.dispatch_event("on_release")
+            if (x != float("nan")) and (y != float("nan")):
+                self.dispatch_event("on_release")
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if not self._pressed:
-            if self.check_hit(x, y) and self._enable:
-                self._sprite.image = self._pressed_img
-            else:
-                self._sprite.image = self._depressed_img if self._enable else self._unable_img
+        if self.check_hit(x, y) and self._enable:
+            self._sprite.image = self._pressed_img
+        else:
+            self._sprite.image = self._depressed_img if self._enable else self._unable_img
 
 
 ImageButton.register_event_type("on_press")
@@ -157,5 +164,6 @@ class ChooseButton(Button):
                 self._point = len(self._values) - 1
             self.text("%s: %s" % (self._prefix, self._values[self._point]))
 
+    @property
     def value(self):
         return self._values[self._point]
