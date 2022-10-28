@@ -23,6 +23,7 @@ class StartScene(Scene):
         super().__init__()
         width, height = get_size()
         self._back = LoadingBackground()
+        self._frame = Frame()
         # 在窗口从上往下的20%处居中绘制Minecraft标题
         self._title = Sprite(get_game().resource_pack.get_resource(
             "textures/gui/title/minecraft"), x=width // 2, y=0.8 * height)
@@ -39,16 +40,14 @@ class StartScene(Scene):
         self._title_edition.scale = 2
         self._version_label = ColorLabel(
             "Minecraft in python %s" % VERSION["str"], x=width - 2, y=3, anchor_x="right", bold=True)
-        # 场景中所有GUI
-        self._frame = Frame()
         self._singleplayer_btn = Button(resource_pack.get_translation(
-            "text.start_scent.single_player"), width // 2 - 200, 0.5 * height, 400, 40)
+            "text.start_scent.single_player"), width // 2 - 200, height // 2, 400, 40)
         self._multiplayer_btn = Button(resource_pack.get_translation("text.start_scent.multi_player"),
-                                       width // 2 - 200, 0.5 * height - 50, 400, 40, False)
+                                       width // 2 - 200, height // 2 - 50, 400, 40, False)
         self._options_btn = Button(resource_pack.get_translation("text.start_scent.options"),
-                                   width // 2 - 200, 0.5 * height - 110, 195, 40)
+                                   width // 2 - 200, height // 2 - 110, 195, 40)
         self._exit_btn = Button(resource_pack.get_translation("text.start_scent.quit_game"),
-                                width // 2 + 5, 0.5 * height - 110, 195, 40)
+                                width // 2 + 5, height // 2 - 110, 195, 40)
         self._language_select_btn = ImageButton([
             get_game().resource_pack.get_resource(
                 "textures/gui/widgets").get_region(0, 110, 20, 20),
@@ -56,7 +55,7 @@ class StartScene(Scene):
                 "textures/gui/widgets").get_region(0, 130, 20, 20),
             get_game().resource_pack.get_resource(
                 "textures/gui/widgets").get_region(20, 130, 20, 20)
-        ], width // 2 + 205, 0.5 * height - 110, 40, 40)
+        ], width // 2 + 205, height // 2 - 110, 40, 40)
         self._frame.add_widget(self._singleplayer_btn, self._multiplayer_btn, self._options_btn, self._exit_btn,
                                self._language_select_btn)
 
@@ -94,9 +93,9 @@ class StartScene(Scene):
         self._title_edition.position = (
             width // 2, 0.8 * height - self._title.image.height - self._title_edition.image.height - 3)
         self._version_label.x = width - 3
-        self._singleplayer_btn.position = (width // 2 - 200, 0.5 * height)
-        self._multiplayer_btn.position = (width // 2 - 200, 0.5 * height - 50)
-        self._options_btn.position = (width // 2 - 200, 0.5 * height - 110)
+        self._singleplayer_btn.position = (width // 2 - 200, height // 2)
+        self._multiplayer_btn.position = (width // 2 - 200, height // 2 + 50)
+        self._options_btn.position = (width // 2 - 200, height // 2 + 110)
         self._language_select_btn.position = (
-            width // 2 + 205, 0.5 * height - 110)
-        self._exit_btn.position = (width // 2 + 5, 0.5 * height - 110)
+            width // 2 + 205, height // 2 + 110)
+        self._exit_btn.position = (width // 2 + 5, height // 2 + 110)

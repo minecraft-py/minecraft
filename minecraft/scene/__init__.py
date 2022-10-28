@@ -41,7 +41,7 @@ class GameWindow(Window):
         self.set_minimum_size(640, 480)
         self.__scenes = {}
         self.__now = ""
-        # 一些变量，可通过minecraft.utils.utils.get_game()获得
+        # 一些变量，可通过`minecraft.utils.utils.get_game()`获得
         self.mouse_position = (0, 0)
         self.resource_pack = resource_pack
         self.settings = settings
@@ -59,7 +59,8 @@ class GameWindow(Window):
             self.__scenes[self.__now].on_scene_leave()
         self.__now = name
         self.push_handlers(self.__scenes[self.__now])
+        self.__scenes[self.__now].on_resize(*get_size())
         self.__scenes[self.__now].on_scene_enter()
-    
+
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_position = (x, y)

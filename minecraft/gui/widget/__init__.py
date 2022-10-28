@@ -21,7 +21,7 @@ class Widget(EventDispatcher):
 
     @position.setter
     def position(self, value):
-        self._x, self._y = value
+        self._x, self._y = value[0], get_size()[1] - value[1]
         self._update()
 
     @property
