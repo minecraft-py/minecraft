@@ -48,6 +48,7 @@ class GameWindow(Window):
 
     def add_scene(self, name: str, scene: Scene, *args, **kwargs):
         """添加一个场景。"""
+        assert is_namespace(name)
         self.__scenes[name] = scene(*args, **kwargs)
 
     def switch_scene(self, name: str):

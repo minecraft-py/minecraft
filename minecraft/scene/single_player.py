@@ -36,7 +36,7 @@ class SinglePlayerScene(Scene):
 
         @self._back_btn.event
         def on_press():
-            get_game().switch_scene("start")
+            get_game().switch_scene("minecraft:start")
 
     def on_scene_enter(self):
         self._frame.enable()

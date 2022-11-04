@@ -124,12 +124,27 @@ def get_game() -> pyglet.window.Window:
     若直接导入模块运行该函数会引发异常。
     """
     for w in pyglet.canvas.get_display().get_windows():
-        if str(w).startswith('GameWindow'):
+        if str(w).startswith("GameWindow"):
             return w
-    raise RuntimeError("No game window found")
+    raise RuntimeError("no GameWindow found")
 
 
 def get_size() -> Tuple[int, int]:
     """返回窗口大小。"""
     w = get_game()
     return w.width, w.height
+
+def is_namespace(s: str) -> bool:
+    """判断一个字符串是否是命名空间。
+
+    命名空间应该满足`[顶层命名空间]:<子命名空间1>.<子命名空间2>...<子命名空间n>`。
+
+    顶层命名空间可省略，默认为`minecraft`；子命名空间用`.`分隔。
+
+    使用`str.partition()`检测命名空间是否合法。
+    """
+    l = s.partition(":")
+    if s.partition(":")[1]:
+        return l[0].isidentifier() and all([sub.isidentifier() for sub in l[2].split(".")])
+    else:
+        return all([sub.isidentifier() for sub in l[0].split(".")])

@@ -24,8 +24,8 @@ def start():
     try:
         setup_opengl()
         game = GameWindow(800, 600, resizable=True)
-        game.add_scene("start", StartScene)
-        game.switch_scene("start")
+        game.add_scene("minecraft:start", StartScene)
+        game.switch_scene("minecraft:start")
         pyglet.app.run()
     except SystemExit:
         pass

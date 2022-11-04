@@ -63,8 +63,8 @@ class StartScene(Scene):
         def on_press():
             single_player = import_module(
                 "minecraft.scene.single_player").SinglePlayerScene
-            get_game().add_scene("single_player", single_player)
-            get_game().switch_scene("single_player")
+            get_game().add_scene("minecraft:single_player", single_player)
+            get_game().switch_scene("minecraft:single_player")
 
         @self._exit_btn.event
         def on_press():
