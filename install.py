@@ -160,9 +160,8 @@ def register_user():
         player_id = previous_uuid or str(uuid.uuid4())
         print("Your uuid is %s, do not change it!" % player_id)
         player_name = ""
-        def is_valid_char(c): return any(
-            [c.isalpha(), c.isdigit(), c == "_"])
-        while all([c for c in map(is_valid_char, player_name)]) and len(player_name) < 3:
+        while all([c for c in map(lambda c: any(
+                [c.isalpha(), c.isdigit(), c == "_"]), player_name)]) and len(player_name) < 3:
             player_name = input("Your name: ")
         dump({player_id: {"name": player_name}}, open(
             path.join(MCPYPATH, "player.json"), "w+"), indent="\t")
