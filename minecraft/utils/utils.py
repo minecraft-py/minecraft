@@ -1,9 +1,11 @@
 # Copyright 2020-2022 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
+import inspect
+import sys
 import time
 from os import environ, path
-from sys import platform
+from pathlib import Path
 from typing import Tuple, Union
 
 import pyglet
@@ -96,10 +98,10 @@ def search_mcpy() -> str:
     """寻找文件存储位置。"""
     if "MCPYPATH" in environ:
         MCPYPATH = environ["MCPYPATH"]
-    elif platform == "darwin":
+    elif sys.platform == "darwin":
         MCPYPATH = path.join(path.expanduser(
             "~"), "Library", "Application Support", "mcpy")
-    elif platform.startswith("win"):
+    elif sys.platform.startswith("win"):
         MCPYPATH = path.join(path.expanduser("~"), "mcpy")
     else:
         MCPYPATH = path.join(path.expanduser("~"), ".mcpy")
@@ -133,6 +135,23 @@ def get_size() -> Tuple[int, int]:
     """返回窗口大小。"""
     w = get_game()
     return w.width, w.height
+
+
+def get_caller() -> str:
+    """获取调用栈中倒数第三个函数所在的包名。
+
+    调用栈：
+
+    1. 函数1（调用了函数2）
+    2. 函数2（调用了本函数）
+    3. 本函数（返回函数1所在的包名）
+    """
+    name = sys._getframe().f_back.f_back.f_code.co_filename
+    for p in sys.path:
+        if name.startswith(p):
+            p1, p2 = Path(p).parts, Path(name).parts
+            return p2[len(p1)]
+
 
 def is_namespace(s: str) -> bool:
     """判断一个字符串是否是命名空间。

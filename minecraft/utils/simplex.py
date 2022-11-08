@@ -23,13 +23,14 @@
 
 最新的opensimplex使用了numpy，可能严重影响程序运行效率。
 """
+
 from ctypes import c_long
 from math import floor
 
-STRETCH_CONSTANT_2D = -0.211324865405187    # (1/Math.sqrt(2+1)-1)/2
-SQUISH_CONSTANT_2D = 0.366025403784439      # (Math.sqrt(2+1)-1)/2
-STRETCH_CONSTANT_3D = -1.0 / 6              # (1/Math.sqrt(3+1)-1)/3
-SQUISH_CONSTANT_3D = 1.0 / 3                # (Math.sqrt(3+1)-1)/3
+STRETCH_CONSTANT_2D = -0.211324865405187    # (1/sqrt(2+1)-1)/2
+SQUISH_CONSTANT_2D = 0.366025403784439      # (sqrt(2+1)-1)/2
+STRETCH_CONSTANT_3D = -1.0 / 6              # (1/sqrt(3+1)-1)/3
+SQUISH_CONSTANT_3D = 1.0 / 3                # (sqrt(3+1)-1)/3
 
 NORM_CONSTANT_2D = 47
 NORM_CONSTANT_3D = 103
@@ -106,7 +107,7 @@ class Simplex(object):
         g1, g2, g3 = GRADIENTS_3D[index:index + 3]
         return g1 * dx + g2 * dy + g3 * dz
 
-    def noise2d(self, x, y):
+    def noise2d(self, x: float, y: float) -> float:
         # Generate 2D OpenSimplex noise from X,Y coordinates.
         # Place input coordinates onto grid.
         stretch_offset = (x + y) * STRETCH_CONSTANT_2D
@@ -210,7 +211,7 @@ class Simplex(object):
 
         return value / NORM_CONSTANT_2D
 
-    def noise3d(self, x, y, z):
+    def noise3d(self, x: float, y: float, z: float) -> float:
         # Generate 3D OpenSimplex noise from X,Y,Z coordinates.
         # Place input coordinates on simplectic honeycomb.
         stretch_offset = (x + y + z) * STRETCH_CONSTANT_3D
