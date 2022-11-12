@@ -11,8 +11,10 @@ from pkgutil import find_loader
 from zipfile import is_zipfile
 
 from minecraft.resource_pack import ResourcePackManager
+from minecraft.utils.logging import get_logger
 from minecraft.utils.utils import *
 
+logger = get_logger(__name__)
 mcpypath = search_mcpy()
 sys.path.insert(0, join(mcpypath, "lib", VERSION["str"]))
 lib_path = sys.path[0]
@@ -42,10 +44,10 @@ if isfile(join(mcpypath, "player.json")):
     player = json.load(open(join(mcpypath, "player.json"), encoding="utf-8"))
     for key, _ in player.items():
         if not re.match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", key):
-            log_err("Invalid player id: %s" % player["id"])
+            logger.error("Invalid player id: %s" % player["id"])
             exit(1)
 else:
-    log_err("You have not registered, exit")
+    logger.error("You have not registered, exit")
     exit(1)
 
 # 解析命令行参数
@@ -55,14 +57,14 @@ for args in sys.argv:
         for lib in args[10:].split(pathsep):
             if isdir(lib) or (isfile(lib) and is_zipfile(lib)):
                 sys.path.insert(0, lib)
-                log_info("Add new lib path: `%s`" % lib)
+                logger.info("Add new lib path: `%s`" % lib)
             else:
-                log_warn("Lib path \"%s\" is not available" % lib)
+                logger.warning("Lib path \"%s\" is not available" % lib)
     elif args.startswith("--extlib="):
         # 添加外部库
         for lib in args[9:].split(pathsep):
             if (loader := find_loader(lib)) is not None:
-                log_info("Loading extra lib: \"%s\"" % lib)
+                logger.info("Loading extra lib: \"%s\"" % lib)
                 libs.append(loader.load_module())
             else:
-                log_warn("Extra lib \"%s\" not found" % lib)
+                logger.warning("Extra lib \"%s\" not found" % lib)

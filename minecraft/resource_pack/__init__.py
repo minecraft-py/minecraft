@@ -7,7 +7,10 @@ from zipfile import is_zipfile
 
 from minecraft.resource_pack.directory import DirectoryResourcePack
 from minecraft.resource_pack.zipfile import ZipfileResourcePack
+from minecraft.utils.logging import get_logger
 from minecraft.utils.utils import *
+
+logger = get_logger(__name__)
 
 
 class ResourcePackManager():
@@ -41,9 +44,9 @@ class ResourcePackManager():
             elif os.path.isfile(name) and is_zipfile(name):
                 self._packs.append(ZipfileResourcePack(name))
             else:
-                log_warn("Not a zipfile: \"%s\"" % name)
+                logger.warning("Not a zipfile: \"%s\"" % name)
         else:
-            log_warn("No such file or directory: \"%s\"" % name)
+            logger.warning("No such file or directory: \"%s\"" % name)
 
     def set_lang(self, lang: str):
         for pack in self._packs:

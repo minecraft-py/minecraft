@@ -30,21 +30,15 @@ def start():
     except SystemExit:
         pass
     except:
-        # 这里负责处理不知道谁引发的异常，并将异常写入日志
-        for line in traceback.format_exception(*sys.exc_info()):
-            for s in line.split("\n")[:-1]:
-                log_err(s)
+        pass
 
 
 if __name__ == "__main__":
     if isfile(join(search_mcpy(), "mcpy.lock")):
         # 检测程序是否重复启动
-        log_info("Minecrft-in-python is running now!", where="c")
+        print("Minecrft-in-python is running now!")
     else:
         open(join(search_mcpy(), "mcpy.lock"), "w+").close()
-        # 注册退出处理器
-        if "--no-save-log" not in sys.argv:
-            atexit.register(on_exit)
         # 打印运行环境等基本信息
         test()
         # 开始游戏！

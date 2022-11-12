@@ -1,7 +1,6 @@
 # Copyright 2020-2022 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
-import inspect
 import sys
 import time
 from os import environ, path
@@ -10,15 +9,6 @@ from typing import Tuple, Union
 
 import pyglet
 
-start_time = time.strftime("%Y-%m-%d_%H.%M.%S")
-_log_str = []
-_have_colorama = False
-try:
-    from colorama import Fore, Style, init
-    init()
-    _have_colorama = True
-except ModuleNotFoundError:
-    pass
 
 # 一个方块周围6个方块的相对坐标
 FACES = [
@@ -38,60 +28,6 @@ VERSION = {
     "str": "0.3.2",
     "data": 1
 }
-
-
-def log_err(text: str, name: str = "client", where: str = "cl"):
-    """打印错误日志。"""
-    if "l" in where:
-        _log_str.append("[ERR  %s %s] %s" %
-                        (time.strftime("%H:%M:%S"), name, text))
-    if "c" in where:
-        if _have_colorama:
-            print("%s[ERR  %s %s]%s %s" % (Fore.RED, time.strftime(
-                "%H:%M:%S"), name, Style.RESET_ALL, text))
-        else:
-            print("[ERR  %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
-
-
-def log_info(text: str, name: str = "client", where: str = "cl"):
-    """打印普通日志。"""
-    if "l" in where:
-        _log_str.append("[INFO %s %s] %s" %
-                        (time.strftime("%H:%M:%S"), name, text))
-    if "c" in where:
-        if _have_colorama:
-            print("%s[INFO %s %s]%s %s" % (Fore.GREEN, time.strftime(
-                "%H:%M:%S"), name, Style.RESET_ALL, text))
-        else:
-            print("[INFO %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
-
-
-def log_warn(text: str, name: str = "client", where: str = "cl"):
-    """打印警告日志。"""
-    if "l" in where:
-        _log_str.append("[WARN %s %s] %s" %
-                        (time.strftime("%H:%M:%S"), name, text))
-    if "c" in where:
-        if _have_colorama:
-            print("%s[WARN %s %s]%s %s" % (Fore.YELLOW, time.strftime(
-                "%H:%M:%S"), name, Style.RESET_ALL, text))
-        else:
-            print("[WARN %s %s] %s" % (time.strftime("%H:%M:%S"), name, text))
-
-
-def on_exit():
-    """在退出时保存日志。
-
-    你不应该调用这个函数，它由`atexit`在退出时自动调用。
-    可以使用`--no-save-log`命令行参数禁止这个操作。
-    """
-    log_info("Save logs to `log/log-%s.log`" % start_time, where="c")
-    log_info("Exit")
-    with open(path.join(search_mcpy(), "log", "log-%s.log" % start_time), "w+") as log:
-        log.write("\n".join(_log_str))
-    # 将当前日志文件再保存一份至"log-latest.log"
-    with open(path.join(search_mcpy(), "log", "log-latest.log"), "w+") as latest_log:
-        latest_log.write("\n".join(_log_str))
 
 
 def search_mcpy() -> str:
@@ -137,7 +73,7 @@ def get_size() -> Tuple[int, int]:
     return w.width, w.height
 
 
-def get_caller() -> str:
+def get_caller(full=False) -> str:
     """获取调用栈中倒数第三个函数所在的包名。
 
     调用栈：
@@ -147,10 +83,17 @@ def get_caller() -> str:
     3. 本函数（返回函数1所在的包名）
     """
     name = sys._getframe().f_back.f_back.f_code.co_filename
+    # 返回的不是文件系统路径而是一个对象则报错
+    assert name[0] == "<", "caller's caller is not in a function"
     for p in sys.path:
         if name.startswith(p):
             p1, p2 = Path(p).parts, Path(name).parts
-            return p2[len(p1)]
+            if full:
+                pkg_path = list(p2[len(p1):])
+                pkg_path[-1] = pkg_path[-1][:-3]
+                return ".".join(pkg_path)
+            else:
+                return p2[len(p1)]
 
 
 def is_namespace(s: str) -> bool:
