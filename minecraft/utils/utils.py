@@ -2,13 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 import sys
-import time
 from os import environ, path
 from pathlib import Path
 from typing import Tuple, Union
 
 import pyglet
-
 
 # 一个方块周围6个方块的相对坐标
 FACES = [
