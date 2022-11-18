@@ -3,14 +3,14 @@
 
 import os
 from typing import Any
+from logging import getLogger
 from zipfile import is_zipfile
 
 from minecraft.resource_pack.directory import DirectoryResourcePack
 from minecraft.resource_pack.zipfile import ZipfileResourcePack
-from minecraft.utils.logging import get_logger
 from minecraft.utils.utils import *
 
-logger = get_logger(__name__)
+logger = getLogger(__name__)
 
 
 class ResourcePackManager():

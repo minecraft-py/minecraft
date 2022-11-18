@@ -1,16 +1,16 @@
 # Copyright 2020-2022 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
+from logging import getLogger
 from platform import platform, python_version_tuple
 
 from pyglet import version
 from pyglet.gl import gl_info
 
-from minecraft.utils.logging import get_logger
 from minecraft.utils.utils import VERSION
 
 
-logger = get_logger(__name__)
+logger = getLogger(__name__)
 
 
 def test():

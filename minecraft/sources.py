@@ -4,6 +4,7 @@
 import json
 import re
 import sys
+from logging import getLogger
 from locale import getdefaultlocale
 from os import pathsep
 from os.path import isdir, isfile, join
@@ -11,10 +12,9 @@ from pkgutil import find_loader
 from zipfile import is_zipfile
 
 from minecraft.resource_pack import ResourcePackManager
-from minecraft.utils.logging import get_logger
 from minecraft.utils.utils import *
 
-logger = get_logger(__name__)
+logger = getLogger(__name__)
 mcpypath = search_mcpy()
 sys.path.insert(0, join(mcpypath, "lib", VERSION["str"]))
 lib_path = sys.path[0]
