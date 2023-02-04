@@ -1,11 +1,11 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
 import logging.config
 from time import strftime
 from os import path
 
-from minecraft.utils.utils import search_mcpy
+from minecraft.utils.utils import storage_dir
 
 
 config = {
@@ -27,7 +27,7 @@ config = {
             "class": "logging.FileHandler",
             "formatter": "default",
             "level": "DEBUG",
-            "filename": path.join(search_mcpy(), "log", strftime("%Y-%m-%d_%H.%M.%S.log"))
+            "filename": path.join(storage_dir(), "log", strftime("%Y-%m-%d_%H.%M.%S.log"))
         }
     },
     "root": {

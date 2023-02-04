@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
 import json
@@ -15,7 +15,7 @@ from minecraft.resource_pack import ResourcePackManager
 from minecraft.utils.utils import *
 
 logger = getLogger(__name__)
-mcpypath = search_mcpy()
+mcpypath = storage_dir()
 sys.path.insert(0, join(mcpypath, "lib", VERSION["str"]))
 lib_path = sys.path[0]
 libs = []

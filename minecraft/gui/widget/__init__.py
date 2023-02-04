@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
 from minecraft.utils.utils import *
@@ -69,6 +69,12 @@ class Widget(EventDispatcher):
     def check_hit(self, x, y):
         return (self._x < x < self._x + self._width) and (self._y < y < self._y + self._height)
 
+    def on_focus(self):
+        pass
+
+    def on_unfocus(self):
+        pass
+
     def on_key_press(self, symbol, modifiers):
         pass
 
@@ -103,6 +109,8 @@ class Widget(EventDispatcher):
         pass
 
 
+Widget.register_event_type("on_unfocus")
+Widget.register_event_type("on_focus")
 Widget.register_event_type("on_key_press")
 Widget.register_event_type("on_key_release")
 Widget.register_event_type("on_mouse_press")
@@ -113,6 +121,16 @@ Widget.register_event_type("on_mouse_scroll")
 Widget.register_event_type("on_text")
 Widget.register_event_type("on_text_motion")
 Widget.register_event_type("on_text_motion_select")
+
+
+class InputWidget(Widget):
+    """提供输入功能的部件。
+
+    继承了该类的部件被认为是可以取得焦点的，即`on_focus`和`on_unfocus`方法有效。
+
+    最早向`Frame`中添加的`InputWidget`会在调用了`Frame.enable()`后自动获取焦点。
+    """
+    pass
 
 
 class Sprite():

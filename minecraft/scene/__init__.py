@@ -1,7 +1,7 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
-from minecraft.sources import *
+from minecraft import *
 from minecraft.utils.utils import *
 from pyglet.event import EventDispatcher
 from pyglet.window import Window

@@ -1,15 +1,15 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
 from importlib import import_module
 
 import pyglet
+from minecraft import resource_pack
 from minecraft.gui.frame import Frame
 from minecraft.gui.widget.button import Button, ImageButton
 from minecraft.gui.widget.label import ColorLabel
 from minecraft.gui.widget.loading import LoadingBackground
 from minecraft.scene import Scene
-from minecraft.sources import resource_pack
 from minecraft.utils.utils import *
 from pyglet.gl import *
 from pyglet.sprite import Sprite

@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
 from minecraft.gui.widget import Widget
@@ -11,8 +11,8 @@ from pyglet.window import key
 class Button(Widget):
     """一个有文字的按钮。"""
 
-    def __init__(self, text, x, y, width, height, enable=True):
-        self._size = win_width, win_height = get_size()
+    def __init__(self, text, x, y, width, height, enable=True, onclick=None, *args):
+        win_width, win_height = get_size()
         super().__init__(x, win_height - y, width, height)
         self._width = width
         self._pressed_img = get_game().resource_pack.get_resource(
@@ -28,6 +28,7 @@ class Button(Widget):
                                  x=x + width / 2, y=win_height - y + height / 2, font_size=16)
         self._pressed = False
         self._enable = enable
+        self._callback = onclick, args
 
     def _update(self):
         self._sprite.position = self._x, self._y
@@ -65,6 +66,9 @@ class Button(Widget):
         if self.check_hit(x, y) and self._enable:
             self._sprite.image = self._pressed_img
             self._pressed = True
+            print(self._callback)
+            if callable(self._callback[0]):
+                self._callback[0](*self._callback[1])
             self.dispatch_event("on_press")
 
     def on_mouse_release(self, x, y, buttons, modifiers):

@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
 import os
@@ -34,7 +34,7 @@ class ResourcePackManager():
         """
         if name.startswith("${game}"):
             name.replace("${game}", os.path.join(
-                search_mcpy(), "resource-pack"))
+                storage_dir(), "resource-pack"))
         if os.path.exists(os.path.join(name)) or (name == "${default}"):
             if os.path.isdir(os.path.join(name)) and (not name.endswith(".zip")):
                 self._packs.append(DirectoryResourcePack(name))

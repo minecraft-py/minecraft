@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 from minecraft.utils.utils import *
+from minecraft.gui.widget import InputWidget
 
 
 class Frame():
@@ -13,6 +14,7 @@ class Frame():
     def __init__(self):
         self._widget = []
         self._enable = False
+        self._focused = -1
 
     def add_widget(self, *widgets):
         for widget in widgets:
@@ -24,8 +26,14 @@ class Frame():
 
     def enable(self):
         self._enable = True
+        self._focused = -1
         self.on_mouse_motion(*get_game().mouse_position, 0, 0)
         get_game().push_handlers(self)
+        for widget in self._widget:
+            if isinstance(widget, InputWidget):
+                self._focused = self._widget.index(widget)
+                widget.on_focus()
+                return
 
     def disable(self):
         self._enable = False

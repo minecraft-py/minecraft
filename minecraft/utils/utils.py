@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Minecraft-in-python.
+# Copyright 2020-2023 Minecraft-in-python.
 # SPDX-License-Identifier: GPL-3.0-only
 
 import sys
@@ -21,14 +21,14 @@ FACES = [
 # 游戏版本信息
 VERSION = {
     "major": 0,
-    "minor": 3,
-    "patch": 2,
-    "str": "0.3.2",
+    "minor": 0,
+    "patch": 1,
+    "str": "0.0.1",
     "data": 1
 }
 
 
-def search_mcpy() -> str:
+def storage_dir() -> str:
     """寻找文件存储位置。"""
     if "MCPYPATH" in environ:
         MCPYPATH = environ["MCPYPATH"]
