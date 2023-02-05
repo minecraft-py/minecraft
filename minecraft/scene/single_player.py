@@ -7,6 +7,7 @@ from minecraft.gui.widget.button import Button
 from minecraft.gui.widget.label import ColorLabel
 from minecraft.gui.widget.loading import LoadingBackground
 from minecraft.scene import Scene
+from minecraft.save import new
 from minecraft import resource_pack
 from minecraft.utils.utils import *
 from pyglet.window import key
@@ -35,7 +36,7 @@ class SinglePlayerScene(Scene):
             "lang.common.go_back"), width // 2 + 5, height - 30, 300, 40)
         for i in range(5):
             self._save_picker.append(Button(
-                "- save %d -" % (i + 1), width // 2 - 250, 0.2 * height + 50 * i, 500, 40, True, print, i + 1))
+                "- save %d -" % (i + 1), width // 2 - 250, 0.2 * height + 50 * i, 500, 40, onclick=(self.on_picker_click, i + 1)))
         self._frame.add_widget(
             self._new_save_btn, self._settings_btn, self._delete_btn, self._play_btn, self._back_btn, *self._save_picker)
 
@@ -64,6 +65,9 @@ class SinglePlayerScene(Scene):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             return True
+
+    def on_picker_click(self, i):
+        new(str(i))
 
     def on_resize(self, width, height):
         self._back.resize(width, height)

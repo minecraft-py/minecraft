@@ -11,7 +11,7 @@ from pyglet.window import key
 class Button(Widget):
     """一个有文字的按钮。"""
 
-    def __init__(self, text, x, y, width, height, enable=True, onclick=None, *args):
+    def __init__(self, text, x, y, width, height, enable=True, onclick=(None, None)):
         win_width, win_height = get_size()
         super().__init__(x, win_height - y, width, height)
         self._width = width
@@ -28,7 +28,7 @@ class Button(Widget):
                                  x=x + width / 2, y=win_height - y + height / 2, font_size=16)
         self._pressed = False
         self._enable = enable
-        self._callback = onclick, args
+        self._callback = onclick
 
     def _update(self):
         self._sprite.position = self._x, self._y
@@ -66,9 +66,8 @@ class Button(Widget):
         if self.check_hit(x, y) and self._enable:
             self._sprite.image = self._pressed_img
             self._pressed = True
-            print(self._callback)
             if callable(self._callback[0]):
-                self._callback[0](*self._callback[1])
+                self._callback[0](*self._callback[1:])
             self.dispatch_event("on_press")
 
     def on_mouse_release(self, x, y, buttons, modifiers):
