@@ -18,14 +18,13 @@
 import uuid
 import venv
 from json import dump, load
-from os import chmod, environ, makedirs, mkdir, path
+from os import chmod, environ, makedirs, mkdir, path, pathsep
 from re import match, search
 from shutil import copytree, rmtree
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
 from subprocess import run
 from sys import argv, executable, platform, version_info
-
-step = 1
+from textwrap import dedent
 
 
 def main():
@@ -49,7 +48,7 @@ def main():
 
 def check_ver():
     if version_info[:2] < (3, 8):
-        print("Minecraft-in-python needs python3.8 or later, but %s found!" %
+        print("Minecraft-in-python needs Python3.8 or later, but %s found!" %
               ".".join([str(s) for s in version_info[:2]]))
         exit(1)
 
@@ -58,48 +57,6 @@ def see_eula():
     print("NOTE: This is not official Minecraft product. Not approved by or associated with Mojang.")
     print("      Visit `https://minecraft.net/term` for more information.")
     input("NOTE: Press ENTER when you have finished reading the above information: ")
-
-
-def gen_script():
-    if "--skip-gen-script" in argv:
-        return
-    while True:
-        ret = input("Generate startup script[Y/n]? ")
-        if (ret.lower() == "y") or (len(ret) == 0):
-            break
-        elif ret.lower() == "n":
-            return
-    script = ""
-    name = get_file("run.sh")
-    if platform.startswith("win"):
-        name = get_file("run.bat")
-        script += "@echo off\n"
-    else:
-        script += "#!/usr/bin/env sh\n"
-    script += "cd \"%s\"\n" % path.dirname(get_file("install.py"))
-    script += "\"%s\" -m minecraft\n" % executable
-    with open(name, "w+") as f:
-        f.write(script)
-        print("Startup script at `%s`" % name)
-    if not platform.startswith("win"):
-        chmod(name, S_IRUSR | S_IWUSR | S_IXUSR)
-
-
-def get_version():
-    # 从`minecraft/utils/utils.py`文件里面把版本号"抠"出来
-    f = open(path.join(get_file("minecraft"),
-             "utils", "utils.py"), encoding="utf-8")
-    start_find = False
-    for line in f.readlines():
-        if line.strip() == "VERSION = {":
-            start_find = True
-        elif (line.strip() == "}") and start_find:
-            start_find = False
-        elif line.strip().startswith("\"str\"") and start_find:
-            # 匹配版本号
-            # 一位主版本号, 两位小版本号/修订版本号
-            # 匹配 -alpha, -beta 后缀, -pre, -rc 后跟数字
-            return search(r"\d(\.\d{1,2}){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
 
 
 def install():
@@ -114,13 +71,15 @@ def install():
     if not path.isdir(path.join(mcpypath, "lib", version)):
         makedirs(path.join(mcpypath, "lib", version))
     if not path.isfile(path.join(mcpypath, "version", version, "pyvenv.cfg")):
-        print("Create virtual environments")
+        print("Creating virtual environments")
         venv.create(path.join(mcpypath, "version", version), with_pip=True)
     if path.isdir(path.join(mcpypath, "version", version, "minecraft")):
         rmtree(path.join(mcpypath, "version", version, "minecraft"))
-    copytree(get_file("minecraft"), path.join(mcpypath, "version", version, "minecraft"))
+    copytree(get_file("minecraft"), path.join(
+        mcpypath, "version", version, "minecraft"))
     if "--skip-install-requirements" not in argv:
-        code = run([executable, "-m", "pip", "install", "-U",
+        pybin = "Scripts\\python.exe" if platform.startswith("win") else "bin/python"
+        code = run([path.join(mcpypath, "version", version, pybin), "-m", "pip", "install", "-U",
                    "-r", get_file("requirements.txt")]).returncode
         if code != 0:
             exit(1)
@@ -181,15 +140,66 @@ def register_user():
             player_name = input("Your name: ")
         dump({"uuid": player_id, "name": player_name}, open(
             path.join(mcpypath, "player.json"), "w+"))
-        print(
-            "Regsitered successfully, you can use your id to play multiplayer game.")
+
+
+def gen_script():
+    # WARN: 启动脚本运行仍有问题
+    return
+    if "--skip-gen-script" in argv:
+        return
+    while True:
+        ret = input("Generate startup script[Y/n]? ")
+        if (ret.lower() == "y") or (len(ret) == 0):
+            break
+        elif ret.lower() == "n":
+            return
+    mcpypath = storage_dir()
+    version = get_version()
+    if platform.startswith("win"):
+        name = get_file("run.bat")
+        script = dedent("""\
+            @echo off
+            cd {0}
+            call Scripts\\active.bat
+            python -m minecraft
+            call Scripts\\deactive.bat
+        """.format(path.join(mcpypath, "version", version)))
     else:
-        print("You have regsitered.")
+        name = get_file("run.sh")
+        script = dedent("""\
+            #!/usr/bin/env sh
+            cd {0}
+            source bin/active
+            python3 -m minecraft $*
+            deactive
+        """.format(path.join(mcpypath, "version", version)))
+    with open(name, "w+") as f:
+        f.write(script)
+        print("Startup script at `%s`" % name)
+    if not platform.startswith("win"):
+        chmod(name, S_IRUSR | S_IWUSR | S_IXUSR)
 
 
 def get_file(f):
     # 返回文件目录下的文件名
     return path.abspath(path.join(path.dirname(__file__), f))
+
+
+def get_version():
+    # 从`minecraft/utils/utils.py`文件里面把版本号"抠"出来
+    f = open(path.join(get_file("minecraft"),
+             "utils", "utils.py"), encoding="utf-8")
+    start_find = False
+    for line in f.readlines():
+        if line.strip() == "VERSION = {":
+            start_find = True
+        elif (line.strip() == "}") and start_find:
+            start_find = False
+        elif line.strip().startswith("\"str\"") and start_find:
+            # 匹配版本号
+            # 一位主版本号, 两位小版本号/修订版本号
+            # 匹配 -alpha, -beta 后缀, -pre, -rc 后跟数字
+            return search(r"\d(\.\d{1,2}){2}(\-alpha|\-beta|\-pre\d+|\-rc\d+)?", line.strip()).group()
 
 
 def storage_dir():
