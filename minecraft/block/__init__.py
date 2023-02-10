@@ -14,11 +14,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from esper import World
+from logging import getLogger
+
+from minecraft.utils.utils import *
+from minecraft import resource_pack, player
+from pyglet.image.atlas import TextureAtlas
+
+logger = getLogger(__name__)
+atlas = None
+coords = None
 
 
-class EntityManager():
-    """管理各实体。"""
-
-    def __init__(self):
-        self.entities = World()
+def gen_atlas():
+    atlas = TextureAtlas(256, 256)
+    coords = {}
+    logger.info("Create %dx%d texture atlas" %
+                (atlas.texture.width, atlas.texture.height))
+    for name in resource_pack.get_all_block_textures():
+        pos = atlas.add(resource_pack.get_resource("textures/block/" + name))
+        coords[name] = tex_coord(pos, atlas.texture.width)

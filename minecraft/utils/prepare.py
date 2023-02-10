@@ -14,18 +14,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from minecraft.gui.widget import InputWidget
+from logging import getLogger
+from platform import platform, python_version_tuple
+
+from minecraft.block import gen_atlas
 from minecraft.utils.utils import *
-from pyglet.gl import *
-from pyglet.graphics import Batch
-from pyglet.shapes import Rectangle
-from pyglet.text.caret import Caret
-from pyglet.text.layout import IncrementalTextLayout
-from pyglet.text.document import UnformattedDocument
+from minecraft.utils.utils import VERSION
+from pyglet import version
+from pyglet.gl import gl_info
+
+logger = getLogger(__name__)
 
 
-class TextEntry(InputWidget):
-    """文本框。"""
-
-    def __init__(self, x, y, width, text=""):
-        pass
+def prepare():
+    # 做准备工作
+    logger.info("** Start Minecraft-in-python **")
+    logger.info("Operation system: %s" % platform())
+    logger.info("Python version: %s" % ".".join(
+        [str(s) for s in python_version_tuple()[:3]]))
+    logger.info("Pyglet version: %s(OpenGL %s)" %
+                (version, gl_info.get_version()))
+    logger.info("Minecraft-in-python version: %s(data version: %d)" %
+                (VERSION["str"], int(VERSION["data"])))
+    gen_atlas()
