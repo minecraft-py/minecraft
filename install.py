@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import argparse
 import uuid
 import venv
 from json import dump, load
@@ -23,21 +24,32 @@ from re import match, search
 from shutil import copytree, rmtree
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
 from subprocess import run
-from sys import argv, executable, platform, version_info
+from sys import platform, version_info
 from textwrap import dedent
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="Game installer", usage="%(prog)s [option]")
+    parser.add_argument("--no-install-deps",
+                        action="store_true", help="skip install game dependencies")
+    parser.add_argument("--no-register",
+                        action="store_true", help="skip register player")
+    parser.add_argument("--no-gen-script", action="store_true",
+                        help="skip generate startup script")
+    args = parser.parse_args()
     # 检查python版本
     check_ver()
     # 最好遵守Mojang的Minecraft eula
     see_eula()
     # 安装
-    install()
+    install(args)
     # 注册玩家
-    register_user()
+    if not args.no_register:
+        register_user()
     # 创建启动脚本
-    gen_script()
+    if not args.no_gen_script:
+        gen_script()
     # 完成！
     if platform.startswith("win"):
         pycmd = "python"
@@ -59,7 +71,7 @@ def see_eula():
     input("NOTE: Press ENTER when you have finished reading the above information: ")
 
 
-def install():
+def install(args):
     mcpypath = storage_dir()
     version = get_version()
     if not path.isdir(mcpypath):
@@ -71,16 +83,20 @@ def install():
     if not path.isdir(path.join(mcpypath, "lib", version)):
         makedirs(path.join(mcpypath, "lib", version))
     if not path.isfile(path.join(mcpypath, "version", version, "pyvenv.cfg")):
-        print("Creating virtual environments")
+        print("Creating virtual environments...")
         venv.create(path.join(mcpypath, "version", version), with_pip=True)
     if path.isdir(path.join(mcpypath, "version", version, "minecraft")):
         rmtree(path.join(mcpypath, "version", version, "minecraft"))
     copytree(get_file("minecraft"), path.join(
         mcpypath, "version", version, "minecraft"))
-    if "--skip-install-requirements" not in argv:
-        pybin = "Scripts\\python.exe" if platform.startswith("win") else "bin/python"
+    if not args.no_install_deps:
+        pybin = "Scripts\\python.exe" if platform.startswith(
+            "win") else "bin/python"
+        pybin_dir = "Scripts" if platform.startswith("win") else "bin"
+        environ["PATH"] = path.join(mcpypath, "version", version, pybin_dir) + pathsep + environ["PATH"]
+        environ["VITURAL_ENV"] = path.join(mcpypath, "version", version)
         code = run([path.join(mcpypath, "version", version, pybin), "-m", "pip", "install", "-U",
-                   "-r", get_file("requirements.txt")]).returncode
+                   "-r", get_file("requirements.txt")], env=environ).returncode
         if code != 0:
             exit(1)
 
@@ -106,8 +122,6 @@ def install_settings():
 
 
 def register_user():
-    if "--skip-register" in argv:
-        return
     mcpypath = storage_dir()
     is_ready = True
     previous_uuid = None
@@ -144,9 +158,6 @@ def register_user():
 
 def gen_script():
     # WARN: 启动脚本运行仍有问题
-    return
-    if "--skip-gen-script" in argv:
-        return
     while True:
         ret = input("Generate startup script[Y/n]? ")
         if (ret.lower() == "y") or (len(ret) == 0):
@@ -160,9 +171,9 @@ def gen_script():
         script = dedent("""\
             @echo off
             cd {0}
-            call Scripts\\active.bat
+            REM call Scripts\\active.bat
             python -m minecraft
-            call Scripts\\deactive.bat
+            REM call Scripts\\deactive.bat
         """.format(path.join(mcpypath, "version", version)))
     else:
         name = get_file("run.sh")

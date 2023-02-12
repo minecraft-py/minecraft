@@ -45,6 +45,7 @@ parser.add_argument("-V", "--version", action="version",
 args = parser.parse_args()
 
 # 游戏设置
+settings = {}
 if args.settings is not None:
     settings = json.load(args.settings)
 elif isfile(join(mcpypath, "settings.json")):
