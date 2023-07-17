@@ -14,19 +14,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import logging.config
 from time import strftime
 from os import path
 
-from minecraft.utils.utils import storage_dir
-
+from minecraft.utils import get_storage_path
 
 config = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
         "default": {
-            "format": "[%(asctime)s %(levelname)-8s] %(message)s",
+            "format": "[%(asctime)s] [%(threadName)s/%(levelname)s] %(message)s",
             "datefmt": "%Y-%m-%d %H:%M:%S"
         }
     },
@@ -34,13 +32,13 @@ config = {
         "console": {
             "class": "logging.StreamHandler",
             "formatter": "default",
-            "level": "INFO",
+            "level": "DEBUG",
         },
         "file": {
             "class": "logging.FileHandler",
             "formatter": "default",
             "level": "DEBUG",
-            "filename": path.join(storage_dir(), "log", strftime("%Y-%m-%d_%H.%M.%S.log"))
+            "filename": path.join(get_storage_path(), "log", strftime("%Y-%m-%d_%H.%M.%S.log"))
         }
     },
     "root": {
@@ -48,4 +46,3 @@ config = {
         "level": "DEBUG"
     }
 }
-logging.config.dictConfig(config)

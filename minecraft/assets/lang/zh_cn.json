@@ -1,13 +1,13 @@
 {
-    "lang.common.delete": "删除",
-    "lang.common.go_back": "返回",
-    "lang.common.settings": "设置",
-    "lang.name": "中文（简体）",
-    "text.single_player_scene.choose_a_save": "选择一个存档",
-    "text.single_player_scene.new_save": "新建存档",
-    "text.single_player_scene.play": "开始游戏",
-    "text.start_scent.multi_player": "多人游戏",
-    "text.start_scent.options": "选项",
-    "text.start_scent.quit_game": "退出",
-    "text.start_scent.single_player": "单人游戏"
+    "language.name": "简体中文",
+    "language.region": "",
+    "language.code": "zh_cn",
+    "single_player.choose_a_save": "选择一个存档",
+    "single_player.new_save": "新建存档",
+    "single_player.play": "开始游戏",
+    "start.multi_player": "多人游戏",
+    "start.options": "选项...",
+    "start.quit_game": "退出",
+    "start.settings": "设置",
+    "start.single_player": "单人游戏"
 }

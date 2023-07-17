@@ -14,26 +14,41 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from json import dump
 from logging import getLogger
+from os import makedirs, mkdir
+from sys import argv
+from shlex import join
+from pathlib import Path
 from platform import platform, python_version_tuple
 
-from minecraft.block import gen_atlas
-from minecraft.utils.utils import *
-from minecraft.utils.utils import VERSION
-from pyglet import version
+from minecraft.utils import VERSION
+from pyglet import version as pyglet_version
 from pyglet.gl import gl_info
 
 logger = getLogger(__name__)
 
 
-def prepare():
-    # 做准备工作
-    logger.info("** Start Minecraft-in-python **")
-    logger.info("Operation system: %s" % platform())
-    logger.info("Python version: %s" % ".".join(
+def create_storage_path(p: Path):
+    if p.exists():
+        return
+    makedirs(p, exist_ok=True)
+    for subpath in ["log", "saves", "screenshot"]:
+        mkdir(p / subpath)
+    settings = {
+        "fov": 70,
+        "language": "<auto>"
+    }
+    dump(settings, open(p / "setting.json", "w+"))
+
+
+def print_debug_info():
+    logger.debug("** Start Minecraft-in-python **")
+    logger.debug("Operation system: %s", platform())
+    logger.debug("Python version: %s", ".".join(
         [str(s) for s in python_version_tuple()[:3]]))
-    logger.info("Pyglet version: %s(OpenGL %s)" %
-                (version, gl_info.get_version()))
-    logger.info("Minecraft-in-python version: %s(data version: %d)" %
-                (VERSION["str"], int(VERSION["data"])))
-    gen_atlas()
+    logger.debug("OpenGL version: %s", gl_info.get_version_string())
+    logger.debug("Renderer: %s" % gl_info.get_renderer())
+    logger.debug("Minecraftpy version: %s (data version: %d)",
+                VERSION["str"], VERSION["data"])
+    logger.debug("Command line arguments: %s", join(argv[1:]))

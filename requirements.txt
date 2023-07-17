@@ -1,2 +1,3 @@
-esper>=2.1
-pyglet<2,>=1.5.26
+esper==2.5
+opensimplex==0.4.5
+pyglet==2.0.8

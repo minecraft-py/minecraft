@@ -17,35 +17,33 @@
 from logging import getLogger
 
 import pyglet
-
-from minecraft.scene import GameWindow
-from minecraft.scene.start import StartScene
-from minecraft.utils.opengl import setup_opengl
-from minecraft.utils.prepare import prepare
-from minecraft.utils.utils import *
+from pyglet.gl import *
+from pyglet.image import Texture
 
 logger = getLogger(__name__)
 
 
 def start():
-    """游戏从这里开始。
-
-    创建窗口、进入场景、开始游戏。
-    """
+    """Start the game."""
     try:
-        setup_opengl()
-        game = GameWindow(800, 600, resizable=True)
-        game.add_scene("minecraft:start", StartScene)
-        game.switch_scene("minecraft:start")
-        pyglet.app.run()
+        ...
     except SystemExit:
         pass
     except:
-        logger.error("Game raise an error", exc_info=True, stack_info=True)
+        logger.error("Game raise an error", exc_info=True)
+
+
+def setup_gl():
+    glEnable(GL_CULL_FACE)
+    glEnable(GL_LINE_SMOOTH)
+    glEnable(GL_POLYGON_SMOOTH)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    Texture.default_min_filter = GL_NEAREST
+    Texture.default_mag_filter = GL_NEAREST
 
 
 if __name__ == "__main__":
-    # 准备工作
-    prepare()
-    # 开始游戏！
     start()

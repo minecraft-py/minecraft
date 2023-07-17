@@ -1,13 +1,13 @@
 {
-    "lang.common.delete": "Delete",
-    "lang.common.go_back": "Go back",
-    "lang.common.settings": "Settings",
-    "lang.name": "English",
-    "text.single_player_scene.choose_a_save": "Choose a save",
-    "text.single_player_scene.new_save": "New",
-    "text.single_player_scene.play": "Play",
-    "text.start_scent.multi_player": "Multiplayer",
-    "text.start_scent.options": "Options",
-    "text.start_scent.quit_game": "Quit Game",
-    "text.start_scent.single_player": "Singleplayer"
+    "language.name": "English",
+    "language.region": "United States",
+    "language.code": "en_us",
+    "single_player.choose_a_save": "Choose a save",
+    "single_player.new_save": "New",
+    "single_player.play": "Play",
+    "start.multi_player": "Multiplayer",
+    "start.options": "Options...",
+    "start.quit_game": "Quit Game",
+    "start.settings": "Settings",
+    "start.single_player": "Singleplayer"
 }

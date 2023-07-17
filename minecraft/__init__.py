@@ -15,90 +15,70 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
-import json
-import re
-import sys
+from atexit import register
 from locale import getdefaultlocale
-from logging import getLogger
-from os import pathsep
-from os.path import isdir, isfile, join
-from pkgutil import find_loader
-from zipfile import is_zipfile
+from logging import config, getLogger
+from pathlib import Path
+from textwrap import dedent
 
-import minecraft.utils.logging
-from minecraft.resource_pack import ResourcePackManager
-from minecraft.utils.utils import *
+from minecraft.resource.loader import GameAssets
+from minecraft.utils import *
+from minecraft.utils.logging import config as logging_config
+from minecraft.utils.prepare import create_storage_path, print_debug_info
+from minecraft.utils.setting import Setting
 
-logger = getLogger(__name__)
-mcpypath = storage_dir()
+try:
+    import esper
+    major, minor = [int(s) for s in esper.version.split(".")]
+    assert (major == 2) and (minor == 5)
+
+    import pyglet
+    major, minor, patch = [int(s) for s in pyglet.version.split(".")]
+    assert (major == 2) and (minor == 0) and (patch == 8)
+
+    import opensimplex
+    major, minor, patch = [int(s) for s in opensimplex.__version__.split(".")]
+    assert (major == 0) and (minor == 4) and (patch == 5)
+except (AssertionError, ModuleNotFoundError):
+    print(dedent("""\
+    One or more dependencies are not installed or the wrong version
+    is installed. Please check if the following packages are correctly
+    installed on your computer:
+
+    \tesper       2.5
+    \tpyglet      2.0.8
+    \topensimplex 0.4.5
+    """))
+    input("Press ENTER after you read the above information...")
+    exit(1)
+
 parser = argparse.ArgumentParser(
     description="A sandbox game", prog="minecraft")
-parser.add_argument("--extlib", help="add extra lib", metavar="LIB")
-parser.add_argument(
-    "--include", help="add paths to `sys.path`", metavar="PATH")
-parser.add_argument("--player", type=argparse.FileType("r", encoding="utf-8"),
-                    help="player information", metavar="FILE")
-parser.add_argument("--settings", type=argparse.FileType("r", encoding="utf-8"),
-                    help="game settings", metavar="FILE")
+parser.add_argument("-D", "--dir", help="storage location", metavar="DIR")
+parser.add_argument("-I", "--include",
+                    help="add paths to `sys.path`", metavar="PATH")
+parser.add_argument("-L", "--extlib", help="add extra lib", metavar="LIB")
 parser.add_argument("-V", "--version", action="version",
-                    version="%(prog)s " + VERSION["str"] + ("(stable)" if isinstance(VERSION["data"], int) else "(in develop)"))
+                    version="%(prog)s " + VERSION["str"] + ("(stable)" if VERSION["stable"] else "(in develop)"))
 args = parser.parse_args()
 
-# 游戏设置
-settings = {}
-if args.settings is not None:
-    settings = json.load(args.settings)
-elif isfile(join(mcpypath, "settings.json")):
-    settings = json.load(
-        open(join(mcpypath, "settings.json"), encoding="utf-8"))
-# 限制视场
-settings["fov"] = max(50, min(100, settings.get("fov", 70)))
-# 设置资源包
-resource_pack = ResourcePackManager()
-if (settings.get("resource-pack") is None) or (len(settings.get("resource-pack", [])) == 0):
-    resource_pack.add("${default}")
-else:
-    for pack in settings["resource-pack"]:
-        resource_pack.add(pack)
-# 设置语言
-if settings.get("lang", "${auto}") == "${auto}":
-    lang = getdefaultlocale()[0].lower()
-else:
-    lang = settings.get("lang", "en_us").lower()
-resource_pack.set_lang(lang)
+if args.dir is not None:
+    STORAGE_DIR = Path(args.dir)
+create_storage_path(get_storage_path())
+config.dictConfig(logging_config)
+print_debug_info()
 
-# 读取玩家信息
-if args.player is not None:
-    player = json.load(args.player)
-elif isfile(join(mcpypath, "player.json")):
-    player = json.load(
-        open(join(mcpypath, "player.json"), encoding="utf-8"))
-else:
-    logger.error("No \"player.json\" found")
-    exit(1)
-# 检验之
-if ("uuid" not in player) or ("name" not in player):
-    logger.error("Invalid player information")
-    exit(1)
-if not re.match("^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$", player["uuid"]):
-    logger.error("Invalid player id: %s" % player["id"])
-    exit(1)
+logger = getLogger(__name__)
+assets = GameAssets()
 
-libs = []
-sys.path.insert(0, join(storage_dir(), "lib", VERSION["str"]))
-# 将路径添加到sys.path
-if args.include is not None:
-    for path in args.lib.split(pathsep):
-        if isdir(path) or (isfile(path) and is_zipfile(path)):
-            sys.path.insert(0, path)
-            logger.info("Add new lib path: `%s`" % path)
-        else:
-            logger.warning("Lib path \"%s\" is not available" % path)
-# 导入外部库
-if args.extlib is not None:
-    for lib in args.extlib.split(","):
-        if (loader := find_loader(lib)) is not None:
-            logger.info("Loading extra lib: \"%s\"" % lib)
-            libs.append(loader.load_module())
-        else:
-            logger.warning("Extra lib \"%s\" not found" % lib)
+setting = Setting()
+if setting.get("language", "<auto>") == "<auto>":
+    lang_code = getdefaultlocale()[0].lower()
+else:
+    lang_code = setting.get("language", "en_us").lower()
+
+
+@register
+def _():
+    logger.info("This log file is stored in: %s",
+                logging_config["handlers"]["file"]["filename"])
