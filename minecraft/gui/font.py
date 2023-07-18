@@ -1,5 +1,5 @@
-# Minecraft-in-python, a sandbox game
-# Copyright (C) 2020-2023  Minecraft-in-python team
+# minecraftpy, a sandbox game
+# Copyright (C) 2020-2023 minecraftpy team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,27 +14,42 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from pyglet.font.base import Font, GlyphRenderer
-from pyglet.gl import *
+import string
+from io import BytesIO
+
+from minecraft import assets
+from PIL import Image
+from PIL.Image import Resampling
+from pyglet.font import create_font
+from pyglet import image
 
 
-class FontRenderer(GlyphRenderer):
+SMALL_SIZE = 12
+NORMAL_SIZE = 16
+BIG_SIZE = 24
 
-    def __init__(self, font: "MinecraftFont"):
-        self._font = font
-        super().__init__(font)
-    
-    def render(self, char: str):
-        pass
+source = assets.loader.file("textures/font/ascii.png", "rb")
+special_width = {
+    "I": 0.5, "f": 0.625, "i": 0.25, "l": 0.375, "t": 0.5,
+    "\"": 0.5, "'": 0.25, ".": 0.5, ":": 0.5, ";": 0.5,
+    "[": 0.5, "]": 0.5, "{": 0.5, "|": 0.5, "}": 0.5
+}
+for size in [SMALL_SIZE, NORMAL_SIZE, BIG_SIZE]:
+    source_image = Image.open(source)
+    source_image = source_image.resize(
+        (size * 16, size * 16), Resampling.NEAREST)
+    resized_image = BytesIO()
+    source_image.save(resized_image, format="png")
+    resized_image.seek(0)
+    font_image = image.load("ascii.png", file=resized_image)
 
+    mappings = {}
+    for c in " " + string.ascii_letters + string.digits + string.punctuation:
+        x, y = ord(c) % 16 * size, size * 16 - (ord(c) // 16 + 1) * size
+        w = (special_width[c] if c in special_width else 0.75) * size
+        mappings[c] = font_image.get_region(
+            int(x), int(y), int(w), size).get_image_data()
+    create_font(name="minecraft", mappings=mappings,
+                default_char=" ", size=size)
 
-class MinecraftFont(Font):
-    ascent = 12
-    descent = 4
-    texture_mag_filter = GL_NEAREST
-    texture_min_filter = GL_NEAREST
-    glyph_renderer_class = FontRenderer
-
-    @property
-    def name(self):
-        return "minecraft"
+__all__ = ("SMALL_SIZE", "NORMAL_SIZE", "BIG_SIZE")

@@ -1,5 +1,5 @@
-# Minecraft-in-python, a sandbox game
-# Copyright (C) 2020-2023  Minecraft-in-python team
+# minecraftpy, a sandbox game
+# Copyright (C) 2020-2023 minecraftpy team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 
 from typing import Dict, Tuple
 
-REIGON: Dict[str, Tuple[int, ...]] = {
+REGION: Dict[str, Tuple[int, ...]] = {
     # textures/gui/widgets.png
     "button_unable_left": (0, 190, 20, 20),
     "button_unable_middle": (20, 190, 160, 20),
@@ -31,3 +31,6 @@ REIGON: Dict[str, Tuple[int, ...]] = {
     "title_minec": (0, 212, 155, 44),
     "title_raft": (0, 167, 119, 44),
 }
+
+
+__all__ = ("REIGON")

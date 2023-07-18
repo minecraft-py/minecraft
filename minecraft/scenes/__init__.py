@@ -1,5 +1,5 @@
-# Minecraft-in-python, a sandbox game
-# Copyright (C) 2020-2023  Minecraft-in-python team
+# minecraftpy, a sandbox game
+# Copyright (C) 2020-2023 minecraftpy team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ class GameWindow(Window):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.set_caption("Island's End")
+        self.set_caption("Minecraft")
         self.set_minimum_size(800, 600)
         self.__scenes: dict[str, Scene] = {}
         self.__now = ""
@@ -90,3 +90,6 @@ class GameWindow(Window):
             logger.info("Screenshot saved in: %s" % name)
         elif symbol == key.F11:
             self.set_fullscreen(not self.fullscreen)
+
+
+__all__ = ("Scene", "GameWindow")

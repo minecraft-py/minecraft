@@ -1,5 +1,5 @@
-# Minecraft-in-python, a sandbox game
-# Copyright (C) 2020-2023  Minecraft-in-python team
+# minecraftpy, a sandbox game
+# Copyright (C) 2020-2023 minecraftpy team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -101,3 +101,7 @@ def romanisation(num: int, /) -> str:
     x = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "LC"]
     i = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
     return c[(num % 1000) // 100] + x[(num % 100) // 10] + i[num % 10]
+
+
+__all__ = ("VERSION", "get_caller", "get_game_window_instance",
+           "get_storage_path", "is_namespace", "romanisation")

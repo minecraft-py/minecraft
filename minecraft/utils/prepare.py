@@ -1,5 +1,5 @@
-# Minecraft-in-python, a sandbox game
-# Copyright (C) 2020-2023  Minecraft-in-python team
+# minecraftpy, a sandbox game
+# Copyright (C) 2020-2023 minecraftpy team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,3 +52,6 @@ def print_debug_info():
     logger.debug("Minecraftpy version: %s (data version: %d)",
                 VERSION["str"], VERSION["data"])
     logger.debug("Command line arguments: %s", join(argv[1:]))
+
+
+__all__ = ("create_storage_path", "print_debug_info")

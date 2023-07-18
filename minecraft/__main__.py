@@ -1,5 +1,5 @@
-# Minecraft-in-python, a sandbox game
-# Copyright (C) 2020-2023  Minecraft-in-python team
+# minecraftpy, a sandbox game
+# Copyright (C) 2020-2023 minecraftpy team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,20 @@ import pyglet
 from pyglet.gl import *
 from pyglet.image import Texture
 
+from minecraft.scenes import GameWindow
+from minecraft.scenes.start import StartScene
+
 logger = getLogger(__name__)
 
 
 def start():
     """Start the game."""
     try:
-        ...
+        setup_gl()
+        game = GameWindow(800, 600, resizable=True)
+        game.add_scene("minecraft:start", StartScene)
+        game.switch_scene("minecraft:start")
+        pyglet.app.run()
     except SystemExit:
         pass
     except:
