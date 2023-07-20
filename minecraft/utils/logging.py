@@ -22,8 +22,16 @@ from minecraft.utils import get_storage_path
 config = {
     "version": 1,
     "disable_existing_loggers": False,
+    "filters": {
+        "PIL": {
+            "()": "minecraft.utils.logging.filter_discard_PIL"
+        }
+    },
     "formatters": {
-        "default": {
+        "console": {
+            "format": "[%(levelname)-8s] %(message)s"
+        },
+        "file": {
             "format": "[%(asctime)s] [%(threadName)s/%(levelname)s] %(message)s",
             "datefmt": "%Y-%m-%d %H:%M:%S"
         }
@@ -31,12 +39,14 @@ config = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "default",
+            "filters": ["PIL"],
+            "formatter": "console",
             "level": "DEBUG",
         },
         "file": {
             "class": "logging.FileHandler",
-            "formatter": "default",
+            "filters": ["PIL"],
+            "formatter": "file",
             "level": "DEBUG",
             "filename": path.join(get_storage_path(), "log", strftime("%Y-%m-%d_%H.%M.%S.log"))
         }
@@ -46,5 +56,12 @@ config = {
         "level": "DEBUG"
     }
 }
+
+
+def filter_discard_PIL():
+    def filter(record):
+        return not record.name.startswith("PIL")
+    return filter
+
 
 __all__ = ("config")

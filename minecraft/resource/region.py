@@ -23,10 +23,10 @@ REGION: Dict[str, Tuple[int, ...]] = {
     "button_unable_right": (180, 190, 20, 20),
     "button_normal_left": (0, 170, 20, 20),
     "button_normal_middle": (20, 170, 160, 20),
-    "button_normal_right": (180, 170, 160, 20),
+    "button_normal_right": (180, 170, 20, 20),
     "button_hover_left": (0, 150, 20, 20),
     "button_hover_middle": (20, 150, 160, 20),
-    "button_hover_right": (180, 150, 160, 20),
+    "button_hover_right": (180, 150, 20, 20),
     # textures/gui/title/minecraft.png
     "title_minec": (0, 212, 155, 44),
     "title_raft": (0, 167, 119, 44),

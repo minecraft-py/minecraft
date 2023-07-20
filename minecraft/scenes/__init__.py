@@ -51,7 +51,11 @@ class GameWindow(Window):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_caption("Minecraft")
-        self.set_minimum_size(800, 600)
+        self.set_minimum_size(600, 450)
+        self.set_icon(
+            assets.loader.image("textures/icon/icon_16x16.png"),
+            assets.loader.image("textures/icon/icon_32x32.png")
+        )
         self.__scenes: dict[str, Scene] = {}
         self.__now = ""
         self.assets = assets

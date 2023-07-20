@@ -23,18 +23,21 @@ from PIL.Image import Resampling
 from pyglet.font import create_font
 from pyglet import image
 
-
-SMALL_SIZE = 12
 NORMAL_SIZE = 16
 BIG_SIZE = 24
 
 source = assets.loader.file("textures/font/ascii.png", "rb")
 special_width = {
-    "I": 0.5, "f": 0.625, "i": 0.25, "l": 0.375, "t": 0.5,
-    "\"": 0.5, "'": 0.25, ".": 0.5, ":": 0.5, ";": 0.5,
+    " ": 0.375, ",": 0.5, "!": 0.5,
+    "F": 0.625, "I": 0.5,
+    "f": 0.625, "i": 0.25, "l": 0.375, "t": 0.5,
+    "\"": 0.5, "'": 0.25, ".": 0.375, ":": 0.375, ";": 0.375,
     "[": 0.5, "]": 0.5, "{": 0.5, "|": 0.5, "}": 0.5
 }
-for size in [SMALL_SIZE, NORMAL_SIZE, BIG_SIZE]:
+for size, metrics in {
+    NORMAL_SIZE: [14, 2],
+    BIG_SIZE: [21, 3]
+}.items():
     source_image = Image.open(source)
     source_image = source_image.resize(
         (size * 16, size * 16), Resampling.NEAREST)
@@ -48,8 +51,8 @@ for size in [SMALL_SIZE, NORMAL_SIZE, BIG_SIZE]:
         x, y = ord(c) % 16 * size, size * 16 - (ord(c) // 16 + 1) * size
         w = (special_width[c] if c in special_width else 0.75) * size
         mappings[c] = font_image.get_region(
-            int(x), int(y), int(w), size).get_image_data()
-    create_font(name="minecraft", mappings=mappings,
-                default_char=" ", size=size)
+            x, y, int(w), size).get_image_data()
+    create_font(name="minecraft", mappings=mappings, default_char=" ",
+                ascent=metrics[0], descent=metrics[1], size=size)
 
-__all__ = ("SMALL_SIZE", "NORMAL_SIZE", "BIG_SIZE")
+__all__ = ("NORMAL_SIZE", "BIG_SIZE")
