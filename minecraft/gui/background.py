@@ -41,8 +41,6 @@ class BackGround:
             return
         del self._sprites
         self._sprites = []
-        self._bg_img = assets.loader.image(
-            "textures/gui/options_background.png")
         for x in range(0, width + bgw, bgw):
             for y in range(0, height + bgh, bgh):
                 sprite = Sprite(self._bg_img, x, y, batch=self._batch)

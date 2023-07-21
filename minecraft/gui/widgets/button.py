@@ -16,20 +16,19 @@
 
 from typing import Dict
 
-from minecraft.resource import REGION
 from minecraft import assets
+from minecraft.gui.widgets.label import Label
+from minecraft.resource import REGION
 from minecraft.utils import *
 from pyglet.gui import WidgetBase
 from pyglet.image import TextureRegion
 from pyglet.sprite import Sprite
-from pyglet.text import Label
+from pyglet.window.mouse import LEFT
 
-GUI_TEXTURE = assets.loader.image("textures/gui/widgets.png", atlas=False)
-WHITE = (255, 255, 255, 255)
-YELLOW = (255, 255, 85, 255)
+GUI_TEXTURE = assets.loader.image("textures/gui/widgets.png")
 
 
-class Button(WidgetBase):
+class TextButton(WidgetBase):
     """A button with text."""
 
     def __init__(self, text: str, x: int, y: int, width: int, height: int):
@@ -44,8 +43,7 @@ class Button(WidgetBase):
             self._sprites[where] = Sprite(
                 self._images["button_normal_" + where])
         self._label = Label(text, x=self._x + width // 2, y=self._y + height // 2 - 4,
-                            color=WHITE, anchor_x="center", anchor_y="center",
-                            font_name="minecraft", font_size=16)
+                            color="white", anchor_x="center", anchor_y="center")
         self._pressed = False
         self._update_position()
 
@@ -59,8 +57,10 @@ class Button(WidgetBase):
 
         self._sprites["left"].position = (self._x, self._y, 0)
         self._sprites["middle"].position = (self._x + self._height, self._y, 0)
-        self._sprites["right"].position = (self._x + self.width - self.height, self._y, 0)
-        self._label.position = (self._x + self._width // 2, self._y + self._height // 2 - 4, 0)
+        self._sprites["right"].position = (
+            self._x + self.width - self.height, self._y, 0)
+        self._label.position = (self._x + self._width //
+                                2, self._y + self._height // 2 - 4, 0)
 
     def __repr__(self) -> str:
         return f"Button(text={self._label.text})"
@@ -77,6 +77,8 @@ class Button(WidgetBase):
     def on_mouse_press(self, x, y, buttons, modifiers):
         if (not self.enabled) or (not self._check_hit(x, y)):
             return
+        if buttons != LEFT:
+            return
         for where in ["left", "middle", "right"]:
             self._sprites[where].image = self._images["button_unable_" + where]
         self._pressed = True
@@ -85,7 +87,7 @@ class Button(WidgetBase):
     def on_mouse_release(self, x, y, buttons, modifiers):
         if (not self.enabled) or (not self._pressed):
             return
-        self._label.color = YELLOW if self._check_hit(x, y) else WHITE
+        self._label.color = "yellow" if self._check_hit(x, y) else "white"
         status = "hover" if self._check_hit(x, y) else "normal"
         for where in ["left", "middle", "right"]:
             self._sprites[where].image = self._images["button_" +
@@ -96,7 +98,7 @@ class Button(WidgetBase):
     def on_mouse_motion(self, x, y, dx, dy):
         if (not self.enabled) or self._pressed:
             return
-        self._label.color = YELLOW if self._check_hit(x, y) else WHITE
+        self._label.color = "yellow" if self._check_hit(x, y) else "white"
         status = "hover" if self._check_hit(x, y) else "normal"
         for where in ["left", "middle", "right"]:
             self._sprites[where].image = self._images["button_" +
@@ -105,12 +107,12 @@ class Button(WidgetBase):
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if (not self.enabled) or self._pressed:
             return
-        self._label.color = YELLOW if self._check_hit(x, y) else WHITE
+        self._label.color = "yellow" if self._check_hit(x, y) else "white"
         status = "hover" if self._check_hit(x, y) else "normal"
         for where in ["left", "middle", "right"]:
             self._sprites[where].image = self._images["button_" +
                                                       status + "_" + where]
 
 
-Button.register_event_type("on_press")
-Button.register_event_type("on_release")
+TextButton.register_event_type("on_press")
+TextButton.register_event_type("on_release")

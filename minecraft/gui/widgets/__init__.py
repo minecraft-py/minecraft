@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from minecraft.gui.widgets.button import Button
+from minecraft.gui.widgets.button import TextButton
+from minecraft.gui.widgets.label import Label
 
-__all__ = ("Button")
+__all__ = ("TextButton", "Label")

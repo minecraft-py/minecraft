@@ -23,8 +23,9 @@ from PIL.Image import Resampling
 from pyglet.font import create_font
 from pyglet import image
 
-NORMAL_SIZE = 16
-BIG_SIZE = 24
+SIZE16 = 16
+SIZE24 = 24
+SIZE32 = 32
 
 source = assets.loader.file("textures/font/ascii.png", "rb")
 special_width = {
@@ -35,8 +36,9 @@ special_width = {
     "[": 0.5, "]": 0.5, "{": 0.5, "|": 0.5, "}": 0.5
 }
 for size, metrics in {
-    NORMAL_SIZE: [14, 2],
-    BIG_SIZE: [21, 3]
+    SIZE16: [14, 2],
+    SIZE24: [21, 3],
+    SIZE32: [28, 4]
 }.items():
     source_image = Image.open(source)
     source_image = source_image.resize(
@@ -52,7 +54,9 @@ for size, metrics in {
         w = (special_width[c] if c in special_width else 0.75) * size
         mappings[c] = font_image.get_region(
             x, y, int(w), size).get_image_data()
+    # TODO: create a PR for pyglet which support render all unicode
+    # TODO: characters in an easy way mentioned in #896.
     create_font(name="minecraft", mappings=mappings, default_char=" ",
                 ascent=metrics[0], descent=metrics[1], size=size)
 
-__all__ = ("NORMAL_SIZE", "BIG_SIZE")
+__all__ = ("SIZE16", "SIZE24", "SIZE32")

@@ -16,6 +16,9 @@
 
 from typing import Dict, List, Tuple
 
+from minecraft.gui.font import SIZE16
+from pyglet.text import Label as _pyglet_label
+
 # https://minecraft.fandom.com/wiki/Formatting_codes#Formatting_codes
 COLOR: Dict[str, List[Tuple[int, ...]]] = {
     "black": [(0, 0, 0), (255, 255, 255)],
@@ -34,3 +37,92 @@ COLOR: Dict[str, List[Tuple[int, ...]]] = {
     "yellow": [(255, 255, 85), (63, 63, 21)],
     "white": [(255, 255, 255), (63, 63, 63)]
 }
+
+
+class Label:
+
+    def __init__(self, text: str, x=0, y=0, color="white", size=SIZE16, **kwargs):
+        colors = {}
+        colors["fg"] = COLOR.get(
+            color, COLOR["white"])[0] + (255,)
+        colors["bg"] = COLOR.get(
+            color, COLOR["white"])[1] + (255,)
+        self._offset = size / 8
+        self._label: List[_pyglet_label] = []
+        self._label.append(
+            _pyglet_label(text=text, x=x, y=y, color=colors["fg"],
+                          font_name="minecraft", font_size=size, **kwargs))
+        self._label.append(
+            _pyglet_label(text=text, x=x + self._offset, y=y - self._offset, color=colors["bg"],
+                          font_name="minecraft", font_size=size,  **kwargs))
+
+    @property
+    def color(self):
+        return "white"
+
+    @color.setter
+    def color(self, value: str):
+        color = {}
+        color["fg"] = COLOR.get(
+            value, COLOR["white"])[0] + (255,)
+        color["bg"] = COLOR.get(
+            value, COLOR["white"])[1] + (255,)
+        self._label[0].color = color["fg"]
+        self._label[1].color = color["bg"]
+
+    @property
+    def text(self):
+        return self._label[0].text
+
+    @text.setter
+    def text(self, value):
+        self._label[0].text = value
+        self._label[1].text = value
+
+    @property
+    def width(self):
+        return self._label[0].content_width + self._offset
+
+    @width.setter
+    def width(self, value):
+        self._label[0].width = value
+        self._label[1].width = value
+
+    @property
+    def height(self):
+        return self._label[0].content_height + self._offset
+
+    @property
+    def x(self):
+        return self._label[0].x
+
+    @x.setter
+    def x(self, value):
+        self._label[0].x = value
+        self._label[1].x = value + self._offset
+
+    @property
+    def y(self):
+        return self._label[0].y
+
+    @y.setter
+    def y(self, value):
+        self._label[0].y = value
+        self._label[1].y = value - self._offset
+    
+    @property
+    def position(self):
+        return self._label[0].x, self._label[0].y
+    
+    @position.setter
+    def position(self, value: Tuple[int, ...]):
+        d = self._offset
+        self._label[0].position = value
+        self._label[1].position = (value[0] + d, value[1] - d, value[2])
+
+    def draw(self):
+        self._label[1].draw()
+        self._label[0].draw()
+
+
+__all__ = ("Label")
