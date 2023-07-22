@@ -27,10 +27,14 @@ REGION: Dict[str, Tuple[int, ...]] = {
     "button_hover_left": (0, 150, 20, 20),
     "button_hover_middle": (20, 150, 160, 20),
     "button_hover_right": (180, 150, 20, 20),
+    "language_normal": (0, 130, 20, 20),
+    "language_hover": (0, 110, 20, 20),
+    "accessibility_normal": (20, 130, 20, 20),
+    "accessibility_hover": (20, 110, 20, 20),
     # textures/gui/title/minecraft.png
     "title_minec": (0, 212, 155, 44),
     "title_raft": (0, 167, 119, 44),
 }
 
 
-__all__ = ("REIGON")
+__all__ = "REIGON"

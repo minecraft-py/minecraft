@@ -22,19 +22,13 @@ from minecraft.utils import get_storage_path
 config = {
     "version": 1,
     "disable_existing_loggers": False,
-    "filters": {
-        "PIL": {
-            "()": "minecraft.utils.logging.filter_discard_PIL"
-        }
-    },
+    "filters": {"PIL": {"()": "minecraft.utils.logging.filter_discard_PIL"}},
     "formatters": {
-        "console": {
-            "format": "[%(levelname)-8s] %(message)s"
-        },
+        "console": {"format": "[%(levelname)-8s] %(message)s"},
         "file": {
-            "format": "[%(asctime)s] [%(threadName)s/%(levelname)s] %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S"
-        }
+            "format": "[%(asctime)s] [%(threadName)s/%(levelname)s] [%(name)s] %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
     },
     "handlers": {
         "console": {
@@ -48,20 +42,20 @@ config = {
             "filters": ["PIL"],
             "formatter": "file",
             "level": "DEBUG",
-            "filename": path.join(get_storage_path(), "log", strftime("%Y-%m-%d_%H.%M.%S.log"))
-        }
+            "filename": path.join(
+                get_storage_path(), "log", strftime("%Y-%m-%d_%H.%M.%S.log")
+            ),
+        },
     },
-    "root": {
-        "handlers": ["console", "file"],
-        "level": "DEBUG"
-    }
+    "root": {"handlers": ["console", "file"], "level": "DEBUG"},
 }
 
 
 def filter_discard_PIL():
     def filter(record):
         return not record.name.startswith("PIL")
+
     return filter
 
 
-__all__ = ("config")
+__all__ = "config"

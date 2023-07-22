@@ -29,34 +29,48 @@ SIZE32 = 32
 
 source = assets.loader.file("textures/font/ascii.png", "rb")
 special_width = {
-    " ": 0.375, ",": 0.5, "!": 0.5,
-    "F": 0.625, "I": 0.5,
-    "f": 0.625, "i": 0.25, "l": 0.375, "t": 0.5,
-    "\"": 0.5, "'": 0.25, ".": 0.375, ":": 0.375, ";": 0.375,
-    "[": 0.5, "]": 0.5, "{": 0.5, "|": 0.5, "}": 0.5
+    " ": 0.375,
+    ",": 0.5,
+    "!": 0.5,
+    "F": 0.625,
+    "I": 0.5,
+    "f": 0.625,
+    "i": 0.25,
+    "l": 0.375,
+    "t": 0.5,
+    '"': 0.5,
+    "'": 0.25,
+    ".": 0.375,
+    ":": 0.375,
+    ";": 0.375,
+    "[": 0.5,
+    "]": 0.5,
+    "{": 0.5,
+    "|": 0.5,
+    "}": 0.5,
 }
-for size, metrics in {
-    SIZE16: [14, 2],
-    SIZE24: [21, 3],
-    SIZE32: [28, 4]
-}.items():
-    source_image = Image.open(source)
-    source_image = source_image.resize(
-        (size * 16, size * 16), Resampling.NEAREST)
-    resized_image = BytesIO()
-    source_image.save(resized_image, format="png")
-    resized_image.seek(0)
-    font_image = image.load("ascii.png", file=resized_image)
+for size, metrics in {SIZE16: [14, 2], SIZE24: [21, 3], SIZE32: [28, 4]}.items():
+    image_source = Image.open(source)
+    image_source = image_source.resize((size * 16, size * 16), Resampling.NEAREST)
+    image_resized = BytesIO()
+    image_source.save(image_resized, format="png")
+    image_resized.seek(0)
+    image_font = image.load("ascii.png", file=image_resized)
 
     mappings = {}
     for c in " " + string.ascii_letters + string.digits + string.punctuation:
         x, y = ord(c) % 16 * size, size * 16 - (ord(c) // 16 + 1) * size
         w = (special_width[c] if c in special_width else 0.75) * size
-        mappings[c] = font_image.get_region(
-            x, y, int(w), size).get_image_data()
+        mappings[c] = image_font.get_region(x, y, int(w), size).get_image_data()
     # TODO: create a PR for pyglet which support render all unicode
     # TODO: characters in an easy way mentioned in #896.
-    create_font(name="minecraft", mappings=mappings, default_char=" ",
-                ascent=metrics[0], descent=metrics[1], size=size)
+    create_font(
+        name="minecraft",
+        mappings=mappings,
+        default_char=" ",
+        ascent=metrics[0],
+        descent=metrics[1],
+        size=size,
+    )
 
 __all__ = ("SIZE16", "SIZE24", "SIZE32")

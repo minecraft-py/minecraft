@@ -51,8 +51,9 @@ class GUIFrame:
 
     def add_widget(self, *widgets: WidgetBase):
         for widget in widgets:
-            min_vec, max_vec = self._hash(
-                *widget.aabb[0:2]), self._hash(*widget.aabb[2:4])
+            min_vec, max_vec = self._hash(*widget.aabb[0:2]), self._hash(
+                *widget.aabb[2:4]
+            )
             for i in range(min_vec[0], max_vec[0] + 1):
                 for j in range(min_vec[1], max_vec[1] + 1):
                     self._cells.setdefault((i, j), set()).add(widget)
@@ -60,8 +61,9 @@ class GUIFrame:
 
     def remove_widget(self, *widgets: WidgetBase):
         for widget in widgets:
-            min_vec, max_vec = self._hash(
-                *widget.aabb[0:2]), self._hash(*widget.aabb[2:4])
+            min_vec, max_vec = self._hash(*widget.aabb[0:2]), self._hash(
+                *widget.aabb[2:4]
+            )
             for i in range(min_vec[0], max_vec[0] + 1):
                 for j in range(min_vec[1], max_vec[1] + 1):
                     self._cells.get((i, j)).remove(widget)
@@ -130,4 +132,4 @@ class GUIFrame:
             widget.on_text_motion_select(motion)
 
 
-__all__ = ("GUIFrame")
+__all__ = "GUIFrame"

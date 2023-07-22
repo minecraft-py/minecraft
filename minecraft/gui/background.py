@@ -22,12 +22,10 @@ from pyglet.window import Window
 
 
 class BackGround:
-
     def __init__(self, window: Window):
         self._window = window
         width, height = window.width, window.height
-        self._bg_img = assets.loader.image(
-            "textures/gui/options_background.png")
+        self._bg_img = assets.loader.image("textures/gui/options_background.png")
         self._batch = Batch()
         self._sprites = []
         self.resize(width, height)
@@ -49,4 +47,4 @@ class BackGround:
                 self._sprites.append(sprite)
 
 
-__all__ = ("BackGround")
+__all__ = "BackGround"

@@ -35,26 +35,39 @@ COLOR: Dict[str, List[Tuple[int, ...]]] = {
     "red": [(255, 85, 85), (66, 21, 21)],
     "light_purple": [(255, 85, 255), (63, 21, 63)],
     "yellow": [(255, 255, 85), (63, 63, 21)],
-    "white": [(255, 255, 255), (63, 63, 63)]
+    "white": [(255, 255, 255), (63, 63, 63)],
 }
 
 
 class Label:
-
     def __init__(self, text: str, x=0, y=0, color="white", size=SIZE16, **kwargs):
         colors = {}
-        colors["fg"] = COLOR.get(
-            color, COLOR["white"])[0] + (255,)
-        colors["bg"] = COLOR.get(
-            color, COLOR["white"])[1] + (255,)
+        colors["fg"] = COLOR.get(color, COLOR["white"])[0] + (255,)
+        colors["bg"] = COLOR.get(color, COLOR["white"])[1] + (255,)
         self._offset = size / 8
         self._label: List[_pyglet_label] = []
         self._label.append(
-            _pyglet_label(text=text, x=x, y=y, color=colors["fg"],
-                          font_name="minecraft", font_size=size, **kwargs))
+            _pyglet_label(
+                text=text,
+                x=x,
+                y=y,
+                color=colors["fg"],
+                font_name="minecraft",
+                font_size=size,
+                **kwargs
+            )
+        )
         self._label.append(
-            _pyglet_label(text=text, x=x + self._offset, y=y - self._offset, color=colors["bg"],
-                          font_name="minecraft", font_size=size,  **kwargs))
+            _pyglet_label(
+                text=text,
+                x=x + self._offset,
+                y=y - self._offset,
+                color=colors["bg"],
+                font_name="minecraft",
+                font_size=size,
+                **kwargs
+            )
+        )
 
     @property
     def color(self):
@@ -63,10 +76,8 @@ class Label:
     @color.setter
     def color(self, value: str):
         color = {}
-        color["fg"] = COLOR.get(
-            value, COLOR["white"])[0] + (255,)
-        color["bg"] = COLOR.get(
-            value, COLOR["white"])[1] + (255,)
+        color["fg"] = COLOR.get(value, COLOR["white"])[0] + (255,)
+        color["bg"] = COLOR.get(value, COLOR["white"])[1] + (255,)
         self._label[0].color = color["fg"]
         self._label[1].color = color["bg"]
 
@@ -109,11 +120,11 @@ class Label:
     def y(self, value):
         self._label[0].y = value
         self._label[1].y = value - self._offset
-    
+
     @property
     def position(self):
         return self._label[0].x, self._label[0].y
-    
+
     @position.setter
     def position(self, value: Tuple[int, ...]):
         d = self._offset
@@ -125,4 +136,4 @@ class Label:
         self._label[0].draw()
 
 
-__all__ = ("Label")
+__all__ = "Label"

@@ -23,7 +23,6 @@ from pathlib import Path
 from platform import platform, python_version_tuple
 
 from minecraft.utils import VERSION
-from pyglet import version as pyglet_version
 from pyglet.gl import gl_info
 
 logger = getLogger(__name__)
@@ -35,22 +34,21 @@ def create_storage_path(p: Path):
     makedirs(p, exist_ok=True)
     for subpath in ["log", "saves", "screenshot"]:
         mkdir(p / subpath)
-    settings = {
-        "fov": 70,
-        "language": "<auto>"
-    }
+    settings = {"fov": 70, "language": "<auto>"}
     dump(settings, open(p / "setting.json", "w+"))
 
 
 def print_debug_info():
     logger.debug("** Start Minecraft-in-python **")
     logger.debug("Operation system: %s", platform())
-    logger.debug("Python version: %s", ".".join(
-        [str(s) for s in python_version_tuple()[:3]]))
+    logger.debug(
+        "Python version: %s", ".".join([str(s) for s in python_version_tuple()[:3]])
+    )
     logger.debug("OpenGL version: %s", gl_info.get_version_string())
     logger.debug("Renderer: %s" % gl_info.get_renderer())
-    logger.debug("Minecraftpy version: %s (data version: %d)",
-                VERSION["str"], VERSION["data"])
+    logger.debug(
+        "Minecraftpy version: %s (data version: %d)", VERSION["str"], VERSION["data"]
+    )
     logger.debug("Command line arguments: %s", join(argv[1:]))
 
 

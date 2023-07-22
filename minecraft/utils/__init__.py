@@ -26,9 +26,10 @@ VERSION = {
     "patch": 1,
     "str": "0.0.1",
     "data": 1,
-    "stable": False
+    "stable": False,
 }
 STORAGE_DIR: Union[Path, None] = None
+_GAME_WINDOW = None
 
 
 def get_caller(full=False) -> str:
@@ -47,7 +48,7 @@ def get_caller(full=False) -> str:
         if name.startswith(p):
             p1, p2 = Path(p).parts, Path(name).parts
             if full:
-                pkg_path = list(p2[len(p1):])
+                pkg_path = list(p2[len(p1) :])
                 pkg_path[-1] = pkg_path[-1][:-3]
                 return ".".join(pkg_path)
             else:
@@ -58,9 +59,13 @@ def get_game_window_instance():
     """Get an instance of the `GameWindow` class, which is the main window
     of the game.
     """
-    for w in pyglet.canvas.get_display().get_windows():
-        if str(w).startswith("GameWindow"):
-            return w
+    global _GAME_WINDOW
+    if _GAME_WINDOW is not None:
+        return _GAME_WINDOW
+    for w in pyglet.app.windows:
+        if hasattr(w, "minecraft_gamewindow") and w.minecraft_gamewindow == 0x1BF52:
+            _GAME_WINDOW = w
+            return _GAME_WINDOW
     raise RuntimeError("no GameWindow found")
 
 
@@ -85,7 +90,9 @@ def is_namespace(s: str, /) -> bool:
     """
     l = s.partition(":")
     if s.partition(":")[1]:
-        return l[0].isidentifier() and all([sub.isidentifier() for sub in l[2].split(".")])
+        return l[0].isidentifier() and all(
+            [sub.isidentifier() for sub in l[2].split(".")]
+        )
     else:
         return all([sub.isidentifier() for sub in l[0].split(".")])
 
@@ -103,5 +110,11 @@ def romanisation(num: int, /) -> str:
     return c[(num % 1000) // 100] + x[(num % 100) // 10] + i[num % 10]
 
 
-__all__ = ("VERSION", "get_caller", "get_game_window_instance",
-           "get_storage_path", "is_namespace", "romanisation")
+__all__ = (
+    "VERSION",
+    "get_caller",
+    "get_game_window_instance",
+    "get_storage_path",
+    "is_namespace",
+    "romanisation",
+)

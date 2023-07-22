@@ -30,22 +30,28 @@ from minecraft.utils.setting import Setting
 
 try:
     import esper
+
     major, minor = [int(s) for s in esper.version.split(".")]
     assert (major == 2) and (minor == 5)
 
     import opensimplex
+
     major, minor, patch = [int(s) for s in opensimplex.__version__.split(".")]
     assert (major == 0) and (minor == 4) and (patch == 5)
 
     import PIL
+
     major, minor, patch = [int(s) for s in PIL.__version__.split(".")]
     assert (major == 10) and (minor == 0) and (patch == 0)
 
     import pyglet
+
     major, minor, patch = [int(s) for s in pyglet.version.split(".")]
     assert (major == 2) and (minor == 0) and (patch == 8)
 except (AssertionError, ModuleNotFoundError):
-    print(dedent("""\
+    print(
+        dedent(
+            """\
     One or more dependencies are not installed or the wrong version
     is installed. Please check if the following packages are correctly
     installed on your computer:
@@ -54,19 +60,25 @@ except (AssertionError, ModuleNotFoundError):
     \topensimplex 0.4.5
     \tpillow      10.0.0
     \tpyglet      2.0.8
-    """))
+    """
+        )
+    )
     input("Press ENTER after you read the above information...")
     exit(1)
 
-parser = argparse.ArgumentParser(
-    description="A sandbox game", prog="minecraft")
+parser = argparse.ArgumentParser(description="A sandbox game", prog="minecraft")
 parser.add_argument("-D", "--dir", help="storage location", metavar="DIR")
-parser.add_argument("-I", "--include",
-                    help="add paths to `sys.path`", metavar="PATH")
+parser.add_argument("-I", "--include", help="add paths to `sys.path`", metavar="PATH")
 parser.add_argument("-L", "--extlib", help="add extra lib", metavar="LIB")
 parser.add_argument("--player", help="player information", metavar="name:uuid")
-parser.add_argument("-V", "--version", action="version",
-                    version="%(prog)s " + VERSION["str"] + ("(stable)" if VERSION["stable"] else "(in develop)"))
+parser.add_argument(
+    "-V",
+    "--version",
+    action="version",
+    version="%(prog)s "
+    + VERSION["str"]
+    + ("(stable)" if VERSION["stable"] else "(in develop)"),
+)
 cmdargs = parser.parse_args()
 
 if cmdargs.dir is not None:
@@ -82,13 +94,9 @@ player_info: dict
 if cmdargs.player is not None:
     player_name, player_uuid = cmdargs.player.split(":", 1)
     player_uuid = UUID(player_uuid)
-    player_info = {
-        "name": player_name,
-        "uuid": player_uuid
-    }
+    player_info = {"name": player_name, "uuid": player_uuid}
 else:
-    logger.error(
-        "A player information should be provided through `--player` argument")
+    logger.error("A player information should be provided through `--player` argument")
     exit(1)
 
 setting = Setting()
@@ -96,11 +104,13 @@ if setting.get("language", "<auto>") == "<auto>":
     lang_code = getdefaultlocale()[0].lower()
 else:
     lang_code = setting.get("language", "en_us").lower()
+# assets.language = lang_code
 
 __all__ = ("cmdargs", "assets", "player_info", "setting")
 
 
 @register
 def _():
-    logger.info("This log file is stored in: %s",
-                logging_config["handlers"]["file"]["filename"])
+    logger.info(
+        "This log file is stored in: %s", logging_config["handlers"]["file"]["filename"]
+    )

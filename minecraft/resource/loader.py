@@ -20,12 +20,12 @@ from pyglet.resource import Loader
 
 
 class GameAssets:
-
     def __init__(self):
         self.loader = Loader("minecraft/assets")
         self._lang = "en_us"
         self._translation_en_us: dict[str, str] = load(
-            self.loader.file("lang/en_us.json", mode="r"))
+            self.loader.file("lang/en_us.json", mode="r")
+        )
         self._translation_now: dict[str, str] = {}
 
     @property
@@ -36,8 +36,7 @@ class GameAssets:
     def language(self, name: str):
         self._lang = name
         if self._lang != "en_us":
-            contents = self.loader.file(
-                "lang/%s.json" % self._lang, mode="rb").read()
+            contents = self.loader.file("lang/%s.json" % self._lang, mode="rb").read()
             s = contents.decode("utf-8")
             self._translation_now = loads(s)
 
@@ -49,8 +48,7 @@ class GameAssets:
         2. English
         3. `name` parameter
         """
-        s = self._translation_now.get(
-            name, self._translation_en_us.get(name, name))
+        s = self._translation_now.get(name, self._translation_en_us.get(name, name))
         if s != name:
             try:
                 return s.format(**kwargs)
@@ -60,4 +58,4 @@ class GameAssets:
             return name
 
 
-__all__ = ("GameAssets")
+__all__ = "GameAssets"

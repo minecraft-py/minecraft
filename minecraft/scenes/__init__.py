@@ -54,8 +54,9 @@ class GameWindow(Window):
         self.set_minimum_size(600, 450)
         self.set_icon(
             assets.loader.image("textures/icon/icon_16x16.png"),
-            assets.loader.image("textures/icon/icon_32x32.png")
+            assets.loader.image("textures/icon/icon_32x32.png"),
         )
+        self.minecraft_gamewindow = 0x1BF52
         self.__scenes: dict[str, Scene] = {}
         self.__now = ""
         self.assets = assets
@@ -76,7 +77,7 @@ class GameWindow(Window):
         """Switch to another scene."""
         assert is_namespace(name)
         if name not in self.__scenes:
-            raise NameError("scene \"%s\" not found" % name)
+            raise NameError('scene "%s" not found' % name)
         if self.__now != "":
             self.remove_handlers(self.__scenes[self.__now])
             self.__scenes[self.__now].on_scene_leave()
@@ -88,8 +89,9 @@ class GameWindow(Window):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.F2:
-            name = path.join(get_storage_path(), "screenshot",
-                             time.strftime('%Y-%m-%d_%H.%M.%S.png'))
+            name = path.join(
+                get_storage_path(), "screenshot", time.strftime("%Y-%m-%d_%H.%M.%S.png")
+            )
             get_buffer_manager().get_color_buffer().save(name)
             logger.info("Screenshot saved in: %s" % name)
         elif symbol == key.F11:

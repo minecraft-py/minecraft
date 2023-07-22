@@ -37,4 +37,4 @@ class Setting(UserDict):
         dump(self.data, open(self._file, "w+", encoding="utf-8"), ensure_ascii=False)
 
 
-__all__ = ("Setting")
+__all__ = "Setting"
