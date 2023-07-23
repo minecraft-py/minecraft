@@ -14,26 +14,44 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from typing import List
+
 from minecraft import assets
-from pyglet.gl import *
 from pyglet.graphics import Batch
 from pyglet.sprite import Sprite
 from pyglet.window import Window
 
 
 class BackGround:
-    def __init__(self, window: Window):
+    def __init__(self, window: Window, darkness=0.5):
+        assert 0 <= darkness <= 1
         self._window = window
+        self._darkness = darkness
+        if self._darkness < 0.01:
+            self._darkness = 0.01
         width, height = window.width, window.height
         self._bg_img = assets.loader.image("textures/gui/options_background.png")
         self._batch = Batch()
-        self._sprites = []
+        self._sprites: List[Sprite] = []
         self.resize(width, height)
 
-    def draw(self):
+    @property
+    def darkness(self) -> float:
+        return self._darkness
+
+    @darkness.setter
+    def darkness(self, value: float) -> None:
+        assert 0 <= value <= 1
+        self._darkness = value
+        if self._darkness < 0.01:
+            self._darkness = 0.01
+        for sprite in self._sprites:
+            sprite.color = (256 * (1 - self._darkness),) * 3
+
+    def draw(self) -> None:
         self._batch.draw()
 
-    def resize(self, width: int, height: int):
+    def resize(self, width: int, height: int) -> None:
         bgw, bgh = self._bg_img.width * 4, self._bg_img.height * 4
         if bgw * (width / bgw) > width and bgh * (height / bgh) > height:
             return
@@ -42,7 +60,7 @@ class BackGround:
         for x in range(0, width + bgw, bgw):
             for y in range(0, height + bgh, bgh):
                 sprite = Sprite(self._bg_img, x, y, batch=self._batch)
-                sprite.color = (128, 128, 128)
+                sprite.color = (256 * (1 - self._darkness),) * 3
                 sprite.scale = 4
                 self._sprites.append(sprite)
 

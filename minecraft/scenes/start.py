@@ -22,7 +22,6 @@ from minecraft.resource import REGION
 from minecraft.scenes import Scene
 from minecraft.utils import VERSION
 from pyglet import app
-from pyglet.gl import *
 from pyglet.sprite import Sprite
 from pyglet.window import key
 
@@ -58,7 +57,7 @@ class StartScene(Scene):
         self.title_raft.scale = 2
         self.title_raft.position = (width // 2 - 2, height // 1.25, 0)
         self.label_version = Label(
-            f"Minecraft.py {VERSION['str']}",
+            f"Minecraftpy {VERSION['str']}",
             x=width,
             y=0,
             anchor_x="right",
@@ -110,7 +109,7 @@ class StartScene(Scene):
             40,
         )
 
-        self.button_quit.on_press = lambda: app.exit()
+        self.button_quit.push_handlers(on_release=lambda: app.exit())
         self.frame.add_widget(
             self.button_singleplayer,
             self.button_multiplayer,
@@ -121,8 +120,7 @@ class StartScene(Scene):
         )
 
     def on_draw(self):
-        glClear(GL_COLOR_BUFFER_BIT)
-        glClearColor(0.0, 0.0, 0.0, 0.0)
+        self.window.clear()
         self.background.draw()
         self.title_minec.draw()
         self.title_raft.draw()
