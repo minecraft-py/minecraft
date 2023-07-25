@@ -39,7 +39,7 @@ def create_storage_path(p: Path):
 
 
 def print_debug_info():
-    logger.debug("** Start Minecraft-in-python **")
+    logger.debug("** Start Minecraftpy **")
     logger.debug("Operation system: %s", platform())
     logger.debug(
         "Python version: %s", ".".join([str(s) for s in python_version_tuple()[:3]])

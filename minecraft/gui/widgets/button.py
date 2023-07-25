@@ -17,10 +17,10 @@
 from typing import Dict
 
 from minecraft import assets
+from minecraft.gui.widgets import WidgetBase
 from minecraft.gui.widgets.label import Label
 from minecraft.resource import REGION
 from minecraft.utils import *
-from pyglet.gui import WidgetBase
 from pyglet.image import TextureRegion
 from pyglet.sprite import Sprite
 from pyglet.window.mouse import LEFT
@@ -41,6 +41,8 @@ class ImageButton(WidgetBase):
         self._sprite.height = height
 
     def _update_position(self):
+        self._sprite.width = self._width
+        self._sprite.height = self._height
         self._sprite.position = (self._x, self._y, 0)
 
     @property
@@ -133,9 +135,6 @@ class TextButton(WidgetBase):
             self._y + self._height // 2 - 4,
             0,
         )
-
-    def __repr__(self) -> str:
-        return f"Button(text={self._label.text!r}, enable={self.enable})"
 
     @property
     def enable(self) -> bool:

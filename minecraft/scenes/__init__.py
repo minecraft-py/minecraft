@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from contextlib import contextmanager
 import time
 from logging import getLogger
 from os import path
@@ -36,12 +37,17 @@ class Scene(EventDispatcher):
         self.window: GameWindow = get_game_window_instance()
         self.frame = GUIFrame(self.window)
 
+    def on_language_change(self):
+        """The callback function on changing the language."""
+        pass
+
     def on_scene_enter(self):
         """The callback function on entering the scene."""
         self.frame.enable = True
 
     def on_scene_leave(self):
         """The callback function when leaving the scene."""
+        self.frame.on_mouse_motion(0, 0, 0, 0)
         self.frame.enable = False
 
 
@@ -51,41 +57,67 @@ class GameWindow(Window):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_caption("Minecraft")
-        self.set_minimum_size(600, 450)
+        self.set_minimum_size(640, 480)
         self.set_icon(
             assets.loader.image("textures/icon/icon_16x16.png"),
             assets.loader.image("textures/icon/icon_32x32.png"),
         )
         self.minecraft_gamewindow = 0x1BF52
-        self.__scenes: dict[str, Scene] = {}
-        self.__now = ""
+        self._scenes: dict[str, Scene] = {}
+        self._now = ""
         self.assets = assets
 
     @property
     def scene(self) -> str:
-        return self.__now
+        return self._now
 
     @scene.setter
     def scene(self, name: str):
         self.switch_scene(name)
 
+    @contextmanager
+    def change_viewport(self, x: int, y: int, width: int, height: int):
+        self.viewport = (x, y, width, height)
+        try:
+            yield
+        finally:
+            self.viewport = (0, 0, self.width, self.height)
+
     def add_scene(self, name: str, scene: Scene, *args, **kwargs):
         """Add a scene."""
-        self.__scenes[name] = scene(*args, **kwargs)
+        self._scenes[name] = scene(*args, **kwargs)
 
-    def switch_scene(self, name: str):
+    def has_scene(self, name: str) -> bool:
+        """Whether a scene is added."""
+        return name in self._scenes
+
+    def remove_scene(self, name: str) -> None:
+        """
+        Remove a scene.
+
+        You cannot remove the active one!
+        """
+        if self._now == name:
+            return
+        del self._scenes[name]
+
+    def switch_scene(self, name: str) -> None:
         """Switch to another scene."""
         assert is_namespace(name)
-        if name not in self.__scenes:
+        if name not in self._scenes:
             raise NameError('scene "%s" not found' % name)
-        if self.__now != "":
-            self.remove_handlers(self.__scenes[self.__now])
-            self.__scenes[self.__now].on_scene_leave()
-        self.__now = name
-        self.push_handlers(self.__scenes[self.__now])
-        if hasattr(self.__scenes[self.__now], "on_resize"):
-            self.__scenes[self.__now].on_resize(self.width, self.height)
-        self.__scenes[self.__now].on_scene_enter()
+        if self._now != "":
+            self.remove_handlers(self._scenes[self._now])
+            self._scenes[self._now].on_scene_leave()
+        self._now = name
+        self.push_handlers(self._scenes[self._now])
+        if hasattr(self._scenes[self._now], "on_resize"):
+            self._scenes[self._now].on_resize(self.width, self.height)
+        self._scenes[self._now].on_scene_enter()
+
+    def change_language(self):
+        for scene in self._scenes.values():
+            scene.on_language_change()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.F2:

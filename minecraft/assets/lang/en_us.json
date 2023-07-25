@@ -46,5 +46,13 @@
     "menu.shareToLan": "Open to LAN",
     "menu.reportBugs": "Report Bugs",
     "menu.paused": "Game Paused",
-    "menu.modded": " (Modded)"
+    "menu.modded": " (Modded)",
+    "selectWorld.title": "Select World",
+    "selectWorld.search": "search for worlds",
+    "selectWorld.world": "World",
+    "selectWorld.select": "Play Selected World",
+    "selectWorld.create": "Create New World",
+    "selectWorld.recreate": "Re-Create",
+    "selectWorld.delete": "Delete",
+    "selectWorld.edit": "Edit"
 }

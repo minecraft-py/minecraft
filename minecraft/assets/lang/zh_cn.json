@@ -46,5 +46,13 @@
     "menu.shareToLan": "对局域网开放",
     "menu.reportBugs": "报告漏洞",
     "menu.paused": "游戏暂停",
-    "menu.modded": "（已修改）"
+    "menu.modded": "（已修改）",
+    "selectWorld.title": "选择世界",
+    "selectWorld.search": "搜索世界",
+    "selectWorld.world": "世界",
+    "selectWorld.select": "进入选中的世界",
+    "selectWorld.create": "创建新的世界",
+    "selectWorld.recreate": "重建",
+    "selectWorld.delete": "删除",
+    "selectWorld.edit": "编辑"
 }

@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from importlib import import_module
 from logging import getLogger
 
 from minecraft.gui.background import BackGround
@@ -81,14 +82,14 @@ class StartScene(Scene):
         self.button_options = TextButton(
             self.window.assets.translate("menu.options"),
             width // 2 - 200,
-            height // 2 - 110,
+            height // 2 - 120,
             195,
             40,
         )
         self.button_quit = TextButton(
             self.window.assets.translate("menu.quit"),
             width // 2 + 5,
-            height // 2 - 110,
+            height // 2 - 120,
             195,
             40,
         )
@@ -96,7 +97,7 @@ class StartScene(Scene):
             self._widgets_texture.get_region(*REGION["accessibility_normal"]),
             self._widgets_texture.get_region(*REGION["accessibility_hover"]),
             width // 2 + 205,
-            height // 2 - 110,
+            height // 2 - 120,
             40,
             40,
         )
@@ -104,11 +105,12 @@ class StartScene(Scene):
             self._widgets_texture.get_region(*REGION["language_normal"]),
             self._widgets_texture.get_region(*REGION["language_hover"]),
             width // 2 - 245,
-            height // 2 - 110,
+            height // 2 - 120,
             40,
             40,
         )
 
+        self.button_singleplayer.push_handlers(on_release=self.on_singleplayer_click)
         self.button_quit.push_handlers(on_release=lambda: app.exit())
         self.frame.add_widget(
             self.button_singleplayer,
@@ -118,6 +120,14 @@ class StartScene(Scene):
             self.button_accessibility,
             self.button_language,
         )
+
+    def on_singleplayer_click(self):
+        if not self.window.has_scene("minecraft:singleplayer"):
+            singleplayer = import_module(
+                "minecraft.scenes.singleplayer"
+            ).SingleplayerScene
+            self.window.add_scene("minecraft:singleplayer", singleplayer)
+        self.window.switch_scene("minecraft:singleplayer")
 
     def on_draw(self):
         self.window.clear()
@@ -144,10 +154,10 @@ class StartScene(Scene):
         with self.frame.update():
             self.button_singleplayer.position = (width // 2 - 200, height // 2)
             self.button_multiplayer.position = (width // 2 - 200, height // 2 - 50)
-            self.button_options.position = (width // 2 - 200, height // 2 - 110)
-            self.button_quit.position = (width // 2 + 5, height // 2 - 110)
-            self.button_accessibility.position = (width // 2 + 205, height // 2 - 110)
-            self.button_language.position = (width // 2 - 245, height // 2 - 110)
+            self.button_options.position = (width // 2 - 200, height // 2 - 120)
+            self.button_quit.position = (width // 2 + 5, height // 2 - 120)
+            self.button_accessibility.position = (width // 2 + 205, height // 2 - 120)
+            self.button_language.position = (width // 2 - 245, height // 2 - 120)
 
 
 __all__ = "StartScene"

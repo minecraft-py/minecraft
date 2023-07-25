@@ -14,8 +14,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from minecraft.gui.widgets.base import WidgetBase
-from minecraft.gui.widgets.button import ImageButton, TextButton
-from minecraft.gui.widgets.label import Label
+from pyglet.gui.widgets import WidgetBase as _WidgetBase
 
-__all__ = ("WidgetBase", "ImageButton", "TextButton", "Label")
+
+class WidgetBase(_WidgetBase):
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, value: int):
+        self._width = value
+        self._update_position()
+
+    @property
+    def height(self):
+        return self._height
+
+    @height.setter
+    def height(self, value: int):
+        self._height = value
+        self._update_position()
+
+
+__all__ = "WidgetBase"

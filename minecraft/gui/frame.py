@@ -80,54 +80,38 @@ class GUIFrame:
             self.add_widget(*all_widgets)
 
     def on_mouse_press(self, x, y, buttons, modifiers):
-        if not self._enable:
-            return
         for widget in self._cells.get(self._hash(x, y), set()):
             widget.on_mouse_press(x, y, buttons, modifiers)
             self._active_widgets.add(widget)
 
     def on_mouse_release(self, x, y, buttons, modifiers):
-        if not self._enable:
-            return
         for widget in self._active_widgets:
             widget.on_mouse_release(x, y, buttons, modifiers)
         self._active_widgets.clear()
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if not self._enable:
-            return
         for widget in self._active_widgets:
             widget.on_mouse_drag(x, y, dx, dy, buttons, modifiers)
         self._mouse_pos = x, y
 
     def on_mouse_scroll(self, x, y, index, direction):
-        if not self._enable:
-            return
         for widget in self._cells.get(self._hash(x, y), set()):
             widget.on_mouse_scroll(x, y, index, direction)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        if not self._enable:
-            return
         for widgets in self._cells.values():
             [widget.on_mouse_motion(x, y, dx, dy) for widget in widgets]
         self._mouse_pos = x, y
 
     def on_text(self, text):
-        if not self._enable:
-            return
         for widget in self._cells.get(self._hash(*self._mouse_pos), set()):
             widget.on_text(text)
 
     def on_text_motion(self, motion):
-        if not self._enable:
-            return
         for widget in self._cells.get(self._hash(*self._mouse_pos), set()):
             widget.on_text_motion(motion)
 
     def on_text_motion_select(self, motion):
-        if not self._enable:
-            return
         for widget in self._cells.get(self._hash(*self._mouse_pos), set()):
             widget.on_text_motion_select(motion)
 
