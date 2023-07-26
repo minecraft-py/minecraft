@@ -17,9 +17,9 @@
 from logging import getLogger
 
 from minecraft.gui.background import BackGround
+from minecraft.gui.shapes import BorderedRectangle
 from minecraft.gui.widgets import Label, TextButton
 from minecraft.scenes import Scene
-from pyglet.shapes import BorderedRectangle
 from pyglet.window import key
 
 logger = getLogger(__name__)
@@ -33,18 +33,20 @@ class SingleplayerScene(Scene):
         self.title = Label(
             self.window.assets.translate("selectWorld.title"),
             x=width // 2,
-            y=height - 48,
+            y=height - 32,
             anchor_x="center",
             anchor_y="center",
         )
         self.rect = BorderedRectangle(
             -10,
-            120,
+            130,
             width + 20,
             height - 180,
             border=10,
-            color=(16, 16, 16, 192),
-            border_color=(0, 0, 0, 192),
+            # The original class has been overwritten to support
+            # different opacities.
+            color=(0, 0, 0, 192),
+            border_color=(0, 0, 0, 255),
         )
         self.button_select = TextButton(
             self.window.assets.translate("selectWorld.select"),
@@ -123,7 +125,7 @@ class SingleplayerScene(Scene):
 
     def on_resize(self, width, height):
         self.background.resize(width, height)
-        self.title.position = (width // 2, height - 48, 0)
+        self.title.position = (width // 2, height - 32, 0)
         self.rect.width = width + 20
         self.rect.height = height - 180
         with self.frame.update():
