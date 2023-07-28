@@ -18,7 +18,7 @@ from logging import getLogger
 
 from minecraft.gui.background import BackGround
 from minecraft.gui.shapes import BorderedRectangle
-from minecraft.gui.widgets import Label, TextButton
+from minecraft.gui.widgets import Label, TextButton, Scrollable, ScrollBar
 from minecraft.scenes import Scene
 from pyglet.window import key
 
@@ -94,6 +94,26 @@ class SingleplayerScene(Scene):
             145,
             40,
         )
+        self.save_chooser = Scrollable(
+            width // 2 - 310,
+            130,
+            603,
+            height - 180,
+            content_height=1000,
+        )
+        self.scrollbar = ScrollBar(
+            width // 2 + 292, 130, height - 180, scrollable=self.save_chooser
+        )
+
+        self.rect_test = BorderedRectangle(
+            width // 2 - 300,
+            200,
+            40,
+            20,
+            color=(255, 255, 255),
+            border_color=(192, 192, 192),
+        )
+        self.save_chooser.add(self.rect_test)
 
         self.button_back.push_handlers(
             on_release=lambda: self.window.switch_scene("minecraft:start")
@@ -105,6 +125,8 @@ class SingleplayerScene(Scene):
             self.button_delete,
             self.button_recreate,
             self.button_back,
+            self.save_chooser,
+            self.scrollbar,
         )
 
     def on_draw(self):
@@ -118,6 +140,8 @@ class SingleplayerScene(Scene):
         self.button_delete.draw()
         self.button_recreate.draw()
         self.button_back.draw()
+        self.save_chooser.draw()
+        self.scrollbar.draw()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
@@ -128,6 +152,7 @@ class SingleplayerScene(Scene):
         self.title.position = (width // 2, height - 32, 0)
         self.rect.width = width + 20
         self.rect.height = height - 180
+        self.rect_test.x = width // 2 - 300
         with self.frame.update():
             self.button_select.position = (width // 2 - 310, 70)
             self.button_create.position = (width // 2 + 10, 70)
@@ -135,6 +160,10 @@ class SingleplayerScene(Scene):
             self.button_delete.position = (width // 2 - 155, 20)
             self.button_recreate.position = (width // 2 + 10, 20)
             self.button_back.position = (width // 2 + 165, 20)
+            self.save_chooser.position = (width // 2 - 310, 130)
+            self.save_chooser.height = height - 180
+            self.scrollbar.position = (width // 2 + 292, 130)
+            self.scrollbar.height = height - 180
 
 
 __all__ = "SingleplayerScene"

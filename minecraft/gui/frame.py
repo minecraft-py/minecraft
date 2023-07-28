@@ -18,7 +18,7 @@ from contextlib import contextmanager
 from typing import Dict, Set
 
 from minecraft.utils import *
-from pyglet.gui.widgets import WidgetBase
+from minecraft.gui.widgets import WidgetBase
 from pyglet.window import Window
 
 
@@ -94,9 +94,9 @@ class GUIFrame:
             widget.on_mouse_drag(x, y, dx, dy, buttons, modifiers)
         self._mouse_pos = x, y
 
-    def on_mouse_scroll(self, x, y, index, direction):
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         for widget in self._cells.get(self._hash(x, y), set()):
-            widget.on_mouse_scroll(x, y, index, direction)
+            widget.on_mouse_scroll(x, y, scroll_x, scroll_y)
 
     def on_mouse_motion(self, x, y, dx, dy):
         for widgets in self._cells.values():

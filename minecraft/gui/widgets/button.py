@@ -36,7 +36,7 @@ class ImageButton(WidgetBase):
         self._pressed = False
         self._image_normal = image_normal
         self._image_hover = image_hover
-        self._sprite = Sprite(self._image_normal, x, y)
+        self._sprite = Sprite(self._image_normal, self._x, self._y)
         self._sprite.width = width
         self._sprite.height = height
 

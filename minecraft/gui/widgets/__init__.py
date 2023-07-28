@@ -17,5 +17,13 @@
 from minecraft.gui.widgets.base import WidgetBase
 from minecraft.gui.widgets.button import ImageButton, TextButton
 from minecraft.gui.widgets.label import Label
+from minecraft.gui.widgets.scrollable import Scrollable, ScrollBar
 
-__all__ = ("WidgetBase", "ImageButton", "TextButton", "Label")
+__all__ = (
+    "WidgetBase",
+    "ImageButton",
+    "TextButton",
+    "Label",
+    "Scrollable",
+    "ScrollBar",
+)

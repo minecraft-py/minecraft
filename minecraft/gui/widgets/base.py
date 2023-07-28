@@ -36,5 +36,9 @@ class WidgetBase(_WidgetBase):
         self._height = value
         self._update_position()
 
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        # Parameters were just renamed due to pyglet#904.
+        return super().on_mouse_scroll(x, y, scroll_x, scroll_y)
+
 
 __all__ = "WidgetBase"
