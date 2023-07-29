@@ -18,8 +18,9 @@ from logging import getLogger
 
 from minecraft.gui.background import BackGround
 from minecraft.gui.shapes import BorderedRectangle
-from minecraft.gui.widgets import Label, TextButton, Scrollable, ScrollBar
+from minecraft.gui.widgets import Label, TextButton, ScrollableLayout, ScrollBar
 from minecraft.scenes import Scene
+from pyglet.shapes import Circle
 from pyglet.window import key
 
 logger = getLogger(__name__)
@@ -94,26 +95,18 @@ class SingleplayerScene(Scene):
             145,
             40,
         )
-        self.save_chooser = Scrollable(
+        self.chooser_layout = ScrollableLayout(
             width // 2 - 310,
             130,
-            603,
+            608,
             height - 180,
-            content_height=1000,
+            content_height=480,
         )
         self.scrollbar = ScrollBar(
-            width // 2 + 292, 130, height - 180, scrollable=self.save_chooser
+            width // 2 + 298, 130, height - 180, scrollable_layout=self.chooser_layout
         )
-
-        self.rect_test = BorderedRectangle(
-            width // 2 - 300,
-            200,
-            40,
-            20,
-            color=(255, 255, 255),
-            border_color=(192, 192, 192),
-        )
-        self.save_chooser.add(self.rect_test)
+        self.placement = Circle(width // 2, height // 2, 20, color=(255, 255, 255))
+        self.chooser_layout.add(self.placement)
 
         self.button_back.push_handlers(
             on_release=lambda: self.window.switch_scene("minecraft:start")
@@ -125,7 +118,7 @@ class SingleplayerScene(Scene):
             self.button_delete,
             self.button_recreate,
             self.button_back,
-            self.save_chooser,
+            self.chooser_layout,
             self.scrollbar,
         )
 
@@ -140,19 +133,24 @@ class SingleplayerScene(Scene):
         self.button_delete.draw()
         self.button_recreate.draw()
         self.button_back.draw()
-        self.save_chooser.draw()
+        self.chooser_layout.draw()
         self.scrollbar.draw()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             return True
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        if (x, y) in self.placement:
+            self.placement.color = (255, 255, 255)
+        else:
+            self.placement.color = (192, 192, 192)
+
     def on_resize(self, width, height):
         self.background.resize(width, height)
         self.title.position = (width // 2, height - 32, 0)
         self.rect.width = width + 20
         self.rect.height = height - 180
-        self.rect_test.x = width // 2 - 300
         with self.frame.update():
             self.button_select.position = (width // 2 - 310, 70)
             self.button_create.position = (width // 2 + 10, 70)
@@ -160,10 +158,15 @@ class SingleplayerScene(Scene):
             self.button_delete.position = (width // 2 - 155, 20)
             self.button_recreate.position = (width // 2 + 10, 20)
             self.button_back.position = (width // 2 + 165, 20)
-            self.save_chooser.position = (width // 2 - 310, 130)
-            self.save_chooser.height = height - 180
-            self.scrollbar.position = (width // 2 + 292, 130)
+            self.chooser_layout.position = (width // 2 - 310, 130)
+            self.chooser_layout.height = height - 180
+            self.scrollbar.position = (width // 2 + 298, 130)
             self.scrollbar.height = height - 180
+        self.placement.position = self.chooser_layout.get_point(width // 2, height // 2)
+
+    def on_scene_leave(self):
+        super().on_scene_leave()
+        self.chooser_layout.offset_y = 0
 
 
 __all__ = "SingleplayerScene"

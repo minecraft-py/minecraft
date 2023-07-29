@@ -14,24 +14,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from minecraft.gui.widgets import WidgetBase
-from pyglet.gl import *
+from pyglet import gl
 from pyglet.gui.widgets import WidgetBase as PygletWidgetBase
 from pyglet.shapes import Rectangle, ShapeBase
 
 
-class Scrollable(WidgetBase):
+class ScrollableLayout(WidgetBase):
     """
-    Strictly speaking, Scrollable is not a widget, it is a container
+    Strictly speaking, ScrollableLayout is not a widget, it is a container
     that holds other widgets.
 
-    The widgets in the Scrollable only have their initial absolute positions,
+    The widgets in the ScrollableLayout only have their initial absolute positions,
     and they all retain their relative positions after the scrolling operation.
-
-    If you need to change the position of the widgets inside the
-    container (x, y properties), you should use the `+=` or `-=` operator.
     """
 
     def __init__(
@@ -44,12 +41,12 @@ class Scrollable(WidgetBase):
     ):
         super().__init__(x, y, width, height)
         self._content_height = content_height or height
-        assert self._content_height >= self._height
+        if self._content_height < self._height:
+            self._content_height = self._height
         self._offset_y = 0
         self._value: float = 0
         self._hscroll: Optional[ScrollBar] = None
-        # The elements in `Scrollable._contents` must have `x` and `y` properties.
-        self._contents: List[Union[PygletWidgetBase, ShapeBase]] = []
+        self._elements: List[Union[PygletWidgetBase, ShapeBase]] = []
 
     def _update_position(self):
         pass
@@ -69,6 +66,13 @@ class Scrollable(WidgetBase):
     @height.setter
     def height(self, value):
         self._height = value
+        if self._content_height < self._height:
+            self._content_height = self._height
+        if self._content_height > self._height:
+            self._hscroll.visiable = True
+        else:
+            self.offset_y = 0
+            self._hscroll.visiable = False
         self._update_position()
 
     @property
@@ -77,8 +81,14 @@ class Scrollable(WidgetBase):
 
     @content_height.setter
     def content_height(self, value):
-        assert value >= self._height
+        if value < self._height:
+            value = self._height
         self._content_height = value
+        if self._content_height > self._height:
+            self._hscroll.visiable = True
+        else:
+            self.offset_y = 0
+            self._hscroll.visiable = False
 
     @property
     def hscroll(self):
@@ -97,51 +107,96 @@ class Scrollable(WidgetBase):
         value = max(0, min(self._content_height - self._height, value))
         self.scroll(0, value - self._offset_y)
         self._offset_y = value
+        if self._offset_y == 0:
+            self._hscroll.value = 0
+        else:
+            self._hscroll.value = self._offset_y / (self._content_height - self._height)
 
     def add(self, *elements: Union[PygletWidgetBase, ShapeBase]):
-        for element in elements:
-            if element not in self._contents:
+        """
+        Add some elements to ScrollableLayout.
+
+        Objects that are instanced in `pyglet.gui.widget.WidgetBase` and
+        `pyglet.shapes.ShapeBase` are recommended.
+
+        Otherwise, the objects need to have `x`, `y` attributes and
+        `draw` method and cannot be `ScrollableLayout` or `ScrollBar`.
+        """
+        for obj in elements:
+            if obj not in self._elements:
                 assert (
-                    hasattr(element, "x")
-                    and hasattr(element, "y")
-                    and hasattr(element, "draw")
-                )
-                if isinstance(elements, (Scrollable, ScrollBar)):
+                    hasattr(obj, "x") and hasattr(obj, "y") and hasattr(obj, "draw")
+                ), "must have x, y attributes and draw method"
+                if isinstance(obj, (ScrollableLayout, ScrollBar)):
                     raise TypeError(
-                        f"{element.__class__.__name__} cannot add to Scrollable"
+                        f"{obj.__class__.__name__} cannot add to ScrollableLayout"
                     )
-                self._contents.append(element)
+                self._elements.append(obj)
 
     def draw(self):
-        glEnable(GL_SCISSOR_TEST)
-        glScissor(self._x, self._y, self._width, self._height)
-        for element in self._contents:
-            element.draw()
-        glDisable(GL_SCISSOR_TEST)
+        gl.glEnable(gl.GL_SCISSOR_TEST)
+        gl.glScissor(self._x, self._y, self._width, self._height)
+        for obj in self._elements:
+            obj.draw()
+        gl.glDisable(gl.GL_SCISSOR_TEST)
+
+    def get_point(self, x: int, y: int) -> Tuple[int, int]:
+        """
+        Get the absolute position of `(x, y)` after the ScrollableLayout has been scrolled.
+
+        Returns `(x, y)` itself when it is outside the widget.
+        """
+        if not self._check_hit(x, y):
+            return (x, y)
+        return (x, y + self._offset_y)
 
     def scroll(self, dx: int, dy: int):
-        for element in self._contents:
-            element.y += dy
+        for obj in self._elements:
+            obj.y += dy
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        for obj in self._elements:
+            if hasattr(obj, "on_mouse_drag"):
+                obj.on_mouse_drag(x, y, dx, dy, buttons, modifiers)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        for obj in self._elements:
+            if hasattr(obj, "on_mouse_motion"):
+                obj.on_mouse_motion(x, y, dx, dy)
+
+    def on_mouse_press(self, x, y, buttons, modifiers):
+        for obj in self._elements:
+            if hasattr(obj, "on_mouse_press"):
+                obj.on_mouse_press(x, y, buttons, modifiers)
+
+    def on_mouse_release(self, x, y, buttons, modifiers):
+        for obj in self._elements:
+            if hasattr(obj, "on_mouse_release"):
+                obj.on_mouse_release(x, y, buttons, modifiers)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        if self._check_hit(x, y):
+        if self._hscroll.visiable and self._check_hit(x, y):
             self.offset_y -= 8 * scroll_y
-            self._hscroll.value = self._offset_y / (self._content_height - self._height)
 
     def on_scrollbar_scroll(self, vx, vy):
         self.offset_y = vy * (self._content_height - self._height)
 
 
-Scrollable.register_event_type("on_scrollbar_scroll")
+ScrollableLayout.register_event_type("on_scrollbar_scroll")
 
 
 class ScrollBar(WidgetBase):
-    def __init__(self, x: int, y: int, height: int, scrollable: Scrollable):
+    def __init__(
+        self, x: int, y: int, height: int, scrollable_layout: ScrollableLayout
+    ):
         super().__init__(x, y, 12, height)
         self._press = False
         self._value: float = 0
-        self._scrollable = scrollable
-        self._scrollable.hscroll = self
+        self._visiable = True
+        self._scrollable_layout = scrollable_layout
+        self._scrollable_layout.hscroll = self
+        if self._scrollable_layout.content_height <= self._scrollable_layout.height:
+            self._visiable = False
 
         self._scrolling_area = Rectangle(
             self._x, self._y, self._width, self._height, color=(0, 0, 0, 192)
@@ -174,7 +229,9 @@ class ScrollBar(WidgetBase):
         self._scrolling_area.height = self._height
 
         self._bbar.height = (
-            self._height * self._scrollable.height / self._scrollable.content_height
+            self._height
+            * self._scrollable_layout.height
+            / self._scrollable_layout.content_height
         )
         self._fbar.height = self._bbar.height - 3
 
@@ -196,13 +253,26 @@ class ScrollBar(WidgetBase):
         self._value = value
         self._update_position()
 
+    @property
+    def visiable(self):
+        return self._visiable
+
+    @visiable.setter
+    def visiable(self, value: bool):
+        self._visiable = bool(value)
+        if not self._visiable:
+            self.value = 0
+        else:
+            self._update_position()
+
     def draw(self):
-        self._scrolling_area.draw()
-        self._bbar.draw()
-        self._fbar.draw()
+        if self._visiable:
+            self._scrolling_area.draw()
+            self._bbar.draw()
+            self._fbar.draw()
 
     def on_mouse_press(self, x, y, buttons, modifiers):
-        if self._check_hit(x, y) and (x, y) in self._bbar:
+        if self._visiable and self._check_hit(x, y) and (x, y) in self._bbar:
             self._press = True
 
     def on_mouse_release(self, x, y, buttons, modifiers):
@@ -216,7 +286,9 @@ class ScrollBar(WidgetBase):
             )
             self._fbar.y = self._bbar.y + 3
             self._refresh_value()
-            self._scrollable.dispatch_event("on_scrollbar_scroll", 0, self._value)
+            self._scrollable_layout.dispatch_event(
+                "on_scrollbar_scroll", 0, self._value
+            )
 
 
-__all__ = ("Scrollable", "ScrollBar")
+__all__ = ("ScrollableLayout", "ScrollBar")
