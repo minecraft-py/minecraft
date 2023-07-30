@@ -23,12 +23,9 @@ from pyglet.shapes import Rectangle, ShapeBase
 
 
 class ScrollableLayout(WidgetBase):
-    """
-    Strictly speaking, ScrollableLayout is not a widget, it is a container
-    that holds other widgets.
+    """A container can be scrolled.
 
-    The widgets in the ScrollableLayout only have their initial absolute positions,
-    and they all retain their relative positions after the scrolling operation.
+    ScrollableLayout only support vertical scrolling.
     """
 
     def __init__(
@@ -39,6 +36,14 @@ class ScrollableLayout(WidgetBase):
         height: int,
         content_height: Optional[int] = None,
     ):
+        """Create a ScrollableLayout.
+
+        Parameters:
+
+        - `x`, `y`: Widget's position
+        - `width`, `height`: Widget's display size
+        - `content_height`: The real height
+        """
         super().__init__(x, y, width, height)
         self._content_height = content_height or height
         if self._content_height < self._height:
@@ -113,8 +118,7 @@ class ScrollableLayout(WidgetBase):
             self._hscroll.value = self._offset_y / (self._content_height - self._height)
 
     def add(self, *elements: Union[PygletWidgetBase, ShapeBase]):
-        """
-        Add some elements to ScrollableLayout.
+        """Add some elements to ScrollableLayout.
 
         Objects that are instanced in `pyglet.gui.widget.WidgetBase` and
         `pyglet.shapes.ShapeBase` are recommended.
@@ -141,8 +145,8 @@ class ScrollableLayout(WidgetBase):
         gl.glDisable(gl.GL_SCISSOR_TEST)
 
     def get_point(self, x: int, y: int) -> Tuple[int, int]:
-        """
-        Get the absolute position of `(x, y)` after the ScrollableLayout has been scrolled.
+        """Get the absolute position of `(x, y)` after the ScrollableLayout
+        has been scrolled.
 
         Returns `(x, y)` itself when it is outside the widget.
         """
@@ -151,6 +155,13 @@ class ScrollableLayout(WidgetBase):
         return (x, y + self._offset_y)
 
     def scroll(self, dx: int, dy: int):
+        """Scroll the elements added to the ScrollableLayout.
+
+        Parameters:
+
+        - `dx`(not used): The amount of change in x-value
+        - `dy`: The amount of change in y-value
+        """
         for obj in self._elements:
             obj.y += dy
 
@@ -179,6 +190,13 @@ class ScrollableLayout(WidgetBase):
             self.offset_y -= 8 * scroll_y
 
     def on_scrollbar_scroll(self, vx, vy):
+        """An event triggered by ScrollBar scrolling.
+
+        Parameters:
+
+        - `vx`(not used): value of the horizontal scrollbar, in the range of [0, 1]
+        - `vy`: value of the vertical scrollbar, in the range of [0, 1]
+        """
         self.offset_y = vy * (self._content_height - self._height)
 
 
@@ -186,6 +204,8 @@ ScrollableLayout.register_event_type("on_scrollbar_scroll")
 
 
 class ScrollBar(WidgetBase):
+    """A vertical scrollbar."""
+
     def __init__(
         self, x: int, y: int, height: int, scrollable_layout: ScrollableLayout
     ):

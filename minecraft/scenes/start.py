@@ -77,7 +77,7 @@ class StartScene(Scene):
             height // 2 - 50,
             400,
             40,
-            False,
+            enable=False,
         )
         self.button_options = TextButton(
             self.window.assets.translate("menu.options"),
