@@ -17,6 +17,6 @@ Notice that `name` and `uuid` should always be provided when start the game.
 ## Short-term Goal
 
 - [ ] Support i18n
-  - [x] [#908](https://github.com/pyglet/pygley/pull/908) was created for pyglet
+  - [x] [#908](https://github.com/pyglet/pyglet/pull/908) was created for pyglet
   - [ ] Waiting for a new release of pyglet
 - [ ] A simple 3D scene

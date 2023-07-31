@@ -63,7 +63,7 @@ for size, metrics in {SIZE16: [14, 2], SIZE24: [21, 3], SIZE32: [28, 4]}.items()
         w = (special_width[c] if c in special_width else 0.75) * size
         mappings[c] = image_font.get_region(x, y, int(w), size).get_image_data()
     # TODO: create a PR for pyglet which support render all unicode
-    # TODO: characters in an easy way mentioned in #896.
+    # TODO: characters in an easy way mentioned in #896 and #908.
     create_font(
         name="minecraft",
         mappings=mappings,
