@@ -27,8 +27,8 @@ class BorderedRectangle(_Rect):
         width,
         height,
         border=1,
-        color=...,
-        border_color=...,
+        color=(255, 255, 255),
+        border_color=(100, 100, 100),
         batch=None,
         group=None,
     ):

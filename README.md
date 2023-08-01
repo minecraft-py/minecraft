@@ -12,7 +12,7 @@ pip install -r requirments.txt
 python -m minecraft --player <name>:<uuid>
 ```
 
-Notice that `name` and `uuid` should always be provided when start the game.
+<!-- Notice that `name` and `uuid` should always be provided when start the game. -->
 
 ## Short-term Goal
 

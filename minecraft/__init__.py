@@ -96,8 +96,9 @@ if cmdargs.player is not None:
     player_uuid = UUID(player_uuid)
     player_info = {"name": player_name, "uuid": player_uuid}
 else:
-    logger.error("A player information should be provided through `--player` argument")
-    exit(1)
+    player_info = {"name": "unknown", "uuid": UUID(int=0)}
+    # logger.error("A player information should be provided through `--player` argument")
+    # exit(1)
 
 setting = Setting()
 if setting.get("language", "<auto>") == "<auto>":
