@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
+from inspect import getmodule
 from pathlib import Path
 from typing import Union
 
@@ -32,7 +33,7 @@ STORAGE_DIR: Union[Path, None] = None
 _GAME_WINDOW = None
 
 
-def get_caller(full=False) -> str:
+def get_caller() -> str:
     """Get the package name of the penultimate function in the call stack.
 
     The call stack:
@@ -41,18 +42,11 @@ def get_caller(full=False) -> str:
     2. function 2 (called this function)
     3. this function (return the name of the package where function 1 is located)
     """
-    name = sys._getframe().f_back.f_back.f_code.co_filename
-    # Return an object instead of a file system path will raise an error.
-    assert name[0] == "<", "caller's caller is not in a function"
-    for p in sys.path:
-        if name.startswith(p):
-            p1, p2 = Path(p).parts, Path(name).parts
-            if full:
-                pkg_path = list(p2[len(p1) :])
-                pkg_path[-1] = pkg_path[-1][:-3]
-                return ".".join(pkg_path)
-            else:
-                return p2[len(p1)]
+    module = getmodule(sys._getframe().f_back.f_back.f_code)
+    if module is not None:
+        return module.__name__
+    else:
+        return "unknow"
 
 
 def get_game_window_instance():

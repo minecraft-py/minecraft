@@ -34,8 +34,8 @@ def create_storage_path(p: Path):
     makedirs(p, exist_ok=True)
     for subpath in ["log", "saves", "screenshot"]:
         mkdir(p / subpath)
-    settings = {"fov": 70, "language": "<auto>"}
-    dump(settings, open(p / "setting.json", "w+"))
+    setting = {"fov": 70, "language": "<auto>"}
+    dump(setting, open(p / "setting.json", "w+"))
 
 
 def print_debug_info():
