@@ -35,7 +35,9 @@ class GameAssets:
     @language.setter
     def language(self, name: str):
         self._lang = name
-        if self._lang != "en_us":
+        if self._lang == "en_us":
+            self._translation_now = self._translation_en_us
+        else:
             contents = self.loader.file("lang/%s.json" % self._lang, mode="rb").read()
             s = contents.decode("utf-8")
             self._translation_now = loads(s)
