@@ -17,9 +17,10 @@
 import sys
 from inspect import getmodule
 from pathlib import Path
+from subprocess import run
 from typing import Union
 
-import pyglet
+from pyglet import app, compat_platform, resource
 
 VERSION = {
     "major": 0,
@@ -56,7 +57,7 @@ def get_game_window_instance():
     global _GAME_WINDOW
     if _GAME_WINDOW is not None:
         return _GAME_WINDOW
-    for w in pyglet.app.windows:
+    for w in app.windows:
         if hasattr(w, "minecraft_gamewindow") and w.minecraft_gamewindow == 0x1BF52:
             _GAME_WINDOW = w
             return _GAME_WINDOW
@@ -66,7 +67,7 @@ def get_game_window_instance():
 def get_storage_path() -> Path:
     """Return the file storage location."""
     if STORAGE_DIR is None:
-        return Path(pyglet.resource.get_script_home(), ".minecraft")
+        return Path(resource.get_script_home(), ".minecraft")
     else:
         return STORAGE_DIR
 
@@ -102,6 +103,29 @@ def romanisation(num: int, /) -> str:
     x = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "LC"]
     i = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
     return c[(num % 1000) // 100] + x[(num % 100) // 10] + i[num % 10]
+
+
+def show_directory(path: Path, /) -> bool:
+    """Show `path` in the file manager.
+
+    It uses different commands in different platform. For Linux user,
+    they must install the `xdg-utils` package.
+    
+    Return `False` if the command has failed.
+    """
+    abs_path = Path(path).absolute()
+    if compat_platform == "darwin":
+        program = "open"
+    elif compat_platform.startswith("linux"):
+        program = "xdg-open"
+    elif compat_platform in ("cygwin", "win32"):
+        program = "start"
+
+    try:
+        run([program, abs_path], capture_output=True, check=False)
+        return True
+    except:
+        return False
 
 
 __all__ = (

@@ -14,17 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from contextlib import contextmanager
 import time
+from contextlib import contextmanager
 from logging import getLogger
 from os import path
+
+from pyglet.event import EventDispatcher
+from pyglet.image import get_buffer_manager
+from pyglet.window import Window, key
 
 from minecraft import assets
 from minecraft.gui.frame import GUIFrame
 from minecraft.utils import *
-from pyglet.event import EventDispatcher
-from pyglet.image import get_buffer_manager
-from pyglet.window import Window, key
 
 logger = getLogger(__name__)
 
@@ -43,12 +44,11 @@ class Scene(EventDispatcher):
 
     def on_scene_enter(self):
         """The callback function on entering the scene."""
-        self.frame.enable = True
+        pass
 
     def on_scene_leave(self):
         """The callback function when leaving the scene."""
-        self.frame.on_mouse_motion(0, 0, 0, 0)
-        self.frame.enable = False
+        pass
 
 
 class GameWindow(Window):
@@ -75,14 +75,6 @@ class GameWindow(Window):
     def scene(self, name: str):
         self.switch_scene(name)
 
-    @contextmanager
-    def change_viewport(self, x: int, y: int, width: int, height: int):
-        self.viewport = (x, y, width, height)
-        try:
-            yield
-        finally:
-            self.viewport = (0, 0, self.width, self.height)
-
     def add_scene(self, name: str, scene: Scene, *args, **kwargs):
         """Add a scene."""
         self._scenes[name] = scene(*args, **kwargs)
@@ -91,7 +83,7 @@ class GameWindow(Window):
         """Whether a scene is added."""
         return name in self._scenes
 
-    def remove_scene(self, name: str) -> None:
+    def remove_scene(self, name: str):
         """
         Remove a scene.
 
@@ -101,16 +93,19 @@ class GameWindow(Window):
             return
         del self._scenes[name]
 
-    def switch_scene(self, name: str) -> None:
+    def switch_scene(self, name: str):
         """Switch to another scene."""
         assert is_namespace(name)
         if name not in self._scenes:
             raise NameError('scene "%s" not found' % name)
         if self._now != "":
-            self.remove_handlers(self._scenes[self._now])
+            self._scenes[self._now].frame.on_mouse_motion(0, 0, 0, 0)
+            self._scenes[self._now].frame.enable = False
             self._scenes[self._now].on_scene_leave()
+            self.remove_handlers(self._scenes[self._now])
         self._now = name
         self.push_handlers(self._scenes[self._now])
+        self._scenes[self._now].frame.enable = True
         if hasattr(self._scenes[self._now], "on_resize"):
             self._scenes[self._now].on_resize(self.width, self.height)
         self._scenes[self._now].on_scene_enter()

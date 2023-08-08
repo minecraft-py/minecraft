@@ -17,9 +17,10 @@
 from contextlib import contextmanager
 from typing import Dict, Set
 
-from minecraft.utils import *
-from minecraft.gui.widgets import WidgetBase
 from pyglet.window import Window
+
+from minecraft.gui.widgets import WidgetBase
+from minecraft.utils import *
 
 
 class GUIFrame:

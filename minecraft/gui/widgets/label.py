@@ -16,8 +16,9 @@
 
 from typing import Dict, List, Tuple
 
-from minecraft.gui.font import SIZE16
 from pyglet.text import Label as _pyglet_label
+
+from minecraft.gui.font import SIZE16
 
 # https://minecraft.fandom.com/wiki/Formatting_codes#Formatting_codes
 COLOR: Dict[str, List[Tuple[int, ...]]] = {

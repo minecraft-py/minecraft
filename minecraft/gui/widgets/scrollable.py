@@ -16,10 +16,11 @@
 
 from typing import List, Optional, Tuple, Union
 
-from minecraft.gui.widgets import WidgetBase
 from pyglet import gl
 from pyglet.gui.widgets import WidgetBase as PygletWidgetBase
 from pyglet.shapes import Rectangle, ShapeBase
+
+from minecraft.gui.widgets import WidgetBase
 
 
 class ScrollableLayout(WidgetBase):

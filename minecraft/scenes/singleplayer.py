@@ -16,12 +16,14 @@
 
 from logging import getLogger
 
-from minecraft.gui.background import BackGround
-from minecraft.gui.shapes import BorderedRectangle
-from minecraft.gui.widgets import Label, TextButton, ScrollableLayout, ScrollBar
-from minecraft.scenes import Scene
 from pyglet.shapes import Circle
 from pyglet.window import key
+
+from minecraft.gui.background import BackGround
+from minecraft.gui.shapes import BorderedRectangle
+from minecraft.gui.widgets import (Label, ScrollableLayout, ScrollBar,
+                                   TextButton)
+from minecraft.scenes import Scene
 
 logger = getLogger(__name__)
 
@@ -165,7 +167,6 @@ class SingleplayerScene(Scene):
         self.placement.position = self.chooser_layout.get_point(width // 2, height // 2)
 
     def on_scene_leave(self):
-        super().on_scene_leave()
         self.chooser_layout.offset_y = 0
 
 

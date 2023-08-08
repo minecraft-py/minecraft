@@ -1,13 +1,14 @@
 # Show native dialog using tkinter.
 # Copy from pyglet example and make some changes.
 
-from os.path import curdir
 from concurrent.futures import ThreadPoolExecutor
+from os.path import curdir
 from tkinter import Tk, colorchooser, filedialog
 from tkinter.commondialog import Dialog as TkDialog
 
-from minecraft import assets
 from pyglet.event import EventDispatcher
+
+from minecraft import assets
 
 
 class DialogBase(EventDispatcher):

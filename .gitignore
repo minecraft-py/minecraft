@@ -1,4 +1,5 @@
 __pycache__/
+bin/
 build/
 dist/
 lib/
@@ -16,4 +17,5 @@ pyre/
 .*.a
 .*.pyd
 *.pyc
+lib64
 pyvenv.cfg

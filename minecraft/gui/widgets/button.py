@@ -16,14 +16,15 @@
 
 from typing import Dict
 
+from pyglet.image import TextureRegion
+from pyglet.sprite import Sprite
+from pyglet.window.mouse import LEFT
+
 from minecraft import assets
 from minecraft.gui.widgets import WidgetBase
 from minecraft.gui.widgets.label import Label
 from minecraft.resource import REGION
 from minecraft.utils import *
-from pyglet.image import TextureRegion
-from pyglet.sprite import Sprite
-from pyglet.window.mouse import LEFT
 
 WIDGETS_TEXTURE = assets.loader.image("textures/gui/widgets.png")
 

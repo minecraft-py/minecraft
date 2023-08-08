@@ -18,11 +18,12 @@ import string
 from io import BytesIO
 from typing import Dict, Tuple
 
-from minecraft import assets
 from PIL import Image
 from PIL.Image import Resampling
-from pyglet.font import base, create_font
 from pyglet import image
+from pyglet.font import base, create_font
+
+from minecraft import assets
 
 SIZE16 = 16
 SIZE24 = 24

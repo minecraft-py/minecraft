@@ -14,9 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from pyglet.graphics import Batch
-from pyglet.shapes import get_default_shader, BorderedRectangle as _Rect
 from pyglet.gl import *
+from pyglet.graphics import Batch
+from pyglet.shapes import BorderedRectangle as _Rect
+from pyglet.shapes import get_default_shader
 
 
 class BorderedRectangle(_Rect):

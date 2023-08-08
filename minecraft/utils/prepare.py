@@ -17,13 +17,14 @@
 from json import dump
 from logging import getLogger
 from os import makedirs, mkdir
-from sys import argv
-from shlex import join
 from pathlib import Path
 from platform import platform, python_version_tuple
+from shlex import join
+from sys import argv
+
+from pyglet.gl import gl_info
 
 from minecraft.utils import VERSION
-from pyglet.gl import gl_info
 
 logger = getLogger(__name__)
 

@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from time import strftime
 from os import path
+from time import strftime
 
 from minecraft.utils import get_storage_path
 

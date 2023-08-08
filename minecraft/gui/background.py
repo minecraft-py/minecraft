@@ -16,10 +16,11 @@
 
 from typing import List
 
-from minecraft import assets
 from pyglet.graphics import Batch
 from pyglet.sprite import Sprite
 from pyglet.window import Window
+
+from minecraft import assets
 
 
 class BackGround:

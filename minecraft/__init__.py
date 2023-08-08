@@ -23,7 +23,7 @@ from textwrap import dedent
 from uuid import UUID
 
 from minecraft.resource.loader import GameAssets
-from minecraft.utils import *
+from minecraft.utils import STORAGE_DIR, VERSION, get_storage_path
 from minecraft.utils.logging import config as logging_config
 from minecraft.utils.prepare import create_storage_path, print_debug_info
 from minecraft.utils.setting import Setting

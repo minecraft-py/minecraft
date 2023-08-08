@@ -16,15 +16,17 @@
 
 from importlib import import_module
 from logging import getLogger
+from threading import Thread
+
+from pyglet import app
+from pyglet.sprite import Sprite
+from pyglet.window import key
 
 from minecraft.gui.background import BackGround
 from minecraft.gui.widgets import ImageButton, Label, TextButton
 from minecraft.resource import REGION
 from minecraft.scenes import Scene
 from minecraft.utils import VERSION
-from pyglet import app
-from pyglet.sprite import Sprite
-from pyglet.window import key
 
 logger = getLogger(__name__)
 
