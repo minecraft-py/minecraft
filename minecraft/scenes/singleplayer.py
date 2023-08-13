@@ -21,8 +21,7 @@ from pyglet.window import key
 
 from minecraft.gui.background import BackGround
 from minecraft.gui.shapes import BorderedRectangle
-from minecraft.gui.widgets import (Label, ScrollableLayout, ScrollBar,
-                                   TextButton)
+from minecraft.gui.widgets import Label, ScrollableLayout, ScrollBar, TextButton
 from minecraft.scenes import Scene
 
 logger = getLogger(__name__)

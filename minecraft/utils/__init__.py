@@ -72,26 +72,6 @@ def get_storage_path() -> Path:
         return STORAGE_DIR
 
 
-def is_namespace(s: str, /) -> bool:
-    """Determines if a string is a namespace.
-
-    The namespace should satisfy
-    `[top-level namespace]:<sub-namespace1>.<sub-namespace2>...<sub-namespace n>`.
-
-    The top-level namespace may be omitted, defaulting to `minecraft`; sub-namespaces
-    are separated by `.`.
-
-    Use `str.partition()` to detect if a namespace is legal.
-    """
-    l = s.partition(":")
-    if s.partition(":")[1]:
-        return l[0].isidentifier() and all(
-            [sub.isidentifier() for sub in l[2].split(".")]
-        )
-    else:
-        return all([sub.isidentifier() for sub in l[0].split(".")])
-
-
 def romanisation(num: int, /) -> str:
     """Convert an inreger to its roman numeral.
     `num` should be within the range from 1 to 999.
@@ -110,7 +90,7 @@ def show_directory(path: Path, /) -> bool:
 
     It uses different commands in different platform. For Linux user,
     they must install the `xdg-utils` package.
-    
+
     Return `False` if the command has failed.
     """
     abs_path = Path(path).absolute()
@@ -133,6 +113,5 @@ __all__ = (
     "get_caller",
     "get_game_window_instance",
     "get_storage_path",
-    "is_namespace",
     "romanisation",
 )
