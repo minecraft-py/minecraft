@@ -20,7 +20,7 @@ from pyglet.text import Label as _pyglet_label
 
 from minecraft.gui.font import SIZE16
 
-# https://minecraft.fandom.com/wiki/Formatting_codes#Formatting_codes
+# https://minecraft.wiki/w/Formatting_codes#Formatting_codes
 COLOR: Dict[str, List[Tuple[int, ...]]] = {
     "black": [(0, 0, 0), (255, 255, 255)],
     "dark_blue": [(0, 0, 170), (0, 0, 42)],
