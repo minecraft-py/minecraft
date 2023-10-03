@@ -1,4 +1,4 @@
 esper==2.5
 opensimplex==0.4.5
-pillow==10.0.0
+pillow==10.0.1
 pyglet==2.0.8
