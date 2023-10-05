@@ -17,7 +17,6 @@
 import time
 from contextlib import contextmanager
 from logging import getLogger
-from os import path
 
 from pyglet.event import EventDispatcher
 from pyglet.image import get_buffer_manager
@@ -26,6 +25,7 @@ from pyglet.window import Window, key
 from minecraft import assets
 from minecraft.gui.frame import GUIFrame
 from minecraft.utils import *
+from minecraft.utils.namespace import is_namespace
 
 logger = getLogger(__name__)
 
@@ -116,11 +116,13 @@ class GameWindow(Window):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.F2:
-            name = path.join(
-                get_storage_path(), "screenshot", time.strftime("%Y-%m-%d_%H.%M.%S.png")
+            filename = (
+                get_storage_path()
+                / "screenshot"
+                / time.strftime("%Y-%m-%d_%H.%M.%S.png")
             )
-            get_buffer_manager().get_color_buffer().save(name)
-            logger.info("Screenshot saved in: %s" % name)
+            get_buffer_manager().get_color_buffer().save(filename)
+            logger.info("Screenshot saved in: %s" % filename)
         elif symbol == key.F11:
             self.set_fullscreen(not self.fullscreen)
 

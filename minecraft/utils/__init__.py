@@ -66,10 +66,10 @@ def get_game_window_instance():
 
 def get_storage_path() -> Path:
     """Return the file storage location."""
+    global STORAGE_DIR
     if STORAGE_DIR is None:
-        return Path(resource.get_script_home(), ".minecraft")
-    else:
-        return STORAGE_DIR
+        STORAGE_DIR = Path(resource.get_script_home(), ".minecraft")
+    return STORAGE_DIR
 
 
 def romanisation(num: int, /) -> str:

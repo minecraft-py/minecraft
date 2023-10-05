@@ -14,12 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
 from collections import namedtuple
 from typing import Union
 
 
 class NameSpace(namedtuple("NameSpace", ["main", "directory", "sub"])):
-    def relative(self, other: Union[str, "NameSpace"]) -> "NameSpace":
+    def relative(self, other: Union[str, "NameSpace"]) -> NameSpace:
         if not isinstance(other, NameSpace):
             other = get_namespace(other)
         if self.main != other.main:

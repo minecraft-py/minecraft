@@ -42,12 +42,12 @@ try:
     import PIL
 
     major, minor, patch = [int(s) for s in PIL.__version__.split(".")]
-    assert (major == 10) and (minor == 0) and (patch == 0)
+    assert (major == 10) and (minor == 0) and (patch == 1)
 
     import pyglet
 
     major, minor, patch = [int(s) for s in pyglet.version.split(".")]
-    assert (major == 2) and (minor == 0) and (patch == 8)
+    assert (major == 2) and (minor == 0) and (patch == 9)
 except (AssertionError, ModuleNotFoundError):
     print(
         dedent(
@@ -58,8 +58,8 @@ except (AssertionError, ModuleNotFoundError):
 
     \tesper       2.5
     \topensimplex 0.4.5
-    \tpillow      10.0.0
-    \tpyglet      2.0.8
+    \tpillow      10.0.1
+    \tpyglet      2.0.9
     """
         )
     )

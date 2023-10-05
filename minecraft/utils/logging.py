@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from os import path
 from time import strftime
 
 from minecraft.utils import get_storage_path
@@ -42,9 +41,7 @@ config = {
             "filters": ["PIL"],
             "formatter": "file",
             "level": "DEBUG",
-            "filename": path.join(
-                get_storage_path(), "log", strftime("%Y-%m-%d_%H.%M.%S.log")
-            ),
+            "filename": get_storage_path() / "log" / strftime("%Y-%m-%d_%H.%M.%S.log"),
         },
     },
     "root": {"handlers": ["console", "file"], "level": "DEBUG"},

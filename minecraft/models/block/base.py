@@ -14,13 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
 from json import loads
 from typing import Dict, List, Union
 
 from minecraft import assets
 from minecraft.utils.namespace import NameSpace, get_namespace
 
-_model_cache: Dict[tuple, "BlockModel"] = {}
+_model_cache: Dict[tuple, BlockModel] = {}
 
 
 class BlockModel:
@@ -35,11 +36,11 @@ class BlockModel:
         self.textures: BlockModelTextures = None
 
     @classmethod
-    def from_namespace(self, name: Union[str, NameSpace]) -> "BlockModel":
-        if not isinstance(name, NameSpace):
-            name = get_namespace(name)
-        block_name = name.sub[-1]
-        if (name.main, block_name) not in _model_cache:
+    def from_namespace(self, namespace: Union[str, NameSpace]) -> BlockModel:
+        if not isinstance(namespace, NameSpace):
+            namespace = get_namespace(namespace)
+        block_name = namespace.sub[-1]
+        if (namespace.main, block_name) not in _model_cache:
             cls = BlockModel()
             cls.block_json = loads(
                 assets.loader.file("models/block/%s.json" % block_name, mode="rb")
@@ -51,9 +52,9 @@ class BlockModel:
                 cls.parent = BlockModel.from_namespace(parent_block)
             cls.gui_light = cls.get("gui_light", "side")
             cls.display = cls.get("display", {})
-            _model_cache[(name.main, block_name)] = cls
+            _model_cache[(namespace.main, block_name)] = cls
         else:
-            cls = _model_cache[(name.main, block_name)]
+            cls = _model_cache[(namespace.main, block_name)]
         return cls
 
     def get(self, key: str, default=None):

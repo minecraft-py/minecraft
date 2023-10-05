@@ -16,7 +16,6 @@
 
 from logging import getLogger
 
-from pyglet.shapes import Circle
 from pyglet.window import key
 
 from minecraft.gui.background import BackGround
@@ -106,8 +105,6 @@ class SingleplayerScene(Scene):
         self.scrollbar = ScrollBar(
             width // 2 + 298, 130, height - 180, scrollable_layout=self.chooser_layout
         )
-        self.placement = Circle(width // 2, height // 2, 20, color=(255, 255, 255))
-        self.chooser_layout.add(self.placement)
 
         self.button_back.push_handlers(
             on_release=lambda: self.window.switch_scene("minecraft:start")
@@ -141,12 +138,6 @@ class SingleplayerScene(Scene):
         if symbol == key.ESCAPE:
             return True
 
-    def on_mouse_motion(self, x, y, dx, dy):
-        if (x, y) in self.placement:
-            self.placement.color = (255, 255, 255)
-        else:
-            self.placement.color = (192, 192, 192)
-
     def on_resize(self, width, height):
         self.background.resize(width, height)
         self.title.position = (width // 2, height - 32, 0)
@@ -163,7 +154,6 @@ class SingleplayerScene(Scene):
             self.chooser_layout.height = height - 180
             self.scrollbar.position = (width // 2 + 298, 130)
             self.scrollbar.height = height - 180
-        self.placement.position = self.chooser_layout.get_point(width // 2, height // 2)
 
     def on_scene_leave(self):
         self.chooser_layout.offset_y = 0
