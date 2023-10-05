@@ -6,7 +6,7 @@ Typing the following lines of commands to play the game:
 ```bash
 # Create a venv environment is a good choice!
 python -m venv .
-./bin/activate
+source bin/activate
 # Then run the game.
 pip install -r requirments.txt
 python -m minecraft --player <name>:<uuid>
@@ -17,6 +17,6 @@ python -m minecraft --player <name>:<uuid>
 ## Short-term Goal
 
 - [ ] Support i18n
-  - [x] [#908](https://github.com/pyglet/pyglet/pull/908) was created for pyglet
+  - [x] [#956](https://github.com/pyglet/pyglet/pull/956) was created for pyglet
   - [ ] Waiting for a new release of pyglet
 - [ ] A simple 3D scene
