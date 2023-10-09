@@ -43,7 +43,7 @@ def get_caller() -> str:
     2. function 2 (called this function)
     3. this function (return the name of the package where function 1 is located)
     """
-    module = getmodule(sys._getframe().f_back.f_back.f_code)
+    module = getmodule(sys._getframe(1).f_back.f_code)
     if module is not None:
         return module.__name__
     else:

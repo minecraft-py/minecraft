@@ -105,7 +105,7 @@ if setting.get("language", "<auto>") == "<auto>":
     lang_code = getdefaultlocale()[0].lower()
 else:
     lang_code = setting.get("language", "en_us").lower()
-# assets.language = lang_code
+assets.language = lang_code
 
 __all__ = ("cmdargs", "assets", "player_info", "setting")
 

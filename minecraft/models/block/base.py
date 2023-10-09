@@ -43,7 +43,7 @@ class BlockModel:
         if (namespace.main, block_name) not in _model_cache:
             cls = BlockModel()
             cls.block_json = loads(
-                assets.loader.file("models/block/%s.json" % block_name, mode="rb")
+                assets.loader.file(f"models/block/{block_name}.json", mode="rb")
                 .read()
                 .decode("utf-8")
             )

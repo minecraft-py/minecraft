@@ -20,7 +20,7 @@ from typing import Union
 
 
 class NameSpace(namedtuple("NameSpace", ["main", "directory", "sub"])):
-    def relative(self, other: Union[str, "NameSpace"]) -> NameSpace:
+    def relative(self, other: Union[str, NameSpace]) -> NameSpace:
         if not isinstance(other, NameSpace):
             other = get_namespace(other)
         if self.main != other.main:

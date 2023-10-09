@@ -15,7 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import time
-from contextlib import contextmanager
 from logging import getLogger
 
 from pyglet.event import EventDispatcher
@@ -97,7 +96,7 @@ class GameWindow(Window):
         """Switch to another scene."""
         assert is_namespace(name)
         if name not in self._scenes:
-            raise NameError('scene "%s" not found' % name)
+            raise NameError(f"scene '{name}' not found")
         if self._now != "":
             self._scenes[self._now].frame.on_mouse_motion(0, 0, 0, 0)
             self._scenes[self._now].frame.enable = False

@@ -16,7 +16,5 @@ python -m minecraft --player <name>:<uuid>
 
 ## Short-term Goal
 
-- [ ] Support i18n
-  - [x] [#956](https://github.com/pyglet/pyglet/pull/956) was created for pyglet
-  - [ ] Waiting for a new release of pyglet
+- [x] Support i18n
 - [ ] A simple 3D scene

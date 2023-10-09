@@ -16,7 +16,10 @@
 
 from json import load, loads
 
+from logging import getLogger
 from pyglet.resource import Loader
+
+logger = getLogger(__name__)
 
 
 class GameAssets:
@@ -38,9 +41,14 @@ class GameAssets:
         if self._lang == "en_us":
             self._translation_now = self._translation_en_us
         else:
-            contents = self.loader.file("lang/%s.json" % self._lang, mode="rb").read()
-            s = contents.decode("utf-8")
-            self._translation_now = loads(s)
+            try:
+                contents = self.loader.file(f"lang/{self._lang}.json", mode="rb").read()
+            except:
+                logger.warn(f"Translation file of language '{self._lang}' is not found")
+                self._lang = "en_us"
+            else:
+                s = contents.decode("utf-8")
+                self._translation_now = loads(s)
 
     def translate(self, name: str, **kwargs: dict) -> str:
         """Get the translation of `name`.
