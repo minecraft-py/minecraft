@@ -8,7 +8,7 @@ Typing the following lines of commands to play the game:
 python -m venv .
 source bin/activate
 # Then run the game.
-pip install -r requirments.txt
+./bin/pip install -r requirments.txt
 python -m minecraft --player <name>:<uuid>
 ```
 
